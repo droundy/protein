@@ -41,8 +41,9 @@ if load.f_param4 != "94.00":
 for protein in load.proteinList:
     tails = np.loadtxt('./data/shape-%s/%s%s%sarrow-plot-%s-%s-%s-%s-%s-%s-%s.dat'%(load.f_shape,load.debug_str,load.hires_str,load.slice_str,protein,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5))
     tails = [list(element) for element in tails]
-    cut = len(tails)-15
-    tails = [tail for tail in tails[cut:][:]]
+    cut = 10#len(tails)-15
+    tails = [tail for tail in tails[6:cut][:]]
+
     # z_max = max(tails[:][2])
     # z_min = min(tails[:][2])
     # print "z_max = ",z_max
@@ -97,8 +98,8 @@ for protein in load.proteinList:
     cell_y = np.linspace(0,load.dx*len(cell_membrane[:,0]),len(cell_membrane[:,0]))
     plt.contour(cell_x,cell_y,cell_membrane, linewidths=2,levels=[.99])
     #plt.ax.quiver(X,Y,U,V,scale_units='xy',angles='xy',scale=1)
-    plt.ax.get_yaxis().set_visible(False)
-    plt.ax.get_xaxis().set_visible(False)
+    plt.ax.get_yaxis().set_visible(True)
+    plt.ax.get_xaxis().set_visible(True)
     plt.xlim((0,load.dx*cell_membrane.shape[1]))
     plt.ylim((0,load.dx*cell_membrane.shape[0]))
     plt.xlabel("Z grid position")
