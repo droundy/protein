@@ -44,63 +44,55 @@
 \maketitle
 
 \section{Introduction}
-It is vital that during the process of bacterial cell division, a cell
+It is vital that during the process of bacterial cell division a cell
 avoid minicelling, or splitting into daughter cells with lopsided
-volumes.  A long FtsZ polymer chain develops on the cell wall, in the
-center region of the cell, the region which dictates the plane of
+volumes.  Instrumental to this process in \emph{Escherichia coli} is a
+long FtsZ polymer chain that develops on the cell wall in the center
+region of the cell, helping dictate the plane of
 division~\cite{adams2009bacterial, lutkenhaus2007assembly}. Previous
 experimental studies have shown that the MinC protein, known to
 inhibit the FtZ polymer\cite{shen2010examination}, exhibits pole to
-pole oscillatory behavior in conjunction with the MinD and MinE
-proteins, while the oscillating MinE tends to be more localized in the
-center of the cell~\cite{hu1999topological, fu2001mine,
-  shapiro2009and, yu1999ftsz, raskin1999rapid}. The MinC protein will
-then have a higher time averaged concentration in the cell poles, as
-opposed to the center region of the cell, aiding in prohibiting the
-FtZ from developing in the wrong region.
+pole oscillatory behavior in conjunction with the MinD protein and a
+MinE that tends to be more localized in the center of the
+cell~\cite{hu1999topological, fu2001mine, shapiro2009and, yu1999ftsz,
+  raskin1999rapid}. The MinC protein will then have a higher time
+averaged concentration in the cell poles, as opposed to the center
+region of the cell, aiding in prohibiting the FtZ from developing in
+the wrong region.
 
-The cell division process must be able to prevent minicelling, even
-under irregular conditions. Studies have shown that it is capable of
-performing this task for fairly perturbed cell
-shapes\cite{touhami2006temperature}. Mannik et al. have done some
-early experimental work showing regular oscillations of cell division
-systems in bacteria that were physically forced into unusual
-shapes. Varma et al. studied one particular example of a perturbed
-shape, a three-pronged tube, and found both experimental and
-simulation results\cite{varma2008min} supporting the idea that certain
-systems inside the cell begin to undergo oscillations inside the
-cell. These oscillations seem to seek out the extreme poles in the
-cell shape\cite{corbin2002exploring} \cite{juarez2010changes}, and
-effectively prevent minicelling in most cases. However, Mannik et
-al. have also shown that there are limitations to this
-mechanism\cite{mannik2010bacteria} \cite{mannik2009bacterial}. One
-instance of this behavior is observable when the cell has been forced
-into a flattened, irregular shape. Oscillations in this sort of cell
-shape are far from the regular sorts of oscillations seen in the
-computational work done by Huang et al\cite{huang2003dynamic}. We seek
-to apply a computational model to explore the more extreme or
-irregular cell shapes, in order to determine the limits of the steady
-cell oscillations seen by Mannik et al.
-
-%is this necessary? was in old paragraph.
-%\fixme{this link doesn't work =
-%  cite{mannik2012robustness}} \cite{mannik2010bacteria}
-%\cite{mannik2009bacterial}
+Studies have shown that the cell division process is capable of
+preventing minicelling for fairly perturbed cell
+shapes\cite{touhami2006temperature}. Varma et al. studied one
+particular example of a perturbed shape, a three-pronged tube, and
+found both experimental and simulation results\cite{varma2008min} that
+show oscillation. These oscillations seem to seek out the extreme
+poles in the cell shape\cite{corbin2002exploring}
+\cite{juarez2010changes}, and effectively prevent minicelling in most
+cases. However, Mannik et al. have also shown that there are
+limitations to this mechanism\cite{mannik2010bacteria}
+\cite{mannik2009bacterial}. One instance of this behavior is
+observable when the cell has been forced into a flattened, irregular
+shape. Oscillations in this sort of cell shape are far from the
+regular sorts of oscillations seen in the computational work done by
+Huang et al\cite{huang2003dynamic}. We seek to apply a computational
+model to explore the more extreme or irregular cell shapes, in order
+to determine the limits of the steady cell oscillations seen by both
+theory and experiment.
 
 A significant amount of work has been done to develop protein reaction
 and diffusion models that exhibit accurate macroscopic dynamics of the
-MinD protein system. Early models involved free proteins that affect
+MinD protein system. Early models involve free proteins that affect
 each others' rates of diffusion and membrane attachment, but do not
 combine into compound states~\cite{meinhardt2001pattern}.  In 2003
-Huang improved upon this work with a simple model based on MinD-MinE
-combination, ATPase hydrolysis, and MinD membrane attachment that when
-simulated, exhibits accurate MinD oscillations in cylindrical
-cells~\cite{huang2003dynamic}. In this model cytoplasmic MinD is more
-likely to attach to the membrane when MinD is already clustered there
-(following observed non-linear attachement of minD on the cell
-membrane), and is stationary once attached.  A number of studies have
-used an approach similar in that they do not rely on the ability of
-MinD to move along the walls and
+Huang improved upon this work with a simple simulation model based on
+MinD-MinE combination, ATPase hydrolysis, and MinD membrane attachment
+that exhibits accurate MinD oscillations in
+cylindrical cells~\cite{huang2003dynamic}. In this model cytoplasmic
+MinD is more likely to attach to the membrane when MinD is already
+clustered there (following observed non-linear attachement of minD on
+the cell membrane), and is stationary once attached.  A number of
+studies have used an approach similar in that they do not rely on the
+ability of MinD to move along the walls and
 cluster~\cite{kruse2007experimentalist, meinhardt2001pattern,
   drew2005polymerization, fange2006noise, kerr2006division}, while
 studies have been made as well of models which rely on MinD mobility
@@ -114,9 +106,9 @@ experimentally observed oscillations in round cell
 phenotypes~\cite{drew2005polymerization, fange2006noise,
   huang2004min}. Biochemical models of broader scope have also been
 used to study the MinD system and show consistent
-results.\cite{arjunan2010new}.  However, in general, the results of the
-stochastic and monte-carlo simulations are similar to those given by
-Huang's mean field results.
+results.\cite{arjunan2010new}.  However, in general, the results of
+the stochastic and monte-carlo simulations are similar to those given
+by Huang's mean field results.
 
 Previous studies have been made of the Min system's associtation with
 the cell membrane
@@ -128,13 +120,15 @@ models.\cite{drew2005polymerization,cytrynbaum2007multistranded,renner2012mind,r
 However, this mechanism of combined clustering, phospholipids and MinD
 has not been observed in real cells. \cite{halatek2012highly}
 
+
 \begin{figure}
   \includegraphics[width=\columnwidth]{reactions}
   \caption{Reactions included in the model of Huang \emph{et
       al.}~\cite{huang2003dynamic}.}\label{fig:reactions}
 \end{figure}
 
-\section{Model and Methods}
+
+\section{Model, Methods, and Pill Shaped Cell}
 We implement the model of Huang \emph{et al.}  for the behavior of the
 MinD and MinE proteins inside the cell~\cite{huang2003dynamic}.
 Figure~\ref{fig:reactions} shows the reaction process.  The
@@ -143,7 +137,7 @@ changed into the MinD:ATP complex.  This will naturally diffuse
 towards and attach to the cell membrane.  A cytoplasmic MinE will
 attach to the wall bound MinD:ATP complex and after a time will
 activate ATP hydrolosis.  This breaks up the complex, releasing MinE,
-phosphate, and MinD:ADP back into the cell.  The MinD:ADP will undergo
+phosphate, and MinD:ADP back into the cytoplasm.  The MinD:ADP will undergo
 nucleotide exchange and begin again the cyclic process.  This model is
 defined by a set of five reaction-diffusion equations:
 
@@ -187,14 +181,14 @@ relevent at the membrane because the membrane bound density values
 will have no meaning in the cytoplasm where there is no membrane.
 
 Our diffusion and reaction rates are shown below.  We are interested
-primarily in the effect of cellular shape on the protein
-oscillations, so we follow Huang's work\cite{huang2003dynamic} and do
-not deviate from the wild type values used in that work.  Huang's
-simulations use total MinD and MinE concentrations of $1,000/\mu m$
-and $350/\mu m$, respectively, in a cylindrical cell of radius $0.5\mu
-m$, and in our (non-cylindrical) cells we use the same number of
-proteins per unit volume.  These concentration values are 1273 $\mu
-m^{-3}$ and 445 $\mu m^{-3}$, respectively.
+primarily in the effect of cellular size and shape on the protein
+oscillations, so we follow Huang\cite{huang2003dynamic} and do not
+deviate from the wild type values used in the cited work (see values
+below).  Huang's simulations use total MinD and MinE concentrations of
+$1,000/\mu m$ and $350/\mu m$, respectively, in a cylindrical cell of
+radius $0.5\mu m$, and in our (non-cylindrical) cells we use the same
+number of proteins per unit volume.  These concentration values are
+1273 $\mu m^{-3}$ and 445 $\mu m^{-3}$, respectively.
 \begin{gather*}
   \mathcal{D}_D = \mathcal{D}_{E} = 2.5\micron^2/\text{sec}\\
   k_D^{\textrm{ADP $\rightarrow$ ATP}} = 1/\textrm{sec,  }
@@ -254,8 +248,6 @@ Overall this process results in extremely robust oscillatory
 behavoir of polar selection and oscillation in a wide variety of cell
 shapes.
 
-\section{Cell shapes}
-
 We mean to investigate the geometric limits of the Min system
 oscillations, as observed by Mannik \emph{et
   al.}~\cite{mannik2012robustness}, so we model the Min system in a
@@ -298,19 +290,15 @@ cells the two dimensional length scales are tuned so that total cell
 volumes are very close to $3\micron^3$. \jeffsays{I'm not sure how
   true this is.  We should go through and check.  There've been a few
   implementations of printouts reporting volume in the cpp}
-\section{Specific Results}
-
-\subsection{Pill Shape}
 
 
 \begin{figure*}
   \includegraphics[width=\textwidth]{../data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf}
-  \caption{Images of the concentration of each species in a natural
-    pill-shaped bacterium as a function of time, with darker regions
-    indicating higher concentration.  The cells pictured are
-    $4\micron$ in length, measured from end to end.  Frames from an animation showing
-    a series of contour plots of the concentration of proteins in
-    different stages over time.  The order of frames is such that
+  \caption{Countour plot images of the concentration of each protein
+    species in a natural pill-shaped bacterium at regular intervals in
+    time (one second intervals), with darker regions indicating higher
+    concentration.  The cells pictured are $4\micron$ in length,
+    measured from end to end.  The order of frames is such that
     individual MinD proteins begin at the bottom of the plot (in the
     MinD:ATP state in the cytoplasm), and progress upward until they
     reach the MinE:MinD:ATP membrane-bound complex.  At that point,
@@ -527,6 +515,28 @@ distance of travel for the different proteins.
 
 Fifteen
 
+\begin{figure}
+  \includegraphics[width=\columnwidth]{stability-analysis}
+  \caption{Infinite slab stability analysis yields characteristic half
+    wavelengths at which system becomes unstable.}
+    \label{fig:stability-analysis}
+\end{figure}
+
+\section{Theory}
+Stability analysis of the five differential equations in an infinite
+slab show a characteristic half wavelength in perturbative spatial
+oscillations at which the system becomes unstable.  This length is
+dependent upon slab thickness as shown in
+Figure~\ref{fig:stability-analysis}.  When increasing the lengths and
+widths of our simulated flattened cells, the steady, two pole
+oscillations seem to break down when the the shortest distance across
+the cell is approximately equal to the characteristic half wavelength
+at the particular thickness at which we simulate (our simulations of cells
+with thickness $0.25\mu m$ corresponds to half wavelengths of $1.91\mu
+m$).  Huang~\cite{huang2003dynamic} performs a similar analysis for a
+cylindrical shape and finds characteristic half wavelengths of $2\mu
+m$.
+
 
 \subsection{Randst shape}
 \fixme{Cheat sheet for the shapes, need to put these into a big figure
@@ -538,34 +548,46 @@ Fifteen
   \includegraphics[width=2.8cm]{../mannik-2.png}
   \includegraphics[width=2.8cm]{../mannik-1.png}
   \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-1300-2000-9400-1500.pdf}
-  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-1101-1101-9500-1500.pdf}
+  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-1100-1100-9500-1500.pdf}
+  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-1800-2500-9400-1500.pdf}
+  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-1800-1800-9500-1500.pdf}
+  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-2300-3300-9400-1500.pdf}
+  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-2800-2800-9500-1500.pdf}
   \caption{Arrow plots for our simulation and mannik's experimental}
   \label{arrow-compare-mannik}
 \end{figure}
 
-Figure \ref{arrow-compare-mannik} shows a comparison of time maxima
+Figure~\ref{arrow-compare-mannik} shows a comparison of time maxima
 plots with similar plots published by mannik et al.  The sequence of
 arrows show a series of global maxima in space and local maxima in
 time at their heads, numbered by the sequence in which they occur.
 They function as a trace of the path that the traveling maxima take.
 We have created for each of the two shapes published by Mannik a
-closely resembling shape (shown directly below Mannik's) and a
-variation on this shape (shown below that) in order to test the effect
-of variations on basic shapes.  The plots of the left shape show that
-much of the preffered locations for the proteins to maximize are
-similar between this experimental and simulated shape.  The maxima in
-the top center of the cell does not seem to appear in the experimental
-version.  Also in both of the simulations on the left there don't seem
-to be maxima at membrane regions with negative radii of curvature
-while the experimental shows a maxima in the bottom center region
-right at one of these regions.  The shape on the right compares less
-successfully.  Here the simulation shows a limited number of maxima
-locations that appear to be quite regular, where mannik's experimental
-results show a much more chaotic system.  In particular, the maxima
-location on the right wall seems to be very robust.  It acts as one of
-the poles do in the pill shapes.  \fixme{I'm now running a sim with a
-  slightly different shape to see result} The simulated version has
-found a robust two pole pattern, similar to that seen in other shapes.
+closely resembling shape (shown directly below Mannik's) that is in
+all dimensions the same size as that reported in their experiment.  We
+have also simulated longer and wider versions of these same shapes
+(keeping the cell thickness the same).  Shown in
+Figure~\ref{arrow-compare-mannik} are versions that have 1.3 and 2.0
+times the length and width dimensions.  These plots show
+that there are certain sizes at which the steady, two pole
+oscillations seem to break down, and indeed these lengths seem to be
+roughly those estimated by our 2D stability analysis.  \fixme{Waiting
+  to rewrite this section when more data, at more sizes, becomes
+  available} The plots of the left shape show that much of the
+preffered locations for the proteins to maximize are similar between
+this experimental and simulated shape.  The maxima in the top center
+of the cell does not seem to appear in the experimental version.  Also
+in both of the simulations on the left there don't seem to be maxima
+at membrane regions with negative radii of curvature while the
+experimental shows a maxima in the bottom center region right at one
+of these regions.  The shape on the right compares less successfully.
+Here the simulation shows a limited number of maxima locations that
+appear to be quite regular, where mannik's experimental results show a
+much more chaotic system.  In particular, the maxima location on the
+right wall seems to be very robust.  It acts as one of the poles do in
+the pill shapes.  \fixme{I'm now running a sim with a slightly
+  different shape to see result} The simulated version has found a
+robust two pole pattern, similar to that seen in other shapes.
 
 
 
