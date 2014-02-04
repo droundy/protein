@@ -11,9 +11,16 @@ from matplotlib.font_manager import FontProperties
 
 dx=0.05
 
-arg_set = ["randst-0.25-11.00-11.00-95.00-15.00","randst-0.25-18.00-18.00-95.00-15.00",
-           "randst-0.25-19.00-19.00-95.00-15.00","randst-0.25-20.00-20.00-95.00-15.00",
-           "randst-0.25-21.00-21.00-95.00-15.00"]
+#The following two sets are the potentially relevent Mannik shape
+#data.  For the 95 shape, the 11.00 11.00 data is real Mannik size and
+#for the 94.00 the 13.00 20.00 data is real Mannik size
+
+# arg_set = ["randst-0.25-11.00-11.00-95.00-15.00","randst-0.25-20.00-20.00-95.00-15.00",
+#            "randst-0.25-21.00-21.00-95.00-15.00","randst-0.25-28.00-28.00-95.00-15.00"]
+
+arg_set = ["randst-0.25-13.00-20.00-94.00-15.00","randst-0.25-15.00-22.00-94.00-15.00",
+           "randst-0.25-16.00-23.00-94.00-15.00","randst-0.25-18.00-25.00-94.00-15.00",
+           "randst-0.25-30.00-40.00-94.00-15.00"]
 
 plt.figure()
 
