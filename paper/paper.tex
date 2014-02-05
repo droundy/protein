@@ -321,8 +321,6 @@ bound to the membrane on the lower third of the cell, a high
 concentration of cytoplasmic MinE in the upper half of the cell, and a
 MinE ring pushing downward on the membrane-bound MinD:ATP.
 
-In general process results in extremely robust oscillatory behavoir of
-polar selection and oscillation in a wide variety of cell shapes.
 
 \begin{figure}
   \includegraphics[width=\columnwidth]{stability-analysis}
@@ -331,28 +329,35 @@ polar selection and oscillation in a wide variety of cell shapes.
     \label{fig:stability-analysis}
 \end{figure}
 
-\section{Theory}
-Stability analysis of the five differential equations in an infinite
-slab show a characteristic half wavelength in perturbative spatial
+\section{Stability Analysis and Mannik's Experimental Shapes}
+In general we have found that the protein reaction sequence discussed
+above results in extremely robust oscillatory behavoir of polar
+selection and oscillation in a wide variety of cell shapes.  However
+we have found that this robustness is heavily dependent upon cell
+size.  Two pole, regular oscillatory behavoir is found in cells which
+are long enough in one dimension for the reaction chain to be unstable
+but short enough in the perpendicular dimension to be stable.  The
+limits are seen when both dimensions are too short to be unstable, so
+that initial assymetry in protein concentration relaxes into a
+motionless steady state, or when both are too great, so that the
+proteins exhibit much more complex and varied behavoir.
+
+In order to explain this theoretically, we have performed stability
+analysis of the five differential equations in an infinite slab that
+shows a characteristic half wavelength in perturbative spatial
 oscillations at which the system becomes unstable.  This length is
 dependent upon slab thickness as shown in
 Figure~\ref{fig:stability-analysis}.  When increasing the lengths and
 widths of our simulated flattened cells, the steady, two pole
 oscillations seem to break down when the the shortest distance across
 the cell is approximately equal to the characteristic half wavelength
-at the particular thickness at which we simulate (our simulations of cells
-with thickness $0.25\mu m$ corresponds to half wavelengths of $1.91\mu
-m$).  Huang~\cite{huang2003dynamic} performs a similar analysis for a
-cylindrical shape and finds characteristic half wavelengths of $2\mu
-m$.
+at the particular thickness at which we simulate (our simulations of
+cells with thickness $0.25\mu m$ corresponds to half wavelengths of
+\fixme{check next number} $1.91\mu m$).  Huang~\cite{huang2003dynamic}
+performs a similar analysis for a cylindrical shape and finds
+characteristic half wavelengths of $2\mu m$.
 
 
-\subsection{Randst shape}
-\fixme{Cheat sheet for the shapes, need to put these into a big figure
-  from the sections output: 96=star shape, 97=sideways sideways
-  flying saucer pancake, 98=manniks squished cell, 99=an A}
-
-\subsubsection{Randst-mannik shape}
 \begin{figure}
   \includegraphics[width=2.8cm]{../mannik-2.png}
   \includegraphics[width=2.8cm]{../mannik-1.png}
@@ -366,40 +371,31 @@ m$.
   \label{arrow-compare-mannik}
 \end{figure}
 
-Figure~\ref{arrow-compare-mannik} shows a comparison of time maxima
-plots with similar plots published by mannik et al.  The sequence of
-arrows show a series of global maxima in space and local maxima in
-time at their heads, numbered by the sequence in which they occur.
-They function as a trace of the path that the traveling maxima take.
-We have created for each of the two shapes published by Mannik a
-closely resembling shape (shown directly below Mannik's) that is in
-all dimensions the same size as that reported in their experiment.  We
-have also simulated longer and wider versions of these same shapes
-(keeping the cell thickness the same).  Shown in
-Figure~\ref{arrow-compare-mannik} are versions that have 1.3 and 2.0
-times the length and width dimensions.  These plots show
-that there are certain sizes at which the steady, two pole
-oscillations seem to break down, and indeed these lengths seem to be
-roughly those estimated by our 2D stability analysis.  \fixme{Waiting
-  to rewrite this section when more data, at more sizes, becomes
-  available} The plots of the left shape show that much of the
-preffered locations for the proteins to maximize are similar between
-this experimental and simulated shape.  The maxima in the top center
-of the cell does not seem to appear in the experimental version.  Also
-in both of the simulations on the left there don't seem to be maxima
-at membrane regions with negative radii of curvature while the
-experimental shows a maxima in the bottom center region right at one
-of these regions.  The shape on the right compares less successfully.
-Here the simulation shows a limited number of maxima locations that
-appear to be quite regular, where mannik's experimental results show a
-much more chaotic system.  In particular, the maxima location on the
-right wall seems to be very robust.  It acts as one of the poles do in
-the pill shapes.  \fixme{I'm now running a sim with a slightly
-  different shape to see result} The simulated version has found a
-robust two pole pattern, similar to that seen in other shapes.
+Figure~\ref{arrow-compare-mannik} shows plots of total MinD
+concentration maxima that are global in space and local in time.  The
+tip of an arrow represents one of these maxima and the adjacent arrow
+(whose tail is touching the previous arrow's tip) points to the next
+such maxima in time.  Mannik \emph{et al.} have published similar
+plots of two of their cells, and we have attempted to replicate the
+shape of these cells in our simulation in order to compare.  We find
+that when we replicate the size as well as shape of their cells as
+near as possible, we do not see the disordered protein behavoir that
+they observe.  Instead we see a robust ability of the cell to find two
+prefered pole locations and to oscillate maxima back and forth very
+steadily between them.  However, when we keep the same shape but
+increase the size, we see that there is a critical size at which the
+protein dynamics lose their order and become very complex (showing
+hints of prefered wall maxima locations), similar to what Mannik sees
+experimentally.  We find that this critical size matches up well with
+our stability analysis, in that the critical sizes correspond to sizes
+for which the shorter of the two distances across the cell is roughly
+equal to the analysis' half wavelength found for this cell thickness.
 
+\fixme{I'm also waiting for data to come in that will hopefully show
+  cells so small that no oscillations take place.  We can put this in
+  as well}
 
-\subsection{Triangular Shapes}
+\section{Triangular Shapes}
 \begin{figure}
   %%\includegraphics[width=\columnwidth]{../data/shape-triangle/plots/box-plot_D--triangle-25-400-400-400-1500}
   %%\includegraphics[width=\columnwidth]{../data/shape-triangle/plots/box-plot_D--triangle-25-500-300-500-1500}
