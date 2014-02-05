@@ -274,8 +274,9 @@ Table~\ref{tab:pill-periods}, in agreement with the results of Huang
     \hline
   \end{tabular}
   \caption{Period of oscillation according to length of cell for
-    pill-shaped cells.}\label{tab:pill-periods}\fixme{whats the 'sim'
-    here?}
+    pill-shaped cells.}\label{tab:pill-periods}\fixme{the 'sim' here
+    means that it's waiting for a simulation.  Not sure where it went
+    but I'm rerunning it.}
 \end{table}
 
 This simple cell shape is a good starting point for observing in
@@ -288,16 +289,26 @@ summed over the coordinate orthogonal to the page.  The color scale
 for each protein state is set according to the maximum density
 observed.
 
-At $t=0$ in Figs.~\ref{image-p}, the cytoplasmic MinE
-is concentrated in the lower portion of the cell, and is diffusing
-upward.  The MinD protein is initially concentrated on the membrane in
-the upper portion of the cell.  At the boundary between the
-cytoplasmic MinE and the membrane-bound MinD, there is a ring of the
-membrane-bound MinE:MinD complex, which is moving towards the upper
-end of the cell, removing the MinD from the membrane as it goes.  The
-MinD is removed from the membrane in its MinD:ADP form, which begins
-to accumulate at the upper end of the cell, peaking at around
-10 seconds.
+At $t=0$ in Figs.~\ref{image-p}, the cytoplasmic MinE is concentrated
+in the lower portion of the cell and is diffusing upward, since it
+will react with and stick to wall-bound MinD that is concentrated on
+the membrane in the upper portion of the cell.  At the boundary
+between the cytoplasmic MinE and the membrane-bound MinD, there is a
+ring of the membrane-bound MinE:MinD complex, which is moving towards
+the upper end of the cell, removing the MinD from the membrane as it
+goes.  The MinD is removed from the membrane in its MinD:ADP form and
+diffuses freely for a time before spontenously undergowing nucleotide
+exchange and shifting back into the MinD:ATP that is able to attach to
+the membrane.  Diffusion away from the end of the cell will bring the
+protein into the MinE ring, where reactions will prevent it from
+collecting for any significant time on the membrane.  Diffusion
+further towards the upper end, however, while the MinE has not yet
+collected there, will allow MinD:ATP to accumulate with the other
+MinD:ATP, peaking at around 10 seconds in Figure~\ref{image-p}.  As
+the MinE ring approaches the end of the cell, seen in the seconds
+following 10, the only freely diffusing MinD:ADP that 'escapes' the
+MinE will be that which has diffused away from the the end of the cell
+and past the MinE ring towards the center.
 
 At 15 seconds, the membrane-bound MinD:ATP has been essentially
 removed from the top end of the cell, and MinD:ATP has begun to bind
@@ -305,66 +316,13 @@ to the membrane in the the lower half of the cell.  At this stage,
 there is a high concentration of cytoplasmic MinE at the top of the
 cell, and by 16 seconds we begin to see the formation of a MinE ring
 just below the center of the cell.  At 18 seconds, the cell has
-reached its original state, with MinD:ATP bound to the membrane on the
-lower third of the cell, a high concentration of cytoplasmic MinE in
-the upper half of the cell, and a MinE ring pushing on the
-membrane-bound MinD:ATP.
+reached its original state (reversed directionally), with MinD:ATP
+bound to the membrane on the lower third of the cell, a high
+concentration of cytoplasmic MinE in the upper half of the cell, and a
+MinE ring pushing downward on the membrane-bound MinD:ATP.
 
-The reactions shown in Figure~\ref{fig:reactions} are cyclical so we
-can begin our observations at any stage in the cycle (which is
-presented for the natural, pill shapes cell in Fig.~\ref{image-p}
-below).  We consider first MinD:ATP floating freely in the cytoplasm.
-The protein will not react with any other floating protein, and it
-will not spontenously shift back into the MinD:ADP stage of the cycle.
-It will diffuse until it attaches to a cell membrane.  This will
-happen most rapidly in cytoplasmic regions that are close to membrane
-regions of high curvature, where diffusion in a random direction is
-more likely to lead to an encounter with a wall.  This effect is made
-more pronounced by the MinD:ATP tendency to attract and cluster on the
-membrane, as reflected in Equation~\ref{eq:d-on-wall}, which shows
-that when adjacent to the membrane, the rate of binding to the
-membrane is porportional to the amount of MinD already bound to the
-wall.  Initially, then, there is a strong tendency of MinD to cluster
-on the polar regions of the cell, where the curvature is highest.
-
-We next see the formation of MinE `rings' on the membranes of the
-polar caps.  As the freely diffusing MinE enters the cap portion it
-begins to encounter concentrated membrane bound MinD.  The MinE binds
-to this MinD and remains for a time on the walls in compound form.
-When released, if it diffuses inward, there is less cross sectional
-wall for it to bump into and also less concentrated MinD:ATP to react
-with, whereas if it diffuses outward the opposite is the case.  This
-process results in the observed qualitative 'encroaching MinE ring'
-behavoir that releases MinD:ADP back into the cytoplasm.  This
-MinD:ADP will diffuse for a time before spontanosly undergowing
-nucleotide exchange and reaching the MinD:ATP state that can bind to
-the membrane again.  There is a strong chance that it has by this time
-diffused out of the polar region and is on its way to the opposite
-polar region of the cell.  If it hasn't then it will reattach to the
-MinD:ATP on the cell wall deeper into the endcap and will eventually
-be converged upon by the MinE ring, only to be released again in
-MinD:ADP form.
-
-Overall this process results in extremely robust oscillatory
-behavoir of polar selection and oscillation in a wide variety of cell
-shapes.
-
-%% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{../data/shape-p/plots/box-plot_D--p-300-50-0-0-1500}
-%%   \caption{Total protein fluctuation in the right, middle, and left
-%%     parts of a natural pill shaped cell.  The cell is the same as is
-%%     shown in Fig.~\ref{image-p}.  The time axis is also identical to
-%%     that shown in Fig.~\ref{image-p}, and shows one period of the
-%%     oscillation after the system has settled down.  The vertical axis
-%%     shows stacked the total number of proteins that are of four
-%%     different compound stages and in the right section of the cell
-%%     (bottom four colors), in the middle of the cell (middle four
-%%     colors) and in the left section of the cell (top four colors). The
-%%     different forms of protein changes while the total number of MinD
-%%     protein in the cell remains constant, shown by the fact that the
-%%     very top line is horizontal.}
-%%   \label{box-p}
-%% \end{figure}
+In general process results in extremely robust oscillatory behavoir of
+polar selection and oscillation in a wide variety of cell shapes.
 
 \begin{figure}
   \includegraphics[width=\columnwidth]{stability-analysis}
