@@ -168,16 +168,16 @@ for i in range(len(data)):
     k2arr = np.append(k2arr,data[i][2])
 
 for i in range(len(Larr)):
-    if Larr[i] == 0.3 or Larr[i] == 0.25:
+    if Larr[i] == 0.35 or Larr[i] == 0.25:
         print "L = %.2f and half wavelength = %f" % (Larr[i],wavelength[i]/2)
 
 plt.figure()
 plt.plot(Larr,wavelength/2)
 plt.xlabel('Slab thickness ($\mu m$)')
 plt.ylabel('Half wavelength ($\mu m$)')
-plt.xlim([.1,.7])
-plt.ylim([0,5])
-plt.savefig('sympy-plot-wavelength.pdf')
+plt.xlim([0,.7])
+plt.ylim([1.5,3.0])
+plt.savefig('paper/stability-analysis.pdf')
 
 f.write(r'''
 \begin{figure}

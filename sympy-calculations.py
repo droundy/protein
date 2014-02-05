@@ -18,12 +18,8 @@ eq4 = Eq(gD,rAD*L + rAT*L + 2*sD + 2*sDE)
 eq4 = rAD*L + rAT*L + 2*sD + 2*sDE - gD
 eq5 = Eq(gE,rE*L + 2*sDE)
 
-#eq4_modA = eq4.subs(rAT, L*kAD*rAD/(2*(kD + kdD*(sD + sDE)))).subs(rAD,2*kde*sDE/(L*kAD))
 eq4_modA = eq4.subs(rAT, solve(eq2, rAT)[0]).subs(rAD,solve(eq1, rAD)[0])
-print '0 =', eq4_modA
-#eq5_mod = eq5.subs(rE,kde*sDE/(kE*sD))
 eq5_mod = eq5.subs(rE,solve(eq3, rE)[0])
-#eq5_solved = Eq(sDE, gE/(L*kde/(sD*kE)+1))
 eq5_solved = Eq(sDE, solve(eq5_mod, sDE)[0])
 
 def put_in_numbers(f):
@@ -34,11 +30,7 @@ first_elements = np.array([0.005,0.01,0.015,0.02,0.025,0.03,0.035,0.04,0.045,])
 Larr = np.append(first_elements,Larr)
 
 eq4_modA_with_eq5_solved_input = eq4_modA.subs(sDE, solve(eq5_solved, sDE)[0])
-print '0 =', eq4_modA_with_eq5_solved_input
 
-print 'working on solving for sD...'
-print eq4_modA_with_eq5_solved_input.subs(L, 0.5)
-print 'about to solve'
 mysD = 1.0
 sDarr = np.zeros_like(Larr)
 for i in xrange(len(Larr)):
@@ -48,6 +40,8 @@ for i in xrange(len(Larr)):
 
 k2arr = np.zeros_like(Larr)
 karr = np.zeros_like(Larr)
+lambda_over_2 = np.zeros_like(Larr)
+
 for i in range(len(Larr)):
     sDE_ans = solve(put_in_numbers(eq5_mod).subs(L,Larr[i]).subs(sD,sDarr[i]),sDE)[0]
     rE_ans = solve(put_in_numbers(eq3).subs(sD,sDarr[i]).subs(sDE,sDE_ans),rE)[0]
@@ -61,7 +55,6 @@ for i in range(len(Larr)):
                 [ 0        , kD+kdD*(sD+sDE)               , -kE*sD          , -kE*rE+kdD*rAT, kdD*rAT    ],
                 [ 0        , 0                             , kE*sD           , kE*rE         , -kde       ]])
     Mnumerical = put_in_numbers(M).subs(rE,rE_ans).subs(rAD,rAD_ans).subs(rAT,rAT_ans).subs(sD,sDarr[i]).subs(sDE,sDE_ans).subs(L,Larr[i])
-    tryk2 = 0.1**2
     def find_greatest_eigenvalue_real_part(k2val):
         xxx = np.array(Mnumerical.subs(k2, k2val).tolist(), dtype=np.complex)
         return np.real(np.linalg.eigvals(xxx)).max()
@@ -75,37 +68,25 @@ for i in range(len(Larr)):
             return find_k2_of_instability_between(k2try, k2hi)
         else:
             return find_k2_of_instability_between(k2lo, k2try)
+    tryk2 = 0.1**2
     print Mnumerical.subs(k2, tryk2).eigenvals(), Mnumerical.subs(k2, tryk2).eigenvects(), Mnumerical.subs(k2, tryk2).det()
     print Mnumerical.subs(k2, tryk2)
+
     print 'numpy eigvals', find_greatest_eigenvalue_real_part(tryk2)
     print 'k2instability', find_k2_of_instability_between(0, 100**2)
     print 'k instability', np.sqrt(find_k2_of_instability_between(0, 100**2))
     print '*********** lambda/2 instability', Larr[i], np.pi/np.sqrt(find_k2_of_instability_between(0, 100**2))
 
-    M_det = collect(put_in_numbers(M.det()).subs(rE,rE_ans).subs(rAD,rAD_ans).subs(rAT,rAT_ans).subs(sD,sDarr[i]).subs(sDE,sDE_ans).subs(L,Larr[i]),k2)
-    print M_det
-    k2_from_det = solve(M_det)
-    print 'k2_from_det', k2_from_det
-    pos = False
-    for j in k2_from_det:
-        if j>0:
-            k2_from_det = j
-            if pos == True:
-                print "There were two positive solutions to the det equation."
-                print exit(1)
-            pos = True
-    if pos:
-        k2arr[i] = k2_from_det
-        karr[i] = sqrt(k2_from_det)
-    print ""
-    print Larr[i]
-    print k2_from_det
-    print ""
+    print 'numpy eigvals', find_greatest_eigenvalue_real_part(tryk2)
+    k2arr[i] =  find_k2_of_instability_between(0, 100**2)
+    karr[i] =  np.sqrt(find_k2_of_instability_between(0, 100**2))
+    lambda_over_2[i] =  np.pi/np.sqrt(find_k2_of_instability_between(0, 100**2))
 
-# f = open('sympy-calculations-out.txt', 'w')
-# for i in range(len(Larr)):
-#     f.write('%f\t%f\t%f\n' % (Larr[i],karr[i],k2arr[i]))
-# f.close()
+
+f = open('sympy-calculations-out.txt', 'w')
+for i in range(len(Larr)):
+    f.write('%f\t%f\t%f\n' % (Larr[i],karr[i],k2arr[i]))
+f.close()
 
 # f = open('sympy-calc-for-mathematica.tex','w')
 # f.write(r"""\documentclass[letterpaper,onecolumn,amsmath,amssymb,pre]{revtex4-1}
