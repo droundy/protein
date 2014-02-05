@@ -252,6 +252,64 @@ cells that are slightly larger than this range.
   \label{image-p}
 \end{figure*}
 
+We begin with the naturally occuring pill cell shape.  We peice this
+shape together as two hemispherical endcaps attached on either end of
+a cylinder.  This shape follows the early simulations of Huang
+\emph{et al.} but differs in that we have added the end caps for a
+more natural shape, expecting similar results.  We test cells of
+radius $.5\micron$ and of lengths $2\micron$, $3\micron$, and
+$5\micron$ measured from the tip of one end cap to the top of the
+other. In each case, we observe quick establishement (within a few
+periods) of extremely regular oscillatory behavoir that lasts
+indefinitely.  The period increases with cell length, as shown in
+Table~\ref{tab:pill-periods}, in agreement with the results of Huang
+\emph{et al.}
+
+\begin{table}
+  \begin{tabular}{|r|c|c|c|l|}
+    \hline
+    Length($\mu$) & 2.50 & 3.00 & 4.00 & 5.00\\
+    \hline
+    Period(sec) & sim & 33 & 38 & 48 \\ \cline{2-2}
+    \hline
+  \end{tabular}
+  \caption{Period of oscillation according to length of cell for
+    pill-shaped cells.}\label{tab:pill-periods}\fixme{whats the 'sim'
+    here?}
+\end{table}
+
+This simple cell shape is a good starting point for observing in
+detail the dynamic interaction between the different stages of protein
+that lead to their qualitatively distinct behavoir. Figure
+\ref{image-p} shows the process in a series of frames taken from
+simulation animations.  Each frame is 2.5 seconds ahead of the last,
+and each image shows a the concentration of a given state of protein
+summed over the coordinate orthogonal to the page.  The color scale
+for each protein state is set according to the maximum density
+observed.
+
+At $t=0$ in Figs.~\ref{image-p}, the cytoplasmic MinE
+is concentrated in the lower portion of the cell, and is diffusing
+upward.  The MinD protein is initially concentrated on the membrane in
+the upper portion of the cell.  At the boundary between the
+cytoplasmic MinE and the membrane-bound MinD, there is a ring of the
+membrane-bound MinE:MinD complex, which is moving towards the upper
+end of the cell, removing the MinD from the membrane as it goes.  The
+MinD is removed from the membrane in its MinD:ADP form, which begins
+to accumulate at the upper end of the cell, peaking at around
+10 seconds.
+
+At 15 seconds, the membrane-bound MinD:ATP has been essentially
+removed from the top end of the cell, and MinD:ATP has begun to bind
+to the membrane in the the lower half of the cell.  At this stage,
+there is a high concentration of cytoplasmic MinE at the top of the
+cell, and by 16 seconds we begin to see the formation of a MinE ring
+just below the center of the cell.  At 18 seconds, the cell has
+reached its original state, with MinD:ATP bound to the membrane on the
+lower third of the cell, a high concentration of cytoplasmic MinE in
+the upper half of the cell, and a MinE ring pushing on the
+membrane-bound MinD:ATP.
+
 The reactions shown in Figure~\ref{fig:reactions} are cyclical so we
 can begin our observations at any stage in the cycle (which is
 presented for the natural, pill shapes cell in Fig.~\ref{image-p}
@@ -290,62 +348,6 @@ MinD:ADP form.
 Overall this process results in extremely robust oscillatory
 behavoir of polar selection and oscillation in a wide variety of cell
 shapes.
-
-We begin with the naturally occuring pill cell shape.  We peice this
-shape together as two hemispherical endcaps attached on either end of
-a cylinder.  This shape follows the early simulations of Huang
-\emph{et al.} but differs in that we have added the end caps for a
-more natural shape, expecting similar results.  We test cells of
-radius $.5\micron$ and of lengths $2\micron$, $3\micron$, and
-$5\micron$ measured from the tip of one end cap to the top of the
-other. In each case, we observe quick establishement (within a few
-periods) of extremely regular oscillatory behavoir that lasts
-indefinitely.  The period increases with cell length, as shown in
-Table~\ref{tab:pill-periods}, in agreement with the results of Huang
-\emph{et al.}.
-
-\begin{table}
-  \begin{tabular}{|r|c|c|c|l|}
-    \hline
-    Length($\mu$) & 2.50 & 3.00 & 4.00 & 5.00\\
-    \hline
-    Period(sec) & sim & 33 & 38 & 48 \\ \cline{2-2}
-    \hline
-  \end{tabular}
-  \caption{Period of oscillation according to length of cell for
-    pill-shaped cells.}\label{tab:pill-periods}
-\end{table}
-
-This simple model is a good starting point for observing in detail the
-dynamic interaction between the different stages of protein that lead
-to their qualitatively distinct behavoir. Figure \ref{image-p} shows
-the process in a series of frames taken from simulation animations.
-Each frame is 2.5 seconds ahead of the last, and each image shows a
-the concentration of a given state of protein summed over the
-coordinate orthogonal to the page.  The color scale for each protein
-state is set according to the maximum density observed.
-
-At $t=0$ in Figs.~\ref{image-p}, the cytoplasmic MinE
-is concentrated in the lower portion of the cell, and is diffusing
-upward.  The MinD protein is initially concentrated on the membrane in
-the upper portion of the cell.  At the boundary between the
-cytoplasmic MinE and the membrane-bound MinD, there is a ring of the
-membrane-bound MinE:MinD complex, which is moving towards the upper
-end of the cell, removing the MinD from the membrane as it goes.  The
-MinD is removed from the membrane in its MinD:ADP form, which begins
-to accumulate at the upper end of the cell, peaking peaking at around
-10 seconds.
-
-At 15 seconds, the membrane-bound MinD:ATP has been essentially
-removed from the top end of the cell, and MinD:ATP has begun to bind
-to the membrane in the the lower half of the cell.  At this stage,
-there is a high concentration of cytoplasmic MinE at the top of the
-cell, and by 16 seconds we begin to see the formation of a MinE ring
-just below the center of the cell.  At 18 seconds, the cell has
-reached its original state, with MinD:ATP bound to the membrane on the
-lower third of the cell, a high concentration of cytoplasmic MinE in
-the upper half of the cell, and a MinE ring pushing on the
-membrane-bound MinD:ATP.
 
 %% \begin{figure}
 %%   \includegraphics[width=\columnwidth]{../data/shape-p/plots/box-plot_D--p-300-50-0-0-1500}
