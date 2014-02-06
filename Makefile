@@ -16,6 +16,7 @@ ALL_FIGURES = \
 
 paper/paper.pdf: paper/paper.tex \
 		paper/reactions.pdf data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf \
+		data/shape-randst/plots/paper-arrow-plot.pdf \
 		${ALL_FIGURES}
 	echo ${ALL_FIGURES}
 	cd paper && pdflatex paper.tex && bibtex paper && pdflatex paper.tex && pdflatex paper.tex
@@ -48,6 +49,10 @@ data/shape-p/plots/time-map-compare-p-40-30-0-0-150.pdf: pyplots/time_map.py
 data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf: pyplots/image_plot.py
 	mkdir -p data/shape-p/plots
 	python $< p 3.00 0.50 0.00 0.00 15.00 266.00 304.00
+
+data/shape-randst/plots/paper-arrow-plot.pdf: pyplots/paper-arrow-plot.py $(wildcard data/shape-randst/*.dat)
+	mkdir -p data/shape-randst/plots
+	python $<
 
 #arrow plots
 #box plots
