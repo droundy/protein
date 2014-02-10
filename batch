@@ -122,9 +122,9 @@ def runPlots(commands,options):
                         runningProcesses.remove(p)
                 time.sleep(0.5)
         friendly_system(sruncmd + ["python","pyplots/box_plot.py"] + job)
-        friendly_system(sruncmd + ["python","pyplots/time_map.py"] + job)
+        #friendly_system(sruncmd + ["python","pyplots/time_map.py"] + job)
         friendly_system(sruncmd + ["python","pyplots/arrow_plot.py"] + job)
-        friendly_system(sruncmd + ["python","pyplots/ave_plot.py"] + job)
+        #friendly_system(sruncmd + ["python","pyplots/ave_plot.py"] + job)
     while len(runningProcesses) > 0:
         for p in runningProcesses.copy():
             if p.poll() is not None:
