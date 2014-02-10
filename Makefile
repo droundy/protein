@@ -27,23 +27,6 @@ paper/reactions.pdf: paper/reactions.svg
 ${ALL_FIGURES}: batch jobs $(wildcard data/shape-*/*.dat) $(wildcard pyplots/*.py)
 	./batch plot include="-paper"
 
-#time maps
-data/shape-randst/plots/time-map-compare-randst-10-60-60-990-150.pdf: pyplots/time_map.py
-	python pyplots/time_map.py randst 1.00 6.00 6.00 99.00 15.00
-data/shape-randst/plots/time-map-compare-randst-10-80-60-980-150.pdf: pyplots/time_map.py
-	python pyplots/time_map.py randst 1.00 8.00 6.00 98.00 15.00
-data/shape-randst/plots/time-map-compare-randst-10-60-60-970-150.pdf: pyplots/time_map.py
-	python pyplots/time_map.py randst 1.00 6.00 6.00 97.00 15.00
-data/shape-randst/plots/time-map-compare-randst-10-60-60-960-150.pdf: pyplots/time_map.py
-	python pyplots/time_map.py randst 1.00 6.00 6.00 96.00 15.00
-data/shape-p/plots/time-map-compare-p-100-5-0-0-150.pdf: pyplots/time_map.py
-	python pyplots/time_map.py p 10.00 0.50 0.00 0.00 15.00
-data/shape-p/plots/time-map-compare-p-40-5-0-0-150.pdf: pyplots/time_map.py
-	python pyplots/time_map.py p 4.00 0.50 0.00 0.00 15.00
-data/shape-p/plots/time-map-compare-p-40-20-0-0-150.pdf: pyplots/time_map.py
-	python pyplots/time_map.py p 4.00 2.00 0.00 0.00 15.00
-data/shape-p/plots/time-map-compare-p-40-30-0-0-150.pdf: pyplots/time_map.py
-	python pyplots/time_map.py p 4.00 3.00 0.00 0.00 15.00
 
 # start time 29.501, period 45.002
 data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf: pyplots/image_plot.py
