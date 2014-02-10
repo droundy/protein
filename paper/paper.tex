@@ -349,13 +349,13 @@ oscillations at which the system becomes unstable.  This length is
 dependent upon slab thickness as shown in
 Figure~\ref{fig:stability-analysis}.  When increasing the lengths and
 widths of our simulated flattened cells, the steady, two pole
-oscillations seem to break down when the the shortest distance across
-the cell is approximately equal to the characteristic half wavelength
-at the particular thickness at which we simulate (our simulations of
+oscillations seem to break down when the shortest distance across the
+cell is approximately equal to the characteristic half wavelength at
+the particular thickness at which we simulate (our simulations of
 cells with thickness $0.25\mu m$ corresponds to half wavelengths of
 $2.13\mu m$).  Huang~\cite{huang2003dynamic} performs a similar
-analysis for a cylindrical shape and finds characteristic half
-wavelengths of $2\mu m$.
+analysis for a cylindrical shape \fixme{is it cylindrical or 1d?} and
+finds characteristic half wavelengths of $2\mu m$.
 
 
 \begin{figure}
@@ -390,6 +390,20 @@ experimentally.  We find that this critical size matches up well with
 our stability analysis, in that the critical sizes correspond to sizes
 for which the shorter of the two distances across the cell is roughly
 equal to the analysis' half wavelength found for this cell thickness.
+
+\begin{figure}
+  \includegraphics[width=3cm]{../data/shape-randst/plots/box-plot_D--randst-25-800-800-9500-1500}
+  \includegraphics[width=3cm]{../data/shape-randst/plots/box-plot_D--randst-25-1000-1700-9400-1500}
+  \caption{Box plots of Mannik shapes for sizes at the lower stability
+    threshhold.  Both shapes have longer axis of roughly 2.2$\mu m$.}
+  \label{box-mannik}
+\end{figure}
+Decreasing the cell size in succesive steps, we can see as well the
+critical size at which the cell oscillations are quickly damped out.
+Figure~\ref{box-mannik} shows box plots of the largest cells simulated
+whose oscilltions relax into the steady state solution.  Both have a
+long axis of roughly 2.2$\mu m$, in agreement with theory.
+
 
 \fixme{I'm also waiting for data to come in that will hopefully show
   cells so small that no oscillations take place.  We can put this in
@@ -631,7 +645,7 @@ time in the other two corners.\fixme{should try some different
   starting conditions with this to see if there's another patter.}
 
 Looking at at few periods in detail.  We find that there is a small
-increase in cytoplasmic MinE always directly before the the beggining
+increase in cytoplasmic MinE always directly before the beggining
 of climb in the membrane bound MinE peak.  Also, there is at any one
 time a very large amount more of minE that is membrane bound then
 cytoplasmic in any ones section.  A difference of a factor of roughly
