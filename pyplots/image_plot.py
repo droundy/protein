@@ -41,15 +41,13 @@ proteins = [0]*len(proteinList)
 for i in range(len(proteinList)):
     proteins[i] = load.data(proteinList[i],start_time,end_time)
 
-plt.figure(figsize=(9,3.5))
+plt.figure(figsize=(9,3.5)).patch.set_alpha(0)
 numtimes = int(end_time/dump_time_step)- int(start_time/dump_time_step)
 numproteins = len(proteins)
 skip_times = 2 # only plot every skip_times of the snapshots
 dZ = proteins[0].datashape[1]*1.05
 dY = proteins[0].datashape[0]*1.1/skip_times
 kvals = range(0, int(end_time/dump_time_step)-int(start_time/dump_time_step), skip_times)
-
-#axes = plt.subplot(1, 1, 1, axisbg='black')
 
 for i in range(len(proteins)):
     if (proteinList[i]=="ND" or proteinList[i]=="NDE"):
