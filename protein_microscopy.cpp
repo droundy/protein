@@ -8,6 +8,9 @@ using namespace std;
 #include "protein.h"
 #include "MersenneTwister.h"
 #include <cassert>
+#include <unistd.h>
+
+const bool stochastic = true;
 
 const double difD = 2.5; // (um)^2 s^- 1
 const double difE = 2.5; // (um)^2 s^-1
@@ -46,6 +49,7 @@ int min_xi;
 int min_yi;
 int min_zi;
 
+bool once_inside = true;
 
 string mem_f_shape; //cell shape argument
 double A, B, C, D; //specific shape parameters, set by command line args
@@ -169,29 +173,35 @@ double f_2D_randst(double y, double z){
   return f;
 }
 
+bool only = true;
 double f_2D_stad(double y, double z){
-     double f;
-     double Y = Ny*dx;
-     double Z = Nz*dx;
-     double z1 = (Z-C)/2;
-     double z2 = (C +(Z-C)/2);
-     double y1 = Y/2;
-     if (z < z1) {
-       f = (y-y1)*(y-y1)/(B*B)+(z-z1)*(z-z1)/(D*D)-1;
-       if (f > 0.0){
-         return 0.09;
-       }
-     }
-     if (z > z2) {
-       f = (y-y1)*(y-y1)/(B*B)+(z-z2)*(z-z2)/(D*D)-1;
-       if (f > 0.0){
-         return 0.09;
-       }
-     }
-     if (abs(y-y1) > B){
-       return 0.09;
-     }
-     return -0.85;
+  double f;
+  double Y = Ny*dx;
+  double Z = Nz*dx;
+  double z1 = (Z-C)/2;
+  if(only){
+    printf("z1 = %g Z = %g C = %g\n",z1,Z,C);
+    fflush(stdout);
+    only = false;
+  }
+  double z2 = (C +(Z-C)/2);
+  double y1 = Y/2;
+  if (z < z1) {
+    f = (y-y1)*(y-y1)/(B*B)+(z-z1)*(z-z1)/(D*D)-1;
+    if (f > 0.0){
+      return 0.1;
+    }
+  }
+  if (z > z2) {
+    f = (y-y1)*(y-y1)/(B*B)+(z-z2)*(z-z2)/(D*D)-1;
+    if (f > 0.0){
+      return 0.1;
+    }
+  }
+  if (abs(y-y1) > B){
+    return 0.1;
+  }
+  return -0.1;
 }
 //end randst shape functions
 
@@ -208,8 +218,11 @@ double mem_f(double x, double y, double z) {
       printf("somethings wrong with the shape argument!!!");
       exit(1);
     }
-
     if (f_2d<=0) {
+      // if (abs(2*(x-(X/2.0))/A - 0.99999) < .1){
+      //   printf("f_2d = %g and X/2.0 = %g and 2*(x-(X/2.0))/A - 0.99999 = %g and x = %g\n",f_2d,X/2.0,2*(x-(X/2.0))/A - 0.99999,x);
+      //   fflush(stdout);
+      // }
       return abs(2*(x-(X/2.0))/A) - 0.99999;//1.00001;
     }
     double closest_y0 = -100.0;
@@ -249,91 +262,37 @@ double mem_f(double x, double y, double z) {
     double x1 = X/2.0;
     double y1 = Y/2.0;
     f = sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1))-B;
-     if (z < z1) {
-       f = sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1)+(z-z1)*(z-z1))-B;
-     }
-     if (z > z2) {
-       f = sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1)+(z-z2)*(z-z2))-B;
-     }
-     return f;
-   }
-
-   if (mem_f_shape=="b"){
-     //A (x),B (z),C (y) lengths
-     double f;
-     double X = Nx*dx;
-     double Y = Ny*dx;
-     double Z = Nz*dx;
-     if ( (x >= (X-A)/2) && (x <= A+(X-A)/2) && (z >= (Z-B)/2) && (z <= B+(Z-B)/2) && (y >= (Y-C)/2) && (y <= C+(Y-C)/2)) {
-       f = -1;
-     }
-     else {
-       f = 1;
-     }
-     return f;
-   }
-
-   if (mem_f_shape=="c"){
-     //A = length of cone, B = radius of base
-     double f;
-     double X = Nx*dx;
-     double Y = Ny*dx;
-     double Z = Nz*dx;
-     double x1=X/2;
-     double y1=Y/2;
-     double z1=(Z-A)/2;
-     double z2=(A+(Z-A)/2);
-     if ((z > z1) && (z < z2)){
-       f = sqrt((x-x1)*(x-x1) + (y-y1)*(y-y1))/(z-z1) - B/(z2-z1);
-     }
-     else { f = 1; }
-     return f;
-   }
-
-   if (mem_f_shape=="st"){
-     //A = length, B = x axis radius radius, C = y axis radius radius, D = z axis radius radius
-     double f;
-     double X = Nx*dx;
-     double Y = Ny*dx;
-     double Z = Nz*dx;
-     double z1 = (Z-A)/2;
-     double z2 = (A+(Z-A)/2);
-     double x1 = X/2;
-     double y1 = Y/2;
-     f = sqrt((x-x1)*(x-x1)/(B*B)+(y-y1)*(y-y1)/(C*C))-1;
-     if (z < z1) {
-       f = sqrt((x-x1)*(x-x1)/(B*B)+(y-y1)*(y-y1)/(C*C)+(z-z1)*(z-z1)/(D*D))-1;
-     }
-     if (z > z2) {
-       f = sqrt((x-x1)*(x-x1)/(B*B)+(y-y1)*(y-y1)/(C*C)+(z-z2)*(z-z2)/(D*D))-1;
-     }
-     return f;
-   }
-
-   if (mem_f_shape=="sp"){
-     // A = radius
-     double X = Nx*dx;
-     double Y = Ny*dx;
-     double Z = Nz*dx;
-     double x1 = X/2.0;
-     double y1 = Y/2.0;
-     double z1 = Z/2.0;
-     double f;
-     f = sqrt((x-x1)*(x-x1) + (y-y1)*(y-y1) + (z-z1)*(z-z1)) - A;
-     return f;
-   }
-
-   if (mem_f_shape=="e"){
-     //B = x axis radius radius, C = y axis radius radius, A = z axis radius radius
-     double X = Nx*dx;
-     double Y = Ny*dx;
-     double Z = Nz*dx;
-     double x1 = X/2;
-     double y1 = Y/2;
-     double z1 = Z/2;
-     double f = sqrt( (x-x1)*(x-x1)/(B*B) + (y-y1)*(y-y1)/(C*C)+ (z-z1)*(z-z1)/(A*A) ) - 1;
-     return f;
-   }
+    if (z < z1) {
+      f = sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1)+(z-z1)*(z-z1))-B;
+    }
+    if (z > z2) {
+      f = sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1)+(z-z2)*(z-z2))-B;
+    }
+    return f;
+  }
+  if (mem_f_shape=="sp"){
+    // A = radius
+    double X = Nx*dx;
+    double Y = Ny*dx;
+    double Z = Nz*dx;
+    double x1 = X/2.0;
+    double y1 = Y/2.0;
+    double z1 = Z/2.0;
+    double f;
+    f = sqrt((x-x1)*(x-x1) + (y-y1)*(y-y1) + (z-z1)*(z-z1)) - A;
+    return f;
+  }
+  if (mem_f_shape=="e"){
+    //B = x axis radius radius, C = y axis radius radius, A = z axis radius radius
+    double X = Nx*dx;
+    double Y = Ny*dx;
+    double Z = Nz*dx;
+    double x1 = X/2;
+    double y1 = Y/2;
+    double z1 = Z/2;
+    double f = sqrt( (x-x1)*(x-x1)/(B*B) + (y-y1)*(y-y1)/(C*C)+ (z-z1)*(z-z1)/(A*A) ) - 1;
+    return f;
+  }
 
    else {
      double f = 1;
@@ -513,7 +472,7 @@ string triangle_section (double y, double z) {
   return "Left";
 }
 
-void trim_grid(double **pointer_to_mem_A, double *first_mem_A){
+void trim_grid(double **pointer_to_mem_A, double *first_mem_A){//, int min_xi, int min_yi, int min_zi){
   int max_xi = 0;
   min_xi = Nx;
   int max_yi = 0;
@@ -549,7 +508,6 @@ void trim_grid(double **pointer_to_mem_A, double *first_mem_A){
   int new_Nx = max_xi-min_xi+3;
   int new_Ny = max_yi-min_yi+3;
   int new_Nz = max_zi-min_zi+3;
-  printf("new_Nx*new_Ny*new_Nz = %d\n",new_Nx*new_Ny*new_Nz);
   *pointer_to_mem_A = new double[new_Nx*new_Ny*new_Nz];
   for(int xi=0;xi<new_Nx;xi++){
     for(int yi=0;yi<new_Ny;yi++){
@@ -561,298 +519,258 @@ void trim_grid(double **pointer_to_mem_A, double *first_mem_A){
   Nx = new_Nx;
   Ny = new_Ny;
   Nz = new_Nz;
-  printf("size of mem_A array = %d and it should be = %d\n",int(sizeof(*pointer_to_mem_A)/sizeof(double)),Nx*Ny*Nz);
+}
+
+void test_the_amount_of_area(double *first_mem_A, string mem_f_shape){
+  printf("\n\n\nDid this print ok %s???\n",(char *)mem_f_shape.c_str());
+  double A_ours = 0;
+  for (int i =0;i<Nx*Ny*Nz;i++){
+    A_ours += first_mem_A[i];
+  }
+  double A_ideal;
+  if (mem_f_shape=="stad"){
+    printf("This in here eh?\n");
+    double d_phi = 0.0001;
+    double Integral = 0;
+    for (double phi = 0; phi<M_PI; phi += d_phi){
+      double denominator = sqrt( (B*B*cos(phi)*cos(phi)) + (D*D*sin(phi)*sin(phi)) );
+      Integral += A*D*B*M_PI/2/denominator*d_phi;
+    }
+    A_ideal = 4*C*B + 2*M_PI*B*D + C*A*M_PI + M_PI*A*A/2 + 2*Integral;
+  }
+  else if (mem_f_shape=="p"){
+    A_ideal = 2*M_PI*B*A + 4*M_PI*B*B;
+  }
+  else if (mem_f_shape=="sp"){
+    A_ideal = 4*M_PI*A*A;
+  }
+  double percent_off = 100.0*abs(A_ideal-A_ours)/A_ideal;
+  if (A_ideal > A_ours) {
+    printf("\nOur mem_A area is too small and is %g%% off\n\n",percent_off);
+  }
+  else {
+    printf("\nOur mem_A area is too great and is %g%% off\n\n",percent_off);
+  }
 }
 
 
+
 int main (int argc, char *argv[]) {
-   //command line parameters
-   mem_f_shape = argv[1];
-   A = atof(argv[2]);
-   B = atof(argv[3]);
-   C = atof(argv[4]);
-   D = atof(argv[5]);
-   density_factor = atof(argv[6]);
-   dx=.05;
+  //command line parameters
+  mem_f_shape = argv[1];
+  A = atof(argv[2]);
+  B = atof(argv[3]);
+  C = atof(argv[4]);
+  D = atof(argv[5]);
+  density_factor = atof(argv[6]);
+  dx=.05;
 
-   memset(hires_flag_str,0,1024*sizeof(char));
-   memset(slice_flag_str,0,1024*sizeof(char));
-   memset(debug_flag_str,0,1024*sizeof(char));
+  memset(hires_flag_str,0,1024*sizeof(char));
+  memset(slice_flag_str,0,1024*sizeof(char));
+  memset(debug_flag_str,0,1024*sizeof(char));
 
-   //flag checking
-   for (int i=0; i<argc; i++) {
-     if (strcmp(argv[i],"-area")==0) {
-       area_rating_flag = 1;
-       printf("Area rating printout.\n");
-     }
-     if (strcmp(argv[i],"-hires")==0) {
-       dx=.025;
-       printf("Using high resolution.\n");
-       sprintf(hires_flag_str,"hires-");
-     }
-     if (strcmp(argv[i],"-slice")==0) {
-       slice_flag = 1;
-       printf("Printing middle slice data.\n");
-       sprintf(slice_flag_str,"slice-");
-     }
-     if (strcmp(argv[i],"-dump")==0) {
-       dump_flag = 1;
-       printf("Printing all 501 data files.\n");
-     }
-     if (strcmp(argv[i],"-debug")==0) {
-       dx = .05;
-       debug_flag = 1;
-       sprintf(debug_flag_str,"debug-");
-       printf("=============================================\nDebug mode. dx=.15 um^3, tot_time=250s\n=============================================\n");
-     }
-   }
+  //flag checking
+  for (int i=0; i<argc; i++) {
+    if (strcmp(argv[i],"-area")==0) {
+      area_rating_flag = 1;
+      printf("Area rating printout.\n");
+    }
+    if (strcmp(argv[i],"-hires")==0) {
+      dx=.025;
+      printf("Using high resolution.\n");
+      sprintf(hires_flag_str,"hires-");
+    }
+    if (strcmp(argv[i],"-slice")==0) {
+      slice_flag = 1;
+      printf("Printing middle slice data.\n");
+      sprintf(slice_flag_str,"slice-");
+    }
+    if (strcmp(argv[i],"-dump")==0) {
+      dump_flag = 1;
+      printf("Printing all 501 data files.\n");
+    }
+    if (strcmp(argv[i],"-debug")==0) {
+      dx = .05;
+      debug_flag = 1;
+      sprintf(debug_flag_str,"debug-");
+      printf("=============================================\nDebug mode. dx=.15 um^3, tot_time=250s\n=============================================\n");
+    }
+  }
 
-   //compute grid size based on cell parameters
-   if (mem_f_shape=="p") {
-     Nx = round(2*B/dx) + 4;
-     Ny = round(2*B/dx) + 4;
-     Nz = round((A + 2*B)/dx) + 4;
-     printf("Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
-     box_divider_left = int(Nz/3);
-     box_divider_right = int(2*Nz/3);
-   }
-   if (mem_f_shape=="stad") {
-     Nx = round(A/dx) + 5;
-     Ny = round((2*B+2*A)/dx) + 5;
-     Nz = round((C+2*D+2*A)/dx) + 5;
-     printf("Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
-   }
-   if (mem_f_shape=="b") {
-     Nx = ceil(A/dx) + 4;
-     Ny = ceil(C/dx) + 4;
-     Nz = ceil(B/dx) + 4;
-   }
-   if (mem_f_shape=="c") {
-     Nx = ceil(2*B/dx) + 4;
-     Ny = ceil(2*B/dx) + 4;
-     Nz = ceil(A/dx) + 4;
-   }
-   if (mem_f_shape=="randst") {
-     Nx = round(A/dx) + 5;
-     Ny = round(B/dx) + 5;
-     Nz = round(C/dx) + 5;
-     rand_seed = int(D);
-     if (D != round(D)) {
-       printf("WARNING!!! When using randst the last argument, the rand_seed, should be an integer!  For now I've truncated it!!!\n");
-     }
-   }
-   if (mem_f_shape=="TIE_fighter") {
-     Nx = ceil(A/dx) + 4;
-     Ny = ceil(B/dx) + 4;
-     Nz = ceil(C/dx) + 4;
-   }
-   if (mem_f_shape=="triangle") {
-     Nx = ceil(A/dx) + 5;
-     Nz = ceil((A+B)/dx) + 5;
-     //Using law of cosines we get height of triangle:
-     double theta = acos((B*B+D*D-C*C)/(2*B*D));
-     Ny = ceil((A+D*sin(theta))/dx) + 4;
-   }
-   if (mem_f_shape=="st") {
-     Nx = ceil(2*B/dx) + 4;
-     Ny = ceil(2*C/dx) + 4;
-     Nz = ceil((A+2*D)/dx) + 4;
-   }
-   if (mem_f_shape=="sp") {
-     Nx = ceil(2*A/dx) + 4;
-     Ny = ceil(2*A/dx) + 4;
-     Nz = ceil(2*A/dx) + 4;
-   }
-   if (mem_f_shape=="e") {
-     Nx = ceil(1/dx) + 4;
-     Ny = ceil(2*A/dx) + 4;
-     Nz = ceil(2*B/dx) + 4;
-   }
+  //compute grid size based on cell parameters
+  if (mem_f_shape=="p") {
+    Nx = round(2*B/dx) + 4;
+    Ny = round(2*B/dx) + 4;
+    Nz = round((A + 2*B)/dx) + 4;
+    printf("Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
+    box_divider_left = int(Nz/3);
+    box_divider_right = int(2*Nz/3);
+  }
+  if (mem_f_shape=="stad") {
+    Nx = round(A/dx) + 3;
+    Ny = round((2*B+2*A)/dx) + 3;
+    Nz = round((C+2*D+2*A)/dx) + 3;
+  }
+  if (mem_f_shape=="randst") {
+    Nx = round(A/dx) + 5;
+    Ny = round(B/dx) + 5;
+    Nz = round(C/dx) + 5;
+    rand_seed = int(D);
+    if (D != round(D)) {
+      printf("WARNING!!! When using randst the last argument, the rand_seed, should be an integer!  For now I've truncated it!!!\n");
+    }
+  }
+  if (mem_f_shape=="TIE_fighter") {
+    Nx = ceil(A/dx) + 4;
+    Ny = ceil(B/dx) + 4;
+    Nz = ceil(C/dx) + 4;
+  }
+  if (mem_f_shape=="triangle") {
+    Nx = ceil(A/dx) + 5;
+    Nz = ceil((A+B)/dx) + 5;
+    //Using law of cosines we get height of triangle:
+    double theta = acos((B*B+D*D-C*C)/(2*B*D));
+    Ny = ceil((A+D*sin(theta))/dx) + 4;
+  }
+  if (mem_f_shape=="sp") {
+    Nx = ceil(2*A/dx) + 5;
+    Ny = ceil(2*A/dx) + 5;
+    Nz = ceil(2*A/dx) + 5;
+  }
+  if (mem_f_shape=="e") {
+    Nx = ceil(1/dx) + 4;
+    Ny = ceil(2*A/dx) + 4;
+    Nz = ceil(2*B/dx) + 4;
+  }
 
-   //fixed simulation parameters
-   tot_time = 4000; //sec
-   if (debug_flag==1) {
-     tot_time = 15;
-   }
-   time_step = .1*dx*dx/difD;//sec
-   iter = int(tot_time/time_step);//this will give us triangle data in about two days and randst in four days?
-   printout_iterations = int(0.5/time_step);
-   int total_arrow_time = 1000;
-   int arrow_iter = int(total_arrow_time/time_step);//this tells us how many seconds we'll do the arrow plots for
-   int print_denominator = 1000; //This dictates how often (in iterations) you add a line to the box, time, and ave plots
-   printf("printout iterations = %d\n",printout_iterations);//approximately 5 seconds between each printout
-   double dV = dx*dx*dx;
+  //fixed simulation parameters
+  tot_time = 4000; //sec
+  if (debug_flag==1) {
+    tot_time = 15;
+  }
+  time_step = .1*dx*dx/difD;//sec
+  iter = int(tot_time/time_step);//this will give us triangle data in about two days and randst in four days?
+  printout_iterations = int(0.5/time_step);
+  int total_arrow_time = 1000;
+  int arrow_iter = int(total_arrow_time/time_step);//this tells us how many seconds we'll do the arrow plots for
+  int print_denominator = 1000; //This dictates how often (in iterations) you add a line to the box, time, and ave plots
+  printf("printout iterations = %d\n",printout_iterations);//approximately 5 seconds between each printout
+  double dV = dx*dx*dx;
 
-   printf("Simulation arguments: %s %g %g %g %g %g\n",mem_f_shape.c_str(),A,B,C,D,density_factor);
+  printf("Simulation arguments: %s %g %g %g %g %g\n",mem_f_shape.c_str(),A,B,C,D,density_factor);
 
-   //In the following, for every set of three numbers, the 1st is y and he 2nd is z and the 3rd is quassian width
-   double guass99[] = {2.0,2.2,.5,3,3,.50,4.0,3.6,.50,3,4.2,.50,2.0,5,.5};
-   double guass98[] = {2.0,2.0,.3,3,3,.6,4.2,3.4,.3,4.6,4.6,.6,3.4,5.6,.6};
-   double guass94[] = {2.6,3.2,.3,2.28,2.75,.25,3.0,3.9,.6,3.1,3.6,.4,3.3,3.9,.4,3.5,4.7,.5,2.9,5.6,.5,3.1,5.2,.4,2.4,5.8,.2,3.6,5.1,.3};
-   //double guass94[] = {2.3,2.3,.2,2.4,2.3,.3,3.1,3.4,.6,3.6,3.4,.4,3.5,4.3,.6,3.4,4.4,.5,3.1,5.1,.6,3.3,5.2,.6,3.3,5.3,.3};
-   double guass97[] = {1.4,3,.4,1.8,3,.4,2.2,3,.4,2.6,3,.4,3,3,.4,3.4,3,.4,3.8,3,.4,4.2,3,.4,4.6,3,.4,5,3,.4,5.4,3,.4,3.4,2.4,.6};
-   double guass96[] = {1.3,1.3,.7,2.1,2,.7,3,2,.7,3.9,2,.7,4.7,1.3,.7,4,2.1,.7,4,3,.7,4,3.9,.7,4.7,4.7,.7,3.9,4,.7,3,4,.7,2.3,4,.7,1.3,4.7,.7,2.1,3.9,.7,3,3.9,.7,2.1,3.9,.7};
-   double guass95[] = {2.2,2.4,.3,2.5,3.2,.6,2.7,3.5,.4,2.9,3.5,.4,3.5,4.2,.5,3.8,4.1,.8,3.1,4.6,.6,3.15,4.3,.5};
+  //In the following, for every set of three numbers, the 1st is y and he 2nd is z and the 3rd is quassian width
+  double guass94[] = {2.6,3.2,.3,2.28,2.75,.25,3.0,3.9,.6,3.1,3.6,.4,3.3,3.9,.4,3.5,4.7,.5,2.9,5.6,.5,3.1,5.2,.4,2.4,5.8,.2,3.6,5.1,.3};
+  double guass95[] = {2.2,2.4,.3,2.5,3.2,.6,2.7,3.5,.4,2.9,3.5,.4,3.5,4.2,.5,3.8,4.1,.8,3.1,4.6,.6,3.15,4.3,.5};
+  double guass96[] = {1.3,1.3,.7,2.1,2,.7,3,2,.7,3.9,2,.7,4.7,1.3,.7,4,2.1,.7,4,3,.7,4,3.9,.7,4.7,4.7,.7,3.9,4,.7,3,4,.7,2.3,4,.7,1.3,4.7,.7,2.1,3.9,.7,3,3.9,.7,2.1,3.9,.7};
+  double guass97[] = {1.4,3,.4,1.8,3,.4,2.2,3,.4,2.6,3,.4,3,3,.4,3.4,3,.4,3.8,3,.4,4.2,3,.4,4.6,3,.4,5,3,.4,5.4,3,.4,3.4,2.4,.6};
+  double guass98[] = {2.0,2.0,.3,3,3,.6,4.2,3.4,.3,4.6,4.6,.6,3.4,5.6,.6};
+  double guass99[] = {2.0,2.2,.5,3,3,.50,4.0,3.6,.50,3,4.2,.50,2.0,5,.5};
 
-   double size_modifier_94 = 3.0;
-   double size_modifier_95 = 3.0;
-   double size_modifier_96 = 1.3;
-   double size_modifier_97 = 1.3;
-   double size_modifier_98 = 1.3;
-   double size_modifier_99 = 0.6;
+  double size_modifier_94 = 0.3;
+  double size_modifier_95 = 0.3;
+  double size_modifier_96 = 1.0;
+  double size_modifier_97 = 1.0;
+  double size_modifier_98 = 1.0;
+  double size_modifier_99 = 1.3;
 
-   bzero(guass,int(sizeof(guass)/sizeof(double)));
-   printf("size of guass = %d\n",int(sizeof(guass)));
-   fflush(stdout);
-   if (rand_seed == 94) {
-     for (int i=0;i<int(sizeof(guass94)/sizeof(double));i++){
-       guass[i] = size_modifier_94*guass94[i];
-     }
-   }
-   if (rand_seed == 95) {
-     for (int i=0;i<int(sizeof(guass95)/sizeof(double));i++){
-       guass[i] = size_modifier_95*guass95[i];
-     }
-   }
-   if (rand_seed == 96) {
-     for (int i=0;i<int(sizeof(guass96)/sizeof(double));i++){
-       guass[i] = size_modifier_96*guass96[i];
-     }
-   }
-   if (rand_seed == 97) {
-     for (int i=0;i<int(sizeof(guass97)/sizeof(double));i++){
-       guass[i] = size_modifier_97*guass97[i];
-     }
-   }
-   if (rand_seed == 98) {
-     for (int i=0;i<int(sizeof(guass98)/sizeof(double));i++){
-       guass[i] = size_modifier_98*guass98[i];
-     }
-   }
-   if (rand_seed == 99) {
-     for (int i=0;i<int(sizeof(guass99)/sizeof(double));i++){
-       guass[i] = size_modifier_99*guass99[i];
-     }
-   }
-   else {
-     if (mem_f_shape == "randst"){
-       randomize_cell_wall(guass);
-     }
-   }
-   printf("Those are all the guassians!\n");
-   //end random stuff
+  {
+    char *hn = (char *)malloc(1024);
+    gethostname(hn, 1023);
+    printf("Hostname:  %s\n", hn);
+    free(hn);
+  }
+  printf("\nsize_modifier 94 is = %g",size_modifier_94);
+  printf("\nsize_modifier 95 is = %g\n",size_modifier_95);
+  printf("\nsize_modifier 99 is = %g\n",size_modifier_99);
+  fflush(stdout);
 
-   double *first_mem_A = new double[Nx*Ny*Nz];
-   set_membrane(first_mem_A);
+  bzero(guass,int(sizeof(guass)/sizeof(double)));
+  if (rand_seed == 94) {
+    for (int i=0;i<int(sizeof(guass94)/sizeof(double));i++){
+      guass[i] = size_modifier_94*guass94[i];
+    }
+  }
+  else if (rand_seed == 95) {
+    for (int i=0;i<int(sizeof(guass95)/sizeof(double));i++){
+      guass[i] = size_modifier_95*guass95[i];
+    }
+  }
+  else if (rand_seed == 96) {
+    for (int i=0;i<int(sizeof(guass96)/sizeof(double));i++){
+      guass[i] = size_modifier_96*guass96[i];
+    }
+  }
+  else if (rand_seed == 97) {
+    for (int i=0;i<int(sizeof(guass97)/sizeof(double));i++){
+      guass[i] = size_modifier_97*guass97[i];
+    }
+  }
+  else if (rand_seed == 98) {
+    for (int i=0;i<int(sizeof(guass98)/sizeof(double));i++){
+      guass[i] = size_modifier_98*guass98[i];
+    }
+  }
+  else if (rand_seed == 99) {
+    for (int i=0;i<int(sizeof(guass99)/sizeof(double));i++){
+      guass[i] = size_modifier_99*guass99[i];
+    }
+  }
+  else {
+    if (mem_f_shape == "randst"){
+      randomize_cell_wall(guass);
+    }
+  }
+  printf("Those are all the guassians!\n");
+  //end random stuff
 
-   char* outfilename = new char[1024];
-   sprintf(outfilename,"data/shape-%s/%s%s%smembrane-%s-%4.02f-%4.02f-%4.02f-%4.02f-%4.02f.dat",mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor);
-   FILE *out = fopen((const char *)outfilename,"w");
-   if (out==0){
-     printf ("couldn't print outfile = %s\n",outfilename);
-     //exit();
-   }
-   for (int j=0;j<Ny;j++){
-     for (int i=0;i<Nz;i++){
-       double marker = 0;
-       if (first_mem_A[Nx/2*Ny*Nz+j*Nz+i]!=0) {
-         marker = 1;
-       }
-       fprintf(out, "%g  ", marker);
-     }
-     fprintf(out, "\n");
-   }
-   fflush(out);
-   fclose(out);
-   printf("\nMembrane file printed.\n");
+  double *first_mem_A = new double[Nx*Ny*Nz];
+  set_membrane(first_mem_A);
 
-   //Trimming the grid
-   double *mem_A;
-   double **pointer_to_mem_A;
-   pointer_to_mem_A = &mem_A;
-   printf("\nBefore Trim Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
-   trim_grid(pointer_to_mem_A,first_mem_A);
-   printf("After Trim Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
-   fflush(stdout);
+  if (mem_f_shape == "p" || mem_f_shape == "stad" || mem_f_shape == "sp"){
+    test_the_amount_of_area(first_mem_A,mem_f_shape);
+  }
 
+  //Trimming the grid
+  double *mem_A;
+  if (mem_f_shape!="stad"){
+    double **pointer_to_mem_A;
+    pointer_to_mem_A = &mem_A;
+    printf("\nBefore Trim Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
+    trim_grid(pointer_to_mem_A,first_mem_A);//,min_xi,min_yi,min_zi);
+    printf("After Trim Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
+    fflush(stdout);
+  }
+  else {
+    mem_A = new double[Nx*Ny*Nz];
+    for (int i=0;i<Nx*Ny*Nz;i++){
+      mem_A[i] = first_mem_A[i];
+    }
+  }
 
-   char* outtwofilename = new char[1024];
-   sprintf(outtwofilename,"data/shape-%s/%s%s%smembrane-two-%s-%4.02f-%4.02f-%4.02f-%4.02f-%4.02f.dat",mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor);
-   FILE *out_two = fopen((const char *)outtwofilename,"w");
-   if (out_two==0){
-     printf ("couldn't print outfile = %s\n",outtwofilename);
-     //exit();
-   }
-   for (int j=0;j<Ny;j++){
-     for (int i=0;i<Nz;i++){
-       double marker = 0;
-       if (mem_A[Nx/2*Ny*Nz+j*Nz+i]!=0) {
-         marker = 1;
-       }
-       fprintf(out_two, "%g  ", marker);
-     }
-     fprintf(out_two, "\n");
-   }
-   printf("Here?\n");
-   fflush(stdout);
-   fflush(out_two);
-   fclose(out_two);
-   printf("\n\nSecond Membrane file printed.\n\n");
-   fflush(stdout);
+  printf("\nAfter trim, min_xi = %d min_yi = %d min_zi = %d\n",min_xi,min_yi,min_zi);
+  fflush(stdout);
 
-
-
-   //attempt at making the p shape an exception to trimming
-   char* shape_debugging = new char[1024];
-   sprintf(shape_debugging,"testing_shape.txt");
-   FILE *shape_debug = fopen((const char *)shape_debugging,"w");
-   delete[]shape_debugging;
-   for (int j=0;j<Ny;j++){
-     for (int i=0;i<Nz;i++){
-       // if (mem_A[i*Ny*Nz+j*Nz+Nz/2]!=0) {
-       //   marker = 1;
-       // }
-      //  fprintf(shape_debug, "y=%g z=%g mem_f=%g  ",dx*j,dx*i,mem_f(dx*Nx/2,dx*j,dx*i));
-     // }
-       //if (mem_f(dx*Nx/2,dx*j,dx*i) > -.9){
-       fprintf(shape_debug, "y=%g z=%g mem_f=%g\n",dx*j,dx*i,mem_f(dx*Nx/2,dx*j,dx*i));
-       //}
-       //fprintf(shape_debug, "got passed y = %g line\n",dx*j);
-     }
-     fprintf(shape_debug,"\n");
-   }
-   fprintf(shape_debug, "got passed all the lines\n");
-   fflush(shape_debug);
-   fclose(shape_debug);
-   printf("\nFinished with the debugging print out\n\n");
-   fflush(stdout);
-
-   // printf("Got Here!\n");
-   // fflush(stdout);
-
-   bool *insideArr = new bool[Nx*Ny*Nz];
-   set_insideArr(insideArr);
-   // printf("One Got Here!\n");
-   // fflush(stdout);
-   //global arrays for storing simulation data
-   nATP = new double[Nx*Ny*Nz];
-   nADP = new double[Nx*Ny*Nz];
-   nE = new double[Nx*Ny*Nz];
-   ND = new double[Nx*Ny*Nz];
-   NDE = new double[Nx*Ny*Nz];
-   NflD = new double[Nx*Ny*Nz];
-   NflE = new double[Nx*Ny*Nz];
-   f_mem = new double[Nx*Ny*Nz];
-   double *JxATP = new double[Nx*Ny*Nz];
-   double *JyATP = new double[Nx*Ny*Nz];
-   double *JzATP = new double[Nx*Ny*Nz];
-   double *JxADP = new double[Nx*Ny*Nz];
-   double *JyADP = new double[Nx*Ny*Nz];
-   double *JzADP = new double[Nx*Ny*Nz];
+  bool *insideArr = new bool[Nx*Ny*Nz];
+  set_insideArr(insideArr);
+  //global arrays for storing simulation data
+  nATP = new double[Nx*Ny*Nz];
+  nADP = new double[Nx*Ny*Nz];
+  nE = new double[Nx*Ny*Nz];
+  ND = new double[Nx*Ny*Nz];
+  NDE = new double[Nx*Ny*Nz];
+  NflD = new double[Nx*Ny*Nz];
+  NflE = new double[Nx*Ny*Nz];
+  f_mem = new double[Nx*Ny*Nz];
+  double *JxATP = new double[Nx*Ny*Nz];
+  double *JyATP = new double[Nx*Ny*Nz];
+  double *JzATP = new double[Nx*Ny*Nz];
+  double *JxADP = new double[Nx*Ny*Nz];
+  double *JyADP = new double[Nx*Ny*Nz];
+  double *JzADP = new double[Nx*Ny*Nz];
   double *JxE = new double[Nx*Ny*Nz];
   double *JyE = new double[Nx*Ny*Nz];
   double *JzE = new double[Nx*Ny*Nz];
-  //double *curvature = new double[Nx*Ny*Nz];
 
   const int numProteins = 7;
 
@@ -864,17 +782,8 @@ int main (int argc, char *argv[]) {
   protein* NflD_plot = new protein;
   protein* NflE_plot = new protein;
 
-  // printf("Two Got Here!\n");
-  // fflush(stdout);
-
   protein* proteinList[numProteins] = { nATP_plot, nADP_plot, nE_plot, ND_plot, NDE_plot, NflD_plot, NflE_plot };
-  double* accessGlobals[numProteins] = { nATP, nADP, nE, ND, NDE, NflD, NflE };
-
-  printf("Ny*Nz*sizeof(double) = %lu",Ny*Nz*sizeof(double));
-  printf("iter*sizeof(double) = %lu",iter*sizeof(double));
-
-  printf("Three Got Here!\n");
-  fflush(stdout);
+  double* protein_arrs[numProteins] = { nATP, nADP, nE, ND, NDE, NflD, NflE };
 
   //initialize things
   for (int pNum=0; pNum<numProteins; pNum++) {
@@ -912,9 +821,6 @@ int main (int argc, char *argv[]) {
     bzero(proteinList[pNum]->zmax,arrow_iter*sizeof(int));
   }
 
-  printf("Four Got Here!\n");
-  fflush(stdout);
-
   sprintf(proteinList[0]->name,"D_nATP");
   sprintf(proteinList[1]->name,"D_nADP");
   sprintf(proteinList[2]->name,"E_nE");
@@ -925,14 +831,8 @@ int main (int argc, char *argv[]) {
 
 
   set_density(nATP, nE, ND, mem_A);
-  printf("density set.\n");
-
-  printf("Five Got Here!\n");
-  fflush(stdout);
-
 
   //Starting the Sections file set up
-
   double left_area_total = 0;
   double middle_area_total = 0;
   double right_area_total = 0;
@@ -940,6 +840,7 @@ int main (int argc, char *argv[]) {
   double right_down_area_total = 0;
   double left_up_area_total = 0;
   double left_down_area_total = 0;
+
 
   if (mem_f_shape=="triangle") {
     char* outfilename_sections = new char[1024];
@@ -975,11 +876,8 @@ int main (int argc, char *argv[]) {
       fprintf(outfile_sections,"\n");
     }
     fclose(outfile_sections);
-    printf("\nMembrane sections file printed.\n");
-    //fflush(stdout);
     delete[] outfilename_sections;
   }
-
 
   if (mem_f_shape=="p" || mem_f_shape=="stad"){
     box_divider_left = int(Nz/3);
@@ -1018,12 +916,7 @@ int main (int argc, char *argv[]) {
     }
     fclose(outfile_sections);
     delete[] outfilename_sections;
-    printf("Finished printing sections file!!\n");
-    //fflush(stdout);
   }
-
-  printf("Six Got Here!\n");
-  fflush(stdout);
 
   double vert_div = 0;
   double vert_div_two = 0;
@@ -1044,9 +937,9 @@ int main (int argc, char *argv[]) {
       hor_div = size_modifier_96*(3.0/dx)-min_yi+1;
     }
     if (rand_seed == 97) {
-      vert_div = size_modifier_97*(3.0/dx)-min_zi+1;
-      hor_div = size_modifier_97*(3.2/dx)-min_yi+1;
-      hor_div_two = size_modifier_97*(5.6/dx)-min_yi+1;
+      vert_div = size_modifier_97*(2.4/dx)-min_zi+1;
+      hor_div = size_modifier_97*(2.45/dx)-min_yi+1;
+      hor_div_two = size_modifier_97*(4.6/dx)-min_yi+1;
     }
     if (rand_seed == 98) {
       vert_div = size_modifier_98*(3.0/dx)-min_zi+1;
@@ -1146,13 +1039,9 @@ int main (int argc, char *argv[]) {
     }
     fclose(outfile_sections);
     delete[] outfilename_sections;
-    printf("Randst sections file printed !!!\n");
-    //fflush(stdout);
   }
-
-  printf("Seven Got Here!\n");
+  printf("\nSections file has printed\n\n");
   fflush(stdout);
-
 
   //begin simulation
   for (int i=0;i<iter;i++){
@@ -1160,8 +1049,6 @@ int main (int argc, char *argv[]) {
           JzATP, JxADP, JyADP, JzADP, JxE, JyE, JzE);
     get_next_density(mem_A, insideArr, nATP, nADP, nE, ND, NDE, NflD, NflE, JxATP, JyATP, JzATP,
                      JxADP, JyADP, JzADP, JxE, JyE, JzE);
-    // printf("Eight Got Here!\n");
-    // fflush(stdout);
 
     if (i%(int(100*print_denominator))==0) {
       printf("Finished sim loop # i=%d, We're %1.2f percent done\n",i,100*double(i)/iter);
@@ -1173,11 +1060,11 @@ int main (int argc, char *argv[]) {
         for (int b=0; b<Nz; b++) {
           if (slice_flag==0) {
             for (int c=0; c<Nx; c++) {
-              proteinList[pNum]->sum[a*Nz+b] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b];
+              proteinList[pNum]->sum[a*Nz+b] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b];
             }
           }
           else {
-            proteinList[pNum]->sum[a*Nz+b] += accessGlobals[pNum][int(Nx/2)*Ny*Nz+a*Nz+b];
+            proteinList[pNum]->sum[a*Nz+b] += protein_arrs[pNum][int(Nx/2)*Ny*Nz+a*Nz+b];
           }
         }
       }
@@ -1199,73 +1086,71 @@ int main (int argc, char *argv[]) {
             for (int c=0; c<Nx; c++) {
               if (mem_f_shape == "p" || mem_f_shape == "stad") {
                 if (b < box_divider_left) {
-                  proteinList[pNum]->numLeft[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                  proteinList[pNum]->numLeft[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                 }
                 if (b > box_divider_right) {
-                  proteinList[pNum]->numRight[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                  proteinList[pNum]->numRight[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                 }
                 if ((b <= box_divider_right) && (b >= box_divider_left)) {
-                  proteinList[pNum]->numMid[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                  proteinList[pNum]->numMid[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                 }
               }
               if (mem_f_shape == "randst") {
                 if (rand_seed == 99 || rand_seed == 98 || rand_seed == 95 || rand_seed == 94) {
                   if (b < vert_div) {
-                    proteinList[pNum]->numLeft[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numLeft[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                   else if (b > vert_div_two) {
-                    proteinList[pNum]->numRight[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numRight[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                   else {
-                    proteinList[pNum]->numMid[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numMid[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                 }
                 if (rand_seed == 97) {
                   if (b < vert_div) {
-                    proteinList[pNum]->numLeft[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numLeft[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                   else if (a > hor_div_two) {
-                    proteinList[pNum]->numRightUp[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numRightUp[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                   else if (a < hor_div) {
-                    proteinList[pNum]->numRightDown[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numRightDown[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                   else {
-                    proteinList[pNum]->numMid[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numMid[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                 }
                 if (rand_seed == 96) {
                   if (b < vert_div && a < hor_div) {
-                    proteinList[pNum]->numLeftDown[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numLeftDown[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                   else if (b < vert_div && a >= hor_div) {
-                    proteinList[pNum]->numLeftUp[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numLeftUp[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                   else if (b >= vert_div && a < hor_div) {
-                    proteinList[pNum]->numRightDown[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numRightDown[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                   else {
-                    proteinList[pNum]->numRightUp[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                    proteinList[pNum]->numRightUp[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
                 }
               }
               if (mem_f_shape == "triangle") {
                 if (triangle_section(a*dx,b*dx) == "Left") {
-                  proteinList[pNum]->numLeft[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                  proteinList[pNum]->numLeft[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                 }
                 else if (triangle_section(a*dx,b*dx) == "Right") {
-                  proteinList[pNum]->numRight[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                  proteinList[pNum]->numRight[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                 }
                 else {
-                  proteinList[pNum]->numMid[i_dat] += accessGlobals[pNum][c*Ny*Nz+a*Nz+b]*dV;
+                  proteinList[pNum]->numMid[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                 }
               }
             }
           }
         }
       }
-      // printf("Ten Got Here!\n");
-      // fflush(stdout);
 
       //arrow plot
       if (i<arrow_iter) {
@@ -1276,7 +1161,7 @@ int main (int argc, char *argv[]) {
             if (slice_flag==0) {
               currentval=0;
               for (int c=0; c<Nx; c++) {
-                currentval += accessGlobals[pNum][c*Ny*Nz+a*Nz+b];
+                currentval += protein_arrs[pNum][c*Ny*Nz+a*Nz+b];
               }
               if (currentval > storemaxval) {
                 storemaxval = currentval;
@@ -1286,7 +1171,7 @@ int main (int argc, char *argv[]) {
               }
             }
             else {
-              currentval = accessGlobals[pNum][int(Nx/2)*Ny*Nz+a*Nz+b];
+              currentval = protein_arrs[pNum][int(Nx/2)*Ny*Nz+a*Nz+b];
               if (currentval > storemaxval) {
                 storemaxval = currentval;
                 proteinList[pNum]->maxval[i] = storemaxval;
@@ -1298,9 +1183,6 @@ int main (int argc, char *argv[]) {
         }
       }
     }
-
-    // printf("Eleven Got Here!\n");
-    // fflush(stdout);
 
     //begin file printing
     if ((dump_flag == 1) && (i%printout_iterations == 0)) {
@@ -1338,9 +1220,6 @@ int main (int argc, char *argv[]) {
       }
       //end nATP printing
 
-      // printf("Twelve Got Here!\n");
-      // fflush(stdout);
-
       //nE printing
       char *outfilenameE = new char[1000];
       sprintf(outfilenameE, "data/shape-%s/%s%s%snE-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k);
@@ -1371,9 +1250,6 @@ int main (int argc, char *argv[]) {
         fclose(nEfile);
       }
       //end nE printing
-
-      // printf("Thirteen Got Here!\n");
-      // fflush(stdout);
 
       //nADP printing
       char *outfilenameADP = new char[1000];
@@ -1406,9 +1282,6 @@ int main (int argc, char *argv[]) {
       }
       //end nADP printing
 
-      // printf("Fourteen Got Here!\n");
-      // fflush(stdout);
-
       //begin ND printing
       char *outfilenameD = new char[1000];
       sprintf(outfilenameD, "data/shape-%s/%s%s%sND-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k);
@@ -1439,9 +1312,6 @@ int main (int argc, char *argv[]) {
         fclose(NDfile);
       }
       //end ND printing
-
-      // printf("Fifteen Got Here!\n");
-      // fflush(stdout);
 
       //begin NDE printing
       char *outfilenameDE = new char[1000];
@@ -1514,9 +1384,6 @@ int main (int argc, char *argv[]) {
       FILE *NflDfile = fopen((const char *)outfilenameflD,"w");
       delete[] outfilenameflD;
 
-      // printf("Seventeen Got Here!\n");
-      // fflush(stdout);
-
       if (slice_flag==1) {
         for (int a=0;a<Ny;a++){
           for (int b=0;b<Nz;b++){
@@ -1543,9 +1410,6 @@ int main (int argc, char *argv[]) {
       //end NflD printing
       k++;
     }
-
-    // printf("Eightteen Got Here!\n");
-    // fflush(stdout);
 
     time_step = .1*dx*dx/difD;//sec
     int plot_denominator = 100000;
@@ -1625,16 +1489,11 @@ int main (int argc, char *argv[]) {
       }
       fclose(box_plot);
 
-      // printf("Nineteen Got Here!\n");
-      // fflush(stdout);
-
       for (int pNum=0; pNum<numProteins; pNum++) {
         char *avename = new char[1024];
         sprintf(avename,"%s",print_filename("ave_plot",""));
         FILE* ave_plot = fopen(avename,"w");
 
-        printf("left area = %g middle area = %g right area = %g\n",left_area_total,middle_area_total,right_area_total);
-        //fflush(stdout);
         if (mem_f_shape == "p" || mem_f_shape == "triangle" || rand_seed == 98 || rand_seed == 95 || rand_seed == 94 ||
             rand_seed == 99 || mem_f_shape == "stad"){
           for (int pNum=3; pNum<numProteins; pNum++) {
@@ -1710,11 +1569,7 @@ int main (int argc, char *argv[]) {
         delete[] avename;
       }
 
-      // printf("Twenty Got Here!\n");
-      // fflush(stdout);
-
       for (int pNum=0; pNum<numProteins; pNum++) {
-
         //time map
         char *timename = print_filename("time-map",proteinList[pNum]->name);
         FILE* time_map = fopen(timename,"w");
@@ -1729,16 +1584,11 @@ int main (int argc, char *argv[]) {
       }
     }
 
-    // printf("TwentyOne Got Here!\n");
-    // fflush(stdout);
-
     for (int pNum=0; pNum<numProteins; pNum++) {
-      // printf("Hello??? Get here?\n");
-      // fflush(stdout);
-      //arrow plot
-      //filter local maxima in time
       if (i<arrow_iter) {
+        //would like to know how long this algorithm takes and change it if should
         if (i%printout_iterations == 0) {
+          clock_t start_time = clock();
           int* time_maxima_y = new int[arrow_iter];
           int* time_maxima_z = new int[arrow_iter];
           double* time_maxima_value = new double[arrow_iter];
@@ -1763,36 +1613,24 @@ int main (int argc, char *argv[]) {
               time_maxima_value[p] = 0;
             }
           }
-          // printf("TwentyThree Got Here!\n");
-          // fflush(stdout);
           //print to file
           char *arrowname = print_filename("arrow-plot",proteinList[pNum]->name);
           FILE* arrowfile = fopen(arrowname,"w");
           delete[] arrowname;
-          // printf("TwentyFour Got Here!\n");
-          // fflush(stdout);
           for (int p=1; p<(i-1); p++) {
             if ((time_maxima_y[p] != 0) && (time_maxima_z[p] != 0)) {
               fprintf(arrowfile,"%d\t%d\t%g\t%g\n",time_maxima_y[p],time_maxima_z[p],p*time_step,time_maxima_value[p]);
             }
           }
           fclose(arrowfile);
-          // printf("TwentyFive Got Here!\n");
-          // fflush(stdout);
           delete[] time_maxima_y;
-          // printf("TwentySix Got Here!\n");
-          // fflush(stdout);
           delete[] time_maxima_z;
-          // printf("TwentySeven Got Here! i = %d iter = %d\n",i,iter);
-          // fflush(stdout);
           delete[] time_maxima_value;
+          clock_t time_took = clock()-start_time;
+          printf("\n\nThe arrow algorithm at iteration time %d took %f seconds to complete\n\n\n",int(i/time_step),double(time_took/CLOCKS_PER_SEC));
         }
       }
-      // printf("Now TwentySeven Got Here! i = %d iter = %d\n",i,iter);
-      // fflush(stdout);
     }
-    // printf("A lot Got Here!\n");
-    // fflush(stdout);
   }
   //end file printing
   //end simulation
@@ -1876,9 +1714,11 @@ int main (int argc, char *argv[]) {
 
 
 void set_membrane(double mem_A[]) {
+  //int count = 0;
   for(int xi=0;xi<Nx;xi++){
     for(int yi=0;yi<Ny;yi++){
       for(int zi=0;zi<Nz;zi++){
+        //count++;
         double fXYZ = mem_f((xi+0.5)*dx, (yi+0.5)*dx, (zi+0.5)*dx);
         double fXYz = mem_f((xi+0.5)*dx, (yi+0.5)*dx, (zi-0.5)*dx);
         double fXyZ = mem_f((xi+0.5)*dx, (yi-0.5)*dx, (zi+0.5)*dx);
@@ -1888,8 +1728,9 @@ void set_membrane(double mem_A[]) {
         double fxyZ = mem_f((xi-0.5)*dx, (yi-0.5)*dx, (zi+0.5)*dx);
         double fxyz = mem_f((xi-0.5)*dx, (yi-0.5)*dx, (zi-0.5)*dx);
         double f = mem_f(xi*dx, yi*dx, zi*dx);
-        mem_A[xi*Ny*Nz+yi*Nz+zi] = find_intersection(fXYZ, fXYz, fXyZ, fXyz, fxYZ, fxYz, fxyZ, fxyz, f);
-        //printf("mem_A(%d,%d,%d)=%g\n",xi,yi,zi,mem_A[xi*Ny*Nz+yi*Nz+zi]);
+        //printf("In set_membrane xi=%d yi=%d zi=%d and count = and Nx*Ny*Nz=%d\n",xi,yi,zi,Nx*Ny*Nz);
+        //fflush(stdout);
+        mem_A[xi*Ny*Nz+yi*Nz+zi] = find_intersection(fXYZ, fXYz, fXyZ, fXyz, fxYZ, fxYz, fxyZ, fxyz, f, false);
       }
     }
   }
@@ -1930,12 +1771,10 @@ void set_curvature(double mem_A[], double curvature[]){
 
 double find_intersection(const double fXYZ, const double fXYz, const double fXyZ, const double fXyz,
                          const double fxYZ, const double fxYz, const double fxyZ, const double fxyz,
-                         const double f, bool debugme) {
+                         double f, bool debugme) {
+  //Instead of evaluating mem_f in the middle of each cube we will average the corners for greater accuracy:
+  f =  (fXYZ + fXYz + fXyZ + fXyz + fxYZ + fxYz + fxyZ + fxyz + f)/9;
   double dA = 0;
-  if (fXYZ>0.0 && fXYz>0.0 && fXyZ>0.0 && fXyz>0.0 && fxYZ>0.0 && fxYz>0.0 && fxyZ>0.0 && fxyz>0.0 && f>0.0){
-    //printf("outside cell\n");
-    return 0.0;
-  }
   if (debugme) printf("I am debugging\n");
   // "pts" is a set of points in 3D space (in units of distance) where
   // the plane of f=0 intersects with the *edges* of the cube.
@@ -1964,6 +1803,7 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
       }
     }
   }
+  //printf("df_dy = %g and f = %g and -f/(df_dy*dx) = %g\n",df_dy,f,-f/(df_dy*dx));
   for (double i=-0.5; i<1.0; i++){
     for (double k=-0.5; k<1.0; k++){
       if ((-f - i*dx*df_dx - k*dx*df_dz)/(df_dy*dx) < 0.5 && (-f - i*dx*df_dx - k*dx*df_dz)/(df_dy*dx) > -0.5){
@@ -1984,12 +1824,16 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
       }
     }
   }
+  //printf("np = %d\n",np);
   if (np == 0) return 0.0; // no intersections ===> no area!
   if (debugme) {
-    printf("np = %d\n", np);
+    //printf("np = %d\n", np);
     for (int i=0;i<np;i++) {
       printf("\t%g %g %g\n", ptsx[i], ptsy[i], ptsz[i]);
     }
+  }
+  for (int i=0; i<np;i++){
+    //printf("ptsx[%d]=%g, ptsy[%d]=%g, ptsy[%d]=%g\n",i,ptsx[i],i,ptsy[i],i,ptsz[i]);
   }
   int nz0 = 0;  // how many of our pts are on the negative z side
   int ny0 = 0;
@@ -2023,8 +1867,7 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
     printf("nz0 = %d\n", nz0);
   }
   if (nz0 == 4) {
-    // the plane is coplanar with one edge, so our area is very, very
-    // easy.
+    // the plane is coplanar with one edge, so our area is very easy.
     return dx*dx;
   }
   if (nz0 == 2){
@@ -2092,7 +1935,7 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
       } else {
         // We now know that the plane must be going through the +x, +y, +z corner!
         assert(np == 3);
-        return 0.0;
+        //return 0.0;
         const double dist01 = sqrt((ptsx[1]-ptsx[0])*(ptsx[1]-ptsx[0])
                                    + (ptsy[1]-ptsy[0])*(ptsy[1]-ptsy[0])
                                    + (ptsz[1]-ptsz[0])*(ptsz[1]-ptsz[0]));
@@ -2104,10 +1947,10 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
       }
     }
   }
+  assert(s == np-1);
   for (int i=1;i<s;i++){
     if (cos[i] > cos_max){cos_max = cos[i]; as=i;}
   }
-  assert(s == np-1);
   if (debugme) {
     printf("s = %d\n", s);
   }
@@ -2115,6 +1958,7 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
                + (ptz[as+1]-ptz[1])*(ptz[as+1]-ptz[1]));
   p = (line[as]+line[0]+eline)/2;
   dA = sqrt(p*(p-line[as])*(p-line[0])*(p-eline));
+  //printf("First dA = %g\n",dA);
   if (debugme) {
     printf("dA = %g\n", dA);
     printf("p = %g\n", p);
@@ -2133,6 +1977,7 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
                  + (ptz[bs+1]-ptz[as+1])*(ptz[bs+1]-ptz[as+1]));
     p = (line[bs]+line[as]+eline)/2;
     dA += sqrt(p*(p-line[bs])*(p-line[as])*(p-eline));
+    //printf("Second dA = %g\n",sqrt(p*(p-line[bs])*(p-line[as])*(p-eline)));
     cos[bs] = -2; cos_max = -2;
   }
 
@@ -2144,6 +1989,7 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
                  + (ptz[cs+1]-ptz[bs+1])*(ptz[cs+1]-ptz[bs+1]));
     p = (line[cs]+line[bs]+eline)/2;
     dA += sqrt(p*(p-line[cs])*(p-line[bs])*(p-eline));
+    //printf("Third dA = %g\n",sqrt(p*(p-line[cs])*(p-line[bs])*(p-eline)));
     cos[cs] = -2; cos_max = -2;
   }
 
@@ -2155,6 +2001,7 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
                  + (ptz[ds+1]-ptz[cs+1])*(ptz[ds+1]-ptz[cs+1]));
     p = (line[ds]+line[cs]+eline)/2;
     dA += sqrt(p*(p-line[ds])*(p-line[cs])*(p-eline));
+    //printf("Fourth dA = %g\n",sqrt(p*(p-line[ds])*(p-line[cs])*(p-eline)));
   }
   delete[] ptsx;
   delete[] ptsy;
@@ -2177,11 +2024,18 @@ void set_insideArr(bool *insideArr){
   }
 }
 
-
 bool inside(int xi, int yi, int zi){
+  if (once_inside==true){
+    printf("\nxi = %d yi = %d zi = %d\n",xi,yi,zi);
+  }
   xi = xi + min_xi-1;
   yi = yi + min_yi-1;
   zi = zi + min_zi-1;
+  if (once_inside==true){
+    printf("xi = %d yi = %d zi = %d\n\n",xi,yi,zi);
+    once_inside = false;
+  }
+  fflush(stdout);
   if (mem_f((xi-0.5)*dx,(yi-0.5)*dx,(zi-0.5)*dx) <= 0) {return true;}
   if (mem_f((xi+0.5)*dx,(yi-0.5)*dx,(zi-0.5)*dx) <= 0) {return true;}
   if (mem_f((xi-0.5)*dx,(yi+0.5)*dx,(zi-0.5)*dx) <= 0) {return true;}
@@ -2319,15 +2173,14 @@ int set_density(double *nATP, double *nE, double *ND, double *mem_A){
   double vert_div = 2.8/dx-min_zi+1;
   double hor_div = 3.0/dx-min_yi+1;
   int density_divider_right = int(right_most_point_z - (right_most_point_z - left_most_point_z)/3);
-  printf("right_most_point_z = %d and left_most_point_z = %d and density_divider_right = %d and Nz = %d\n",
-         right_most_point_z,left_most_point_z,density_divider_right,Nz);
+  // printf("right_most_point_z = %d and left_most_point_z = %d and density_divider_right = %d and Nz = %d\n",
+  //       right_most_point_z,left_most_point_z,density_divider_right,Nz);
   int density_divider_left = int(right_most_point_z - 2*(right_most_point_z - left_most_point_z)/3);
   int gridpoints_low_dens = 0;
   int gridpoints_high_dens = 0;
   int gridpoints_total = 0;
   double wall_area_high = 0;
   double wall_area_low = 0;
-  printf("Hello!!!!!!!!!!!!!!!\n\n\n");
   for (int i=0;i<Nx;i++){
     for (int j=0;j<Ny;j++){
       for (int k=0;k<Nz;k++){
@@ -2349,14 +2202,15 @@ int set_density(double *nATP, double *nE, double *ND, double *mem_A){
   double density_factor_low_dens = gridpoints_total/(gridpoints_low_dens + density_factor*gridpoints_high_dens);
   double density_factor_high_dens = density_factor*gridpoints_total/(gridpoints_low_dens + density_factor*gridpoints_high_dens);
 
-  double MinD_proteins_per_area_high = dx*dx*dx*nATP_starting_density*gridpoints_high_dens*density_factor_high_dens/wall_area_high;
+  //double MinD_proteins_per_area_high = dx*dx*dx*nATP_starting_density*gridpoints_high_dens*density_factor_high_dens/wall_area_high;
   //double MinD_proteins_per_area_low = dx*dx*dx*nATP_starting_density*gridpoints_low_dens*density_factor_low_dens/wall_area_low;
-  printf("wall_area_high = %g and proteins_per_area_high = %g\n",wall_area_high,MinD_proteins_per_area_high);
-  printf("Density factors: low_dens: %f, high_dens: %f, ratio: %f\n", density_factor_low_dens, density_factor_high_dens, density_factor_high_dens/density_factor_low_dens);
+  // printf("wall_area_high = %g and proteins_per_area_high = %g\n",wall_area_high,MinD_proteins_per_area_high);
+  // printf("Density factors: low_dens: %f, high_dens: %f, ratio: %f\n", density_factor_low_dens, density_factor_high_dens, density_factor_hig
+  //      h_dens/density_factor_low_dens);
 
-  printf("Gridpoints low_dens of the divider: %d\n",gridpoints_low_dens);
-  printf("Gridpoints high_dens of the divider:%d\n",gridpoints_high_dens);
-  printf("Gridpoints total: %d\n",gridpoints_total);
+  // printf("Gridpoints low_dens of the divider: %d\n",gridpoints_low_dens);
+  // printf("Gridpoints high_dens of the divider:%d\n",gridpoints_high_dens);
+  // printf("Gridpoints total: %d\n",gridpoints_total);
 
   //begin setting density at each gridpoint:
   for (int i=0;i<Nx;i++){
@@ -2414,11 +2268,11 @@ int set_density(double *nATP, double *nE, double *ND, double *mem_A){
   density_factor_low_dens = gridpoints_total/(gridpoints_low_dens + density_factor*gridpoints_high_dens);
   density_factor_high_dens = density_factor*gridpoints_total/(gridpoints_low_dens + density_factor*gridpoints_high_dens);
 
-  printf("Density factors: low_dens: %f, high_dens: %f, ratio: %f\n", density_factor_low_dens, density_factor_high_dens, density_factor_high_dens/density_factor_low_dens);
+  //  printf("Density factors: low_dens: %f, high_dens: %f, ratio: %f\n", density_factor_low_dens, density_factor_high_dens, density_factor_high_dens/density_factor_low_dens);
 
-  printf("Gridpoints low_dens of the divider: %d\n",gridpoints_low_dens);
-  printf("Gridpoints high_dens of the divider:%d\n",gridpoints_high_dens);
-  printf("Gridpoints total: %d\n",gridpoints_total);
+  // printf("Gridpoints low_dens of the divider: %d\n",gridpoints_low_dens);
+  // printf("Gridpoints high_dens of the divider:%d\n",gridpoints_high_dens);
+  // printf("Gridpoints total: %d\n",gridpoints_total);
 
   //begin setting density at each gridpoint:
   for (int i=0;i<Nx;i++){
