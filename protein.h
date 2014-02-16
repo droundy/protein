@@ -8,6 +8,11 @@ extern double *f_mem;
 
 
 int set_density(double *nATP, double *nE, double *ND, double *mem_A);
+int get_next_stochastic_state(double *mem_A, bool *insideArr, double *nATP, double *nADP,
+                   double *nE, double *Nd, double *Nde, double *NflD, double *NflE,
+                   double *JxATP, double *JyATP, double *JzATP,
+                   double *JxADP, double *JyADP, double *JzADP,
+                              double *JxE, double *JyE, double *JzE, double elapsed_time);
 int get_next_density(double *mem_A, bool *insideArr, double *nATP, double *nADP,
                      double *nE, double *Nd, double *Nde, double *NflD, double *NflE,
                      double *JxATP, double *JyATP, double *JzATP,
