@@ -7,6 +7,7 @@ using namespace std;
 #include <string.h>
 #include "protein.h"
 #include "MersenneTwister.h"
+#include "weights.h"
 #include <cassert>
 #include <unistd.h>
 
@@ -2056,113 +2057,6 @@ bool inside(int xi, int yi, int zi){
 }
 
 
-int get_next_stochastic_state(double *mem_A, bool *insideArr, double *nATP, double *nADP,
-			      double *nE, double *Nd, double *Nde, double *NflD, double *NflE,
-			      double *JxATP, double *JyATP, double *JzATP,
-			      double *JxADP, double *JyADP, double *JzADP,
-                              double *JxE, double *JyE, double *JzE) {
-  double dV = dx*dx*dx;
-  double ADP_to_ATP;
-  double de_to_ADP_E;
-  double ATP_to_d;
-  double E_d_to_de;
-  double *W_arr = new double[4*Nx*Ny*Nz+1];
-  W_arr[0] = 0;
-  double dist_value = 0;
-  for(int xi=0;xi<Nx;xi++){
-    for(int yi=0;yi<Ny;yi++){
-      for(int zi=0;zi<Nz;zi++){
-        ADP_to_ATP = rate_ADP_ATP*nADP[xi*Ny*Nz+yi*Nz+zi]*dV;
-        W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+1] = dist_value + ADP_to_ATP;
-        de_to_ADP_E = rate_de*NDE[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*dV;
-        W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+2] = dist_value + ADP_to_ATP + de_to_ADP_E;
-        ATP_to_d = (rate_D + rate_dD*(ND[xi*Ny*Nz+yi*Nz+zi] + NDE[xi*Ny*Nz+yi*Nz+zi])/mem_A[xi*Ny*Nz+yi*Nz+zi])
-          *nATP[xi*Ny*Nz+yi*Nz+zi]*dV;
-        W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+3] = dist_value + ADP_to_ATP + de_to_ADP_E + ATP_to_d;
-        E_d_to_de = rate_E*ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*nE[xi*Ny*Nz+yi*Nz+zi]*dV;
-        W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+4] = dist_value + ADP_to_ATP + de_to_ADP_E + ATP_to_d + E_d_to_de;
-        dist_value += ADP_to_ATP + de_to_ADP_E + ATP_to_d + E_d_to_de;
-      }
-    }
-  }
-  double C_fun = dist_value;
-  for (int i =0;i<Nx*Ny*Nz-1;i++){
-    if (W_arr[i+1] < W_arr[i]) {
-      printf("Theres a problem in the W_arr assignment loops/n");
-      exit(1);
-    }
-    if (W_arr[4*Nx*Ny*Nz] != C_fun) {
-      printf("Theres a problem with the C_fun assignment\n");
-      exit(1);
-    }
-  }
-
-  double max_W = 0;
-  for (int i=0; i<4*Nx*Ny*Nz+1; i++) {
-    if (W_arr[i] > max_W) {
-      max_W = W_arr[i];
-    }
-  }
-
-  //starting the loop that I think hopefully we can run a number of times before updating W_arr?
-  double elapsed_time=0;
-  while (stoch_iter*time_step > elapsed_time) {
-    double ran = (double)rand()/(RAND_MAX)*C_fun; //between 0 and C_fun
-    int interval = int(ran/C_fun*4*Nx*Ny*Nz);
-    while (ran < W_arr[interval] or ran >= W_arr[interval+1]) {
-      if ( abs(ran - W_arr[interval]) < max_W) {
-        if (ran - W_arr[interval] > 0) {
-          interval++;
-        }
-        else {
-          interval--;
-        }
-      }
-      else {
-        interval = interval + (ran - W_arr[interval])/C_fun*4*Nx*Ny*Nz;
-        if (interval < 0) {
-          interval = -interval;
-        }
-      }
-    }
-    printf("ran = %f\nW_arr[interval] = %f\nW_arr[interval+1] = %f\n",ran,W_arr[interval],W_arr[interval+1]);
-    printf("Ran should be in between the other two!\n");
-    if (ran >= W_arr[interval+1] or ran < W_arr[interval]) {
-      printf("And its not so Im quitting :(");
-      exit(1);
-    }
-    int xi = floor( interval/(4*Ny*Nz) );
-    int yi = floor( (interval - xi*Ny*Nz)/(4*Nz) );
-    int zi = floor( (interval - xi*Ny*Nz - yi*Nz)/4 );
-    int n = interval -xi*Ny*Nz - yi*Nz - zi;
-    //should I worry about these floors when the integer is right on?
-    if (n == 0) {
-      nADP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-      nATP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
-    }
-    if (n == 1) {
-      Nde[xi*Ny*Nz+yi*Nz+zi] -= 1;
-      nADP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
-      nE[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
-    }
-    if (n == 2) {
-      nATP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-      Nd[xi*Ny*Nz+yi*Nz+zi] += 1;
-    }
-    if (n == 3) {
-      nE[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-      Nd[xi*Ny*Nz+yi*Nz+zi] -= 1;
-      Nde[xi*Ny*Nz+yi*Nz+zi] += 1;
-    }
-    double delta_t = log( (double)rand()/(RAND_MAX) ) / C_fun;
-    elapsed_time += delta_t;
-  }
-  delete[]  W_arr;
-  return 0;
-}
-
-
-
 int get_J(double difD, double *nATP, double *nADP, double *nE,
           double *JxATP, double *JyATP, double *JzATP,
           double *JxADP, double *JyADP, double *JzADP,
@@ -2420,3 +2314,112 @@ int set_density(double *nATP, double *nE, double *ND, double *mem_A){
   }
   return 0;
 }
+
+
+
+
+
+
+
+// int get_next_stochastic_state(double *mem_A, bool *insideArr, double *nATP, double *nADP,
+//                               double *nE, double *Nd, double *Nde, double *NflD, double *NflE,
+//                               double *JxATP, double *JyATP, double *JzATP,
+//                               double *JxADP, double *JyADP, double *JzADP,
+//                               double *JxE, double *JyE, double *JzE) {
+//   double dV = dx*dx*dx;
+//   double ADP_to_ATP;
+//   double de_to_ADP_E;
+//   double ATP_to_d;
+//   double E_d_to_de;
+//   double *W_arr = new double[4*Nx*Ny*Nz+1];
+//   W_arr[0] = 0;
+//   double dist_value = 0;
+//   for(int xi=0;xi<Nx;xi++){
+//     for(int yi=0;yi<Ny;yi++){
+//       for(int zi=0;zi<Nz;zi++){
+//         ADP_to_ATP = rate_ADP_ATP*nADP[xi*Ny*Nz+yi*Nz+zi]*dV;
+//         W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+1] = dist_value + ADP_to_ATP;
+//         de_to_ADP_E = rate_de*NDE[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*dV;
+//         W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+2] = dist_value + ADP_to_ATP + de_to_ADP_E;
+//         ATP_to_d = (rate_D + rate_dD*(ND[xi*Ny*Nz+yi*Nz+zi] + NDE[xi*Ny*Nz+yi*Nz+zi])/mem_A[xi*Ny*Nz+yi*Nz+zi])
+//           *nATP[xi*Ny*Nz+yi*Nz+zi]*dV;
+//         W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+3] = dist_value + ADP_to_ATP + de_to_ADP_E + ATP_to_d;
+//         E_d_to_de = rate_E*ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*nE[xi*Ny*Nz+yi*Nz+zi]*dV;
+//         W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+4] = dist_value + ADP_to_ATP + de_to_ADP_E + ATP_to_d + E_d_to_de;
+//         dist_value += ADP_to_ATP + de_to_ADP_E + ATP_to_d + E_d_to_de;
+//       }
+//     }
+//   }
+//   double C_fun = dist_value;
+//   for (int i =0;i<Nx*Ny*Nz-1;i++){
+//     if (W_arr[i+1] < W_arr[i]) {
+//       printf("Theres a problem in the W_arr assignment loops/n");
+//       exit(1);
+//     }
+//     if (W_arr[4*Nx*Ny*Nz] != C_fun) {
+//       printf("Theres a problem with the C_fun assignment\n");
+//       exit(1);
+//     }
+//   }
+//   double max_W = 0;
+//   for (int i=0; i<4*Nx*Ny*Nz+1; i++) {
+//     if (W_arr[i] > max_W) {
+//       max_W = W_arr[i];
+//     }
+//   }
+//   //starting the loop that I think hopefully we can run a number of times before updating W_arr?
+//   double elapsed_time=0;
+//   while (stoch_iter*time_step > elapsed_time) {
+//     double ran = (double)rand()/(RAND_MAX)*C_fun; //between 0 and C_fun
+//     int interval = int(ran/C_fun*4*Nx*Ny*Nz);
+//     while (ran < W_arr[interval] or ran >= W_arr[interval+1]) {
+//       if ( abs(ran - W_arr[interval]) < max_W) {
+//         if (ran - W_arr[interval] > 0) {
+//           interval++;
+//         }
+//         else {
+//           interval--;
+//         }
+//       }
+//       else {
+//         interval = interval + (ran - W_arr[interval])/C_fun*4*Nx*Ny*Nz;
+//         if (interval < 0) {
+//           interval = -interval;
+//         }
+//       }
+//     }
+//     printf("ran = %f\nW_arr[interval] = %f\nW_arr[interval+1] = %f\n",ran,W_arr[interval],W_arr[interval+1]);
+//     printf("Ran should be in between the other two!\n");
+//     if (ran >= W_arr[interval+1] or ran < W_arr[interval]) {
+//       printf("And its not so Im quitting :(");
+//       exit(1);
+//     }
+//     int xi = floor( interval/(4*Ny*Nz) );
+//     int yi = floor( (interval - xi*Ny*Nz)/(4*Nz) );
+//     int zi = floor( (interval - xi*Ny*Nz - yi*Nz)/4 );
+//     int n = interval -xi*Ny*Nz - yi*Nz - zi;
+//     //should I worry about these floors when the integer is right on?
+//     if (n == 0) {
+//       nADP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
+//       nATP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
+//     }
+//     if (n == 1) {
+//       Nde[xi*Ny*Nz+yi*Nz+zi] -= 1;
+//       nADP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
+//       nE[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
+//     }
+//     if (n == 2) {
+//       nATP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
+//       Nd[xi*Ny*Nz+yi*Nz+zi] += 1;
+//     }
+//     if (n == 3) {
+//       nE[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
+//       Nd[xi*Ny*Nz+yi*Nz+zi] -= 1;
+//       Nde[xi*Ny*Nz+yi*Nz+zi] += 1;
+//     }
+//     double delta_t = log( (double)rand()/(RAND_MAX) ) / C_fun;
+//     elapsed_time += delta_t;
+//   }
+//   delete[]  W_arr;
+//   return 0;
+// }
