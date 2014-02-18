@@ -760,6 +760,11 @@ int main (int argc, char *argv[]) {
   nATP = new double[Nx*Ny*Nz];
   nADP = new double[Nx*Ny*Nz];
   nE = new double[Nx*Ny*Nz];
+  N_ATP = new double[Nx*Ny*Nz];
+  N_ADP = new double[Nx*Ny*Nz];
+  N_E = new double[Nx*Ny*Nz];
+  ND_stoch = new int[Nx*Ny*Nz];
+  NDE_stoch = new int[Nx*Ny*Nz];
   ND = new double[Nx*Ny*Nz];
   NDE = new double[Nx*Ny*Nz];
   NflD = new double[Nx*Ny*Nz];
@@ -833,7 +838,7 @@ int main (int argc, char *argv[]) {
   sprintf(proteinList[6]->name,"NflE");
 
 
-  set_density(nATP, nE, ND, mem_A);
+  set_density(nATP, nADP, nE, ND, NDE, N_stoch, N_stoch, N_ATP, N_ADP, N_E, mem_A);
 
   //Starting the Sections file set up
   double left_area_total = 0;
@@ -1047,12 +1052,40 @@ int main (int argc, char *argv[]) {
   fflush(stdout);
 
   //begin simulation
+  double spill_over_time = 0;
+  weights weights(23*Nx*Ny*Nz);
+  ///////////////////////
+  /*Here I'll write a for loop that initializes all the memory in the
+    object according to the physics stuff.  It will use for loops and the
+    weight.update method over and over. */
+  ////////////////////////
+  enum reaction {ADP_to_ATP, de_to_ADP_E, ATP_to_d, E_d_to_de};
+  struct stoch_params {
+    int xi, int yi, int zi, int reactions;
+  }
   for (int i=0;i<iter;i++){
     if (stochastic) {
-      if (i%stoch_iter==0) {
-        get_next_stochastic_state(mem_A, insideArr, nATP, nADP, nE, ND, NDE, NflD, NflE, JxATP, JyATP, JzATP,
-                                  JxADP, JyADP, JzADP, JxE, JyE, JzE);
+      double elapsed_time = spill_over_time;
+      while (elapsed_time < time_step) {
+        double p = (double)rand()/(RAND_MAX);//from 0 to 1
+        int index = weights.lookup(p);
+        //////////////////
+        //Here I'll figure the parameters from the index
+        //
+        //Here I'll update the appropriate N_ arrays using the returned values from lookup
+        ///////////////////
+        int parameters_to_index(stoch_params parameters) {
+          //figure out index using params
+          return index;
+        }
+        ia  = parameters_to_index(parameters_one);
+        ib = parameters_to_index(parameters_two);
+        weights.update(ia);
+        weights.update(ib);
+        //Here the weights class code will update itself internally according to your algorithms
+        elapsed_time += log( (double)rand()/(RAND_MAX) ) / weights.get_total();
       }
+      spill_over_time = elapsed_time - time_step;
     }
     else {
       get_J(difD, nATP, nADP, nE, JxATP, JyATP,
@@ -2152,7 +2185,7 @@ int get_next_density(double *mem_A, bool *insideArr, double *nATP, double *nADP,
   return 0;
 }
 
-int set_density(double *nATP, double *nE, double *ND, double *mem_A){
+int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE, int *ND_stoch, int *NDE_stoch, int *N_ATP, int *N_ADP, int *N_E, double *mem_A){
   double dV = dx*dx*dx;
   printf("In set_density function, Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
   int right_most_point_z=0; //left and right most points for z
@@ -2312,9 +2345,17 @@ int set_density(double *nATP, double *nE, double *ND, double *mem_A){
       }
     }
   }
-  return 0;
+  if (stochastic) {
+    for (int i=0; i<Nx*Ny*Nz;i++) {
+      N_ATP[i] = int(nATP[i]*dV);
+      N_ADP[i] = int(nADP[i]*dV);
+      N_E[i] = int(nATP[i]*dV);
+      ND_stoch[i] = round(ND[i]);
+      NDE_stoch = round(NDE[i]);
+      return 0;
+    }
+  }
 }
-
 
 
 

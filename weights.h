@@ -1,7 +1,9 @@
 
+
 class weights {
  public:
   weights(int myN) { // constructor, allocates new weights
+    //will want to allocate and initialize all the memory here
     N = myN;
     tot_weights = 0;
     ws = new double[N];
@@ -9,11 +11,15 @@ class weights {
   ~weights() { // destructor
     delete[] ws;
   }
-  void update(int i, double w) {
-    tot_weights += w - ws[i];
+  void update(double w, int i) {
+    /*this will update tot_weights and also the memory within the
+      class according to the reaction and placement input.*/
+    double tot_weights += w - ws[i];
     ws[i] = w;
   }
   int lookup(double p) const { // p is from 0 to 1
+    /*protein_microscopy.cpp will give a random number and this
+    returns where in the memory allocated this is (in terms of index i)*/
     p *= tot_weights;
     for (int i=0; i<N; i++) {
       if (p < ws[i]) {
