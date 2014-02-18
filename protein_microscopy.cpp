@@ -61,8 +61,13 @@ double A, B, C, D; //specific shape parameters, set by command line args
 double *nATP; //min D bound to an ATP
 double *nADP; //min D bound to an ADP
 double *nE; //loose min E in cytoplasm
+int *N_ATP; //min D bound to an ATP integers for stochastic
+int *N_ADP; //min D bound to an ADP integers for stochastic
+int *N_E; //loose min E in cytoplasm integers for stochastic
 double *ND; //min D bound to ATP on the wall
 double *NDE; //min D bound to ATP and min E on the wall
+int *ND_stoch; //min D bound to ATP on the wall
+int *NDE_stoch; //min D bound to ATP and min E on the wall
 double *NflD;
 double *NflE;
 double *f_mem;
@@ -558,6 +563,26 @@ void test_the_amount_of_area(double *first_mem_A, string mem_f_shape){
 
 
 
+struct stoch_params {
+  int xi;
+  int yi;
+  int zi;
+  int reaction;
+};
+
+
+stoch_params index_to_perameters(int index) {
+  stoch_params p;
+  //should I worry about these floors when the integer is right on?
+  p.reaction = floor( index/(Nx*Ny*Nz) );
+  p.xi = floor( (index - p.reaction*Nx*Ny*Nz) / (Ny*Nz) );
+  p.yi = floor( (index - p.reaction*Nx*Ny*Nz - p.xi*Ny*Nz) / Nz);
+  p.zi = index - p.reaction*Nx*Ny*Nz - p.xi*Ny*Nz - p.yi*Nz;
+  return p;
+}
+
+
+
 int main (int argc, char *argv[]) {
   //command line parameters
   mem_f_shape = argv[1];
@@ -760,9 +785,9 @@ int main (int argc, char *argv[]) {
   nATP = new double[Nx*Ny*Nz];
   nADP = new double[Nx*Ny*Nz];
   nE = new double[Nx*Ny*Nz];
-  N_ATP = new double[Nx*Ny*Nz];
-  N_ADP = new double[Nx*Ny*Nz];
-  N_E = new double[Nx*Ny*Nz];
+  N_ATP = new int[Nx*Ny*Nz];
+  N_ADP = new int[Nx*Ny*Nz];
+  N_E = new int[Nx*Ny*Nz];
   ND_stoch = new int[Nx*Ny*Nz];
   NDE_stoch = new int[Nx*Ny*Nz];
   ND = new double[Nx*Ny*Nz];
@@ -838,7 +863,7 @@ int main (int argc, char *argv[]) {
   sprintf(proteinList[6]->name,"NflE");
 
 
-  set_density(nATP, nADP, nE, ND, NDE, N_stoch, N_stoch, N_ATP, N_ADP, N_E, mem_A);
+  set_density(nATP, nADP, nE, ND, NDE, ND_stoch, NDE_stoch, N_ATP, N_ADP, N_E, mem_A);
 
   //Starting the Sections file set up
   double left_area_total = 0;
@@ -1051,83 +1076,73 @@ int main (int argc, char *argv[]) {
   printf("\nSections file has printed\n\n");
   fflush(stdout);
 
-  //begin simulation
   enum reaction {ADP_to_ATP, de_to_ADP_E, ATP_to_d, E_d_to_de};
   const int num_pos_reactions = 4;
-  double spill_over_time = 0;
-  weights weights(num_pos_reactions*Nx*Ny*Nz);
+  weights ws(num_pos_reactions*Nx*Ny*Nz);
   for(int xi=0;xi<Nx;xi++){
     for(int yi=0;yi<Ny;yi++){
       for(int zi=0;zi<Nz;zi++){
-        weights.update(rate_ADP_ATP*N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*(xi*Ny*Nz+yi*Nz+zi));
-        weights.update(rate_de*NDE[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*dV, de_to_ADP_E*(xi*Ny*Nz+yi*Nz+zi));
-        weights.update((rate_D + rate_dD*(ND[xi*Ny*Nz+yi*Nz+zi] + NDE[xi*Ny*Nz+yi*Nz+zi])/mem_A[xi*Ny*Nz+yi*Nz+zi])
-                       *N_ATP[xi*Ny*Nz+yi*Nz+zi], ATP_to_d*(xi*Ny*Nz+yi*Nz+zi));
-        weights.update(rate_E*ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*N_E[xi*Ny*Nz+yi*Nz+zi], E_d_to_de*(xi*Ny*Nz+yi*Nz+zi));
+        ws.update(rate_ADP_ATP*N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        ws.update(rate_de*NDE[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*dV, de_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        ws.update((rate_D + rate_dD*(ND[xi*Ny*Nz+yi*Nz+zi] + NDE[xi*Ny*Nz+yi*Nz+zi])/mem_A[xi*Ny*Nz+yi*Nz+zi])
+                  *N_ATP[xi*Ny*Nz+yi*Nz+zi], ATP_to_d*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        ws.update(rate_E*ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*N_E[xi*Ny*Nz+yi*Nz+zi], E_d_to_de*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
       }
     }
   }
   printf("We have allocated and initialized the probability weighting memory\n");
 
-  struct stoch_params {
-    int xi, int yi, int zi, int reactions;
-  }
+  ///////////////////////////////////////
+  //I need to look into whether I rally need to use ND_stoch and not just the same ND?
+  ////////////////////////////////////
+
+  //starting simuation
+  double spill_over_time = 0;
   for (int i=0;i<iter;i++){
     if (stochastic) {
       double elapsed_time = spill_over_time;
       while (elapsed_time < time_step) {
-        double p = (double)rand()/(RAND_MAX);//from 0 to 1
-        int index = weights.lookup(p);
-
-//     //should I worry about these floors when the integer is right on?
-//     if (n == 0) {
-//       nADP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-//       nATP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
-//     }
-//     if (n == 1) {
-//       Nde[xi*Ny*Nz+yi*Nz+zi] -= 1;
-//       nADP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
-//       nE[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
-//     }
-//     if (n == 2) {
-//       nATP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-//       Nd[xi*Ny*Nz+yi*Nz+zi] += 1;
-//     }
-//     if (n == 3) {
-//       nE[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-//       Nd[xi*Ny*Nz+yi*Nz+zi] -= 1;
-//       Nde[xi*Ny*Nz+yi*Nz+zi] += 1;
-//     }
-//     double delta_t = log( (double)rand()/(RAND_MAX) ) / C_fun;
-//     elapsed_time += delta_t;
-//   }
-
-
-        //////////////////
-        //Here I'll figure the parameters from the index
-        //
-        //Here I'll update the appropriate N_ arrays using the returned values from lookup
-        ///////////////////
-        stoch_params index_to_parameters (int index){
-          stoch_params perams;
-          perams.reactions = index -xi*Ny*Nz - yi*Nz - zi;
-          perams.xi = floor( index/(4*Ny*Nz) );
-          perams.yi = floor( (index - xi*Ny*Nz)/(4*Nz) );
-          perams.zi = floor( (index - xi*Ny*Nz - yi*Nz)/4 );
-          return perams;
+        int index = ws.lookup( (double)rand()/(RAND_MAX) );//random number is from 0 to 1
+        stoch_params p = index_to_perameters(index);
+        if (p.reaction == ADP_to_ATP) {
+          N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+          N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+          ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+          ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+                    *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_d*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
         }
-
-        int parameters_to_index(stoch_params parameters) {
-          //figure out index using params
-          
-          return index;
+        if (p.reaction == de_to_ADP_E) {
+          Nde_stoch[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+          N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+          N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+          ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+          ws.update(rate_de*NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dV, de_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+          ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+                    *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_d*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+          ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_d_to_de*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
         }
-        ia  = parameters_to_index(parameters_one);
-        ib = parameters_to_index(parameters_two);
-        weights.update(ia);
-        weights.update(ib);
-        //Here the weights class code will update itself internally according to your algorithms
-        elapsed_time += log( (double)rand()/(RAND_MAX) ) / weights.get_total();
+        if (p.reaction == ATP_to_d) {
+          N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+          ND_stoch[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+          ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+                    *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_d*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+          ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_d_to_de*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        if (p.reaction == E_d_to_de) {
+          N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+          ND_stoch[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+          NDE_stoch[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+          ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_d_to_de*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+          ws.update(rate_de*NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dV, de_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+          ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+                    *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_d*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        // int parameters_to_index(stoch_params parameters) {
+        //   //figure out index using params
+        //   return index;
+        // }
+
+        elapsed_time += log( (double)rand()/(RAND_MAX) ) / ws.get_total();
       }
       spill_over_time = elapsed_time - time_step;
     }
@@ -1797,7 +1812,6 @@ int main (int argc, char *argv[]) {
 
   return 0;
 }
-
 
 void set_membrane(double mem_A[]) {
   //int count = 0;
