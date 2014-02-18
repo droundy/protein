@@ -1052,14 +1052,23 @@ int main (int argc, char *argv[]) {
   fflush(stdout);
 
   //begin simulation
-  double spill_over_time = 0;
-  weights weights(23*Nx*Ny*Nz);
-  ///////////////////////
-  /*Here I'll write a for loop that initializes all the memory in the
-    object according to the physics stuff.  It will use for loops and the
-    weight.update method over and over. */
-  ////////////////////////
   enum reaction {ADP_to_ATP, de_to_ADP_E, ATP_to_d, E_d_to_de};
+  const int num_pos_reactions = 4;
+  double spill_over_time = 0;
+  weights weights(num_pos_reactions*Nx*Ny*Nz);
+  for(int xi=0;xi<Nx;xi++){
+    for(int yi=0;yi<Ny;yi++){
+      for(int zi=0;zi<Nz;zi++){
+        weights.update(rate_ADP_ATP*N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*(xi*Ny*Nz+yi*Nz+zi));
+        weights.update(rate_de*NDE[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*dV, de_to_ADP_E*(xi*Ny*Nz+yi*Nz+zi));
+        weights.update((rate_D + rate_dD*(ND[xi*Ny*Nz+yi*Nz+zi] + NDE[xi*Ny*Nz+yi*Nz+zi])/mem_A[xi*Ny*Nz+yi*Nz+zi])
+                       *N_ATP[xi*Ny*Nz+yi*Nz+zi], ATP_to_d*(xi*Ny*Nz+yi*Nz+zi));
+        weights.update(rate_E*ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*N_E[xi*Ny*Nz+yi*Nz+zi], E_d_to_de*(xi*Ny*Nz+yi*Nz+zi));
+      }
+    }
+  }
+  printf("We have allocated and initialized the probability weighting memory\n");
+
   struct stoch_params {
     int xi, int yi, int zi, int reactions;
   }
@@ -1069,13 +1078,48 @@ int main (int argc, char *argv[]) {
       while (elapsed_time < time_step) {
         double p = (double)rand()/(RAND_MAX);//from 0 to 1
         int index = weights.lookup(p);
+
+//     //should I worry about these floors when the integer is right on?
+//     if (n == 0) {
+//       nADP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
+//       nATP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
+//     }
+//     if (n == 1) {
+//       Nde[xi*Ny*Nz+yi*Nz+zi] -= 1;
+//       nADP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
+//       nE[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
+//     }
+//     if (n == 2) {
+//       nATP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
+//       Nd[xi*Ny*Nz+yi*Nz+zi] += 1;
+//     }
+//     if (n == 3) {
+//       nE[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
+//       Nd[xi*Ny*Nz+yi*Nz+zi] -= 1;
+//       Nde[xi*Ny*Nz+yi*Nz+zi] += 1;
+//     }
+//     double delta_t = log( (double)rand()/(RAND_MAX) ) / C_fun;
+//     elapsed_time += delta_t;
+//   }
+
+
         //////////////////
         //Here I'll figure the parameters from the index
         //
         //Here I'll update the appropriate N_ arrays using the returned values from lookup
         ///////////////////
+        stoch_params index_to_parameters (int index){
+          stoch_params perams;
+          perams.reactions = index -xi*Ny*Nz - yi*Nz - zi;
+          perams.xi = floor( index/(4*Ny*Nz) );
+          perams.yi = floor( (index - xi*Ny*Nz)/(4*Nz) );
+          perams.zi = floor( (index - xi*Ny*Nz - yi*Nz)/4 );
+          return perams;
+        }
+
         int parameters_to_index(stoch_params parameters) {
           //figure out index using params
+          
           return index;
         }
         ia  = parameters_to_index(parameters_one);
