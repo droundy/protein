@@ -1,4 +1,5 @@
-
+#ifndef __WEIGHTS_H_INCLUDED__
+#define __WEIGHTS_H_INCLUDED__
 
 class weights {
  public:
@@ -14,7 +15,7 @@ class weights {
   void update(double w, int i) {
     /*this will update tot_weights and also the memory within the
       class according to the reaction and placement input.*/
-    double tot_weights += w - ws[i];
+    tot_weights += w - ws[i];
     ws[i] = w;
   }
   int lookup(double p) const { // p is from 0 to 1
@@ -37,3 +38,5 @@ class weights {
   double tot_weights;
   double *ws; // or something smarter
 };
+
+#endif

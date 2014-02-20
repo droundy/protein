@@ -66,11 +66,16 @@ int *N_ADP; //min D bound to an ADP integers for stochastic
 int *N_E; //loose min E in cytoplasm integers for stochastic
 double *ND; //min D bound to ATP on the wall
 double *NDE; //min D bound to ATP and min E on the wall
-int *ND_stoch; //min D bound to ATP on the wall
-int *NDE_stoch; //min D bound to ATP and min E on the wall
+int *ND_st; //min D bound to ATP on the wall
+int *NDE_st; //min D bound to ATP and min E on the wall
 double *NflD;
 double *NflE;
 double *f_mem;
+
+enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE, X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos,
+               Z_ADP_neg, X_ATP_pos, X_ATP_neg, Y_ATP_pos, Y_ATP_neg, Z_ATP_pos, Z_ATP_neg, X_E_pos, X_E_neg,
+               Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
+const int num_pos_reactions = Z_E_neg+1;
 
 const int starting_num_guassians=20;
 double guass[3*starting_num_guassians]; //stores y,z, and sigma for each guassian when creating random cell wall
@@ -788,8 +793,8 @@ int main (int argc, char *argv[]) {
   N_ATP = new int[Nx*Ny*Nz];
   N_ADP = new int[Nx*Ny*Nz];
   N_E = new int[Nx*Ny*Nz];
-  ND_stoch = new int[Nx*Ny*Nz];
-  NDE_stoch = new int[Nx*Ny*Nz];
+  ND_st = new int[Nx*Ny*Nz];
+  NDE_st = new int[Nx*Ny*Nz];
   ND = new double[Nx*Ny*Nz];
   NDE = new double[Nx*Ny*Nz];
   NflD = new double[Nx*Ny*Nz];
@@ -863,7 +868,7 @@ int main (int argc, char *argv[]) {
   sprintf(proteinList[6]->name,"NflE");
 
 
-  set_density(nATP, nADP, nE, ND, NDE, ND_stoch, NDE_stoch, N_ATP, N_ADP, N_E, mem_A);
+  set_density(nATP, nADP, nE, ND, NDE, ND_st, NDE_st, N_ATP, N_ADP, N_E, mem_A);
 
   //Starting the Sections file set up
   double left_area_total = 0;
@@ -1076,24 +1081,11 @@ int main (int argc, char *argv[]) {
   printf("\nSections file has printed\n\n");
   fflush(stdout);
 
-  enum reaction {ADP_to_ATP, de_to_ADP_E, ATP_to_d, E_d_to_de};
-  const int num_pos_reactions = 4;
   weights ws(num_pos_reactions*Nx*Ny*Nz);
-  for(int xi=0;xi<Nx;xi++){
-    for(int yi=0;yi<Ny;yi++){
-      for(int zi=0;zi<Nz;zi++){
-        ws.update(rate_ADP_ATP*N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-        ws.update(rate_de*NDE[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*dV, de_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-        ws.update((rate_D + rate_dD*(ND[xi*Ny*Nz+yi*Nz+zi] + NDE[xi*Ny*Nz+yi*Nz+zi])/mem_A[xi*Ny*Nz+yi*Nz+zi])
-                  *N_ATP[xi*Ny*Nz+yi*Nz+zi], ATP_to_d*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-        ws.update(rate_E*ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*N_E[xi*Ny*Nz+yi*Nz+zi], E_d_to_de*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-      }
-    }
-  }
-  printf("We have allocated and initialized the probability weighting memory\n");
+  initialize_densities_and_weighting(ws, N_ATP, N_ADP, N_E, ND_st, NDE_st, mem_A);
 
   ///////////////////////////////////////
-  //I need to look into whether I rally need to use ND_stoch and not just the same ND?
+  //I need to look into whether I rally need to use ND_st and not just the same ND?
   ////////////////////////////////////
 
   //starting simuation
@@ -1104,45 +1096,15 @@ int main (int argc, char *argv[]) {
       while (elapsed_time < time_step) {
         int index = ws.lookup( (double)rand()/(RAND_MAX) );//random number is from 0 to 1
         stoch_params p = index_to_perameters(index);
-        if (p.reaction == ADP_to_ATP) {
-          N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-          N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-          ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                    *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_d*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        if (p.reaction == de_to_ADP_E) {
-          Nde_stoch[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-          N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-          N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-          ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          ws.update(rate_de*NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dV, de_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                    *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_d*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_d_to_de*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        if (p.reaction == ATP_to_d) {
-          N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-          ND_stoch[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-          ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                    *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_d*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_d_to_de*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        if (p.reaction == E_d_to_de) {
-          N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-          ND_stoch[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-          NDE_stoch[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-          ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_d_to_de*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          ws.update(rate_de*NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dV, de_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                    *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_d*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        // int parameters_to_index(stoch_params parameters) {
-        //   //figure out index using params
-        //   return index;
-        // }
-
+        update_densities_and_weighting(p, ws, N_ATP, N_ADP, N_E, ND_st, NDE_st, mem_A);
         elapsed_time += log( (double)rand()/(RAND_MAX) ) / ws.get_total();
+      }
+      for (int i=0;i<Nx*Ny*Nz;i++) {
+        nATP[i] = double(N_ATP[i])/dx*dx*dx;
+        nADP[i] = double(N_ADP[i])/dx*dx*dx;
+        nE[i] = double(N_E[i])/dx*dx*dx;
+        ND[i] = double(ND_st[i]);
+        NDE[i] = double(NDE_st[i]);
       }
       spill_over_time = elapsed_time - time_step;
     }
@@ -1813,6 +1775,150 @@ int main (int argc, char *argv[]) {
   return 0;
 }
 
+
+void initialize_densities_and_weighting(weights ws, int *N_ATP, int *N_ADP, int *N_E, int *ND_st, int *NDE_st, double *mem_A){
+  double dV = dx*dx*dx;
+  for(int xi=0;xi<Nx;xi++){
+    for(int yi=0;yi<Ny;yi++){
+      for(int zi=0;zi<Nz;zi++){
+        ws.update(rate_ADP_ATP*N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        ws.update(rate_de*NDE[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*dV, DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        ws.update((rate_D + rate_dD*(ND[xi*Ny*Nz+yi*Nz+zi] + NDE[xi*Ny*Nz+yi*Nz+zi])/mem_A[xi*Ny*Nz+yi*Nz+zi])
+                  *N_ATP[xi*Ny*Nz+yi*Nz+zi], ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        ws.update(rate_E*ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*N_E[xi*Ny*Nz+yi*Nz+zi], E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+
+
+      }
+    }
+  }
+  printf("We have allocated and initialized the probability weighting memory\n");
+}
+
+void update_densities_and_weighting(stoch_params p, weights ws, int *N_ATP, int *N_ADP, int *N_E, int *ND_st, int *NDE_st, double *mem_A){
+// reminder of the order of the reaction enums:
+// enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
+//                X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
+//                X_ATP_pos, X_ATP_neg, Y_ATP_pos, Y_ATP_neg, Z_ATP_pos, Z_ATP_neg,
+//                X_E_pos, X_E_neg, Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
+  double dV = dx*dx*dx;
+  if (p.reaction <= E_D_to_DE) {
+    if (p.reaction == ADP_to_ATP) {
+      N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+      N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+    }
+    if (p.reaction == DE_to_ADP_E) {
+      NDE_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+      N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+      N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+    }
+    if (p.reaction == ATP_to_D) {
+      N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+      ND_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+    }
+    if (p.reaction == E_D_to_DE) {
+      N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+      ND_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+      NDE_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+    }
+    if (p.reaction == ADP_to_ATP || p.reaction == DE_to_ADP_E) { //N_ADP has changed
+      ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    }
+    if (p.reaction == ADP_to_ATP || p.reaction == ATP_to_D) { //N_ATP has changed
+      ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    }
+    if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //N_E has changed
+      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    }
+    if (p.reaction == ATP_to_D || p.reaction == E_D_to_DE) { //ND_st has changed
+      ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    }
+    if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //NDE_st has changed
+      ws.update(rate_de*NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dV, DE_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    }
+  }
+  else if (p.reaction >= X_ADP_pos && p.reaction <= Z_ADP_neg) {
+    N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+    ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    if (p.reaction == X_ADP_pos){
+      p.xi += 1;
+    }
+    else if (p.reaction == Y_ADP_pos){
+      p.yi += 1;
+    }
+    else if (p.reaction == Z_ADP_pos){
+      p.zi += 1;
+    }
+    else if (p.reaction == X_ADP_neg){
+      p.xi -= 1;
+    }
+    else if (p.reaction == Y_ADP_neg){
+      p.yi -= 1;
+    }
+    else if (p.reaction == Z_ADP_neg){
+      p.zi -= 1;
+    }
+    N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+    ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+  }
+  else if (p.reaction >= X_ATP_pos && p.reaction <= Z_ATP_neg) {
+    N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+    ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+              *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    if (p.reaction == X_ATP_pos){
+      p.xi += 1;
+    }
+    else if (p.reaction == Y_ATP_pos){
+      p.yi += 1;
+    }
+    else if (p.reaction == Z_ATP_pos){
+      p.zi += 1;
+    }
+    else if (p.reaction == X_ATP_neg){
+      p.xi -= 1;
+    }
+    else if (p.reaction == Y_ATP_neg){
+      p.yi -= 1;
+    }
+    else if (p.reaction == Z_ATP_neg){
+      p.zi -= 1;
+    }
+    N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+    ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+              *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+  }
+  else if (p.reaction >= X_E_pos && p.reaction <= Z_E_neg) {
+    N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+    ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    if (p.reaction == X_E_pos){
+      p.xi += 1;
+    }
+    else if (p.reaction == Y_E_pos){
+      p.yi += 1;
+    }
+    else if (p.reaction == Z_E_pos){
+      p.zi += 1;
+    }
+    else if (p.reaction == X_E_neg){
+      p.xi -= 1;
+    }
+    else if (p.reaction == Y_E_neg){
+      p.yi -= 1;
+    }
+    else if (p.reaction == Z_E_neg){
+      p.zi -= 1;
+    }
+    N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+    ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+  }
+}
+
+
+
 void set_membrane(double mem_A[]) {
   //int count = 0;
   for(int xi=0;xi<Nx;xi++){
@@ -1836,38 +1942,6 @@ void set_membrane(double mem_A[]) {
   }
 }
 
-void set_curvature(double mem_A[], double curvature[]){
-  printf("doing set curvature!!!\n");
-  //fflush(stdout);
-  double X = Nx*dx;
-  double x1 = (X-A)/2.0;
-  double x2 = (X+A)/2.0;
-  for(int xi=0;xi<Nx;xi++){
-    for(int yi=0;yi<Ny;yi++){
-      for(int zi=0;zi<Nz;zi++){
-        if (mem_A[xi*Ny*Nz+yi*Nz+zi]==0 || (xi*dx+0.05)>x2 || (xi*dx-0.05)<x1 ){
-          curvature[xi*Ny*Nz+yi*Nz+zi]=0;
-        } else {
-          double fX = mem_f((xi+0.5)*dx, yi*dx, zi*dx);
-          double fx = mem_f((xi-0.5)*dx, yi*dx, zi*dx);
-          double fY = mem_f(xi*dx, (yi+0.5)*dx, zi*dx);
-          double fy = mem_f(xi*dx, (yi-0.5)*dx, zi*dx);
-          double fZ = mem_f(xi*dx, yi*dx, (zi+0.5)*dx);
-          double fz = mem_f(xi*dx, yi*dx, (zi-0.5)*dx);
-          double f = mem_f(xi*dx, yi*dx, zi*dx);
-
-          double df_dx = (fX-fx)/dx;
-          double df_dy = (fY-fy)/dx;
-          double df_dz = (fZ-fz)/dx;
-          double constant = sqrt((df_dx)*(df_dx) + (df_dy)*(df_dy) + (df_dz)*(df_dz));
-
-          curvature[xi*Ny*Nz+yi*Nz+zi] = 4*(fX + fx + fY + fy + fZ + fz - 6*f)/dx/dx/constant;
-        }
-      }
-    }
-  }
-  //fflush(stdout);
-}
 
 double find_intersection(const double fXYZ, const double fXYz, const double fXyZ, const double fXyz,
                          const double fxYZ, const double fxYz, const double fxyZ, const double fxyz,
@@ -2171,7 +2245,7 @@ int get_J(double difD, double *nATP, double *nADP, double *nE,
 }
 
 int get_next_density(double *mem_A, bool *insideArr, double *nATP, double *nADP,
-                     double *nE, double *Nd, double *Nde, double *NflD, double *NflE,
+                     double *nE, double *ND, double *NDE, double *NflD, double *NflE,
                      double *JxATP, double *JyATP, double *JzATP,
                      double *JxADP, double *JyADP, double *JzADP,
                      double *JxE, double *JyE, double *JzE){
@@ -2243,7 +2317,7 @@ int get_next_density(double *mem_A, bool *insideArr, double *nATP, double *nADP,
   return 0;
 }
 
-int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE, int *ND_stoch, int *NDE_stoch, int *N_ATP, int *N_ADP, int *N_E, double *mem_A){
+int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE, int *ND_st, int *NDE_st, int *N_ATP, int *N_ADP, int *N_E, double *mem_A){
   double dV = dx*dx*dx;
   printf("In set_density function, Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
   int right_most_point_z=0; //left and right most points for z
@@ -2405,14 +2479,14 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
   }
   if (stochastic) {
     for (int i=0; i<Nx*Ny*Nz;i++) {
-      N_ATP[i] = int(nATP[i]*dV);
-      N_ADP[i] = int(nADP[i]*dV);
-      N_E[i] = int(nATP[i]*dV);
-      ND_stoch[i] = round(ND[i]);
-      NDE_stoch = round(NDE[i]);
-      return 0;
+      N_ATP[i] = round(nATP[i]*dV);
+      N_ADP[i] = round(nADP[i]*dV);
+      N_E[i] = round(nATP[i]*dV);
+      ND_st[i] = round(ND[i]);
+      NDE_st[i] = round(NDE[i]);
     }
   }
+  return 0;
 }
 
 
@@ -2421,7 +2495,7 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
 
 
 // int get_next_stochastic_state(double *mem_A, bool *insideArr, double *nATP, double *nADP,
-//                               double *nE, double *Nd, double *Nde, double *NflD, double *NflE,
+//                               double *nE, double *ND, double *NDE, double *NflD, double *NflE,
 //                               double *JxATP, double *JyATP, double *JzATP,
 //                               double *JxADP, double *JyADP, double *JzADP,
 //                               double *JxE, double *JyE, double *JzE) {
@@ -2503,22 +2577,56 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
 //       nATP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
 //     }
 //     if (n == 1) {
-//       Nde[xi*Ny*Nz+yi*Nz+zi] -= 1;
+//       NDE[xi*Ny*Nz+yi*Nz+zi] -= 1;
 //       nADP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
 //       nE[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
 //     }
 //     if (n == 2) {
 //       nATP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-//       Nd[xi*Ny*Nz+yi*Nz+zi] += 1;
+//       ND[xi*Ny*Nz+yi*Nz+zi] += 1;
 //     }
 //     if (n == 3) {
 //       nE[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-//       Nd[xi*Ny*Nz+yi*Nz+zi] -= 1;
-//       Nde[xi*Ny*Nz+yi*Nz+zi] += 1;
+//       ND[xi*Ny*Nz+yi*Nz+zi] -= 1;
+//       NDE[xi*Ny*Nz+yi*Nz+zi] += 1;
 //     }
 //     double delta_t = log( (double)rand()/(RAND_MAX) ) / C_fun;
 //     elapsed_time += delta_t;
 //   }
 //   delete[]  W_arr;
 //   return 0;
+// }
+
+
+// void set_curvature(double mem_A[], double curvature[]){
+//   printf("doing set curvature!!!\n");
+//   //fflush(stdout);
+//   double X = Nx*dx;
+//   double x1 = (X-A)/2.0;
+//   double x2 = (X+A)/2.0;
+//   for(int xi=0;xi<Nx;xi++){
+//     for(int yi=0;yi<Ny;yi++){
+//       for(int zi=0;zi<Nz;zi++){
+//         if (mem_A[xi*Ny*Nz+yi*Nz+zi]==0 || (xi*dx+0.05)>x2 || (xi*dx-0.05)<x1 ){
+//           curvature[xi*Ny*Nz+yi*Nz+zi]=0;
+//         } else {
+//           double fX = mem_f((xi+0.5)*dx, yi*dx, zi*dx);
+//           double fx = mem_f((xi-0.5)*dx, yi*dx, zi*dx);
+//           double fY = mem_f(xi*dx, (yi+0.5)*dx, zi*dx);
+//           double fy = mem_f(xi*dx, (yi-0.5)*dx, zi*dx);
+//           double fZ = mem_f(xi*dx, yi*dx, (zi+0.5)*dx);
+//           double fz = mem_f(xi*dx, yi*dx, (zi-0.5)*dx);
+//           double f = mem_f(xi*dx, yi*dx, zi*dx);
+
+//           double df_dx = (fX-fx)/dx;
+//           double df_dy = (fY-fy)/dx;
+//           double df_dz = (fZ-fz)/dx;
+//           double constant = sqrt((df_dx)*(df_dx) + (df_dy)*(df_dy) + (df_dz)*(df_dz));
+
+//           curvature[xi*Ny*Nz+yi*Nz+zi] = 4*(fX + fx + fY + fy + fZ + fz - 6*f)/dx/dx/constant;
+//         }
+//       }
+//     }
+//   }
+//   //fflush(stdout);
 // }
