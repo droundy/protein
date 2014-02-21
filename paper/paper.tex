@@ -332,41 +332,56 @@ MinE ring pushing downward on the membrane-bound MinD:ATP.
 \section{Stability Analysis and Mannik's Experimental Shapes}
 In general we have found that the protein reaction sequence discussed
 above results in extremely robust oscillatory behavoir of polar
-selection and oscillation in a wide variety of cell shapes.  However
-we have found that this robustness is heavily dependent upon cell
-size.  Two pole, regular oscillatory behavoir is found in cells which
-are long enough in one dimension for the reaction chain to be unstable
-but short enough in the perpendicular dimension to be stable.  The
-limits are seen when both dimensions are too short to be unstable, so
-that initial assymetry in protein concentration relaxes into a
-motionless steady state, or when both are too great, so that the
-proteins exhibit much more complex and varied behavoir.
+selection and oscillation in a wide variety of cell shapes.  We have
+also found that while all sizes of cell will in time settle into
+regular oscillations, there are size dependent distinctions in the
+number and placement of the spatial positions of maximization.
+Regular oscillatory behavoir between two poles at opposite ends of the
+longer cellular direction is found in cells which are long enough in
+one dimension for the reaction chain to be unstable but short enough
+in the perpendicular dimension to be stable.  The limits are seen when
+both dimensions are too short to be unstable, so that initial
+assymetry in protein concentration relaxes into a motionless steady
+state (see Figure~\ref{box-mannik}, or when both are too great, so
+that the proteins exhibit more than two poles and those at extreme
+postitions in both dimensions.
 
 In order to explain this theoretically, we have performed stability
 analysis of the five differential equations in an infinite slab that
-shows a characteristic half wavelength in perturbative spatial
+show a characteristic half wavelength in perturbative spatial
 oscillations at which the system becomes unstable.  This length is
 dependent upon slab thickness as shown in
 Figure~\ref{fig:stability-analysis}.  When increasing the lengths and
-widths of our simulated flattened cells, the steady, two pole
-oscillations seem to break down when the shortest distance across the
-cell is approximately equal to the characteristic half wavelength at
-the particular thickness at which we simulate (our simulations of
-cells with thickness $0.25\mu m$ corresponds to half wavelengths of
-$2.13\mu m$).  Huang~\cite{huang2003dynamic} performs a similar
-analysis for a cylindrical shape \fixme{is it cylindrical or 1d?} and
-finds characteristic half wavelengths of $2\mu m$.
+widths of our simulated flattened cells, the cells stop exhibiting two
+pole oscillalitory behavior and instead exhibit multiple
+positions of maximization when the shortest distance across the cell
+is approximately equal to the characteristic half wavelength at the
+particular thickness at which we simulate (our simulations of cells
+with thickness $0.25\mu m$ corresponds to half wavelengths of $2.13\mu
+m$).  Huang~\cite{huang2003dynamic} performs a similar analysis for a
+cylindrical shape \fixme{is it cylindrical or 1d?} and finds
+characteristic half wavelengths of $2\mu m$.
 
+\begin{figure}
+  \includegraphics[width=4.2cm]{../data/shape-randst/plots/box-plot_D--randst-25-800-800-9500-1500}
+  \includegraphics[width=4.2cm]{../data/shape-randst/plots/box-plot_D--randst-25-1000-1700-9400-1500}
+  \caption{Box plots of Mannik shapes for sizes at the lower stability
+    threshhold.  The vertical axis shows stacked and changing over
+    time the total number of proteins that are of four different
+    compound stages and in the different sections of the cell.  Both
+    shapes have longer axis of roughly 2.2$\mu m$.}
+  \label{box-mannik}
+\end{figure}
+
+Decreasing the cell size in succesive steps, we can see the critical
+size at which the cell oscillations are quickly damped out.
+Figure~\ref{box-mannik} shows box plots of the largest cells simulated
+whose oscillations relax into the steady state solution.  Both have a
+long axis of roughly 2.2$\mu m$, in agreement with theory.
 
 \begin{figure}
   \includegraphics[width=2.8cm]{../mannik-2.png}
   \includegraphics[width=2.8cm]{../mannik-1.png}
-  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-1300-2000-9400-1500.pdf}
-  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-1100-1100-9500-1500.pdf}
-  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-1800-2500-9400-1500.pdf}
-  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-1800-1800-9500-1500.pdf}
-  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-2300-3300-9400-1500.pdf}
-  \includegraphics[width=3cm]{../data/shape-randst/plots/arrow-plot-NflD-randst-25-2800-2800-9500-1500.pdf}
   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/paper-arrow-plot}
   \caption{Arrow plots for our simulation and mannik's experimental}
   \label{arrow-compare-mannik}
@@ -383,62 +398,50 @@ that when we replicate the size as well as shape of their cells as
 near as possible, we do not see the disordered protein behavoir that
 they observe.  Instead we see a robust ability of the cell to find two
 prefered pole locations and to oscillate maxima back and forth very
-steadily between them.  However, when we keep the same shape but
-increase the size, we see that there is a critical size at which the
-protein dynamics lose their order and become very complex (showing
-hints of prefered wall maxima locations), similar to what Mannik sees
-experimentally.  We find that this critical size matches up well with
-our stability analysis, in that the critical sizes correspond to sizes
-for which the shorter of the two distances across the cell is roughly
-equal to the analysis' half wavelength found for this cell thickness.
-
-\begin{figure}
-  \includegraphics[width=4.2cm]{../data/shape-randst/plots/box-plot_D--randst-25-800-800-9500-1500}
-  \includegraphics[width=4.2cm]{../data/shape-randst/plots/box-plot_D--randst-25-1000-1700-9400-1500}
-  \caption{Box plots of Mannik shapes for sizes at the lower stability
-    threshhold.  The vertical axis shows stacked and changing over
-    time the total number of proteins that are of four different
-    compound stages and in the different sections of the cell.  Both
-    shapes have longer axis of roughly 2.2$\mu m$.}
-  \label{box-mannik}
-\end{figure}
-Decreasing the cell size in succesive steps, we can see as well the
-critical size at which the cell oscillations are quickly damped out.
-Figure~\ref{box-mannik} shows box plots of the largest cells simulated
-whose oscilltions relax into the steady state solution.  Both have a
-long axis of roughly 2.2$\mu m$, in agreement with theory.
-
+steadily between them.  When we increase the size of our cells, we
+indeed see multiple positions of maxima develop, but we never observe
+the random behavoir that they have observed experimentally.  This is
+perhaps due to the exact, continuous method we use when conducting
+simulations.  Stochastic methods would perhaps show more random
+behavoir at these sizes.  We consider this to be a limitation of the
+exact solution method.
 
 \section{Triangular Shapes}
-
-Still waiting for the triangle data to show what we expect.  We have
-small triangles that gradually go from no oscillations to
-oscillations, but the large triangle data does not yet show
-irregularities.  I have very large simulations running that should
-definitely show this at some point (Give it a few days).
 
 \begin{figure}
   \includegraphics[width=4.2cm]{../data/shape-triangle/plots/box-plot_D--triangle-25-233-233-233-1500}
   \includegraphics[width=4.2cm]{../data/shape-triangle/plots/box-plot_D--triangle-25-266-266-266-1500}
-  \caption{Box plots of triangle shapes for sizes at the lower stability
-    threshhold.  The vertical axis shows stacked and changing over
-    time the total number of proteins that are of four different
-    compound stages and in the different sections of the cell.}
+  \includegraphics[width=4.2cm]{../data/shape-triangle/plots/box-plot_D--triangle-25-800-800-800-1500}
+  \caption{Two box plots of triangle shapes.  The two smaller show
+    sizes at the lower stability threshhold, one just below, one just
+    above.  The larger triangle is the largest simulated. The vertical
+    axis shows stacked and changing over time the total number of
+    proteins that are of four different compound stages and in the
+    different sections of the cell.}
   \label{box-triangle}
 \end{figure}
 
+Along with our other shapes we have chosen to simulate both
+equilateral and iscoscolese triangular pancake shapes, since these
+offer in a way the simplest shapes that are geometrically more
+complicated than our pill shapes.
 
-%% \begin{figure}
-%%   %%\includegraphics[width=\columnwidth]{../data/shape-triangle/plots/box-plot_D--triangle-25-400-400-400-1500}
-%%   %%\includegraphics[width=\columnwidth]{../data/shape-triangle/plots/box-plot_D--triangle-25-500-300-500-1500}
-%%   %%\includegraphics[width=\columnwidth]{../data/shape-triangle/plots/box-plot_D--triangle-25-600-480-360-1500}
-%%   \caption{Total protein fluctuation in the right, middle, and left
-%%     parts of an equilateral (top), iscoscolese (middle), and 3-4-5
-%%     (bottom) triangle.  The vertical axis shows stacked the total
-%%     number of proteins that are of four different compound stages and
-%%     in the different sections of the cell.}
-%%   \label{box-triangle}
-%% \end{figure}
+Both triangle types show a similar oscillation pattern.  The
+iscosolese exhibit regular oscillations characterized by one distinct
+pole in the more accute angle of the three, and another 'pole' along
+the opposite wall, peaking in the two more obtuse angles at the same
+time.  The equilateral triangles settle very quickly into the same
+pattern, where the choice of which is one pole corner is dependent
+upon initial conditions.  As with the Mannik simulated shapes, there
+is a critical small size below which the oscillations dampen out and
+will not achieve a regular pattern.  Figure~\ref{box-triangle} shows
+three plots of equilateral triangles.  The two smaller show the
+largest that showed damped out behavoir and the smallest that
+developed regular oscillations.  The larger shows the largest traingle
+that we simulated, showing that at even very large sizes the behavoir
+is consistent and stable.  Above the small size threshold, all
+simulated triangles show regular patterns for as long as simulated
+(roughly 800 seconds).
 
 %% The double pole oscillation pattern, in which one pole is located in a
 %% single corner of the triangle and the other pole is spread out between
@@ -497,16 +500,23 @@ definitely show this at some point (Give it a few days).
 
 \section{Our 'V' Shaped Cells}
 \begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-600-600-9900-1500}
-  %%\includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-600-600-9600-1500}arrow-plot-NflD-randst-25-600-800-9800-1500.pdf
-
-  \caption{Total protein fluctuation in the A shaped shape.  The vertical axis shows stacked the total number
-    of proteins that are of four different compound stages and in the
-    different sections of the cell.}
-  \label{total-oscillation-randst-96-plot}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-500-500-9900-1500}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-525-525-9900-1500}
 \end{figure}
 
-
+\begin{figure}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-550-550-9900-1500}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-600-600-9900-1500}
+\end{figure}
+\begin{figure}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-1400-1400-9900-1500}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-1500-1500-9900-1500}
+\end{figure}
+\begin{figure}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-1600-1600-9900-1500}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-1800-1800-9900-1500}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-2000-2000-9900-1500}
+\end{figure}
 
 Our animations for this cell shape show a very interesting pattern.
 The maxima oscillates from the right corner to the top corner, then
@@ -597,92 +607,92 @@ opposite sides (the protein in the right corner at any time is too far
 away from the left to immediately affect the protein there).
 
 
-\subsubsection{Randst-97-}
-\begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-800-600-9700-1500}
-  %%\includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-600-600-9600-1500}
-  \caption{Total protein fluctuation in the sideways flying saucer
-    pancake cell shape.  The vertical axis shows stacked the total
-    number of proteins that are of four different compound stages and
-    in the different sections of the cell.}
-  \label{box-97}
-\end{figure}
+%% \subsubsection{Randst-97-}
+%% \begin{figure}
+%%   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-800-600-9700-1500}
+%%   %%\includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-600-600-9600-1500}
+%%   \caption{Total protein fluctuation in the sideways flying saucer
+%%     pancake cell shape.  The vertical axis shows stacked the total
+%%     number of proteins that are of four different compound stages and
+%%     in the different sections of the cell.}
+%%   \label{box-97}
+%% \end{figure}
 
-Early on in its simulation the sideways flying saucer pancake shape
-shows a clear breakdown of an unstable equilibrium oscillation.  We
-have set the intial conditions so that MinD density is highly
-concentrated to the left of a dividing line that runs parrallel to the
-left vertical side.  For the first number of oscillations the maxima
-trade off right to left, from a high peak in the rightward middle
-compartment to vertically opposed peaks in the poles of the long axis
-of the cell.  This is seen in the first part of Figure~\ref{box-97},
-where the lower and upper sections peak in unison, and the middle
-right section peaks $\pi$ radians removed from these.  After a few
-oscillations the back and forth oscillations tip toward the vertical
-direction and the system loses its initial oscillation pattern.  It
-falls quickly instead into a back and forth pattern between the two
-opposing endcaps.  The oscillation at this point is reminiscent of the
-pills shape oscillation, once again showing the robust nature of the
-back and forth, two pole pattern.
+%% Early on in its simulation the sideways flying saucer pancake shape
+%% shows a clear breakdown of an unstable equilibrium oscillation.  We
+%% have set the intial conditions so that MinD density is highly
+%% concentrated to the left of a dividing line that runs parrallel to the
+%% left vertical side.  For the first number of oscillations the maxima
+%% trade off right to left, from a high peak in the rightward middle
+%% compartment to vertically opposed peaks in the poles of the long axis
+%% of the cell.  This is seen in the first part of Figure~\ref{box-97},
+%% where the lower and upper sections peak in unison, and the middle
+%% right section peaks $\pi$ radians removed from these.  After a few
+%% oscillations the back and forth oscillations tip toward the vertical
+%% direction and the system loses its initial oscillation pattern.  It
+%% falls quickly instead into a back and forth pattern between the two
+%% opposing endcaps.  The oscillation at this point is reminiscent of the
+%% pills shape oscillation, once again showing the robust nature of the
+%% back and forth, two pole pattern.
 
-During each period, directly after one of the polar maxima has
-subsided, there is a small spike with the regular maxima pattern (a
-spike in membrane bound MinD:ATP immediately followed by a spike in
-membrane bound MinD:MinE:ATP) seen in the small middle right
-compartment section.  The animations show that the MinD, oscillating
-back and forth between the upper and lower poles, seems to catch and
-lag in the indentation for a bit before moving on.  Once again the
-positive radius of curvature acts as an attractive place for MinD to
-cluster on the walls, and it is not released to move on through the
-cytoplasm again until MinE has formed its ring and completely reacted
-it away.
-
-
-\subsubsection{Randst-96-Star}
-\begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-700-700-9600-1500}
-  %%\includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-600-600-9600-1500}
-  \caption{Total protein fluctuation in the star cell shape.  The vertical axis shows stacked the total
-    number of proteins that are of four different compound stages and
-    in the different sections of the cell.}
-  \label{box-96}
-\end{figure}
-
-This clover shape finds a regular oscillatory behavoir after about
-seven periods that consists of two maxima that peak regularly in the
-corners accross from each other at the same times (Figure
-\ref{box-96}) and then again opposing maxima that peak at the same
-time in the other two corners.\fixme{should try some different
-  starting conditions with this to see if there's another patter.}
-
-Looking at at few periods in detail.  We find that there is a small
-increase in cytoplasmic MinE always directly before the beggining
-of climb in the membrane bound MinE peak.  Also, there is at any one
-time a very large amount more of minE that is membrane bound then
-cytoplasmic in any ones section.  A difference of a factor of roughly
-20 when membrane MinE is at its peak, and roughly 12 when membrane
-MinE is at it's minimum.  There seem to be two modes of oscillation,
-each exhibiting a density peak maxima that moves back and forth
-diagonaly from one corner to the opposite, as if there were two
-overlapping, criss-crossed cells oscillating.  In the box plot this is
-seen as roughly coinciding membrane minD peaks in the lower left and
-right corners, followed one pi later in peaks in the upper right and
-upper left corners.  Interesting that this did not exhibit
-counterclockwise motion that Huangs 2008 paper might suggest.  Should
-run sims that start in the wacky way that just started running with
-triangles.
-\newline
+%% During each period, directly after one of the polar maxima has
+%% subsided, there is a small spike with the regular maxima pattern (a
+%% spike in membrane bound MinD:ATP immediately followed by a spike in
+%% membrane bound MinD:MinE:ATP) seen in the small middle right
+%% compartment section.  The animations show that the MinD, oscillating
+%% back and forth between the upper and lower poles, seems to catch and
+%% lag in the indentation for a bit before moving on.  Once again the
+%% positive radius of curvature acts as an attractive place for MinD to
+%% cluster on the walls, and it is not released to move on through the
+%% cytoplasm again until MinE has formed its ring and completely reacted
+%% it away.
 
 
-We haven't simulated long enough yet, so no real pattern has shown
-itself.  There's certainly oscillations, and it's almost as if there's
-competing modes - top to bottom, left to right, corner to corner, etc.
-Interesting.
+%% \subsubsection{Randst-96-Star}
+%% \begin{figure}
+%%   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-700-700-9600-1500}
+%%   %%\includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-600-600-9600-1500}
+%%   \caption{Total protein fluctuation in the star cell shape.  The vertical axis shows stacked the total
+%%     number of proteins that are of four different compound stages and
+%%     in the different sections of the cell.}
+%%   \label{box-96}
+%% \end{figure}
 
-\fixme{maybe?}The animations seem to relax into a pattern in which the oscillations
-go from the smallest corner, out to the other three, and then back to
-the smallest corner?  \fixme{There isn't enough data to see properly
-  though, need to run for longer.}
+%% This clover shape finds a regular oscillatory behavoir after about
+%% seven periods that consists of two maxima that peak regularly in the
+%% corners accross from each other at the same times (Figure
+%% \ref{box-96}) and then again opposing maxima that peak at the same
+%% time in the other two corners.\fixme{should try some different
+%%   starting conditions with this to see if there's another patter.}
+
+%% Looking at at few periods in detail.  We find that there is a small
+%% increase in cytoplasmic MinE always directly before the beggining
+%% of climb in the membrane bound MinE peak.  Also, there is at any one
+%% time a very large amount more of minE that is membrane bound then
+%% cytoplasmic in any ones section.  A difference of a factor of roughly
+%% 20 when membrane MinE is at its peak, and roughly 12 when membrane
+%% MinE is at it's minimum.  There seem to be two modes of oscillation,
+%% each exhibiting a density peak maxima that moves back and forth
+%% diagonaly from one corner to the opposite, as if there were two
+%% overlapping, criss-crossed cells oscillating.  In the box plot this is
+%% seen as roughly coinciding membrane minD peaks in the lower left and
+%% right corners, followed one pi later in peaks in the upper right and
+%% upper left corners.  Interesting that this did not exhibit
+%% counterclockwise motion that Huangs 2008 paper might suggest.  Should
+%% run sims that start in the wacky way that just started running with
+%% triangles.
+%% \newline
+
+
+%% We haven't simulated long enough yet, so no real pattern has shown
+%% itself.  There's certainly oscillations, and it's almost as if there's
+%% competing modes - top to bottom, left to right, corner to corner, etc.
+%% Interesting.
+
+%% \fixme{maybe?}The animations seem to relax into a pattern in which the oscillations
+%% go from the smallest corner, out to the other three, and then back to
+%% the smallest corner?  \fixme{There isn't enough data to see properly
+%%   though, need to run for longer.}
 
 
 \section{Interpretation of Data}

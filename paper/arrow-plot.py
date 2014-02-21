@@ -15,12 +15,10 @@ dx=0.05
 #data.  For the 95 shape, the 11.00 11.00 data is real Mannik size and
 #for the 94.00 the 13.00 20.00 data is real Mannik size
 
-# arg_set = ["randst-0.25-11.00-11.00-95.00-15.00","randst-0.25-20.00-20.00-95.00-15.00",
-#            "randst-0.25-21.00-21.00-95.00-15.00","randst-0.25-28.00-28.00-95.00-15.00"]
-
-arg_set = ["randst-0.25-13.00-20.00-94.00-15.00","randst-0.25-15.00-22.00-94.00-15.00",
-           "randst-0.25-16.00-23.00-94.00-15.00","randst-0.25-18.00-25.00-94.00-15.00",
-           "randst-0.25-30.00-40.00-94.00-15.00"]
+arg_set = ["randst-0.25-11.00-11.00-95.00-15.00","randst-0.25-20.00-20.00-95.00-15.00",
+           "randst-0.25-21.00-21.00-95.00-15.00","randst-0.25-28.00-28.00-95.00-15.00",
+           "randst-0.25-13.00-20.00-94.00-15.00","randst-0.25-18.00-25.00-94.00-15.00",
+           "randst-0.25-23.00-33.00-94.00-15.00","randst-0.25-30.00-40.00-94.00-15.00"]
 
 plt.figure()
 
@@ -56,9 +54,22 @@ for i in range(len(arg_set)):
     if len(tails)==0:
         print "The tails in this file has no tails!!"
         exit(1)
+    print tails
+    for k in range(len(tails[:,0])-1,0,-1):
+        if tails[k,3] <0:
+            tails = np.delete(tails,k,0)
+            print k
+        else:
+            print tails[k,3]
+        if tails[k,2] < tails[k-1,2]+3:
+            if tails[k,3] > tails[k-1,3]:
+                tails = np.delete(tails,k-1,0)
+            else:
+                tails = np.delete(tails,k,0)
+    print tails
     tails = tails*dx
-    tails = tails[1:,:] # cut out just the first arrow
-    ax = plt.subplot(2,3,i)
+    tails = tails[22:,:] # cut out just the first arrow
+    ax = plt.subplot(2,4,i)
     ax.set_aspect('equal', 'datalim')
     font=FontProperties()
     font.set_family('serif')
