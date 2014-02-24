@@ -182,6 +182,9 @@ def main():
     if (load.f_shape == 'triangle') or (load.f_param4 == '95.00') or (load.f_param4 == '94.00'):
         start = 0
         end = int(tot_time*.5/box_time_step)
+    if load.f_param2 == '14.00' and load.f_param4 == '99.00':
+        start = 0
+        end = int(tot_time/box_time_step)
 
     periods_file = open('periods.txt','a')
     periods_file.write('Box period= '+str(box_time_step*(end-start)) +' for simulation '+load.f_shape+
@@ -200,16 +203,6 @@ def main():
     print 'and file numbers are', firsttime*2, 'and', (firsttime+period)*2
     # now offset time so it starts at zero
     timeAxis = timeAxis - timeAxis[start]
-
-    if load.f_param4 == '97.00' or (load.f_shape == 'triangle' and load.f_param3 == '6.01'):
-        if load.f_param4 == '97.00':
-            start_time_as_frac_of_ten = 0
-            end_time_as_frac_of_ten = 2.3
-        if load.f_shape == 'triangle' and load.f_param3 == '6.01':
-            start_time_as_frac_of_ten = 5.00
-            end_time_as_frac_of_ten = 9.00
-        start = int(tot_time*start_time_as_frac_of_ten/10.0/box_time_step)
-        end = int(tot_time*end_time_as_frac_of_ten/10.0/box_time_step)
 
     #print set(plotCurveList_D[1]).union(set(plotCurveList_D[2]))
 
