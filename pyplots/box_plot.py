@@ -222,8 +222,10 @@ def main():
 
     #plot scales. colors limited for now.
     colorScale = ["b","g","r","c","m","y"]
-    alphaScale_D = [n/numProteinTypes for n in range(1,numProteinTypes_D+1)]
-    alphaScale_E = [n/numProteinTypes for n in range(1,numProteinTypes_E+1)]
+    #alphaScale_D = [n/numProteinTypes for n in range(0,numProteinTypes_D+1)]
+    alphaScale_D = [0.1,0.25,0.50,1.00]
+    print 'numProteinTypes_D = ',numProteinTypes_D
+    alphaScale_E = [n/numProteinTypes for n in range(0,numProteinTypes_E+1)]
 
     #generate the plot
     #f, (bax,sectionax) = plt.subplots(1, 2)
@@ -329,9 +331,12 @@ def main():
                              plotCurveList_D[i, start:end],
                              alpha=alphaScale_D[k],facecolor=colorScale[j])
         elif i!=0:
+            if i == 1:
+                k+=1
             bax.plot(timeAxis[start:end],
                      plotCurveList_D[i,start:end],
                      color=colorScale[j],alpha=alphaScale_D[k])
+            print k
             y_text_label = i*.8/len(plotCurveList_D[:,0]) + .1*np.floor(i/numProteinTypes_D)
             y_label = (plotCurveList_D[i, start+int(1/box_time_step)] + plotCurveList_D[i-1, start+int(1/box_time_step)])/2.0
             if load.f_param4 == '97.00' or load.f_param4 == '96.00':
