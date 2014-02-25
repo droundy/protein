@@ -422,9 +422,9 @@ exact solution method.
 \end{figure}
 
 Along with our other shapes we have chosen to simulate both
-equilateral and iscoscolese triangular pancake shapes, since these
+equilateral and iscoscolese triangular flattened shapes, since these
 offer in a way the simplest shapes that are geometrically more
-complicated than our pill shapes.
+complicated than our pills.
 
 Both triangle types show a similar oscillation pattern.  The
 iscosolese exhibit regular oscillations characterized by one distinct
@@ -435,7 +435,7 @@ pattern, where the choice of which is one pole corner is dependent
 upon initial conditions.  As with the Mannik simulated shapes, there
 is a critical small size below which the oscillations dampen out and
 will not achieve a regular pattern.  Figure~\ref{box-triangle} shows
-three plots of equilateral triangles.  The two smaller show the
+two plots of equilateral triangles.  The two smaller show the
 largest that showed damped out behavoir and the smallest that
 developed regular oscillations.  The larger shows the largest traingle
 that we simulated, showing that at even very large sizes the behavoir
@@ -498,21 +498,40 @@ simulated triangles show regular patterns for as long as simulated
 %% distance of travel for the different proteins.
 
 
-\section{Our 'V' Shaped Cells}
+\section{Our '\textgreater' Shaped Cells}
 \begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-525-525-9900-1500}
   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-550-550-9900-1500}
+  \label{>-box}
 \end{figure}
 \begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-600-600-9900-1500}
   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-1400-1400-9900-1500}
+  \label{>-box2}
 \end{figure}
 
-Our animations for this cell shape show a very interesting pattern.
-The maxima oscillates from the right corner to the top corner, then
-\emph{back to the right corner} then to the top corner again, then to
-the left corner, then back to the top, then to the left, then to the
-top again, then back to the right side.
+We have simulated a flattened '>' shape that shows an interesting size
+dependent pattern (seen in Figures~\ref{>-box}~and~\ref{>-box2}).
+When the shape is small enough that the distance from the apex tip to
+the opposite curve is less than our stability limit, a simple, two
+pole oscillation pattern develops and is sustained (where the two
+poles are on opposite leftward corners of the cell).  When the cell is
+increased in size, so that this distance measures approximately equal
+to our stability value, the cell develops a double oscillation in
+time, where the maxima oscillates from the lower corner to the
+rightward apex, then \emph{back to the lower corner} then to the apex
+again, then to the upper corner, then back to the apex, then to the
+upper corner, then to the apex again, then back to the lower corner,
+and continues this pattern indefinately.  Figure~\ref{>-box} shows the
+smaller size, which oscillates simply, and an intermediate size, which
+shows a pattern for which one out of three spikes in the regular
+oscillation is less significant.  This second pattern seems to be a
+precursor to the double oscillation seen in Figure~\ref{>-box2}.  The
+second plot shown in Figure~\ref{>-box2} shows a slighlty larger cell,
+for which the distance measured is larger than our stability limit
+distance.  This shows a very random pattern.
+
+
 
 \fixme{running larger and smaller.  Guessing the larger will do pole
   and pole, so talk about in terms of you have huge, pole and pole,
@@ -538,7 +557,7 @@ then moves in.  After it eats at the corners and starts moving in the
 MinD eventually travels back to set up a maxima in the left corner.
 Watching the cytoplasmic MinE, something very interesting: It as well
 maximizes twice in the left corner, but during the MinD's first maxima
-in the left corner, the MinD has a maxima in the upper corner, and
+in the left corner, the MinE has a maxima in the upper corner, and
 during the MinD's second left maxima, the MinE travels to the right
 corner and has a maxima there.  At the same time (during the second
 MinD left corner maxima), there is a large amount of cytoplasmic
