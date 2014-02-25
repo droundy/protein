@@ -217,8 +217,8 @@ def main():
     # colorScale = ["b","g","r","c","m","y"]
 
     # The tuples elements here are the amount of R,G,B in the color, respectively, on a scale 0-1
-    col_amount = 0.6
-    colorScale = ["b",(0.0,col_amount,0.0),(col_amount,0.0,0.0),(0.0,0.0,col_amount),"m","y"]
+    col_amount = 1.0
+    colorScale = ["b",(0.0,0.0,col_amount),(col_amount,0.0,0.0),(0.0,col_amount,0.0),"m","y"]
     # alphaScale_D = [n/numProteinTypes for n in range(0,numProteinTypes_D+1)]
     alphaScale_D = [0.1,0.25,0.50,1.00]
     alphaScale_E = [n/numProteinTypes for n in range(0,numProteinTypes_E+1)]
