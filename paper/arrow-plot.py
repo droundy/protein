@@ -17,9 +17,9 @@ dx=0.05
 #data.  For the 95 shape, the 11.00 11.00 data is real Mannik size and
 #for the 94.00 the 13.00 20.00 data is real Mannik size
 
-arg_set = ["randst-0.25-11.00-11.00-95.00-15.00","randst-0.25-20.00-20.00-95.00-15.00",
+arg_set = ["randst-0.25-18.50-18.50-95.00-15.00","randst-0.25-20.00-20.00-95.00-15.00",
            "randst-0.25-21.00-21.00-95.00-15.00",#"randst-0.25-28.00-28.00-95.00-15.00",
-           "randst-0.25-13.00-20.00-94.00-15.00","randst-0.25-18.00-25.00-94.00-15.00",
+           "randst-0.25-18.50-28.00-94.00-15.00","randst-0.25-21.00-31.00-94.00-15.00",
            "randst-0.25-23.00-33.00-94.00-15.00"]#"randst-0.25-30.00-40.00-94.00-15.00"]
 
 plt.figure()
@@ -37,16 +37,17 @@ def plot_mannik():
     x1 = dx*np.arange(0, m1.shape[1])
     x1, y1 = np.meshgrid(x1, y1)
     xcenter = x1[m1[:,:,0] > 0].mean()
-    yoff = 1.7
-    plt.contourf(x1-xcenter, y1-yoff, m1[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
-    plt.contourf(x1-xcenter, y1-yoff, m1[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
+    y1off = 1.7#1.7 and there was only one yoff, not two
+    plt.contourf(x1-xcenter, y1-y1off, m1[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
+    plt.contourf(x1-xcenter, y1-y1off, m1[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
 
     y2 = -dx*np.arange(0, m2.shape[0])
     x2 = dx*np.arange(0, m2.shape[1])
     x2, y2 = np.meshgrid(x2, y2)
+    y2off = 1.7
     xcenter = x2[m2[:,:,0] > 0].mean()
-    plt.contourf(8+x2-xcenter, y2-yoff, m2[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
-    plt.contourf(8+x2-xcenter, y2-yoff, m2[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
+    plt.contourf(8+x2-xcenter, y2-y2off, m2[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
+    plt.contourf(8+x2-xcenter, y2-y2off, m2[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
 plot_mannik()
 
 for i in range(len(arg_set)):
@@ -80,7 +81,7 @@ for i in range(len(arg_set)):
     tails = np.loadtxt('./data/shape-randst/arrow-plot-NflD-%s.dat' % arg_set[i])
     if len(tails)==0:
         print "The tails in this file has no tails!!"
-        exit(1)
+        #exit(1)
     for k in range(len(tails[:,0])-1,0,-1):
         if tails[k,3] <0:
             tails = np.delete(tails,k,0)
@@ -90,7 +91,7 @@ for i in range(len(arg_set)):
             else:
                 tails = np.delete(tails,k,0)
     tails = tails*dx
-    tails = tails[15:,:] # cut out the first few arrows
+    #tails = tails[15:,:] # cut out the first few arrows
     ax = plt.subplot(1,1,1)
     cell_membrane[cell_membrane>0] = 1
     cell_x = np.linspace(0,dx*len(cell_membrane[0,:]),len(cell_membrane[0,:]))
@@ -99,7 +100,7 @@ for i in range(len(arg_set)):
     centerx = cell_x[cell_membrane == 1].mean()
     centery = cell_y[cell_membrane == 1].mean()
     originx = (1 - (i//3))*8 - centerx
-    originy = (i%3)*3.5 + (i%3)**2*0.6 - centery
+    originy = (i%3)*4.4 + (i%3)**2*0.4 - centery
     ax.set_aspect('equal', 'datalim')
     font=FontProperties()
     font.set_family('serif')
