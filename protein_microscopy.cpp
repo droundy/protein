@@ -76,6 +76,15 @@ enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE, X_ADP_pos, X_ADP_ne
                Z_ADP_neg, X_ATP_pos, X_ATP_neg, Y_ATP_pos, Y_ATP_neg, Z_ATP_pos, Z_ATP_neg, X_E_pos, X_E_neg,
                Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
 const int num_pos_reactions = Z_E_neg+1;
+const int d [6][3] =
+  {
+    {1,0,0},
+    {-1,0,0},
+    {0,1,0},
+    {0,-1,0},
+    {0,0,1},
+    {0,0,-1},
+  };
 
 const int starting_num_guassians=20;
 double guass[3*starting_num_guassians]; //stores y,z, and sigma for each guassian when creating random cell wall
@@ -1096,9 +1105,15 @@ int main (int argc, char *argv[]) {
       while (elapsed_time < time_step) {
         int index = ws.lookup( (double)rand()/(RAND_MAX) );//random number is from 0 to 1
         stoch_params p = index_to_perameters(index);
-        update_densities_and_weighting(p, ws, N_ATP, N_ADP, N_E, ND_st, NDE_st, mem_A);
+        if (p.reaction <= E_D_to_DE) {
+          update_densities_and_weighting_for_reaction(p, ws, N_ATP, N_ADP, N_E, ND_st, NDE_st, mem_A);
+        }
+        else {
+          update_densities_and_weighting_for_diffusion(p, ws, N_ATP, N_ADP, N_E, ND_st, NDE_st, mem_A);
+        }
         elapsed_time += log( (double)rand()/(RAND_MAX) ) / ws.get_total();
       }
+      spill_over_time = elapsed_time - time_step;
       for (int i=0;i<Nx*Ny*Nz;i++) {
         nATP[i] = double(N_ATP[i])/dx*dx*dx;
         nADP[i] = double(N_ADP[i])/dx*dx*dx;
@@ -1106,7 +1121,6 @@ int main (int argc, char *argv[]) {
         ND[i] = double(ND_st[i]);
         NDE[i] = double(NDE_st[i]);
       }
-      spill_over_time = elapsed_time - time_step;
     }
     else {
       get_J(difD, nATP, nADP, nE, JxATP, JyATP,
@@ -1796,130 +1810,131 @@ void initialize_densities_and_weighting(weights ws, int *N_ATP, int *N_ADP, int 
 
 
 
-void update_densities_and_weighting(stoch_params p, weights ws, int *N_ATP, int *N_ADP, int *N_E, int *ND_st, int *NDE_st, double *mem_A){
-// reminder of the order of the reaction enums:
+void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int *N_ATP, int *N_ADP, int *N_E, int *ND_st, int *NDE_st, double *mem_A){
+// reminder of the order of the reaction enums and what d is:
 // enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
 //                X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
 //                X_ATP_pos, X_ATP_neg, Y_ATP_pos, Y_ATP_neg, Z_ATP_pos, Z_ATP_neg,
 //                X_E_pos, X_E_neg, Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
-  int d [6][3] =
-    {
-      {1,0,0},
-      {-1,0,0},
-      {0,1,0},
-      {0,-1,0},
-      {0,0,1},
-      {0,0,-1},
-    };
+// const int d [6][3] = { {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}, {0,0,1}, {0,0,-1}, };
   double dV = dx*dx*dx;
-  if (p.reaction <= E_D_to_DE) {
-    if (p.reaction == ADP_to_ATP) {
+  switch (p.reaction) {
+    case ADP_to_ATP:
       N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
       N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-    }
-    else if (p.reaction == DE_to_ADP_E) {
+      break;
+    case DE_to_ADP_E:
       NDE_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
       N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
       N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-    }
-    else if (p.reaction == ATP_to_D) {
+      break;
+    case ATP_to_D:
       N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
       ND_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-    }
-    else if (p.reaction == E_D_to_DE) {
+      break;
+    case E_D_to_DE:
       N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
       ND_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
       NDE_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-    }
-    if (p.reaction == ADP_to_ATP || p.reaction == DE_to_ADP_E) { //N_ADP has changed
-      ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dx, ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      for (int i=0;i<6;i++){
-        for (int j=0;j<3;j++) {
-          if (difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx >= 0) {
-            ws.update( difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx,
-                       X_ADP_pos*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          }
-        }
-      }
-    }
-    if (p.reaction == ADP_to_ATP || p.reaction == ATP_to_D) { //N_ATP has changed
-      ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      for (int i=0;i<6;i++){
-        for (int j=0;j<3;j++) {
-          if (difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx >= 0) {
-            ws.update( difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx,
-                       X_ATP_pos*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          }
-        }
-      }
-    }
-    if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //N_E has changed
-      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      for (int i=0;i<6;i++){
-        for (int j=0;j<3;j++) {
-          if (difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx >= 0) {
-            ws.update( difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx,
-                       X_E_pos*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          }
-        }
-      }
-    }
-    if (p.reaction == ATP_to_D || p.reaction == E_D_to_DE) { //ND_st has changed
-      ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    }
-    if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //NDE_st has changed
-      ws.update(rate_de*NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dV, DE_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    }
-    return;
+      break;
   }
-  else if (p.reaction >= X_ADP_pos && p.reaction <= Z_ADP_neg) { //N_ADP has diffused
+  if (p.reaction == ADP_to_ATP || p.reaction == DE_to_ADP_E) { //N_ADP has changed
+    ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dx, ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    //This loop goes around the changed lattice point and updates the diffusion propabilities for going to each adjacent lattice point
+    for (int i=0;i<6;i++){
+      if (N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dx,
+                   (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+      else {
+        ws.update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+    }
+  }
+  if (p.reaction == ADP_to_ATP || p.reaction == ATP_to_D) { //N_ATP has changed
+    ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+              *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    for (int i=0;i<6;i++){
+      if ( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dx,
+                   (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+      else {
+        ws.update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+    }
+  }
+  if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //N_E has changed
+    ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    for (int i=0;i<6;i++){
+      if ( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dx,
+                   (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+      else {
+        ws.update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+    }
+  }
+  if (p.reaction == ATP_to_D || p.reaction == E_D_to_DE) { //ND_st has changed
+    ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+              *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+  }
+  if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //NDE_st has changed
+    ws.update(rate_de*NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dV, DE_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
+              *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+  }
+  return;
+}
+
+
+
+
+void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, int *N_ATP, int *N_ADP, int *N_E, int *ND_st, int *NDE_st, double *mem_A){
+// reminder of the order of the reaction enums and what d is:
+// enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
+//                X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
+//                X_ATP_pos, X_ATP_neg, Y_ATP_pos, Y_ATP_neg, Z_ATP_pos, Z_ATP_neg,
+//                X_E_pos, X_E_neg, Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
+// const int d [6][3] = { {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}, {0,0,1}, {0,0,-1}, };
+  if (p.reaction >= X_ADP_pos && p.reaction <= Z_ADP_neg) { //N_ADP has diffused
     N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
     ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dx, ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    if (p.reaction == ADP_to_ATP || p.reaction == DE_to_ADP_E) { //N_ADP has changed
-      ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dx, ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      for (int i=0;i<6;i++){
-        for (int j=0;j<3;j++) {
-          if (difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx >= 0) {
-            ws.update( difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx,
-                       X_ADP_pos*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          }
-        }
+    //This loop goes around the changed lattice point and updates the diffusion propabilities for going to each adjacent lattice point
+    for (int i=0;i<6;i++){
+      if ( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dx,
+                   (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+      else {
+        ws.update( 0.0, (X_ADP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
     }
-    if (p.reaction == X_ADP_pos){
-      p.xi += 1;
-    }
-    else if (p.reaction == Y_ADP_pos){
-      p.yi += 1;
-    }
-    else if (p.reaction == Z_ADP_pos){
-      p.zi += 1;
-    }
-    else if (p.reaction == X_ADP_neg){
-      p.xi -= 1;
-    }
-    else if (p.reaction == Y_ADP_neg){
-      p.yi -= 1;
-    }
-    else if (p.reaction == Z_ADP_neg){
-      p.zi -= 1;
+    switch (p.reaction) {
+      case X_ADP_pos:
+        p.xi += 1; break;
+      case Y_ADP_pos:
+        p.yi += 1; break;
+      case Z_ADP_pos:
+        p.zi += 1; break;
+      case X_ADP_neg:
+        p.xi -= 1; break;
+      case Y_ADP_neg:
+        p.yi -= 1; break;
+      case Z_ADP_neg:
+        p.zi -= 1; break;
     }
     N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
     ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dx, ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    if (p.reaction == ADP_to_ATP || p.reaction == DE_to_ADP_E) { //N_ADP has changed
-      ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dx, ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      for (int i=0;i<6;i++){
-        for (int j=0;j<3;j++) {
-          if (difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx >= 0) {
-            ws.update( difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx,
-                       X_ADP_pos*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          }
-        }
+    for (int i=0;i<6;i++){
+      if ( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dx,
+                   (X_ADP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+      else {
+        ws.update( 0.0, (X_ADP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
     }
     return;
@@ -1928,45 +1943,39 @@ void update_densities_and_weighting(stoch_params p, weights ws, int *N_ATP, int 
     N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
     ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
               *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    if (p.reaction == ADP_to_ATP || p.reaction == ATP_to_D) { //N_ATP has changed
-      ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      for (int i=0;i<6;i++){
-        for (int j=0;j<3;j++) {
-          if (difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx >= 0) {
-            ws.update( difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx,
-                       X_ATP_pos*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-          }
-        }
+    for (int i=0;i<6;i++){
+      if ( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dx,
+                   (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+      else {
+        ws.update( 0.0, (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
     }
-    if (p.reaction == X_ATP_pos){
-      p.xi += 1;
-    }
-    else if (p.reaction == Y_ATP_pos){
-      p.yi += 1;
-    }
-    else if (p.reaction == Z_ATP_pos){
-      p.zi += 1;
-    }
-    else if (p.reaction == X_ATP_neg){
-      p.xi -= 1;
-    }
-    else if (p.reaction == Y_ATP_neg){
-      p.yi -= 1;
-    }
-    else if (p.reaction == Z_ATP_neg){
-      p.zi -= 1;
+    switch (p.reaction) {
+      case X_ATP_pos:
+        p.xi += 1; break;
+      case Y_ATP_pos:
+        p.yi += 1; break;
+      case Z_ATP_pos:
+        p.zi += 1; break;
+      case X_ATP_neg:
+        p.xi -= 1; break;
+      case Y_ATP_neg:
+        p.yi -= 1; break;
+      case Z_ATP_neg:
+        p.zi -= 1; break;
     }
     N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
     ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
               *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     for (int i=0;i<6;i++){
-      for (int j=0;j<3;j++) {
-        if (difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx >= 0) {
-          ws.update( difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx,
-                     X_ATP_pos*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
+      if ( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dx,
+                   (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+      else {
+        ws.update( 0.0, (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
     }
     return;
@@ -1975,39 +1984,37 @@ void update_densities_and_weighting(stoch_params p, weights ws, int *N_ATP, int 
     N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
     ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     for (int i=0;i<6;i++){
-      for (int j=0;j<3;j++) {
-        if (difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx >= 0) {
-          ws.update( difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx,
-                     X_E_pos*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
+      if ( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dx,
+                   (X_E_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+      else {
+        ws.update( 0.0, (X_E_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
     }
-    if (p.reaction == X_E_pos){
-      p.xi += 1;
-    }
-    else if (p.reaction == Y_E_pos){
-      p.yi += 1;
-    }
-    else if (p.reaction == Z_E_pos){
-      p.zi += 1;
-    }
-    else if (p.reaction == X_E_neg){
-      p.xi -= 1;
-    }
-    else if (p.reaction == Y_E_neg){
-      p.yi -= 1;
-    }
-    else if (p.reaction == Z_E_neg){
-      p.zi -= 1;
+    switch (p.reaction) {
+      case X_E_pos:
+        p.xi += 1; break;
+      case Y_E_pos:
+        p.yi += 1; break;
+      case Z_E_pos:
+        p.zi += 1; break;
+      case X_E_neg:
+        p.xi -= 1; break;
+      case Y_E_neg:
+        p.yi -= 1; break;
+      case Z_E_neg:
+        p.zi -= 1; break;
     }
     N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
     ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     for (int i=0;i<6;i++){
-      for (int j=0;j<3;j++) {
-        if (difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx >= 0) {
-          ws.update( difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[ (p.xi+d[i][j])*Ny*Nz + (p.yi+d[i][j])*Nz + (p.zi+d[i][j]) ] ) / dx,
-                     X_E_pos*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
+      if ( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dx,
+                   (X_E_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      }
+      else {
+        ws.update( 0.0, (X_E_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
     }
     return;
