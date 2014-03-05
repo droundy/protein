@@ -61,13 +61,13 @@ double A, B, C, D; //specific shape parameters, set by command line args
 double *nATP; //min D bound to an ATP
 double *nADP; //min D bound to an ADP
 double *nE; //loose min E in cytoplasm
-int *N_ATP; //min D bound to an ATP integers for stochastic
-int *N_ADP; //min D bound to an ADP integers for stochastic
-int *N_E; //loose min E in cytoplasm integers for stochastic
 double *ND; //min D bound to ATP on the wall
 double *NDE; //min D bound to ATP and min E on the wall
-int *ND_st; //min D bound to ATP on the wall
-int *NDE_st; //min D bound to ATP and min E on the wall
+int *s_N_ATP; //min D bound to an ATP integers for stochastic
+int *s_N_ADP; //min D bound to an ADP integers for stochastic
+int *s_N_E; //loose min E in cytoplasm integers for stochastic
+int *s_ND; //min D bound to ATP on the wall
+int *s_NDE; //min D bound to ATP and min E on the wall
 double *NflD;
 double *NflE;
 double *f_mem;
@@ -799,11 +799,11 @@ int main (int argc, char *argv[]) {
   nATP = new double[Nx*Ny*Nz];
   nADP = new double[Nx*Ny*Nz];
   nE = new double[Nx*Ny*Nz];
-  N_ATP = new int[Nx*Ny*Nz];
-  N_ADP = new int[Nx*Ny*Nz];
-  N_E = new int[Nx*Ny*Nz];
-  ND_st = new int[Nx*Ny*Nz];
-  NDE_st = new int[Nx*Ny*Nz];
+  s_N_ATP = new int[Nx*Ny*Nz];
+  s_N_ADP = new int[Nx*Ny*Nz];
+  s_N_E = new int[Nx*Ny*Nz];
+  s_ND = new int[Nx*Ny*Nz];
+  s_NDE = new int[Nx*Ny*Nz];
   ND = new double[Nx*Ny*Nz];
   NDE = new double[Nx*Ny*Nz];
   NflD = new double[Nx*Ny*Nz];
@@ -877,7 +877,7 @@ int main (int argc, char *argv[]) {
   sprintf(proteinList[6]->name,"NflE");
 
 
-  set_density(nATP, nADP, nE, ND, NDE, ND_st, NDE_st, N_ATP, N_ADP, N_E, mem_A);
+  set_density(nATP, nADP, nE, ND, NDE, s_ND, s_NDE, s_N_ATP, s_N_ADP, s_N_E, mem_A);
 
   //Starting the Sections file set up
   double left_area_total = 0;
@@ -1091,10 +1091,10 @@ int main (int argc, char *argv[]) {
   fflush(stdout);
 
   weights ws(num_pos_reactions*Nx*Ny*Nz);
-  initialize_densities_and_weighting(ws, N_ATP, N_ADP, N_E, ND_st, NDE_st, mem_A);
+  initialize_densities_and_weighting(ws, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
 
   ///////////////////////////////////////
-  //I need to look into whether I rally need to use ND_st and not just the same ND?
+  //I need to look into whether I rally need to use s_ND and not just the same ND?
   ////////////////////////////////////
 
   //starting simuation
@@ -1106,20 +1106,20 @@ int main (int argc, char *argv[]) {
         int index = ws.lookup( (double)rand()/(RAND_MAX) );//random number is from 0 to 1
         stoch_params p = index_to_perameters(index);
         if (p.reaction <= E_D_to_DE) {
-          update_densities_and_weighting_for_reaction(p, ws, N_ATP, N_ADP, N_E, ND_st, NDE_st, mem_A);
+          update_densities_and_weighting_for_reaction(p, ws, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
         }
         else {
-          update_densities_and_weighting_for_diffusion(p, ws, N_ATP, N_ADP, N_E, ND_st, NDE_st, mem_A);
+          update_densities_and_weighting_for_diffusion(p, ws, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
         }
         elapsed_time += log( (double)rand()/(RAND_MAX) ) / ws.get_total();
       }
       spill_over_time = elapsed_time - time_step;
       for (int i=0;i<Nx*Ny*Nz;i++) {
-        nATP[i] = double(N_ATP[i])/dx*dx*dx;
-        nADP[i] = double(N_ADP[i])/dx*dx*dx;
-        nE[i] = double(N_E[i])/dx*dx*dx;
-        ND[i] = double(ND_st[i]);
-        NDE[i] = double(NDE_st[i]);
+        nATP[i] = double(s_N_ATP[i])/dx*dx*dx;
+        nADP[i] = double(s_N_ADP[i])/dx*dx*dx;
+        nE[i] = double(s_N_E[i])/dx*dx*dx;
+        ND[i] = double(s_ND[i]);
+        NDE[i] = double(s_NDE[i]);
       }
     }
     else {
@@ -1790,7 +1790,7 @@ int main (int argc, char *argv[]) {
 }
 
 
-void initialize_densities_and_weighting(weights ws, int *N_ATP, int *N_ADP, int *N_E, int *ND_st, int *NDE_st, double *mem_A){
+void initialize_densities_and_weighting(weights ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
   /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
                 X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
@@ -1798,18 +1798,18 @@ void initialize_densities_and_weighting(weights ws, int *N_ATP, int *N_ADP, int 
                 X_E_pos, X_E_neg, Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
      const int d [6][3] = { {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}, {0,0,1}, {0,0,-1} };
      Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
-     so dN/dt = difD*(n[z+1]-n[z])*dA/dx = difD*(N[z+1]-N[z])/(dA)
+     so dN/dt = jz*dA = difD*(n[z+1]-n[z])*dA/dx = difD*(N[z+1]-N[z])/(dA)
   */
   double dV = dx*dx*dx;
   double dA = dx*dx;
   for(int xi=0;xi<Nx;xi++){
     for(int yi=0;yi<Ny;yi++){
       for(int zi=0;zi<Nz;zi++){
-        ws.update(rate_ADP_ATP*N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        ws.update(rate_ADP_ATP*s_N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
         if (mem_A[xi*Ny*Nz+yi*Nz+zi] != 0.0) {
           ws.update((rate_D + rate_dD*(ND[xi*Ny*Nz+yi*Nz+zi] + NDE[xi*Ny*Nz+yi*Nz+zi])/mem_A[xi*Ny*Nz+yi*Nz+zi])
-                    *N_ATP[xi*Ny*Nz+yi*Nz+zi], ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          ws.update(rate_E*ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*N_E[xi*Ny*Nz+yi*Nz+zi], E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+                    *s_N_ATP[xi*Ny*Nz+yi*Nz+zi], ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+          ws.update(rate_E*ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*s_N_E[xi*Ny*Nz+yi*Nz+zi], E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
           ws.update(rate_de*NDE[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*dV, DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
         }
         else {
@@ -1818,22 +1818,22 @@ void initialize_densities_and_weighting(weights ws, int *N_ATP, int *N_ADP, int 
           ws.update( 0.0, DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
         }
         for (int i=0;i<6;i++){
-          if ( N_ATP[xi*Ny*Nz+yi*Nz+zi] - N_ATP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
-            ws.update( difD*( N_ATP[xi*Ny*Nz+yi*Nz+zi] - N_ATP[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
+          if ( s_N_ATP[xi*Ny*Nz+yi*Nz+zi] - s_N_ATP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
+            ws.update( difD*( s_N_ATP[xi*Ny*Nz+yi*Nz+zi] - s_N_ATP[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
                        (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
           }
           else {
             ws.update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
           }
-          if (N_ADP[xi*Ny*Nz+yi*Nz+zi] - N_ADP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
-            ws.update( difD*( N_ADP[xi*Ny*Nz+yi*Nz+zi] - N_ADP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] ) / dA,
+          if (s_N_ADP[xi*Ny*Nz+yi*Nz+zi] - s_N_ADP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
+            ws.update( difD*( s_N_ADP[xi*Ny*Nz+yi*Nz+zi] - s_N_ADP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] ) / dA,
                        (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
           }
           else {
             ws.update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
           }
-          if ( N_E[xi*Ny*Nz+yi*Nz+zi] - N_E[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
-            ws.update( difD*( N_E[xi*Ny*Nz+yi*Nz+zi] - N_E[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
+          if ( s_N_E[xi*Ny*Nz+yi*Nz+zi] - s_N_E[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
+            ws.update( difD*( s_N_E[xi*Ny*Nz+yi*Nz+zi] - s_N_E[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
                        (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
           }
           else {
@@ -1848,7 +1848,7 @@ void initialize_densities_and_weighting(weights ws, int *N_ATP, int *N_ADP, int 
 
 
 
-void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int *N_ATP, int *N_ADP, int *N_E, int *ND_st, int *NDE_st, double *mem_A){
+void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
   /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
                 X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
@@ -1862,30 +1862,30 @@ void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int
   double dA = dx*dx;
   switch (p.reaction) {
     case ADP_to_ATP:
-      N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-      N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+      s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+      s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
       break;
     case DE_to_ADP_E:
-      NDE_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-      N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-      N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+      s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+      s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+      s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
       break;
     case ATP_to_D:
-      N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-      ND_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+      s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+      s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
       break;
     case E_D_to_DE:
-      N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-      ND_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-      NDE_st[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+      s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+      s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+      s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
       break;
   }
-  if (p.reaction == ADP_to_ATP || p.reaction == DE_to_ADP_E) { //N_ADP has changed, need to change probs effected by this
-    ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+  if (p.reaction == ADP_to_ATP || p.reaction == DE_to_ADP_E) { //s_N_ADP has changed, need to change probs effected by this
+    ws.update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     //This loop goes around the changed lattice point and updates the diffusion propabilities for going to each adjacent lattice point
     for (int i=0;i<6;i++){
-      if (N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws.update( difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+      if (s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
                    (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
       else {
@@ -1893,14 +1893,14 @@ void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int
       }
     }
   }
-  if (p.reaction == ADP_to_ATP || p.reaction == ATP_to_D) { //N_ATP has changed
+  if (p.reaction == ADP_to_ATP || p.reaction == ATP_to_D) { //s_N_ATP has changed
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
       ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws.update( difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dA,
+      if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dA,
                    (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
       else {
@@ -1908,13 +1908,13 @@ void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int
       }
     }
   }
-  if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //N_E has changed
+  if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //s_N_E has changed
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws.update( difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dA,
+      if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dA,
                    (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
       else {
@@ -1922,18 +1922,18 @@ void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int
       }
     }
   }
-  if (p.reaction == ATP_to_D || p.reaction == E_D_to_DE) { //ND_st has changed
+  if (p.reaction == ATP_to_D || p.reaction == E_D_to_DE) { //s_ND has changed
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
       ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
   }
-  if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //NDE_st has changed
+  if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //s_NDE has changed
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
       ws.update(rate_de*NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dV, DE_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
   }
   return;
@@ -1942,7 +1942,7 @@ void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int
 
 
 
-void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, int *N_ATP, int *N_ADP, int *N_E, int *ND_st, int *NDE_st, double *mem_A){
+void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
   /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
                 X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
@@ -1952,13 +1952,13 @@ void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, in
      Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
      so dN/dt = difD*(n[z+1]-n[z])*dx  */
   double dA = dx*dx;
-  if (p.reaction >= X_ADP_pos && p.reaction <= Z_ADP_neg) { //N_ADP has diffused
-    N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-    ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+  if (p.reaction >= X_ADP_pos && p.reaction <= Z_ADP_neg) { //s_N_ADP has diffused
+    s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+    ws.update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     //This loop goes around the changed lattice point and updates the diffusion propabilities for going to each adjacent lattice point
     for (int i=0;i<6;i++){
-      if ( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws.update( difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+      if ( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
                    (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
       else {
@@ -1979,11 +1979,11 @@ void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, in
       case Z_ADP_neg:
         p.zi -= 1; break;
     }
-    N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-    ws.update(rate_ADP_ATP*N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dx, ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+    ws.update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dx, ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     for (int i=0;i<6;i++){
-      if ( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws.update( difD*( N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+      if ( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
                    (X_ADP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
       else {
@@ -1992,15 +1992,15 @@ void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, in
     }
     return;
   }
-  else if (p.reaction >= X_ATP_pos && p.reaction <= Z_ATP_neg) { //N_ATP has diffused
-    N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+  else if (p.reaction >= X_ATP_pos && p.reaction <= Z_ATP_neg) { //s_N_ATP has diffused
+    s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
       ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws.update( difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+      if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
                    (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
       else {
@@ -2021,14 +2021,14 @@ void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, in
       case Z_ATP_neg:
         p.zi -= 1; break;
     }
-    N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+    s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
       ws.update((rate_D + rate_dD*(ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws.update( difD*( N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+      if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
                    (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
       else {
@@ -2037,14 +2037,14 @@ void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, in
     }
     return;
   }
-  else if (p.reaction >= X_E_pos && p.reaction <= Z_E_neg) { //N_E has diffused
-    N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
+  else if (p.reaction >= X_E_pos && p.reaction <= Z_E_neg) { //s_N_E has diffused
+    s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws.update( difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+      if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
                    (X_E_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
       else {
@@ -2065,13 +2065,13 @@ void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, in
       case Z_E_neg:
         p.zi -= 1; break;
     }
-    N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
+    s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws.update(rate_E*ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws.update( difD*( N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+      if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+        ws.update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
                    (X_E_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
       }
       else {
@@ -2484,7 +2484,7 @@ int get_next_density(double *mem_A, bool *insideArr, double *nATP, double *nADP,
   return 0;
 }
 
-int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE, int *ND_st, int *NDE_st, int *N_ATP, int *N_ADP, int *N_E, double *mem_A){
+int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE, int *s_ND, int *s_NDE, int *s_N_ATP, int *s_N_ADP, int *s_N_E, double *mem_A){
   double dV = dx*dx*dx;
   printf("In set_density function, Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
   int right_most_point_z=0; //left and right most points for z
@@ -2646,11 +2646,11 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
   }
   if (stochastic) {
     for (int i=0; i<Nx*Ny*Nz;i++) {
-      N_ATP[i] = round(nATP[i]*dV);
-      N_ADP[i] = round(nADP[i]*dV);
-      N_E[i] = round(nATP[i]*dV);
-      ND_st[i] = round(ND[i]);
-      NDE_st[i] = round(NDE[i]);
+      s_N_ATP[i] = round(nATP[i]*dV);
+      s_N_ADP[i] = round(nADP[i]*dV);
+      s_N_E[i] = round(nATP[i]*dV);
+      s_ND[i] = round(ND[i]);
+      s_NDE[i] = round(NDE[i]);
     }
   }
   return 0;
