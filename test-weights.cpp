@@ -40,11 +40,11 @@ double difference_in_lookups(double *ps, double ps_total, weights ws, int num_lo
   for (int i=0;i<num_lookups;i++){
     double random =  (double)rand()/(RAND_MAX);
     int index = ws.lookup(random);//random number is from 0 to 1
-    printf("rand = %g and index = %d\n",random,index);
+    //printf("rand = %g and index = %d\n",random,index);
     bins[index]++;
   }
   double diff = ps[0]/ps_total - double(bins[0])/double(num_lookups);
-  printf("looks = %d and diff = %g and %g and %g\n",num_lookups,ps[0]/ps_total, double(bins[0]),double(num_lookups));
+  //printf("looks = %d and diff = %g and %g and %g\n",num_lookups,ps[0]/ps_total, double(bins[0]),double(num_lookups));
   delete[] bins;
   return diff;
   //  return 0.0;
@@ -68,25 +68,21 @@ int main() {
     ps_total+=ps[i];
   }
   /////////////////////First test
-  assert(ps_total);
   assert(fabs(ws.get_total()-ps_total) < 10e-20);
   printf("passed first test, total difference = %g\n",fabs(ws.get_total()-ps_total));
 
 
   ////////////////////Second Test
-  // int num_try=100000;
-  // double diff = difference_in_lookups(ps,ps_total,ws,num_try);
-  // printf("diff = %g\n",diff);
-  // exit(0);
   int num_looks = 4;
-  int *looks = new int[num_looks];
-  looks[0]=10;
-  double diff = 0;
-  for (int i=1;i<num_looks;i++) {
+  int *looks = new int[num_looks+1];
+  looks[0]=100;
+  double diff = 200;
+  for (int i=1;i<num_looks+1;i++) {
     looks[i] = 10*looks[i-1];
     double old_diff = diff;
     diff = difference_in_lookups(ps,ps_total,ws,looks[i]);
-    assert(old_diff > diff || 1);
+    printf("num_looks = %d and diff = %g and old_diff = %g\n",looks[i],fabs(diff),fabs(old_diff));
+    assert(fabs(old_diff) > fabs(diff));
   }
   printf("Passed Second test\n");
   delete [] looks;
@@ -97,11 +93,27 @@ int main() {
   double prob_test = 1.0;
   const clock_t begin_time = clock();
   for (int i=0;i<Nx_big*Ny_big*Nz_big*23;i++){
-    ws_big.update(prob_test, int(rand()%Nx_big*Ny_big*Nz_big*23));
+    ws_big.update(prob_test, i);
+    ws_big.update(prob_test, i+1);
+    //ws_big.update(prob_test, int(rand()%Nx_big*Ny_big*Nz_big*23));
   }
   clock_t end_time = clock();
   assert(double(end_time-begin_time)/CLOCKS_PER_SEC < 1.0);
   printf("Passed third test, time to update everything once = %g\n",double(end_time-begin_time)/CLOCKS_PER_SEC);
+  /*Less than 1 second here is actually very bad.  Below is code that
+    figures how long a typical simulation (1500 sim-seconds) will take
+    for a hypothetical situation in wich every lattice point and a
+    neighbor is updated per time step, using the current update
+    function (not a good guess, just a starting point).  */
+
+  int tot_iters_typical_sim = int(15000 / ((.1*.05*.05)/2.5));
+  double tot_sec_for_hypothetical_sim = tot_iters_typical_sim*double(end_time-begin_time)/CLOCKS_PER_SEC;
+  int days = floor(tot_sec_for_hypothetical_sim/(60*60*24));
+  int hours = floor( (tot_sec_for_hypothetical_sim - days*(60*60*24)) / (60*60)  );
+  int min = floor( (tot_sec_for_hypothetical_sim - days*(60*60*24) - hours*(60*60)) / 60);
+
+  printf("Total time for a hypothetical simulation is = %d days, %d hours, and %d min\n",days,hours,min);
+
 
   /////////////////////Fourth Test
   //assert(fabs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23) < 10e-20);
