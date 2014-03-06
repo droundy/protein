@@ -1,13 +1,28 @@
 #ifndef __WEIGHTS_H_INCLUDED__
 #define __WEIGHTS_H_INCLUDED__
 
+#include <stdio.h>
+
 class weights {
  public:
   weights(int myN) { // constructor, allocates new weights
     //will want to allocate and initialize all the memory here
     N = myN;
     tot_weights = 0;
+    ws = new double[N](); // initialize to zero say the ()
+  }
+  weights(const weights &x) {
+    N = x.N;
+    tot_weights = x.tot_weights;
     ws = new double[N];
+    for (int i=0;i<N;i++) ws[i] = x.ws[i];
+  }
+  void operator=(const weights &x) {
+    N = x.N;
+    tot_weights = x.tot_weights;
+    delete[] ws;
+    ws = new double[N];
+    for (int i=0;i<N;i++) ws[i] = x.ws[i];
   }
   ~weights() { // destructor
     delete[] ws;

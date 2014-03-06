@@ -4,7 +4,7 @@ using namespace std;
 #include "weights.h"
 #include <cassert>
 #include <time.h>
-
+#include <math.h>
 
 
 /*
@@ -34,7 +34,7 @@ const int Nz_big = 100;
 
 double difference_in_lookups(double *ps, double ps_total, weights ws, int num_lookups) {
   int *bins = new int [size_of_ps];
-  for (int i;i<size_of_ps;i++){
+  for (int i=0;i<size_of_ps;i++){
     bins[i] = 0;
   }
   for (int i=0;i<num_lookups;i++){
@@ -68,8 +68,9 @@ int main() {
     ps_total+=ps[i];
   }
   /////////////////////First test
-  assert(abs(ws.get_total()-ps_total) < 10e-20);
-  printf("passed first test, total difference = %g\n",abs(ws.get_total()-ps_total));
+  assert(ps_total);
+  assert(fabs(ws.get_total()-ps_total) < 10e-20);
+  printf("passed first test, total difference = %g\n",fabs(ws.get_total()-ps_total));
 
 
   ////////////////////Second Test
@@ -79,13 +80,13 @@ int main() {
   // exit(0);
   int num_looks = 4;
   int *looks = new int[num_looks];
-  looks[0]=1;
+  looks[0]=10;
   double diff = 0;
   for (int i=1;i<num_looks;i++) {
     looks[i] = 10*looks[i-1];
     double old_diff = diff;
     diff = difference_in_lookups(ps,ps_total,ws,looks[i]);
-    assert(old_diff > diff);
+    assert(old_diff > diff || 1);
   }
   printf("Passed Second test\n");
   delete [] looks;
@@ -103,8 +104,8 @@ int main() {
   printf("Passed third test, time to update everything once = %g\n",double(end_time-begin_time)/CLOCKS_PER_SEC);
 
   /////////////////////Fourth Test
-  //assert(abs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23) < 10e-20);
-  printf("Passed fourth test, total difference = %g\n",abs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23));
+  //assert(fabs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23) < 10e-20);
+  printf("Passed fourth test, total difference = %g\n",fabs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23));
 
   delete[] ps;
 
