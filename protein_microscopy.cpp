@@ -1790,7 +1790,7 @@ int main (int argc, char *argv[]) {
 }
 
 
-void initialize_densities_and_weighting(weights ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
+inline void initialize_densities_and_weighting(weights ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
   /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
                 X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
@@ -1848,7 +1848,7 @@ void initialize_densities_and_weighting(weights ws, int *s_N_ATP, int *s_N_ADP, 
 
 
 
-void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
+inline void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
   /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
                 X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
@@ -1942,7 +1942,7 @@ void update_densities_and_weighting_for_reaction(stoch_params p, weights ws, int
 
 
 
-void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
+inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
   /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
                 X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,

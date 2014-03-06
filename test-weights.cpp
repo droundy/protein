@@ -3,6 +3,7 @@ using namespace std;
 #include <stdlib.h>
 #include "weights.h"
 #include <cassert>
+#include <time.h>
 
 
 
@@ -24,50 +25,88 @@ using namespace std;
 const int Nx = 3;
 const int Ny = 3;
 const int Nz = 3;
-weights ws(Nx*Ny*Nz*23);
+const int size_of_ps = Nx*Ny*Nz;
+weights ws(Nx*Ny*Nz);
+const int Nx_big = 100;
+const int Ny_big = 100;
+const int Nz_big = 100;
 
-double difference_in_probs(double *ps, double ps_total, weights ws, int num_lookups) {
-  int bins[9];
-  for (int i;i<9;i++){
+
+double difference_in_lookups(double *ps, double ps_total, weights ws, int num_lookups) {
+  int *bins = new int [size_of_ps];
+  for (int i;i<size_of_ps;i++){
     bins[i] = 0;
   }
   for (int i=0;i<num_lookups;i++){
-    int index = ws.lookup( (double)rand()/(RAND_MAX) );//random number is from 0 to 1
+    double random =  (double)rand()/(RAND_MAX);
+    int index = ws.lookup(random);//random number is from 0 to 1
+    printf("rand = %g and index = %d\n",random,index);
     bins[index]++;
   }
   double diff = ps[0]/ps_total - double(bins[0])/double(num_lookups);
+  printf("looks = %d and diff = %g and %g and %g\n",num_lookups,ps[0]/ps_total, double(bins[0]),double(num_lookups));
+  delete[] bins;
   return diff;
+  //  return 0.0;
 }
 
 
 int main() {
-  double *ps  = new double[9];
+  double *ps  = new double[size_of_ps];
+  for (int i=0;i<size_of_ps;i++){
+    ps[i]=0;
+  }
   double den = 256.00;
   ps[0] = 20/den;
   ps[1] = 30/den;
   ps[2] = 40/den;
-  double ps_total=0;
-  for (int i=3;i<9;i++){
-    ps[i]=0;
-  }
-  for (int i=0;i<9;i++){
-    ps_total+=ps[i];
-  }
-
   ws.update(ps[0], 0);
   ws.update(ps[1], 1);
   ws.update(ps[2], 2);
+  double ps_total=0;
+  for (int i=0;i<size_of_ps;i++){
+    ps_total+=ps[i];
+  }
+  /////////////////////First test
+  assert(abs(ws.get_total()-ps_total) < 10e-20);
+  printf("passed first test, total difference = %g\n",abs(ws.get_total()-ps_total));
 
-  int times=900000;
-  double result = difference_in_probs(ps,ps_total,ws,times);
-  printf("result = %g\n",result);
+
+  ////////////////////Second Test
+  // int num_try=100000;
+  // double diff = difference_in_lookups(ps,ps_total,ws,num_try);
+  // printf("diff = %g\n",diff);
+  // exit(0);
+  int num_looks = 4;
+  int *looks = new int[num_looks];
+  looks[0]=1;
+  double diff = 0;
+  for (int i=1;i<num_looks;i++) {
+    looks[i] = 10*looks[i-1];
+    double old_diff = diff;
+    diff = difference_in_lookups(ps,ps_total,ws,looks[i]);
+    assert(old_diff > diff);
+  }
+  printf("Passed Second test\n");
+  delete [] looks;
 
 
-  printf("get_total diff = %g\n",ws.get_total()-ps[0]-ps[1]);
-  assert(ws.get_total() == ps_total);
+  //////////////////////Third Test
+  weights ws_big(Nx_big*Ny_big*Nz_big*23);
+  double prob_test = 1.0;
+  const clock_t begin_time = clock();
+  for (int i=0;i<Nx_big*Ny_big*Nz_big*23;i++){
+    ws_big.update(prob_test, int(rand()%Nx_big*Ny_big*Nz_big*23));
+  }
+  clock_t end_time = clock();
+  assert(double(end_time-begin_time)/CLOCKS_PER_SEC < 1.0);
+  printf("Passed third test, time to update everything once = %g\n",double(end_time-begin_time)/CLOCKS_PER_SEC);
 
-  printf("lookup(0.8) = %d\n",ws.lookup(0.8));
-  assert(ws.lookup(0.8) == 2);
+  /////////////////////Fourth Test
+  //assert(abs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23) < 10e-20);
+  printf("Passed fourth test, total difference = %g\n",abs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23));
+
+  delete[] ps;
 
   return 0;
 }

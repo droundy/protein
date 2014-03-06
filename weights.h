@@ -22,8 +22,10 @@ class weights {
     /*protein_microscopy.cpp will give a random number and this
     returns where in the memory allocated this is (in terms of index i)*/
     p *= tot_weights;
+    printf("p = %g\n",p);
     for (int i=0; i<N; i++) {
       if (p < ws[i]) {
+        printf("max i = %d\n",i);
         return i;
       }
       p -= ws[i];
