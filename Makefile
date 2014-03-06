@@ -5,7 +5,7 @@ CXXFLAGS = -g -O2 -Wall -Werror
 
 all: sim paper/paper.pdf
 
-test: test.cpp
+test-weights: test-weights.cpp weights.h
 
 clean: rm -f protein_microscopy paper/paper.pdf
 
