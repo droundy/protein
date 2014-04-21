@@ -6,7 +6,7 @@
 
 class weights {
  public:
-  weights(int num_of_possibilities); // constructor, allocates new weights
+  weights(int num_of_possibilities);
   ~weights() { // destructor
     delete[] ws;
   }
@@ -21,6 +21,7 @@ class weights {
   int test_lookup_from_zero_to_one(int num_possibilities);
   int test_get_total_matches_summing_up(int num_possibilities);
   int test_looking_up_shows_correct_probs(int num_possibilities);
+  int test_time_of_simulation(int num_possibilities);
 
  private:
   int size_of_array;
