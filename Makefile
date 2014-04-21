@@ -5,9 +5,8 @@ CXXFLAGS = -g -O2 -Wall -Werror
 
 all: protein_microscopy
 
-test-weights: test-weights.cpp weights.h
-
+test-weights: test-weights.cpp weights.h weights.cpp
 
 clean: rm -f protein_microscopy
 
-protein_microscopy: protein_microscopy.cpp protein.h weights.h
+protein_microscopy: protein_microscopy.cpp protein.h weights.h weights.cpp

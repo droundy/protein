@@ -11,7 +11,7 @@ using namespace std;
 #include <cassert>
 #include <unistd.h>
 
-const bool stochastic = true;
+const bool stochastic = false;
 
 const double difD = 2.5; // (um)^2 s^- 1
 const double difE = 2.5; // (um)^2 s^-1
@@ -702,6 +702,8 @@ int main (int argc, char *argv[]) {
   printf("Simulation arguments: %s %g %g %g %g %g\n",mem_f_shape.c_str(),A,B,C,D,density_factor);
 
   //In the following, for every set of three numbers, the 1st is y and he 2nd is z and the 3rd is quassian width
+  double guass92[] = {2.0,2.0,.3,2.0,2.5,.15,2.0,1.5,.15,2.5,2.0,.15,1.5,2.0,.15};
+  double guass93[] = {1.0,1.0,.4,1.0,1.8,.2,1.0,2.6,.4,1.8,2.6,.2,2.6,2.6,.4,2.6,1.8,.2,2.6,1.0,.4,1.8,1.0,.2};
   double guass94[] = {2.6,3.2,.3,2.28,2.75,.25,3.0,3.9,.6,3.1,3.6,.4,3.3,3.9,.4,3.5,4.7,.5,2.9,5.6,.5,3.1,5.2,.4,2.4,5.8,.2,3.6,5.1,.3};
   double guass95[] = {2.2,2.4,.3,2.5,3.2,.6,2.7,3.5,.4,2.9,3.5,.4,3.5,4.2,.5,3.8,4.1,.8,3.1,4.6,.6,3.15,4.3,.5};
   double guass96[] = {1.3,1.3,.7,2.1,2,.7,3,2,.7,3.9,2,.7,4.7,1.3,.7,4,2.1,.7,4,3,.7,4,3.9,.7,4.7,4.7,.7,3.9,4,.7,3,4,.7,2.3,4,.7,1.3,4.7,.7,2.1,3.9,.7,3,3.9,.7,2.1,3.9,.7};
@@ -709,6 +711,8 @@ int main (int argc, char *argv[]) {
   double guass98[] = {2.0,2.0,.3,3,3,.6,4.2,3.4,.3,4.6,4.6,.6,3.4,5.6,.6};
   double guass99[] = {2.0,2.2,.5,3,3,.50,4.0,3.6,.50,3,4.2,.50,2.0,5,.5};
 
+  double size_modifier_92 = 1.5;
+  double size_modifier_93 = 1.5;
   double size_modifier_94 = 0.3;
   double size_modifier_95 = 0.3;
   double size_modifier_96 = 1.0;
@@ -722,13 +726,26 @@ int main (int argc, char *argv[]) {
     printf("Hostname:  %s\n", hn);
     free(hn);
   }
+  printf("\nsize_modifier 92 is = %g",size_modifier_92);
+  printf("\nsize_modifier 93 is = %g",size_modifier_93);
   printf("\nsize_modifier 94 is = %g",size_modifier_94);
   printf("\nsize_modifier 95 is = %g\n",size_modifier_95);
   printf("\nsize_modifier 99 is = %g\n",size_modifier_99);
   fflush(stdout);
 
   bzero(guass,int(sizeof(guass)/sizeof(double)));
-  if (rand_seed == 94) {
+  if (rand_seed == 92) {
+    printf("Hello? rand_seed = %d\n",rand_seed);
+    for (int i=0;i<int(sizeof(guass92)/sizeof(double));i++){
+      guass[i] = size_modifier_92*guass92[i];
+    }
+  }
+  else if (rand_seed == 93) {
+    for (int i=0;i<int(sizeof(guass93)/sizeof(double));i++){
+      guass[i] = size_modifier_93*guass93[i];
+    }
+  }
+  else if (rand_seed == 94) {
     for (int i=0;i<int(sizeof(guass94)/sizeof(double));i++){
       guass[i] = size_modifier_94*guass94[i];
     }
@@ -971,28 +988,36 @@ int main (int argc, char *argv[]) {
   double hor_div_two = 0;
 
   if (mem_f_shape=="randst") {
-    if (rand_seed == 94) {
+    if (rand_seed == 92) {
+      vert_div = size_modifier_92*(1.2/dx)-min_zi+1;
+      vert_div_two = size_modifier_92*(2.7/dx)-min_zi+1;
+    }
+    else if (rand_seed == 93) {
+      vert_div = size_modifier_93*(1.2/dx)-min_zi+1;
+      vert_div_two = size_modifier_93*(2.7/dx)-min_zi+1;
+    }
+    else if (rand_seed == 94) {
       vert_div = size_modifier_94*(3.6/dx)-min_zi+1;
       vert_div_two = size_modifier_94*(5.0/dx)-min_zi+1;
     }
-    if (rand_seed == 95) {
+    else if (rand_seed == 95) {
       vert_div = size_modifier_95*(3.3/dx)-min_zi+1;
       vert_div_two = size_modifier_95*(4.4/dx)-min_zi+1;
     }
-    if (rand_seed == 96) {
+    else if (rand_seed == 96) {
       vert_div = size_modifier_96*(2.8/dx)-min_zi+1;
       hor_div = size_modifier_96*(3.0/dx)-min_yi+1;
     }
-    if (rand_seed == 97) {
+    else if (rand_seed == 97) {
       vert_div = size_modifier_97*(2.4/dx)-min_zi+1;
       hor_div = size_modifier_97*(2.45/dx)-min_yi+1;
       hor_div_two = size_modifier_97*(4.6/dx)-min_yi+1;
     }
-    if (rand_seed == 98) {
+    else if (rand_seed == 98) {
       vert_div = size_modifier_98*(3.0/dx)-min_zi+1;
       vert_div_two = size_modifier_98*(4.8/dx)-min_zi+1;
     }
-    if (rand_seed == 99) {
+    else if (rand_seed == 99) {
       vert_div = size_modifier_99*(2.6/dx)-min_zi+1;
       vert_div_two = size_modifier_99*(4.6/dx)-min_zi+1;
     }
@@ -1005,7 +1030,7 @@ int main (int argc, char *argv[]) {
     for (int a=0; a<Ny; a++) {
       for (int b=0; b<Nz; b++) {
         double marker = 0;
-        if (rand_seed == 99 || rand_seed == 98 || rand_seed == 95 || rand_seed == 94) {
+        if (rand_seed == 99 || rand_seed == 98 || rand_seed == 95 || rand_seed == 94 || rand_seed == 93 || rand_seed == 92) {
           if (b < vert_div) {
             marker = 3;
             for (int c=0;c<Nx;c++){
@@ -1173,7 +1198,7 @@ int main (int argc, char *argv[]) {
                 }
               }
               if (mem_f_shape == "randst") {
-                if (rand_seed == 99 || rand_seed == 98 || rand_seed == 95 || rand_seed == 94) {
+                if (rand_seed == 99 || rand_seed == 98 || rand_seed == 95 || rand_seed == 94 || rand_seed == 93 || rand_seed == 92) {
                   if (b < vert_div) {
                     proteinList[pNum]->numLeft[i_dat] += protein_arrs[pNum][c*Ny*Nz+a*Nz+b]*dV;
                   }
@@ -1498,7 +1523,7 @@ int main (int argc, char *argv[]) {
       delete[] boxname;
       for (int pNum=0; pNum<numProteins; pNum++) {
 
-        if (mem_f_shape == "p" || rand_seed == 99 || rand_seed == 98 || rand_seed == 95 || rand_seed == 94 ||
+        if (mem_f_shape == "p" || rand_seed == 99 || rand_seed == 98 || rand_seed == 95 || rand_seed == 94 || rand_seed == 93 || rand_seed == 92 ||
             mem_f_shape == "triangle" || mem_f_shape == "stad") {
           fprintf(box_plot,"%s\tleft\t",proteinList[pNum]->name);
           for (int i_plot_dat=0; i_plot_dat<i_dat+1; i_plot_dat++) {
@@ -1571,7 +1596,7 @@ int main (int argc, char *argv[]) {
         sprintf(avename,"%s",print_filename("ave_plot",""));
         FILE* ave_plot = fopen(avename,"w");
 
-        if (mem_f_shape == "p" || mem_f_shape == "triangle" || rand_seed == 98 || rand_seed == 95 || rand_seed == 94 ||
+        if (mem_f_shape == "p" || mem_f_shape == "triangle" || rand_seed == 98 || rand_seed == 95 || rand_seed == 94 || rand_seed == 93 || rand_seed == 92 ||
             rand_seed == 99 || mem_f_shape == "stad"){
           for (int pNum=3; pNum<numProteins; pNum++) {
             fprintf(ave_plot,"%s\tleft\t",proteinList[pNum]->name);

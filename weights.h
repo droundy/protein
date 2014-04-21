@@ -2,56 +2,32 @@
 #define __WEIGHTS_H_INCLUDED__
 
 #include <stdio.h>
+#include <math.h>
 
 class weights {
  public:
-  weights(int myN) { // constructor, allocates new weights
-    //will want to allocate and initialize all the memory here
-    N = myN;
-    tot_weights = 0;
-    ws = new double[N](); // initialize to zero say the ()
-  }
-  weights(const weights &x) {
-    N = x.N;
-    tot_weights = x.tot_weights;
-    ws = new double[N];
-    for (int i=0;i<N;i++) ws[i] = x.ws[i];
-  }
-  void operator=(const weights &x) {
-    N = x.N;
-    tot_weights = x.tot_weights;
-    delete[] ws;
-    ws = new double[N];
-    for (int i=0;i<N;i++) ws[i] = x.ws[i];
-  }
+  weights(int num_of_possibilities); // constructor, allocates new weights
   ~weights() { // destructor
     delete[] ws;
   }
-  void update(double w, int i) {
-    /*this will update tot_weights and also the memory within the
-      class according to the reaction and placement input.*/
-    tot_weights += w - ws[i];
-    ws[i] = w;
-  }
-  int lookup(double p) const { // p is from 0 to 1
-    /*protein_microscopy.cpp will give a random number and this
-    returns where in the memory allocated this is (in terms of index i)*/
-    p *= tot_weights;
-    for (int i=0; i<N; i++) {
-      if (p < ws[i]) {
-        return i;
-      }
-      p -= ws[i];
-    }
-    return N-1;
-  }
+  void update(double w, int i);
+  int lookup(double p) const;
   double get_total() const {
-    return tot_weights;
+    return ws[0];
   }
+
+  /*Testing Functions*/
+  void update_one_spot_and_look_at_entire_array(double w, int index);
+  int test_lookup_from_zero_to_one(int num_possibilities);
+  int test_get_total_matches_summing_up(int num_possibilities);
+  int test_looking_up_shows_correct_probs(int num_possibilities);
+
  private:
-  int N;
+  int size_of_array;
+  double *ws;
+  int num_on_top_row;
+  int num_below;
   double tot_weights;
-  double *ws; // or something smarter
 };
 
 #endif

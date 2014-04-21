@@ -1,4 +1,4 @@
-using namespace std;
+#include <cfloat>
 #include <stdio.h>
 #include <stdlib.h>
 #include "weights.h"
@@ -7,120 +7,171 @@ using namespace std;
 #include <math.h>
 
 
-/*
-  weights(int myN)// constructor, allocates new weights
-  ~weights() { // destructor
-
-  void update(double w, int i)
-    this will update tot_weights and also the memory within the
-    class according to the reaction and placement input.
-
-  int lookup(double p) const { // p is from 0 to 1
-    protein_microscopy.cpp will give a random number and this
-    returns where in the memory allocated this is (in terms of index i)
-
-  double get_total() const {
-*/
 /////////////////////hypothetical test code////////////////
 const int Nx = 3;
 const int Ny = 3;
 const int Nz = 3;
 const int size_of_ps = Nx*Ny*Nz;
-weights ws(Nx*Ny*Nz);
+//weights ws(Nx*Ny*Nz);
 const int Nx_big = 100;
 const int Ny_big = 100;
 const int Nz_big = 100;
 
 
-double difference_in_lookups(double *ps, double ps_total, weights ws, int num_lookups) {
-  int *bins = new int [size_of_ps];
-  for (int i=0;i<size_of_ps;i++){
-    bins[i] = 0;
-  }
-  for (int i=0;i<num_lookups;i++){
-    double random =  (double)rand()/(RAND_MAX);
-    int index = ws.lookup(random);//random number is from 0 to 1
-    //printf("rand = %g and index = %d\n",random,index);
-    bins[index]++;
-  }
-  double diff = ps[0]/ps_total - double(bins[0])/double(num_lookups);
-  //printf("looks = %d and diff = %g and %g and %g\n",num_lookups,ps[0]/ps_total, double(bins[0]),double(num_lookups));
-  delete[] bins;
-  return diff;
-  //  return 0.0;
-}
-
-
 int main() {
-  double *ps  = new double[size_of_ps];
-  for (int i=0;i<size_of_ps;i++){
-    ps[i]=0;
+  int num_possibilities = 16;
+  weights ws1 = weights(num_possibilities);
+  for (int i=0;i<num_possibilities;i++) {
+    ws1.update(1.0,i);
   }
-  double den = 256.00;
-  ps[0] = 20/den;
-  ps[1] = 30/den;
-  ps[2] = 40/den;
-  ws.update(ps[0], 0);
-  ws.update(ps[1], 1);
-  ws.update(ps[2], 2);
-  double ps_total=0;
-  for (int i=0;i<size_of_ps;i++){
-    ps_total+=ps[i];
-  }
-  /////////////////////First test
-  assert(fabs(ws.get_total()-ps_total) < 10e-20);
-  printf("passed first test, total difference = %g\n",fabs(ws.get_total()-ps_total));
+  ws1.update_one_spot_and_look_at_entire_array(1.0, 12);
+
+  int test_pass[3];
+  test_pass[0] = ws1.test_lookup_from_zero_to_one(num_possibilities);
+  printf("\ntesting lookup from zero to one = %s\n",test_pass[0]? "PASS" : "FAIL");
+
+  test_pass[1] = ws1.test_get_total_matches_summing_up(num_possibilities);
+  printf("\ntesting get_total matches with summing up probs = %s\n",test_pass[1]? "PASS" : "FAIL");
+
+  test_pass[2] = ws1.test_looking_up_shows_correct_probs(num_possibilities);
+  printf("\ntesting whether looking up many times shows the right probabilities = %s\n\n",
+         test_pass[2]? "PASS" : "FAIL");
 
 
-  ////////////////////Second Test
-  int num_looks = 4;
-  int *looks = new int[num_looks+1];
-  looks[0]=100;
-  double diff = 200;
-  for (int i=1;i<num_looks+1;i++) {
-    looks[i] = 10*looks[i-1];
-    double old_diff = diff;
-    diff = difference_in_lookups(ps,ps_total,ws,looks[i]);
-    printf("num_looks = %d and diff = %g and old_diff = %g\n",looks[i],fabs(diff),fabs(old_diff));
-    assert(fabs(old_diff) > fabs(diff));
-  }
-  printf("Passed Second test\n");
-  delete [] looks;
+  // //////////////////////Third Test
+  // weights ws_big(Nx_big*Ny_big*Nz_big*23);
+  // double prob_test = 1.0;
+  // const clock_t begin_time = clock();
+  // for (int i=0;i<Nx_big*Ny_big*Nz_big*23;i++){
+  //   ws_big.update(prob_test, i);
+  //   ws_big.update(prob_test, i+1);
+  //   //ws_big.update(prob_test, int(rand()%Nx_big*Ny_big*Nz_big*23));
+  // }
+  // clock_t end_time = clock();
+  // assert(double(end_time-begin_time)/CLOCKS_PER_SEC < 1.0);
+  // printf("Passed third test, time to update everything once = %g\n",double(end_time-begin_time)/CLOCKS_PER_SEC);
+  // /*Less than 1 second here is actually very bad.  Below is code that
+  //   figures how long a typical simulation (1500 sim-seconds) will take
+  //   for a hypothetical situation in wich every lattice point and a
+  //   neighbor is updated per time step, using the current update
+  //   function (not a good guess, just a starting point).  */
+
+  // int tot_iters_typical_sim = int(15000 / ((.1*.05*.05)/2.5));
+  // double tot_sec_for_hypothetical_sim = tot_iters_typical_sim*double(end_time-begin_time)/CLOCKS_PER_SEC;
+  // int days = floor(tot_sec_for_hypothetical_sim/(60*60*24));
+  // int hours = floor( (tot_sec_for_hypothetical_sim - days*(60*60*24)) / (60*60)  );
+  // int min = floor( (tot_sec_for_hypothetical_sim - days*(60*60*24) - hours*(60*60)) / 60);
+
+  // printf("Total time for a hypothetical simulation is = %d days, %d hours, and %d min\n",days,hours,min);
 
 
-  //////////////////////Third Test
-  weights ws_big(Nx_big*Ny_big*Nz_big*23);
-  double prob_test = 1.0;
-  const clock_t begin_time = clock();
-  for (int i=0;i<Nx_big*Ny_big*Nz_big*23;i++){
-    ws_big.update(prob_test, i);
-    ws_big.update(prob_test, i+1);
-    //ws_big.update(prob_test, int(rand()%Nx_big*Ny_big*Nz_big*23));
-  }
-  clock_t end_time = clock();
-  assert(double(end_time-begin_time)/CLOCKS_PER_SEC < 1.0);
-  printf("Passed third test, time to update everything once = %g\n",double(end_time-begin_time)/CLOCKS_PER_SEC);
-  /*Less than 1 second here is actually very bad.  Below is code that
-    figures how long a typical simulation (1500 sim-seconds) will take
-    for a hypothetical situation in wich every lattice point and a
-    neighbor is updated per time step, using the current update
-    function (not a good guess, just a starting point).  */
+  // /////////////////////Fourth Test
+  // //assert(fabs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23) < 10e-20);
+  // printf("Passed fourth test, total difference = %g\n",fabs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23));
 
-  int tot_iters_typical_sim = int(15000 / ((.1*.05*.05)/2.5));
-  double tot_sec_for_hypothetical_sim = tot_iters_typical_sim*double(end_time-begin_time)/CLOCKS_PER_SEC;
-  int days = floor(tot_sec_for_hypothetical_sim/(60*60*24));
-  int hours = floor( (tot_sec_for_hypothetical_sim - days*(60*60*24)) / (60*60)  );
-  int min = floor( (tot_sec_for_hypothetical_sim - days*(60*60*24) - hours*(60*60)) / 60);
-
-  printf("Total time for a hypothetical simulation is = %d days, %d hours, and %d min\n",days,hours,min);
-
-
-  /////////////////////Fourth Test
-  //assert(fabs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23) < 10e-20);
-  printf("Passed fourth test, total difference = %g\n",fabs(ws_big.get_total() - prob_test*Nx_big*Ny_big*Nz_big*23));
-
-  delete[] ps;
+  // delete[] ps;
 
   return 0;
 }
 //////////////////////////////////////////////////////
+
+void weights::update_one_spot_and_look_at_entire_array(double w, int index) {
+  for (int i=0;i<size_of_array;i++) {
+    printf("ws[%d] = %g\n",i,ws[i]);
+  }
+  update(w, index);
+  for (int i=0;i<size_of_array;i++) {
+    printf("ws[%d] = %g\n",i,ws[i]);
+  }
+  return;
+}
+
+int weights::test_lookup_from_zero_to_one(int num_possibilities) {
+  for (int i=0;i<num_possibilities;i++) {
+    update(1.0,i);
+  }
+  int index = 0;
+  double lookup_inc = 1.0/num_possibilities;
+  double lookup_val = 0.5*(lookup_inc);
+  for (int i=0;i<num_possibilities;i++) {
+    //printf("lookup_inc = %g lookup_val = %g index = %d\n",lookup_inc,lookup_val,index);
+    if (index != lookup(lookup_val)){
+      return 0;
+    }
+    lookup_val += lookup_inc;
+    index++;
+  }
+  return 1;
+}
+
+int weights::test_get_total_matches_summing_up(int num_possibilities) {
+  if (num_possibilities < 8) {
+    printf("\nnum_possibilities needs to be >= 8 for the get total matches test!!\n");
+    return 0;
+  }
+  double total = 0;
+  for (int i=0;i<num_possibilities;i++) {
+    update(1.0,i);
+    total += 1.0;
+  }
+  if (fabs(get_total() - total) > DBL_EPSILON){
+    return 0;
+  }
+  update(1.0,1); total += 0.0;
+  update(2.2,12); total += 1.2;
+  update(3.6,14); total += 2.6;
+  update(4.9,9); total += 3.9;
+  update(5.2,7); total += 4.2;
+  update(6.0,3); total += 5.0;
+  if (fabs(get_total() - total) > 10e-15){//smaller than this it doesn't pass. Is that ok?
+    return 0;
+  }
+  return 1;
+}
+
+int weights::test_looking_up_shows_correct_probs(int num_possibilities){
+  if (num_possibilities < 8) {
+    printf("\nnum_possibilities needs to be >= 8 for the shows correct probs test!!\n");
+    return 0;
+  }
+  for (int i=0;i<num_possibilities;i++) {
+    update(1.0,i);
+  }
+  int update_indexes[5] = {1,7,9,12,14}; //picked randomly from my head
+  double update_values[5] = {1.0,2.2,3.6,4.9,5.2};//so are these
+  int num_updates = 5;
+  for (int i=0;i<num_updates;i++) {
+    update(update_values[i],update_indexes[i]);
+  }
+  int num_lookup_tests = 4;
+  int num_lookups = 1;
+  int *bins = new int[num_possibilities];
+  double* old_diffs = new double[num_updates];
+  for (int i=0;i<num_updates;i++){
+    old_diffs[i] = 123456.0; //just needed big number
+  }
+  for (int i=0;i<num_lookup_tests;i++) {
+    printf("\nNew lookup test\n");
+    num_lookups = 150*num_lookups;
+    for (int j=0;j<num_possibilities;j++){
+      bins[j] = 0;
+    }
+    for (int j=0;j<num_lookups;j++){
+      bins[lookup((double)rand()/(RAND_MAX))]++; //random number is from 0 to
+    }
+    for (int k=0;k<num_updates;k++) {
+      double diff = fabs(update_values[k]/get_total()
+                         - double(bins[update_indexes[k]])/double(num_lookups));
+      printf("update_value = %g, update_index = %d\n",update_values[k],update_indexes[k]);
+      printf("looks = %d and diff = %g, old_diff = %g and %g and %g num_lookups = %d\n",num_lookups, diff,old_diffs[k],
+             update_values[k]/get_total(),double(bins[update_indexes[k]])/double(num_lookups),num_lookups);
+      if (fabs(old_diffs[k]) < fabs(diff)) {
+        printf("test failed on the last printed\n\n");
+        return 0;
+      }
+      old_diffs[k] = diff;
+    }
+  }
+  delete[] bins;
+  return 1;
+}
