@@ -89,3 +89,26 @@ int weights::lookup(double p) const { // p is from 0 to 1
     return (index - num_below)*2;
   }
 }
+
+double weights::lookup_prob_for_specific_index(int index) {
+  if (index%2 == 0) {
+    return ws[index/2 + num_below];
+  }
+  else {
+    index = index/2 + num_below;
+    while (index%2 != 0 && index>0) {
+      index = index/2;
+    }
+    index = index/2;
+    double prob = ws[index];
+    if (index != 0) {
+      index *= 2;
+      prob -= ws[index];
+    }
+    while (index < num_below) {
+      index = index*2 + 1;
+      prob -= ws[index];
+    }
+    return prob;
+  }
+}

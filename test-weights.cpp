@@ -20,7 +20,14 @@ int main() {
   for (int i=0;i<num_possibilities;i++) {
     ws1.update(1.0,i);
   }
+  ws1.update(2.0,2);
+  ws1.update(2.0,5);
+  ws1.update(2.0,13);
+
   ws1.update_one_spot_and_look_at_entire_array(1.0, 12);
+
+  printf("\nTesting lookup for specific index = %s\n",
+           ws1.test_of_lookup_prob_for_specific_index(num_possibilities)? "PASS" : "FAIL");
 
   int test_pass[4];
   test_pass[0] = ws1.test_lookup_from_zero_to_one(num_possibilities);
@@ -50,11 +57,35 @@ void weights::update_one_spot_and_look_at_entire_array(double w, int index) {
   for (int i=0;i<size_of_array;i++) {
     printf("ws[%d] = %g\n",i,ws[i]);
   }
-  update(w, index);
+  //update(w, index);
   for (int i=0;i<size_of_array;i++) {
     printf("ws[%d] = %g\n",i,ws[i]);
   }
   return;
+}
+
+int weights::test_of_lookup_prob_for_specific_index(int num_possibilities) {
+  if (num_possibilities < 8) {
+    printf("\nnum_possibilities needs to be >= 8 for the test_of_lookup_prob_for_specific_index!!\n");
+    return 0;
+  }
+  for (int i=0;i<num_possibilities;i++) {
+    update(1.0,i);
+    if (fabs(lookup_prob_for_specific_index(i) - 1.0) > 10e-16) {
+      return 0;
+    }
+  }
+  for (int i=0;i<100;i++) {
+    double random = (double)rand()/(RAND_MAX);
+    int random_index = int((double)rand()/(RAND_MAX)*num_possibilities);
+    update(random, random_index);
+    printf("random i = %d and prob = %g\n",random_index,random);
+    if (fabs(lookup_prob_for_specific_index(random_index) - random) > 10e-16) {
+      printf("didn't get i = %d\n",random_index);
+      return 0;
+    }
+  }
+  return 1;
 }
 
 

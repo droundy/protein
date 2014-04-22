@@ -15,6 +15,7 @@ class weights {
   double get_total() const {
     return ws[0];
   }
+  double lookup_prob_for_specific_index(int index);
 
   /*Testing Functions*/
   void update_one_spot_and_look_at_entire_array(double w, int index);
@@ -22,6 +23,7 @@ class weights {
   int test_get_total_matches_summing_up(int num_possibilities);
   int test_looking_up_shows_correct_probs(int num_possibilities);
   int test_time_of_simulation(int num_possibilities);
+  int test_of_lookup_prob_for_specific_index(int num_possibilities);
 
  private:
   int size_of_array;
