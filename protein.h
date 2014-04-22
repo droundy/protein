@@ -18,9 +18,9 @@ int get_J(double difD, double *nATP, double *nADP, double *nE,
           double *JxATP, double *JyATP, double *JzATP,
           double *JxADP, double *JyADP, double *JzADP,
           double *JxE, double *JyE, double *JzE);
-void update_densities_and_weighting_for_reaction(stoch_params p, weights *ws, int *N_ATP, int *N_ADP,
+void update_densities_and_weighting_for_reaction(stoch_params p, weights *ws, bool *insideArr, int *N_ATP, int *N_ADP,
                                     int *N_E, int *ND_st, int *NDE_st, double *mem_A);
-void update_densities_and_weighting_for_diffusion(stoch_params p, weights *ws, int *N_ATP, int *N_ADP,
+void update_densities_and_weighting_for_diffusion(stoch_params p, weights *ws, bool *insideArr, int *N_ATP, int *N_ADP,
                                     int *N_E, int *ND_st, int *NDE_st, double *mem_A);
 void initialize_densities_and_weighting(weights *ws, int *N_ATP, int *N_ADP, int *N_E,
                                         int *ND_st, int *NDE_st, double *mem_A);

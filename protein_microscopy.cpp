@@ -1118,10 +1118,6 @@ int main (int argc, char *argv[]) {
   weights ws = weights(num_pos_reactions*Nx*Ny*Nz);
   initialize_densities_and_weighting(&ws, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
 
-  double yo = ws.get_total();
-  printf("\nRoaming got here %g\n\n",yo);
-  fflush(stdout);
-
   /////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
 
@@ -1134,10 +1130,10 @@ int main (int argc, char *argv[]) {
         int index = ws.lookup( (double)rand()/(RAND_MAX) );//random number is from 0 to 1
         stoch_params p = index_to_parameters(index);
         if (p.reaction <= E_D_to_DE) {
-          update_densities_and_weighting_for_reaction(p, &ws, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
+          update_densities_and_weighting_for_reaction(p, &ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
         }
         else {
-          update_densities_and_weighting_for_diffusion(p, &ws, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
+          update_densities_and_weighting_for_diffusion(p, &ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
         }
         elapsed_time += log( (double)rand()/(RAND_MAX) ) / ws.get_total();
       }
@@ -1148,7 +1144,22 @@ int main (int argc, char *argv[]) {
         nE[i] = double(s_N_E[i])/dx*dx*dx;
         ND[i] = double(s_ND[i]);
         NDE[i] = double(s_NDE[i]);
+        NflD[i] = (nATP[i] + nADP[i])*(dx*dx*dx) + ND[i] + NDE[i];
+        NflE[i] = nE[i]*dx*dx*dx + NDE[i];
       }
+      for (int i=Nx/2-2;i<Nx/2+1;i++){
+        for (int j=0;j<Ny;j++){
+          for (int k=0;k<Nz;k++){
+            if (s_N_ATP[i*Ny*Nz+j*Nz+k] > 0.0) {
+              printf("%d & %g ",s_N_ATP[i*Ny*Nz+j*Nz+k],mem_A[i*Ny*Nz+j*Nz+k]);
+            }
+          }
+          printf("\n");
+        }
+        printf("\n");
+        fflush(stdout);
+      }
+      exit(1);
     }
     else {
       get_J(difD, nATP, nADP, nE, JxATP, JyATP,
@@ -1732,7 +1743,7 @@ int main (int argc, char *argv[]) {
           delete[] time_maxima_z;
           delete[] time_maxima_value;
           clock_t time_took = clock()-start_time;
-          printf("\n\nThe arrow algorithm at iteration time %d took %f seconds to complete\n\n\n",int(i/time_step),double(time_took/CLOCKS_PER_SEC));
+          printf("The arrow algorithm at iteration time %d took %f seconds to complete\n",int(i/time_step),double(time_took/CLOCKS_PER_SEC));
         }
       }
     }
@@ -1846,26 +1857,29 @@ inline void initialize_densities_and_weighting(weights *ws, int *s_N_ATP, int *s
           ws->update( 0.0, DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
         }
         for (int i=0;i<6;i++){
-          if ( s_N_ATP[xi*Ny*Nz+yi*Nz+zi] - s_N_ATP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
-            ws->update( difD*( s_N_ATP[xi*Ny*Nz+yi*Nz+zi] - s_N_ATP[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
-                       (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          }
-          else {
-            ws->update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          }
-          if (s_N_ADP[xi*Ny*Nz+yi*Nz+zi] - s_N_ADP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
-            ws->update( difD*( s_N_ADP[xi*Ny*Nz+yi*Nz+zi] - s_N_ADP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] ) / dA,
-                       (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          }
-          else {
-            ws->update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          }
-          if ( s_N_E[xi*Ny*Nz+yi*Nz+zi] - s_N_E[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
-            ws->update( difD*( s_N_E[xi*Ny*Nz+yi*Nz+zi] - s_N_E[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
-                       (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          }
-          else {
-            ws->update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+          if (xi+d[i][0] > -0.5 && yi+d[i][1] > -0.5 && zi+d[i][2] > -0.5 &&
+              xi+d[i][0] < Nx-0.5 && yi+d[i][1] < Ny-0.5 && zi+d[i][2] < Nz-0.5) {
+            if ( s_N_ATP[xi*Ny*Nz+yi*Nz+zi] - s_N_ATP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
+              ws->update( difD*( s_N_ATP[xi*Ny*Nz+yi*Nz+zi] - s_N_ATP[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
+                          (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+            }
+            else {
+              ws->update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+            }
+            if (s_N_ADP[xi*Ny*Nz+yi*Nz+zi] - s_N_ADP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
+              ws->update( difD*( s_N_ADP[xi*Ny*Nz+yi*Nz+zi] - s_N_ADP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] ) / dA,
+                          (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+            }
+            else {
+              ws->update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+            }
+            if ( s_N_E[xi*Ny*Nz+yi*Nz+zi] - s_N_E[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
+              ws->update( difD*( s_N_E[xi*Ny*Nz+yi*Nz+zi] - s_N_E[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
+                          (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+            }
+            else {
+              ws->update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+            }
           }
         }
       }
@@ -1876,7 +1890,8 @@ inline void initialize_densities_and_weighting(weights *ws, int *s_N_ATP, int *s
 
 
 
-inline void update_densities_and_weighting_for_reaction(stoch_params p, weights *ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
+inline void update_densities_and_weighting_for_reaction(stoch_params p, weights *ws, bool *insideArr, int *s_N_ATP,
+                                                        int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
   /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
                 X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
@@ -1886,6 +1901,9 @@ inline void update_densities_and_weighting_for_reaction(stoch_params p, weights 
      Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
      so dN/dt = difD*(n[z+1]-n[z])*dA/dx = difD*(N[z+1]-N[z])/(dA)
   */
+  if (!insideArr[p.xi*Ny*Nz + p.yi*Nz + p.zi] || p.xi == 0 || p.yi == 0 || p.zi == 0) {
+    return;
+  }
   double dV = dx*dx*dx;
   double dA = dx*dx;
   switch (p.reaction) {
@@ -1912,12 +1930,14 @@ inline void update_densities_and_weighting_for_reaction(stoch_params p, weights 
     ws->update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     //This loop goes around the changed lattice point and updates the diffusion propabilities for going to each adjacent lattice point
     for (int i=0;i<6;i++){
-      if (s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws->update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                   (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      }
-      else {
-        ws->update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        if (s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+          ws->update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+                      (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        else {
+          ws->update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
       }
     }
   }
@@ -1927,12 +1947,14 @@ inline void update_densities_and_weighting_for_reaction(stoch_params p, weights 
                 *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws->update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dA,
-                   (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      }
-      else {
-        ws->update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+          ws->update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dA,
+                      (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        else {
+          ws->update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
       }
     }
   }
@@ -1941,12 +1963,14 @@ inline void update_densities_and_weighting_for_reaction(stoch_params p, weights 
       ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws->update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dA,
-                   (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      }
-      else {
-        ws->update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+          ws->update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dA,
+                      (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        else {
+          ws->update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
       }
     }
   }
@@ -1970,7 +1994,8 @@ inline void update_densities_and_weighting_for_reaction(stoch_params p, weights 
 
 
 
-inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights *ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
+inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights *ws, bool *insideArr, int *s_N_ATP,
+                                                         int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
   /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
                 X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
@@ -1979,18 +2004,32 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
      const int d [6][3] = { {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}, {0,0,1}, {0,0,-1} };
      Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
      so dN/dt = difD*(n[z+1]-n[z])*dx  */
+  // printf("Hello p.xi = %d p.yi = %d p.zi = %d\n",p.xi,p.yi,p.zi);
+  // fflush(stdout);
+  if (!insideArr[p.xi*Ny*Nz + p.yi*Nz + p.zi] || p.xi < 0.5 || p.yi < 0.5 || p.zi < 0.5) {
+    return;
+  }
+  // printf("Also p.xi = %d p.yi = %d p.zi = %d\n",p.xi,p.yi,p.zi);
+  // fflush(stdout);
   double dA = dx*dx;
   if (p.reaction >= X_ADP_pos && p.reaction <= Z_ADP_neg) { //s_N_ADP has diffused
+    for (int i=0;i<6;i++){
+      if (p.reaction == (X_ADP_pos + i) && !insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) {
+        return;
+      }
+    }
     s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
     ws->update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     //This loop goes around the changed lattice point and updates the diffusion propabilities for going to each adjacent lattice point
     for (int i=0;i<6;i++){
-      if ( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws->update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                   (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      }
-      else {
-        ws->update( 0.0, (X_ADP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        if ( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+          ws->update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+                      (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        else {
+          ws->update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
       }
     }
     switch (p.reaction) {
@@ -2010,29 +2049,38 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
     s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
     ws->update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dx, ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     for (int i=0;i<6;i++){
-      if ( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws->update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                   (X_ADP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      }
-      else {
-        ws->update( 0.0, (X_ADP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        if ( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+          ws->update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+                      (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        else {
+          ws->update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
       }
     }
     return;
   }
   else if (p.reaction >= X_ATP_pos && p.reaction <= Z_ATP_neg) { //s_N_ATP has diffused
+    for (int i=0;i<6;i++){
+      if (p.reaction == (X_ATP_pos + i) && !insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        return;
+      }
+    }
     s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
       ws->update((rate_D + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
                 *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws->update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                   (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      }
-      else {
-        ws->update( 0.0, (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+          ws->update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+                      (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        else {
+          ws->update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
       }
     }
     switch (p.reaction) {
@@ -2055,28 +2103,40 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
                 *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws->update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                   (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      }
-      else {
-        ws->update( 0.0, (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+          ws->update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+                      (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        else {
+          ws->update( 0.0, (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
       }
     }
     return;
   }
   else if (p.reaction >= X_E_pos && p.reaction <= Z_E_neg) { //s_N_E has diffused
+    for (int i=0;i<6;i++){
+      // printf("Second p.reaction = %d p.xi = %d p.yi = %d p.zi = %d i = %d X_E_pos + i = %d and insideArr = %d\n",
+      //        p.reaction,p.xi,p.yi,p.zi,i,X_E_pos + i,insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]);
+      // fflush(stdout);
+      if (p.reaction == (X_E_pos + i) && !insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        return;
+      }
+    }
     s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
       ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws->update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                   (X_E_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      }
-      else {
-        ws->update( 0.0, (X_E_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+          ws->update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+                      (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        else {
+          ws->update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
       }
     }
     switch (p.reaction) {
@@ -2098,13 +2158,19 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
       ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
-      if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-        ws->update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                   (X_E_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      // printf("Third p.reaction = %d p.xi = %d p.yi = %d p.zi = %d i = %d\n",p.reaction,p.xi,p.yi,p.zi,i);
+      // fflush(stdout);
+      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
+        if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
+          ws->update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
+                      (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
+        else {
+          ws->update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+        }
       }
-      else {
-        ws->update( 0.0, (X_E_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      }
+      // printf("Fourth p.xi = %d p.yi = %d p.zi = %d\n",p.xi,p.yi,p.zi);
+      // fflush(stdout);
     }
     return;
   }
@@ -2358,7 +2424,6 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
                  + (ptz[cs+1]-ptz[bs+1])*(ptz[cs+1]-ptz[bs+1]));
     p = (line[cs]+line[bs]+eline)/2;
     dA += sqrt(p*(p-line[cs])*(p-line[bs])*(p-eline));
-    //printf("Third dA = %g\n",sqrt(p*(p-line[cs])*(p-line[bs])*(p-eline)));
     cos[cs] = -2; cos_max = -2;
   }
 
@@ -2370,7 +2435,6 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
                  + (ptz[ds+1]-ptz[cs+1])*(ptz[ds+1]-ptz[cs+1]));
     p = (line[ds]+line[cs]+eline)/2;
     dA += sqrt(p*(p-line[ds])*(p-line[cs])*(p-eline));
-    //printf("Fourth dA = %g\n",sqrt(p*(p-line[ds])*(p-line[cs])*(p-eline)));
   }
   delete[] ptsx;
   delete[] ptsy;
@@ -2388,6 +2452,9 @@ void set_insideArr(bool *insideArr){
     for(int yi=0;yi<Ny;yi++){
       for(int zi=0;zi<Nz;zi++){
         insideArr[xi*Ny*Nz+yi*Nz+zi] = inside(xi,yi,zi);
+        if (xi < 0.5 || yi < 0.5 || zi < 0.5){
+          insideArr[xi*Ny*Nz+yi*Nz+zi] = false;
+        }
       }
     }
   }
@@ -2597,158 +2664,65 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
     }
   }
   if (stochastic) {
-    for (int i=0; i<Nx*Ny*Nz;i++) {
-      s_N_ATP[i] = round(nATP[i]*dV);
-      s_N_ADP[i] = round(nADP[i]*dV);
-      s_N_E[i] = round(nE[i]*dV);
-      s_ND[i] = round(ND[i]);
-      s_NDE[i] = round(NDE[i]);
-      printf("%d %d %d %d %d \n",s_N_ATP[i],s_N_ADP[i],s_N_E[i],s_ND[i],s_NDE[i]);
-      printf("%g %g %g %g %g %g \n",nATP[i],nADP[i],nE[i],ND[i],NDE[i],dV);
-      fflush(stdout);
+    /*Want to check the number of starting proteins again.  these seem too high*/
+    int E_total = nE_starting_density*gridpoints_total*dV;
+    int ATP_total = nATP_starting_density*gridpoints_total*dV;
+    printf("E_total = %d ATP_total = %d\n",E_total,ATP_total);
+    while (E_total > 0) {
+      for (int i=0;i<Nx;i++){
+        for (int j=0;j<Ny;j++){
+          for (int k=0;k<Nz;k++){
+            if (inside(i,j,k) && mem_A[i*Ny*Nz+j*Nz+k] == 0.0){
+              if (k>density_divider_right) {
+                if ( (double)rand()/(RAND_MAX) < density_factor_high_dens/10000.0) {
+                  s_N_E[i*Ny*Nz+j*Nz+k] += 1;
+                  E_total -= 1;
+                }
+              }
+              else {
+                if ( (double)rand()/(RAND_MAX) < density_factor_low_dens/10000.0) {
+                  s_N_E[i*Ny*Nz+j*Nz+k] += 1;
+                  E_total -= 1;
+                }
+              }
+            }
+            else {
+              s_N_E[i*Ny*Nz+j*Nz+k] = 0.0;
+            }
+          }
+        }
+      }
+    }
+    while (ATP_total > 0) {
+      for (int i=0;i<Nx;i++){
+        for (int j=0;j<Ny;j++){
+          for (int k=0;k<Nz;k++){
+            if (inside(i,j,k) && mem_A[i*Ny*Nz+j*Nz+k] == 0.0){
+              if (k>density_divider_right) {
+                if ( (double)rand()/(RAND_MAX) < density_factor_high_dens/10000.0) {
+                  s_N_ATP[i*Ny*Nz+j*Nz+k] += 1;
+                  ATP_total -= 1;
+                }
+              }
+              else {
+                if ( (double)rand()/(RAND_MAX) < density_factor_low_dens/10000.0) {
+                  s_N_ATP[i*Ny*Nz+j*Nz+k] += 1;
+                  ATP_total -= 1;
+                }
+              }
+            }
+            else {
+              s_N_ATP[i*Ny*Nz+j*Nz+k] = 0.0;
+            }
+          }
+        }
+      }
+    }
+    for (int i=0;i<Nx*Ny*Nz;i++){
+      s_N_ADP[i] = 0;
+      s_ND[i] = 0;
+      s_NDE[i] = 0;
     }
   }
   return 0;
 }
-
-
-
-
-
-
-// int get_next_stochastic_state(double *mem_A, bool *insideArr, double *nATP, double *nADP,
-//                               double *nE, double *ND, double *NDE, double *NflD, double *NflE,
-//                               double *JxATP, double *JyATP, double *JzATP,
-//                               double *JxADP, double *JyADP, double *JzADP,
-//                               double *JxE, double *JyE, double *JzE) {
-//   double dV = dx*dx*dx;
-//   double ADP_to_ATP;
-//   double de_to_ADP_E;
-//   double ATP_to_d;
-//   double E_d_to_de;
-//   double *W_arr = new double[4*Nx*Ny*Nz+1];
-//   W_arr[0] = 0;
-//   double dist_value = 0;
-//   for(int xi=0;xi<Nx;xi++){
-//     for(int yi=0;yi<Ny;yi++){
-//       for(int zi=0;zi<Nz;zi++){
-//         ADP_to_ATP = rate_ADP_ATP*nADP[xi*Ny*Nz+yi*Nz+zi]*dV;
-//         W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+1] = dist_value + ADP_to_ATP;
-//         de_to_ADP_E = rate_de*NDE[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*dV;
-//         W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+2] = dist_value + ADP_to_ATP + de_to_ADP_E;
-//         ATP_to_d = (rate_D + rate_dD*(ND[xi*Ny*Nz+yi*Nz+zi] + NDE[xi*Ny*Nz+yi*Nz+zi])/mem_A[xi*Ny*Nz+yi*Nz+zi])
-//           *nATP[xi*Ny*Nz+yi*Nz+zi]*dV;
-//         W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+3] = dist_value + ADP_to_ATP + de_to_ADP_E + ATP_to_d;
-//         E_d_to_de = rate_E*ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*nE[xi*Ny*Nz+yi*Nz+zi]*dV;
-//         W_arr[4*(xi*Ny*Nz+yi*Nz+zi)+4] = dist_value + ADP_to_ATP + de_to_ADP_E + ATP_to_d + E_d_to_de;
-//         dist_value += ADP_to_ATP + de_to_ADP_E + ATP_to_d + E_d_to_de;
-//       }
-//     }
-//   }
-//   double C_fun = dist_value;
-//   for (int i =0;i<Nx*Ny*Nz-1;i++){
-//     if (W_arr[i+1] < W_arr[i]) {
-//       printf("Theres a problem in the W_arr assignment loops/n");
-//       exit(1);
-//     }
-//     if (W_arr[4*Nx*Ny*Nz] != C_fun) {
-//       printf("Theres a problem with the C_fun assignment\n");
-//       exit(1);
-//     }
-//   }
-//   double max_W = 0;
-//   for (int i=0; i<4*Nx*Ny*Nz+1; i++) {
-//     if (W_arr[i] > max_W) {
-//       max_W = W_arr[i];
-//     }
-//   }
-//   //starting the loop that I think hopefully we can run a number of times before updating W_arr?
-//   double elapsed_time=0;
-//   while (stoch_iter*time_step > elapsed_time) {
-//     double ran = (double)rand()/(RAND_MAX)*C_fun; //between 0 and C_fun
-//     int interval = int(ran/C_fun*4*Nx*Ny*Nz);
-//     while (ran < W_arr[interval] or ran >= W_arr[interval+1]) {
-//       if ( abs(ran - W_arr[interval]) < max_W) {
-//         if (ran - W_arr[interval] > 0) {
-//           interval++;
-//         }
-//         else {
-//           interval--;
-//         }
-//       }
-//       else {
-//         interval = interval + (ran - W_arr[interval])/C_fun*4*Nx*Ny*Nz;
-//         if (interval < 0) {
-//           interval = -interval;
-//         }
-//       }
-//     }
-//     printf("ran = %f\nW_arr[interval] = %f\nW_arr[interval+1] = %f\n",ran,W_arr[interval],W_arr[interval+1]);
-//     printf("Ran should be in between the other two!\n");
-//     if (ran >= W_arr[interval+1] or ran < W_arr[interval]) {
-//       printf("And its not so Im quitting :(");
-//       exit(1);
-//     }
-//     int xi = floor( interval/(4*Ny*Nz) );
-//     int yi = floor( (interval - xi*Ny*Nz)/(4*Nz) );
-//     int zi = floor( (interval - xi*Ny*Nz - yi*Nz)/4 );
-//     int n = interval -xi*Ny*Nz - yi*Nz - zi;
-//     //should I worry about these floors when the integer is right on?
-//     if (n == 0) {
-//       nADP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-//       nATP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
-//     }
-//     if (n == 1) {
-//       NDE[xi*Ny*Nz+yi*Nz+zi] -= 1;
-//       nADP[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
-//       nE[xi*Ny*Nz+yi*Nz+zi] += 1/dV;
-//     }
-//     if (n == 2) {
-//       nATP[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-//       ND[xi*Ny*Nz+yi*Nz+zi] += 1;
-//     }
-//     if (n == 3) {
-//       nE[xi*Ny*Nz+yi*Nz+zi] -= 1/dV;
-//       ND[xi*Ny*Nz+yi*Nz+zi] -= 1;
-//       NDE[xi*Ny*Nz+yi*Nz+zi] += 1;
-//     }
-//     double delta_t = log( (double)rand()/(RAND_MAX) ) / C_fun;
-//     elapsed_time += delta_t;
-//   }
-//   delete[]  W_arr;
-//   return 0;
-// }
-
-
-// void set_curvature(double mem_A[], double curvature[]){
-//   printf("doing set curvature!!!\n");
-//   //fflush(stdout);
-//   double X = Nx*dx;
-//   double x1 = (X-A)/2.0;
-//   double x2 = (X+A)/2.0;
-//   for(int xi=0;xi<Nx;xi++){
-//     for(int yi=0;yi<Ny;yi++){
-//       for(int zi=0;zi<Nz;zi++){
-//         if (mem_A[xi*Ny*Nz+yi*Nz+zi]==0 || (xi*dx+0.05)>x2 || (xi*dx-0.05)<x1 ){
-//           curvature[xi*Ny*Nz+yi*Nz+zi]=0;
-//         } else {
-//           double fX = mem_f((xi+0.5)*dx, yi*dx, zi*dx);
-//           double fx = mem_f((xi-0.5)*dx, yi*dx, zi*dx);
-//           double fY = mem_f(xi*dx, (yi+0.5)*dx, zi*dx);
-//           double fy = mem_f(xi*dx, (yi-0.5)*dx, zi*dx);
-//           double fZ = mem_f(xi*dx, yi*dx, (zi+0.5)*dx);
-//           double fz = mem_f(xi*dx, yi*dx, (zi-0.5)*dx);
-//           double f = mem_f(xi*dx, yi*dx, zi*dx);
-
-//           double df_dx = (fX-fx)/dx;
-//           double df_dy = (fY-fy)/dx;
-//           double df_dz = (fZ-fz)/dx;
-//           double constant = sqrt((df_dx)*(df_dx) + (df_dy)*(df_dy) + (df_dz)*(df_dz));
-
-//           curvature[xi*Ny*Nz+yi*Nz+zi] = 4*(fX + fx + fY + fy + fZ + fz - 6*f)/dx/dx/constant;
-//         }
-//       }
-//     }
-//   }
-//   //fflush(stdout);
-// }
