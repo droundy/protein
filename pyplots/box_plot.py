@@ -29,13 +29,15 @@ from mpl_toolkits.axes_grid.anchored_artists import AnchoredSizeBar
 
 #opens the file and grabs a particular line matching proteinType and
 #boxName. returns list of protein counts at each time.
+#box-plot--p-0.50-0.50-0.00-0.00-15.00-exact.dat
+
 def returnData(boxName,proteinType):
 
     #open the data file, grab the line with the correct protein type and box partition, load it as a [string] (so we can use list comprehensions)
-    with open("./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s.dat"%
+    with open("./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s-%s.dat"%
               (load.f_shape,load.debug_str,load.hires_str,load.slice_str,
                load.f_shape,load.f_param1,load.f_param2,load.f_param3,
-               load.f_param4,load.f_param5),"r") as boxData:
+               load.f_param4,load.f_param5,load.sim_type),"r") as boxData:
         proteinsOverTime = [line for line in boxData if (proteinType in line) and (boxName in line)]
 
 
@@ -104,7 +106,7 @@ def find_period(f):
     return (penultimate_min, lastmin)
 
 def main():
-    with open("./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s.dat"%(load.f_shape,load.debug_str,load.hires_str,load.slice_str,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5),"r") as boxData:
+    with open("./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s-%s.dat"%(load.f_shape,load.debug_str,load.hires_str,load.slice_str,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5,load.sim_type),"r") as boxData:
         fileLines = boxData.readlines()
 
     #get number of boxes and protein types. little hokey but it works. in boxData.readlines(), there is exactly one '\n' newline string
@@ -172,11 +174,25 @@ def main():
 
     start_time_as_frac_of_ten = float(load.f_param6)
     end_time_as_frac_of_ten = float(load.f_param7)
-    tot_time = len(plotCurveList_D[0])*box_time_step
+    tot_time = float(len(plotCurveList_D[0]))*box_time_step
     start = int(tot_time*start_time_as_frac_of_ten/10.0/box_time_step)
     end = int(tot_time*end_time_as_frac_of_ten/10.0/box_time_step)
-    (start, end) = find_period(plotCurveList_D[len(plotCurveList_D)-2])
-    (start, end) = find_period(np.array(returnData(boxList[len(boxList)-1], 'D_ND')))
+    # (start, end) = find_period(plotCurveList_D[len(plotCurveList_D)-2])
+    # (start, end) = find_period(np.array(returnData(boxList[len(boxList)-1], 'D_ND')))
+    # start = end - 2*(end-start)
+    # end = int(tot_time/box_time_step)
+    # if (load.f_shape == 'triangle') or (load.f_param4 == '95.00') or (load.f_param4 == '94.00'):
+    #     start = 0
+    #     end = int(tot_time*.5/box_time_step)
+    # if ((load.f_param2 == '14.00' or load.f_param2 == '5.50') and load.f_param4 == '99.00'):
+    #     start = 0
+    #     end = int(tot_time/box_time_step)
+
+    # periods_file = open('periods.txt','a')
+    # periods_file.write('Box period= '+str(box_time_step*(end-start)) +' for simulation '+load.f_shape+
+    #                    ' '+load.f_param1+' '+load.f_param2+' '+load.f_param3+' '+load.f_param4+' '+
+    #                    load.f_param5+', with start = '+str(start*box_time_step)+' and end = '+str(end*box_time_step)+'\n')
+    # periods_file.close()
 
     # print useful coordination data
     period = timeAxis[end-1] - timeAxis[start]
@@ -190,16 +206,6 @@ def main():
     # now offset time so it starts at zero
     timeAxis = timeAxis - timeAxis[start]
 
-    if load.f_param4 == '97.00' or (load.f_shape == 'triangle' and load.f_param3 == '6.01'):
-        if load.f_param4 == '97.00':
-            start_time_as_frac_of_ten = 0
-            end_time_as_frac_of_ten = 2.3
-        if load.f_shape == 'triangle' and load.f_param3 == '6.01':
-            start_time_as_frac_of_ten = 5.00
-            end_time_as_frac_of_ten = 9.00
-        start = int(tot_time*start_time_as_frac_of_ten/10.0/box_time_step)
-        end = int(tot_time*end_time_as_frac_of_ten/10.0/box_time_step)
-
     #print set(plotCurveList_D[1]).union(set(plotCurveList_D[2]))
 
        #get num on each plot
@@ -209,10 +215,15 @@ def main():
         if "E_" in proteinType:
             numProteinTypes_E +=1
 
-    #plot scales. colors limited for now.
-    colorScale = ["b","g","r","c","m","y"]
-    alphaScale_D = [n/numProteinTypes for n in range(1,numProteinTypes_D+1)]
-    alphaScale_E = [n/numProteinTypes for n in range(1,numProteinTypes_E+1)]
+    # plot scales. colors limited for now.
+    # colorScale = ["b","g","r","c","m","y"]
+
+    # The tuples elements here are the amount of R,G,B in the color, respectively, on a scale 0-1
+    col_amount = 1.0
+    colorScale = ["b",(0.0,0.0,col_amount),(col_amount,0.0,0.0),(0.0,col_amount,0.0),"m","y"]
+    # alphaScale_D = [n/numProteinTypes for n in range(0,numProteinTypes_D+1)]
+    alphaScale_D = [0.1,0.25,0.50,1.00]
+    alphaScale_E = [n/numProteinTypes for n in range(0,numProteinTypes_E+1)]
 
     #generate the plot
     #f, (bax,sectionax) = plt.subplots(1, 2)
@@ -259,7 +270,7 @@ def main():
         # box plot.
         xdir, ydir = xweighted - xmean, yweighted - ymean
         xdir, ydir = xdir/np.sqrt(xdir**2+ydir**2), ydir/np.sqrt(xdir**2+ydir**2)
-        extraxspace = .5
+        extraxspace = 0.5
         extrayspace = 0
         Yrotated = X*xdir + Y*ydir
         Xrotated = X*ydir - Y*xdir
@@ -276,11 +287,11 @@ def main():
         sectionax.axes.get_yaxis().set_visible(False)
         sectionax.add_artist(AnchoredSizeBar(
                 sectionax.transData,
-                1.00, # length of the bar in the data reference
-                "1$\mu$", # label of the bar
-                #bbox_to_anchor=(0.,0.,1.,1.),
+                2.13, # length of the bar in the data reference
+                "2.13$\mu$", # label of the bar
+                # bbox_to_anchor=(0.,0.,1.,1.),
                 loc=8, # 'best', # location (lower right)
-                pad=-(ymax-ymin)/2.0 + 0.4, borderpad=0.25, sep=3,
+                pad=-(ymax-ymin)/2.0 -.4, borderpad=0.25, sep=3,
                 frameon=False
                 ))
     plot_sections(sectionax, sectiondata)
@@ -318,6 +329,8 @@ def main():
                              plotCurveList_D[i, start:end],
                              alpha=alphaScale_D[k],facecolor=colorScale[j])
         elif i!=0:
+            if i == 1:
+                k+=1
             bax.plot(timeAxis[start:end],
                      plotCurveList_D[i,start:end],
                      color=colorScale[j],alpha=alphaScale_D[k])
@@ -354,7 +367,7 @@ def main():
 
     #bax.legend(plotNameList_D,bbox_to_anchor=(0.3,-0.05,1.0,1.0),loc=4,prop={'size':8}).draw_frame(False)
 
-
+    print load.print_string("box-plot_D","")
     plt.savefig(load.print_string("box-plot_D",""))
     plt.figure()
 

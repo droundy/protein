@@ -16,16 +16,15 @@ int main() {
       (little errors adding up to big ones)*/
 
   int num_possibilities = 16;
-  weights ws1 = weights(num_possibilities);
+  weights ws1 = weights(num_possibilities,'f');
   for (int i=0;i<num_possibilities;i++) {
     ws1.update(1.0,i);
   }
+  ws1.update_one_spot_and_look_at_entire_array(2.0, 13);
+
   ws1.update(2.0,2);
   ws1.update(2.0,5);
   ws1.update(2.0,13);
-
-  ws1.update_one_spot_and_look_at_entire_array(1.0, 12);
-
   printf("\nTesting lookup for specific index = %s\n",
            ws1.test_of_lookup_prob_for_specific_index(num_possibilities)? "PASS" : "FAIL");
 
@@ -42,11 +41,18 @@ int main() {
          test_pass[2]? "PASS" : "FAIL");
 
   int big_num_possibilities = Nx_big*Ny_big*Nz_big*23;
-  weights ws_big = weights(big_num_possibilities);
+  weights ws_big = weights(big_num_possibilities,'f');
   test_pass[3] = ws_big.test_time_of_simulation(big_num_possibilities);
   printf("\ntesting the time it takes to simulate = %s\n\n",
          test_pass[3]? "PASS" : "FAIL");
 
+  for (int i=0;i<4;i++) {
+    if (!test_pass[i]) {
+      printf("\nFAILED  to pass all the tests!\n");
+      return 0;
+    }
+  }
+  printf("\nPASSED all the tests!\n\n");
   return 0;
 }
 
@@ -57,7 +63,7 @@ void weights::update_one_spot_and_look_at_entire_array(double w, int index) {
   for (int i=0;i<size_of_array;i++) {
     printf("ws[%d] = %g\n",i,ws[i]);
   }
-  //update(w, index);
+  update(w, index);
   for (int i=0;i<size_of_array;i++) {
     printf("ws[%d] = %g\n",i,ws[i]);
   }
@@ -69,17 +75,10 @@ int weights::test_of_lookup_prob_for_specific_index(int num_possibilities) {
     printf("\nnum_possibilities needs to be >= 8 for the test_of_lookup_prob_for_specific_index!!\n");
     return 0;
   }
-  for (int i=0;i<num_possibilities;i++) {
-    update(1.0,i);
-    if (fabs(lookup_prob_for_specific_index(i) - 1.0) > 10e-16) {
-      return 0;
-    }
-  }
   for (int i=0;i<100;i++) {
     double random = (double)rand()/(RAND_MAX);
     int random_index = int((double)rand()/(RAND_MAX)*num_possibilities);
     update(random, random_index);
-    printf("random i = %d and prob = %g\n",random_index,random);
     if (fabs(lookup_prob_for_specific_index(random_index) - random) > 10e-16) {
       printf("didn't get i = %d\n",random_index);
       return 0;
@@ -97,7 +96,6 @@ int weights::test_lookup_from_zero_to_one(int num_possibilities) {
   double lookup_inc = 1.0/num_possibilities;
   double lookup_val = 0.5*(lookup_inc);
   for (int i=0;i<num_possibilities;i++) {
-    //printf("lookup_inc = %g lookup_val = %g index = %d\n",lookup_inc,lookup_val,index);
     if (index != lookup(lookup_val)){
       return 0;
     }
@@ -115,19 +113,15 @@ int weights::test_get_total_matches_summing_up(int num_possibilities) {
   }
   double total = 0;
   for (int i=0;i<num_possibilities;i++) {
-    update(1.0,i);
-    total += 1.0;
+    update(0.0,i);
   }
-  if (fabs(get_total() - total) > DBL_EPSILON){
-    return 0;
+  for (int i=0;i<100;i++){
+    double random = (double)rand()/(RAND_MAX);
+    int random_index = int((double)rand()/(RAND_MAX)*num_possibilities);
+    total += random - lookup_prob_for_specific_index(random_index);
+    update(random,random_index);
   }
-  update(1.0,1); total += 0.0;
-  update(2.2,12); total += 1.2;
-  update(3.6,14); total += 2.6;
-  update(4.9,9); total += 3.9;
-  update(5.2,7); total += 4.2;
-  update(6.0,3); total += 5.0;
-  if (fabs(get_total() - total) > 10e-15){//smaller than this it doesn't pass. Is that ok?
+  if (fabs(get_total() - total) > 10e-14){//smaller than this it doesn't pass. Is that ok?
     return 0;
   }
   return 1;
@@ -157,7 +151,7 @@ int weights::test_looking_up_shows_correct_probs(int num_possibilities){
   }
   for (int i=0;i<num_lookup_tests;i++) {
     printf("\nNew lookup test\n");
-    num_lookups = 150*num_lookups;
+    num_lookups = 170*num_lookups;
     for (int j=0;j<num_possibilities;j++){
       bins[j] = 0;
     }
@@ -202,7 +196,7 @@ int weights::test_time_of_simulation(int num_possibilities) {
     int hours = floor( (tot_sec_for_hypothetical_sim - days*(60*60*24)) / (60*60)  );
     int min = floor( (tot_sec_for_hypothetical_sim - days*(60*60*24) - hours*(60*60)) / 60);
     printf("Total time for a hypothetical simulation is = %d days, %d hours, and %d min\n",days,hours,min);
-    if (double(end_time-begin_time)/CLOCKS_PER_SEC > 1.0) {
+    if (double(end_time-begin_time)/CLOCKS_PER_SEC > 2.0) {
         return 0;
     }
     return 1;

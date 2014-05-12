@@ -55,6 +55,7 @@ int min_zi;
 bool once_inside = true;
 
 string mem_f_shape; //cell shape argument
+string sim_type; //type of simulation type - exact, stochastic full_array, or stochastic half_array
 double A, B, C, D; //specific shape parameters, set by command line args
 
 //N denotes protein number, n denotes protein number density
@@ -348,9 +349,12 @@ double mem_f(double x, double y, double z) {
 
  char* print_filename(const char* plotname, const char* proteinname) {
    char* filename = new char[1024];
-   sprintf(filename,"data/shape-%s/%s%s%s%s-%s-%s-%1.2f-%1.2f-%1.2f-%1.2f-%1.2f.dat",mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,plotname,proteinname,mem_f_shape.c_str(),A,B,C,D,density_factor);
+   sprintf(filename,"data/shape-%s/%s%s%s%s-%s-%s-%1.2f-%1.2f-%1.2f-%1.2f-%1.2f-%s.dat",mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,plotname,proteinname,mem_f_shape.c_str(),A,B,C,D,density_factor,sim_type.c_str());
    return filename;
  }
+
+void count_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
+                              double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr);
 
 void sym_check (double * mem_A){
   char *out_filename = new char[1024];
@@ -544,7 +548,6 @@ void trim_grid(double **pointer_to_mem_A, double *first_mem_A){//, int min_xi, i
 }
 
 void test_the_amount_of_area(double *first_mem_A, string mem_f_shape){
-  printf("\n\n\nDid this print ok %s???\n",(char *)mem_f_shape.c_str());
   double A_ours = 0;
   for (int i =0;i<Nx*Ny*Nz;i++){
     A_ours += first_mem_A[i];
@@ -605,6 +608,7 @@ int main (int argc, char *argv[]) {
   C = atof(argv[4]);
   D = atof(argv[5]);
   density_factor = atof(argv[6]);
+  sim_type = argv[8];
   dx=.05;
 
   memset(hires_flag_str,0,1024*sizeof(char));
@@ -1115,57 +1119,73 @@ int main (int argc, char *argv[]) {
   printf("\nSections file has printed\n\n");
   fflush(stdout);
 
-  weights ws = weights(num_pos_reactions*Nx*Ny*Nz);
-  initialize_densities_and_weighting(&ws, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
+  weights *ws;
+  if (sim_type == "full_array") {
+    ws = new weights(num_pos_reactions*Nx*Ny*Nz,'f');
+    printf("\nSimulation type = full_array\n");
+  }
+  else if (sim_type == "half_array") {
+    ws = new weights(num_pos_reactions*Nx*Ny*Nz,'h');
+    printf("\nSimulation type = half_array\n");
+  }
+  else {
+    ws = NULL;
+    printf("\nSimulation type = exact\n");
+  }
+  printf("\nHave initialized weights object\n");
+  fflush(stdout);
+
+  if (sim_type != "exact") {
+    initialize_densities_and_weighting(ws, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
+    printf("\nHave initialized the values of the weights array\n");
+    fflush(stdout);
+  }
 
   /////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
 
+  double start_time = double(clock()/CLOCKS_PER_SEC);
+  double time = start_time;
+
   //starting simuation
   double spill_over_time = 0;
   for (int i=0;i<iter;i++){
-    if (stochastic) {
+    if (sim_type != "exact") {
       double elapsed_time = spill_over_time;
       while (elapsed_time < time_step) {
-        int index = ws.lookup( (double)rand()/(RAND_MAX) );//random number is from 0 to 1
+        int index = ws->lookup( (double)rand()/(RAND_MAX) );//random number is from 0 to 1
         stoch_params p = index_to_parameters(index);
         if (p.reaction <= E_D_to_DE) {
-          update_densities_and_weighting_for_reaction(p, &ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
+          update_densities_and_weighting_for_reaction(p, ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
         }
         else {
-          update_densities_and_weighting_for_diffusion(p, &ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
+          update_densities_and_weighting_for_diffusion(p, ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, mem_A);
         }
-        elapsed_time += log( (double)rand()/(RAND_MAX) ) / ws.get_total();
+        elapsed_time -= log( (double)rand()/(RAND_MAX) ) / ws->get_total();
       }
       spill_over_time = elapsed_time - time_step;
       for (int i=0;i<Nx*Ny*Nz;i++) {
-        nATP[i] = double(s_N_ATP[i])/dx*dx*dx;
-        nADP[i] = double(s_N_ADP[i])/dx*dx*dx;
-        nE[i] = double(s_N_E[i])/dx*dx*dx;
+        nATP[i] = double(s_N_ATP[i])/(dx*dx*dx);
+        nADP[i] = double(s_N_ADP[i])/(dx*dx*dx);
+        nE[i] = double(s_N_E[i])/(dx*dx*dx);
         ND[i] = double(s_ND[i]);
         NDE[i] = double(s_NDE[i]);
         NflD[i] = (nATP[i] + nADP[i])*(dx*dx*dx) + ND[i] + NDE[i];
         NflE[i] = nE[i]*dx*dx*dx + NDE[i];
       }
-      for (int i=Nx/2-2;i<Nx/2+1;i++){
-        for (int j=0;j<Ny;j++){
-          for (int k=0;k<Nz;k++){
-            if (s_N_ATP[i*Ny*Nz+j*Nz+k] > 0.0) {
-              printf("%d & %g ",s_N_ATP[i*Ny*Nz+j*Nz+k],mem_A[i*Ny*Nz+j*Nz+k]);
-            }
-          }
-          printf("\n");
-        }
-        printf("\n");
-        fflush(stdout);
-      }
-      exit(1);
     }
     else {
       get_J(difD, nATP, nADP, nE, JxATP, JyATP,
             JzATP, JxADP, JyADP, JzADP, JxE, JyE, JzE);
       get_next_density(mem_A, insideArr, nATP, nADP, nE, ND, NDE, NflD, NflE, JxATP, JyATP, JzATP,
                        JxADP, JyADP, JzADP, JxE, JyE, JzE);
+    }
+    if ( (sim_type == "exact" && i%10000 == 0) || (sim_type != "exact" && i%10000 == 0) ) {
+      count_and_print_proteins(i,s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr);
+      time = double(clock()/CLOCKS_PER_SEC) - start_time;
+      printf("\nthis is a %s simulation and it took %g seconds to get to interation %d\n",
+             sim_type.c_str(), time, i);
+      fflush(stdout);
     }
     if (i%(int(100*print_denominator))==0) {
       printf("Finished sim loop # i=%d, We're %1.2f percent done\n",i,100*double(i)/iter);
@@ -1184,9 +1204,6 @@ int main (int argc, char *argv[]) {
           }
         }
       }
-
-      // printf("Nine Got Here!\n");
-      // fflush(stdout);
 
       //box plot ...
       if (i%print_denominator==0) {
@@ -1307,7 +1324,7 @@ int main (int argc, char *argv[]) {
 
       //begin nATP printing.
       char *outfilenameATP = new char[1024];
-      sprintf(outfilenameATP, "data/shape-%s/%s%s%snATP-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k);
+      sprintf(outfilenameATP, "data/shape-%s/%s%s%snATP-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
       FILE *nATPfile = fopen((const char *)outfilenameATP,"w");
       delete[] outfilenameATP;
 
@@ -1338,7 +1355,7 @@ int main (int argc, char *argv[]) {
 
       //nE printing
       char *outfilenameE = new char[1000];
-      sprintf(outfilenameE, "data/shape-%s/%s%s%snE-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k);
+      sprintf(outfilenameE, "data/shape-%s/%s%s%snE-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
       FILE *nEfile = fopen((const char *)outfilenameE,"w");
       delete[] outfilenameE;
 
@@ -1369,7 +1386,7 @@ int main (int argc, char *argv[]) {
 
       //nADP printing
       char *outfilenameADP = new char[1000];
-      sprintf(outfilenameADP, "data/shape-%s/%s%s%snADP-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k);
+      sprintf(outfilenameADP, "data/shape-%s/%s%s%snADP-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
       FILE *nADPfile = fopen((const char *)outfilenameADP,"w");
       delete[] outfilenameADP;
 
@@ -1400,7 +1417,7 @@ int main (int argc, char *argv[]) {
 
       //begin ND printing
       char *outfilenameD = new char[1000];
-      sprintf(outfilenameD, "data/shape-%s/%s%s%sND-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k);
+      sprintf(outfilenameD, "data/shape-%s/%s%s%sND-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
       FILE *NDfile = fopen((const char *)outfilenameD,"w");
       delete[] outfilenameD;
 
@@ -1431,7 +1448,7 @@ int main (int argc, char *argv[]) {
 
       //begin NDE printing
       char *outfilenameDE = new char[1000];
-      sprintf(outfilenameDE, "data/shape-%s/%s%s%sNDE-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k);
+      sprintf(outfilenameDE, "data/shape-%s/%s%s%sNDE-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
       FILE *NDEfile = fopen((const char *)outfilenameDE,"w");
       delete[] outfilenameDE;
 
@@ -1460,12 +1477,9 @@ int main (int argc, char *argv[]) {
       }
       //end NDE printing
 
-      // printf("Sixteen Got Here!\n");
-      // fflush(stdout);
-
       //begin NflE printing
       char *outfilenameflE = new char[1000];
-      sprintf(outfilenameflE, "data/shape-%s/%s%s%sNflE-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k);
+      sprintf(outfilenameflE, "data/shape-%s/%s%s%sNflE-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
       FILE *NflEfile = fopen((const char *)outfilenameflE,"w");
       delete[] outfilenameflE;
 
@@ -1496,7 +1510,7 @@ int main (int argc, char *argv[]) {
 
       //begin NflD printing
       char *outfilenameflD = new char[1000];
-      sprintf(outfilenameflD, "data/shape-%s/%s%s%sNflD-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k);
+      sprintf(outfilenameflD, "data/shape-%s/%s%s%sNflD-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
       FILE *NflDfile = fopen((const char *)outfilenameflD,"w");
       delete[] outfilenameflD;
 
@@ -1533,6 +1547,8 @@ int main (int argc, char *argv[]) {
     if (i%plot_denominator==0){
       //boxplot
       char *boxname = print_filename("box-plot","");
+      printf("\nPrinting the box plots %s\n",boxname);
+      fflush(stdout);
       FILE* box_plot = fopen(boxname,"w");
       delete[] boxname;
       for (int pNum=0; pNum<numProteins; pNum++) {
@@ -1704,7 +1720,6 @@ int main (int argc, char *argv[]) {
       if (i<arrow_iter) {
         //would like to know how long this algorithm takes and change it if should
         if (i%printout_iterations == 0) {
-          clock_t start_time = clock();
           int* time_maxima_y = new int[arrow_iter];
           int* time_maxima_z = new int[arrow_iter];
           double* time_maxima_value = new double[arrow_iter];
@@ -1742,18 +1757,12 @@ int main (int argc, char *argv[]) {
           delete[] time_maxima_y;
           delete[] time_maxima_z;
           delete[] time_maxima_value;
-          clock_t time_took = clock()-start_time;
-          printf("The arrow algorithm at iteration time %d took %f seconds to complete\n",int(i/time_step),double(time_took/CLOCKS_PER_SEC));
         }
       }
     }
   }
   //end file printing
   //end simulation
-
-  printf("Twelve Got Here!\n");
-  fflush(stdout);
-
 
   for (int pNum=0; pNum<numProteins; pNum++) {
     delete[] proteinList[pNum]->sum;
@@ -1780,9 +1789,6 @@ int main (int argc, char *argv[]) {
   delete[] JzE;
 
   //printing plot information
-
-  printf("Thirteen Got Here!\n");
-  fflush(stdout);
 
   //printing to the project directory so we have a shortlist of what we've done.
   char *fname = new char[1024];
@@ -1822,9 +1828,6 @@ int main (int argc, char *argv[]) {
     delete[] proteinList[pNum]->name;
     delete proteinList[pNum];
   }
-  printf("Fourteen Got Here!\n");
-  fflush(stdout);
-
   return 0;
 }
 
@@ -1844,12 +1847,12 @@ inline void initialize_densities_and_weighting(weights *ws, int *s_N_ATP, int *s
   for(int xi=0;xi<Nx;xi++){
     for(int yi=0;yi<Ny;yi++){
       for(int zi=0;zi<Nz;zi++){
-        ws->update(rate_ADP_ATP*s_N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        ws->update(rate_ADP_ATP*s_N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//1
         if (mem_A[xi*Ny*Nz+yi*Nz+zi] != 0.0) {
-          ws->update((rate_D + rate_dD*(s_ND[xi*Ny*Nz+yi*Nz+zi] + s_NDE[xi*Ny*Nz+yi*Nz+zi])/mem_A[xi*Ny*Nz+yi*Nz+zi])
-                    *s_N_ATP[xi*Ny*Nz+yi*Nz+zi], ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          ws->update(rate_E*s_ND[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*s_N_E[xi*Ny*Nz+yi*Nz+zi], E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          ws->update(rate_de*s_NDE[xi*Ny*Nz+yi*Nz+zi]/mem_A[xi*Ny*Nz+yi*Nz+zi]*dV, DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+          ws->update((rate_D*mem_A[xi*Ny*Nz+yi*Nz+zi] + rate_dD*(s_ND[xi*Ny*Nz+yi*Nz+zi] + s_NDE[xi*Ny*Nz+yi*Nz+zi]))
+                     *s_N_ATP[xi*Ny*Nz+yi*Nz+zi]/dV, ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//74
+          ws->update(rate_E*s_ND[xi*Ny*Nz+yi*Nz+zi]*s_N_E[xi*Ny*Nz+yi*Nz+zi]/dV, E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//74
+          ws->update(rate_de*s_NDE[xi*Ny*Nz+yi*Nz+zi], DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//.7
         }
         else {
           ws->update( 0.0, ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
@@ -1861,7 +1864,7 @@ inline void initialize_densities_and_weighting(weights *ws, int *s_N_ATP, int *s
               xi+d[i][0] < Nx-0.5 && yi+d[i][1] < Ny-0.5 && zi+d[i][2] < Nz-0.5) {
             if ( s_N_ATP[xi*Ny*Nz+yi*Nz+zi] - s_N_ATP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
               ws->update( difD*( s_N_ATP[xi*Ny*Nz+yi*Nz+zi] - s_N_ATP[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
-                          (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+                          (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//1000
             }
             else {
               ws->update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
@@ -1943,8 +1946,8 @@ inline void update_densities_and_weighting_for_reaction(stoch_params p, weights 
   }
   if (p.reaction == ADP_to_ATP || p.reaction == ATP_to_D) { //s_N_ATP has changed
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update((rate_D + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws->update((rate_D*mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]))
+                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
       if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
@@ -1960,7 +1963,7 @@ inline void update_densities_and_weighting_for_reaction(stoch_params p, weights 
   }
   if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //s_N_E has changed
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
       if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
@@ -1976,16 +1979,16 @@ inline void update_densities_and_weighting_for_reaction(stoch_params p, weights 
   }
   if (p.reaction == ATP_to_D || p.reaction == E_D_to_DE) { //s_ND has changed
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update((rate_D + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws->update((rate_D*mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]))
+                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
   }
   if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //s_NDE has changed
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update(rate_de*s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dV, DE_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      ws->update((rate_D + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws->update(rate_de*s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi], DE_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws->update((rate_D*mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]))
+                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
   }
   return;
@@ -2004,14 +2007,11 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
      const int d [6][3] = { {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}, {0,0,1}, {0,0,-1} };
      Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
      so dN/dt = difD*(n[z+1]-n[z])*dx  */
-  // printf("Hello p.xi = %d p.yi = %d p.zi = %d\n",p.xi,p.yi,p.zi);
-  // fflush(stdout);
   if (!insideArr[p.xi*Ny*Nz + p.yi*Nz + p.zi] || p.xi < 0.5 || p.yi < 0.5 || p.zi < 0.5) {
     return;
   }
-  // printf("Also p.xi = %d p.yi = %d p.zi = %d\n",p.xi,p.yi,p.zi);
-  // fflush(stdout);
   double dA = dx*dx;
+  double dV = dx*dx*dx;
   if (p.reaction >= X_ADP_pos && p.reaction <= Z_ADP_neg) { //s_N_ADP has diffused
     for (int i=0;i<6;i++){
       if (p.reaction == (X_ADP_pos + i) && !insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) {
@@ -2047,7 +2047,7 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
         p.zi -= 1; break;
     }
     s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-    ws->update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi]*dx, ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+    ws->update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     for (int i=0;i<6;i++){
       if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
         if ( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
@@ -2069,8 +2069,8 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
     }
     s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update((rate_D + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws->update((rate_D*mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]))
+                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
       if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
@@ -2099,8 +2099,8 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
     }
     s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update((rate_D + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi])/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi])
-                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws->update((rate_D*mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]))
+                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
       if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
@@ -2117,16 +2117,13 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
   }
   else if (p.reaction >= X_E_pos && p.reaction <= Z_E_neg) { //s_N_E has diffused
     for (int i=0;i<6;i++){
-      // printf("Second p.reaction = %d p.xi = %d p.yi = %d p.zi = %d i = %d X_E_pos + i = %d and insideArr = %d\n",
-      //        p.reaction,p.xi,p.yi,p.zi,i,X_E_pos + i,insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]);
-      // fflush(stdout);
       if (p.reaction == (X_E_pos + i) && !insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
         return;
       }
     }
     s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
       if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
@@ -2155,7 +2152,7 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
     }
     s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
     if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]/mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi], E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
+      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
     }
     for (int i=0;i<6;i++){
       // printf("Third p.reaction = %d p.xi = %d p.yi = %d p.zi = %d i = %d\n",p.reaction,p.xi,p.yi,p.zi,i);
@@ -2177,6 +2174,64 @@ inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights
 }
 
 
+
+void count_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
+                              double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr) {
+  double dV = dx*dx*dx;
+  double total_D_n = 0;
+  double total_E_n = 0;
+  double total_D_N = 0;
+  double total_E_N = 0;
+  double total_NflD = 0;
+  double total_NflE = 0;
+  double total_NE = 0;
+  double total_NDE = 0;
+  double total_NATP = 0;
+  double total_NADP = 0;
+  double total_ND = 0;
+  for (int h=0;h<Nx*Ny*Nz;h++) {
+    total_D_n += (nATP[h] + nADP[h])*dx*dx*dx + ND[h] + NDE[h];
+    total_E_n += nE[h]*dx*dx*dx + NDE[h];
+    total_D_N += s_N_ATP[h] + s_N_ADP[h] + s_ND[h] + s_NDE[h];
+    total_E_N += s_N_E[h] + s_NDE[h];
+    total_NflD += NflD[h];
+    total_NflE += NflE[h];
+    total_NE += nE[h]*dx*dx*dx;
+    total_NDE += NDE[h];
+    total_NATP += nATP[h]*dx*dx*dx;
+    total_NADP += nADP[h]*dx*dx*dx;
+    total_ND += ND[h];
+  }
+  double gridpoints_inside=0;
+  for (int h=0;h<Nx*Ny*Nz;h++) {
+    if (insideArr[h]){
+      gridpoints_inside += 1;
+    }
+  }
+  double number_of_membrane_gridpts=0;
+  double tot_mem_A=0;
+  for (int h=0;h<Nx*Ny*Nz;h++) {
+    if (mem_A[h] != 0.0) {
+      number_of_membrane_gridpts += 1;
+      tot_mem_A += mem_A[h];
+    }
+  }
+  double ave_mem_A = tot_mem_A/number_of_membrane_gridpts;
+  printf("\nFor %s simulation:\ntot_mem_A=%g number_of_membrane_gridpts=%g gridpoints_inside=%g ave_mem_A=%g",
+         sim_type.c_str(), tot_mem_A, number_of_membrane_gridpts, gridpoints_inside, ave_mem_A);
+  // printf("\nAt iteration %d:\ntotal_D_n = %g\ntotal_E_n = %g\ntotal_D_N = %g\ntotal_E_N = %g\ntotal_NflD = %g\ntotal_NflE = %g\n"
+  //        ,iteration,total_D_n,total_E_n,total_D_N,total_E_N,total_NflD,total_NflE);
+  printf("\ntotal_NE = %g\ntotal_NDE = %g\ntotal_NATP = %g\ntotal_NADP = %g\ntotal_ND = %g\n"
+         ,total_NE,total_NDE,total_NATP,total_NADP,total_ND);
+  printf("\nAverage for one gridpt:\nnE = %g\nsigmaDE = %g\nnATP = %g\nnADP = %g\nsigmaND = %g\n",
+         total_NE/(gridpoints_inside*dV),total_NDE/(number_of_membrane_gridpts*ave_mem_A),total_NATP/(gridpoints_inside*dV),
+         total_NADP/(gridpoints_inside*dV),total_ND/(number_of_membrane_gridpts*ave_mem_A));
+  printf("\nMore Average for one gridpt:\nNE = %g\nNDE = %g\nNATP = %g\nNADP = %g\nND = %g\n",
+         total_NE/gridpoints_inside,total_NDE/number_of_membrane_gridpts,total_NATP/gridpoints_inside,
+         total_NADP/gridpoints_inside,total_ND/number_of_membrane_gridpts);
+  fflush(stdout);
+  return;
+}
 
 
 
@@ -2608,7 +2663,7 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
     }
   }
   int density_divider_right = int(right_most_point_z - (right_most_point_z - left_most_point_z)/3);
-  int density_divider_left = int(right_most_point_z - 2*(right_most_point_z - left_most_point_z)/3);
+  //int density_divider_left = int(right_most_point_z - 2*(right_most_point_z - left_most_point_z)/3);
   int gridpoints_low_dens = 0;
   int gridpoints_high_dens = 0;
   int gridpoints_total = 0;
@@ -2634,37 +2689,46 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
   double density_factor_low_dens = gridpoints_total/(gridpoints_low_dens + density_factor*gridpoints_high_dens);
   double density_factor_high_dens = density_factor*gridpoints_total/(gridpoints_low_dens + density_factor*gridpoints_high_dens);
   //begin setting density at each gridpoint:
-  for (int i=0;i<Nx;i++){
-    for (int j=0;j<Ny;j++){
-      for (int k=0;k<Nz;k++){
-        if (inside(i,j,k)){
-          if (k>density_divider_right) {
-            nE[i*Ny*Nz+j*Nz+k] = nE_starting_density*density_factor_high_dens;
+  if (sim_type == "exact"){
+    for (int i=0;i<Nx;i++){
+      for (int j=0;j<Ny;j++){
+        for (int k=0;k<Nz;k++){
+          if (inside(i,j,k)){
+            if (k>density_divider_right) {
+              nE[i*Ny*Nz+j*Nz+k] = nE_starting_density*density_factor_high_dens;
+            }
+            else {
+              nE[i*Ny*Nz+j*Nz+k] = nE_starting_density*density_factor_low_dens;
+            }
+            if (k>density_divider_right) {
+              nATP[i*Ny*Nz+j*Nz+k] = nATP_starting_density*density_factor_high_dens;
+            }
+            else {
+              nATP[i*Ny*Nz+j*Nz+k] = nATP_starting_density*density_factor_low_dens;
+            }
           }
           else {
-            nE[i*Ny*Nz+j*Nz+k] = nE_starting_density*density_factor_low_dens;
+            nATP[i*Ny*Nz+j*Nz+k] = 0;
+            nE[i*Ny*Nz+j*Nz+k] = 0;
           }
-          if (k<density_divider_left) {
-            nATP[i*Ny*Nz+j*Nz+k] = nATP_starting_density*density_factor_high_dens;
-          }
-          else {
-            nATP[i*Ny*Nz+j*Nz+k] = nATP_starting_density*density_factor_low_dens;
-          }
+          nADP[i*Ny*Nz+j*Nz+k] =0;
+          ND[i*Ny*Nz+j*Nz+k] =0;
+          NDE[i*Ny*Nz+j*Nz+k] = 0;
+          NflD[i*Ny*Nz+j*Nz+k] = ND[i*Ny*Nz+j*Nz+k] + NDE[i*Ny*Nz+j*Nz+k] + (nATP[i*Ny*Nz+j*Nz+k] + nADP[i*Ny*Nz+j*Nz+k])*dV;
+          NflE[i*Ny*Nz+j*Nz+k] = NDE[i*Ny*Nz+j*Nz+k] + nE[i*Ny*Nz+j*Nz+k]*dV;
         }
-        else {
-          nATP[i*Ny*Nz+j*Nz+k] = 0;
-          nE[i*Ny*Nz+j*Nz+k] = 0;
-        }
-        nADP[i*Ny*Nz+j*Nz+k] =0;
-        ND[i*Ny*Nz+j*Nz+k] =0;
-        NDE[i*Ny*Nz+j*Nz+k] = 0;
-        NflD[i*Ny*Nz+j*Nz+k] = ND[i*Ny*Nz+j*Nz+k] + NDE[i*Ny*Nz+j*Nz+k] + (nATP[i*Ny*Nz+j*Nz+k] + nADP[i*Ny*Nz+j*Nz+k])*dV;
-        NflE[i*Ny*Nz+j*Nz+k] = NDE[i*Ny*Nz+j*Nz+k] + nE[i*Ny*Nz+j*Nz+k]*dV;
       }
     }
+    printf("This is for exact!:\n\n");
+    for (int j=0;j<Ny;j++){
+      for (int k=0;k<Nz;k++){
+        printf("%g ",NflD[(Nx/2)*Ny*Nz+j*Nz+k]);
+      }
+      printf("\n");
+    }
+    fflush(stdout);
   }
-  if (stochastic) {
-    /*Want to check the number of starting proteins again.  these seem too high*/
+  else {
     int E_total = nE_starting_density*gridpoints_total*dV;
     int ATP_total = nATP_starting_density*gridpoints_total*dV;
     printf("E_total = %d ATP_total = %d\n",E_total,ATP_total);
@@ -2722,7 +2786,17 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
       s_N_ADP[i] = 0;
       s_ND[i] = 0;
       s_NDE[i] = 0;
+      NflD[i] = s_ND[i] + s_NDE[i] + s_N_ATP[i] + s_N_ADP[i];
+      NflE[i] = s_NDE[i] + s_N_E[i];
     }
+    printf("This is for %s simulation!:\n\n",sim_type.c_str());
+    for (int j=0;j<Ny;j++){
+      for (int k=0;k<Nz;k++){
+        printf("%g ",NflD[(Nx/2)*Ny*Nz+j*Nz+k]);
+      }
+      printf("\n");
+    }
+  fflush(stdout);
   }
   return 0;
 }

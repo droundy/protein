@@ -6,15 +6,13 @@
 
 class weights {
  public:
-  weights(int num_of_possibilities);
+  weights(int num_of_possibilities, char sim_type); //sim_type either exact, 'f' for full_array, or 'h' for half_array
   ~weights() { // destructor
     delete[] ws;
   }
   void update(double w, int i);
   int lookup(double p) const;
-  double get_total() const {
-    return ws[0];
-  }
+  double get_total();
   double lookup_prob_for_specific_index(int index);
 
   /*Testing Functions*/
@@ -26,6 +24,7 @@ class weights {
   int test_of_lookup_prob_for_specific_index(int num_possibilities);
 
  private:
+  char sim_type;
   int size_of_array;
   double *ws;
   int num_on_top_row;
