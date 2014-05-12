@@ -1,5 +1,4 @@
-#ifndef __WEIGHTS_H_INCLUDED__
-#define __WEIGHTS_H_INCLUDED__
+#pragma once
 
 #include <stdio.h>
 #include <math.h>
@@ -32,4 +31,3 @@ class weights {
   double tot_weights;
 };
 
-#endif

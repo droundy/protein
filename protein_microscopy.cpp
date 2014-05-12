@@ -1,25 +1,14 @@
 #include <iostream>
-using namespace std;
 #include <stdio.h>
 #include <time.h>
-#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include "protein.h"
 #include "MersenneTwister.h"
 #include "weights.h"
-#include <cassert>
 #include <unistd.h>
 
 const bool stochastic = true;
-
-const double difD = 2.5; // (um)^2 s^- 1
-const double difE = 2.5; // (um)^2 s^-1
-const double rate_ADP_ATP = 1; // s^-1
-const double rate_D = .025; // um s^-1
-const double rate_dD = .0015; // (um)^3 s^-1
-const double rate_de = .7; // s^-1
-const double rate_E = .093; // (um)^3 s^-1
 
 const int stoch_iter = 1000; //this is just a placeholder, not sure how we want to do time yet
 
@@ -37,7 +26,6 @@ char* slice_flag_str = new char[1024];
 char* debug_flag_str = new char[1024];
 
 
-double dx; //grid spacing
 double tot_time; //total simulation time
 double time_step; //simulation time step
 int iter; //total # of iterations
@@ -46,13 +34,11 @@ int printout_iterations; //iterations between file printout
 int box_divider_left;
 int box_divider_right;
 
-double x, y, z;
-int Nx, Ny, Nz; //number of gridpoints in each direction
-int min_xi;
-int min_yi;
-int min_zi;
+int Nx, Ny, Nz;
+int min_xi, min_yi, min_zi;
+double dx;
 
-bool once_inside = true;
+double x, y, z;
 
 string mem_f_shape; //cell shape argument
 string sim_type; //type of simulation type - exact, stochastic full_array, or stochastic half_array
@@ -73,519 +59,45 @@ double *NflD;
 double *NflE;
 double *f_mem;
 
-enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE, X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos,
-               Z_ADP_neg, X_ATP_pos, X_ATP_neg, Y_ATP_pos, Y_ATP_neg, Z_ATP_pos, Z_ATP_neg, X_E_pos, X_E_neg,
-               Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
-const int num_pos_reactions = Z_E_neg+1;
-const int d [6][3] =
-  {
-    {1,0,0},
-    {-1,0,0},
-    {0,1,0},
-    {0,-1,0},
-    {0,0,1},
-    {0,0,-1},
-  };
 
-const int starting_num_guassians=20;
 double guass[3*starting_num_guassians]; //stores y,z, and sigma for each guassian when creating random cell wall
-const int random_num_guassians=5;
-int rand_seed=0; //=14; at this point I have this passed in from the command line as the D argument
-double Norm = 15.0; //This is the height of the guassians that make the cell wall
+int rand_seed = 0; //=14; at this point I have this passed in from the command line as the D argument
 
-//begin randst shape functions
-double rand_dis(double d0,double d_fac,int i) {
-  int fac = 1;
-  srand(i+rand_seed);
-  double x = (rand()%1000);
-  x = x/1000.0;
-  if ( (rand()%1000) < 500) fac = -1;
-  return d0*(1 + fac*(-d_fac*log(1-x)));
-}
 
-void randomize_cell_wall(double guass[]){
-  //double X = Nx*dx; unused
-  double Y = Ny*dx;
-  double Z = Nz*dx;
-  guass[0]=Y/2.0;
-  guass[1]=Z/2.0;
-  guass[2] = rand_dis(0.2,.13,2);
-  for (int i = 1; random_num_guassians; i++){
-    srand(i+rand_seed);
-    double sigma = rand_dis(0.2,.13,i);
-    guass[3*i+2]=sigma;
-    double d = rand_dis(0.4,.13,i);
-    double theta = fmod(rand(),2*M_PI);
-    double y_change = d*sin(theta);
-    double z_change = d*cos(theta);
-    guass[i*3] = guass[(i-1)*3]+y_change;
-    guass[i*3+1] = guass[(i-1)*3+1]+z_change;
-  }
-}
-
-double f_2D_TIE_fighter(double y, double z){
-  double f = 0;double f1 = 0;double f2 = 0;double f3 = 0;
-  double Y = Ny*dx;
-  double Z = Nz*dx;
-  if (y<2.6){
-    f1 = (z-Z/2.0)*(z-Z/2.0)/4 + (y-1.5)*(y-1.5)/0.6 - 1.0;
-  } else {f1 = 0.1;}
-  if (Y-y < 2.6){
-    f2 = (z-Z/2.0)*(z-Z/2.0)/4 + (y-(Y-1.5))*(y-(Y-1.5))/0.6 - 1.0;
-  } else {f2 = 0.1;}
-  if (abs(z-Z/2.0) < 0.8 && abs(y-Y/2.0) < 2.0){
-    f3 = abs(z-Z/2.0)-.5;
-  } else {f3 = 0.1;}
-  f = f1+f2+f3;
-  return f;
-}
-
-bool only_print_once = true;
-double f_2D_triangle(double y, double z){
-  double Y = Ny*dx; double Z = Nz*dx; // total height and width of grid
-  double z1 = A/2.0+2*dx; double y1 = A/2.0+2*dx; // lower left corner of triangle
-  if (y < y1) {
-    return 0.1; // it's too low to be in the triangle
-  }
-
-  double z2 = Z-A/2.0-2*dx; double y2 = y1; // lower right corner of triangle
-  //Using law of cosines from lengths of sides we get top corner:
-  double cos_theta = (B*B+D*D-C*C)/(2*B*D);
-  double z3 = A/2.0+2*dx+D*cos_theta; double y3 = Y-A/2.0-2*dx; // top corner of triangle
-  if (only_print_once==true){
-    printf("z1 = %g y1 = %g\nz2 = %g y2 = %g\nz3 = %g y3 = %g\n",z1,y1,z2,y2,z3,y3);
-    printf("cos_theta = %g\nZ = %g Y = %g A = %g",cos_theta,Z,Y,A/2.0);
-    only_print_once = false;
-  }
-
-  if (z >= z3) {
-    double fac = (z-z3)/(z2-z3); //how far along the line the z coordinate is
-    double y_line = fac*(y2-y3)+y3; //the y coordinate of the line at the z point
-    if (y > y_line) {
-      return 0.1; // it's outside the triangle on the right side
-    }
-  }
-  if (z < z3) {
-    double fac = (z-z1)/(z3-z1); //how far along the line the z coordinate is
-    double y_line = fac*(y3-y1)+y1; //the y coordinate of the line at the z point
-    if (y > y_line) {
-      return 0.1; // its outside the triangle on the left side
-    }
-  }
-  //double rad = 1.75*(z2-z1)*sqrt(3.0)/6.0;
-  //double y_circle = Y/2.0; double z_circle = z1 + sqrt(3)*(y2-y1)/6.0;
-  //if ((z < zl1) && (z < zl3) && (z > z1) && ((z-z_circle)*(z-z_circle) + (y-y_circle)*(y-y_circle)) < rad*rad){
-  //  return -0.1;
-  //} else {
-  return -0.1;
-}
-
-double f_2D_randst(double y, double z){
-  int num_guassians = 0;
-  for(int i=0;i<starting_num_guassians;i++){
-    if (guass[i*3]!=0.0 || guass[i*3+1]!=0.0 || guass[i*3+2]!=0.0){
-      num_guassians++;
-    }
-  }
-  double f=0;
-  for (int i = 0; i<num_guassians; i++){
-    double arg = ((y-guass[3*i])*(y-guass[3*i]) + (z-guass[3*i+1])*(z-guass[3*i+1]))/(guass[3*i+2]*guass[3*i+2]);
-    double fi = -((Norm*exp(-arg))-exp(-1.0));
-    f+=fi;
-  }
-  return f;
-}
-
-bool only = true;
-double f_2D_stad(double y, double z){
-  double f;
-  double Y = Ny*dx;
-  double Z = Nz*dx;
-  double z1 = (Z-C)/2;
-  if(only){
-    printf("z1 = %g Z = %g C = %g\n",z1,Z,C);
-    fflush(stdout);
-    only = false;
-  }
-  double z2 = (C +(Z-C)/2);
-  double y1 = Y/2;
-  if (z < z1) {
-    f = (y-y1)*(y-y1)/(B*B)+(z-z1)*(z-z1)/(D*D)-1;
-    if (f > 0.0){
-      return 0.1;
-    }
-  }
-  if (z > z2) {
-    f = (y-y1)*(y-y1)/(B*B)+(z-z2)*(z-z2)/(D*D)-1;
-    if (f > 0.0){
-      return 0.1;
-    }
-  }
-  if (abs(y-y1) > B){
-    return 0.1;
-  }
-  return -0.1;
-}
-//end randst shape functions
-
-//mem_f produces a scalar field on the grid. points where mem_f = 0 are cell wall.
-double mem_f(double x, double y, double z) {
-  if(mem_f_shape=="randst" || mem_f_shape=="TIE_fighter" || mem_f_shape=="triangle" || mem_f_shape=="stad"){
-    double X = Nx*dx;
-    double f_2d = 0;
-    if(mem_f_shape=="randst") f_2d = f_2D_randst(y,z);
-    else if(mem_f_shape=="TIE_fighter") f_2d = f_2D_TIE_fighter(y,z);
-    else if(mem_f_shape=="triangle") f_2d = f_2D_triangle(y,z);
-    else if(mem_f_shape=="stad") f_2d = f_2D_stad(y,z);
-    else {
-      printf("somethings wrong with the shape argument!!!");
-      exit(1);
-    }
-    if (f_2d<=0) {
-      // if (abs(2*(x-(X/2.0))/A - 0.99999) < .1){
-      //   printf("f_2d = %g and X/2.0 = %g and 2*(x-(X/2.0))/A - 0.99999 = %g and x = %g\n",f_2d,X/2.0,2*(x-(X/2.0))/A - 0.99999,x);
-      //   fflush(stdout);
-      // }
-      return abs(2*(x-(X/2.0))/A) - 0.99999;//1.00001;
-    }
-    double closest_y0 = -100.0;
-    double closest_z0 = -100.0;
-    //bool there_is_closest_point=0; unused
-    for (double y0 = y-(A/2.0+2.0*dx); y0<y+(A/2.0+2.0*dx); y0+=dx/2.0) {
-      for (double z0 = z-(A/2.0+2.0*dx); z0<z+(A/2.0+2.0*dx); z0+=dx/2.0) {
-        if ( (y-y0)*(y-y0)+(z-z0)*(z-z0) < (y-closest_y0)*(y-closest_y0)+(z-closest_z0)*(z-closest_z0) ) {
-          double f0 = 0;
-          if(mem_f_shape=="randst") f0 = f_2D_randst(y0,z0);
-          if(mem_f_shape=="TIE_fighter") f0 = f_2D_TIE_fighter(y0,z0);
-          if(mem_f_shape=="triangle") f0 = f_2D_triangle(y0,z0);
-          if(mem_f_shape=="stad") f0 = f_2D_stad(y0,z0);
-          if (f0 <= 0) {
-            closest_y0 = y0;
-            closest_z0 = z0;
-          }
-        }
-      }
-    }
-    double dis = sqrt((y-closest_y0)*(y-closest_y0) + (z-closest_z0)*(z-closest_z0) + (x-X/2.0)*(x-X/2.0));
-    if (dis < A) {
-      return 2.0*(dis/A-.49999);
-    } else {
-      return 1.0;
-    }
-  }
-
-  if (mem_f_shape=="p"){
-    //A = length, B = radius of endcap and cylinder
-    double f;
-    double X = Nx*dx;
-    double Y = Ny*dx;
-    double Z = Nz*dx;
-    double z1 = (Z-A)/2.0;
-    double z2 = (A+(Z-A)/2.0);
-    double x1 = X/2.0;
-    double y1 = Y/2.0;
-    f = sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1))-B;
-    if (z < z1) {
-      f = sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1)+(z-z1)*(z-z1))-B;
-    }
-    if (z > z2) {
-      f = sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1)+(z-z2)*(z-z2))-B;
-    }
-    return f;
-  }
-  if (mem_f_shape=="sp"){
-    // A = radius
-    double X = Nx*dx;
-    double Y = Ny*dx;
-    double Z = Nz*dx;
-    double x1 = X/2.0;
-    double y1 = Y/2.0;
-    double z1 = Z/2.0;
-    double f;
-    f = sqrt((x-x1)*(x-x1) + (y-y1)*(y-y1) + (z-z1)*(z-z1)) - A;
-    return f;
-  }
-  if (mem_f_shape=="e"){
-    //B = x axis radius radius, C = y axis radius radius, A = z axis radius radius
-    double X = Nx*dx;
-    double Y = Ny*dx;
-    double Z = Nz*dx;
-    double x1 = X/2;
-    double y1 = Y/2;
-    double z1 = Z/2;
-    double f = sqrt( (x-x1)*(x-x1)/(B*B) + (y-y1)*(y-y1)/(C*C)+ (z-z1)*(z-z1)/(A*A) ) - 1;
-    return f;
-  }
-
-   else {
-     double f = 1;
-     return f;
-   }
- }
 
 
  //struct for storing plot information
- struct protein {
-   char* name;
+struct protein {
+  char* name;
 
-   //time_map
-   double* sum;
+  //time_map
+  double* sum;
 
-   //box_plot
-   double* numLeft;
-   double* numMid;
-   double* numRight;
+  //box_plot
+  double* numLeft;
+  double* numMid;
+  double* numRight;
 
-   double* numRightUp;
-   double* numRightDown;
-   double* numLeftUp;
-   double* numLeftDown;
+  double* numRightUp;
+  double* numRightDown;
+  double* numLeftUp;
+  double* numLeftDown;
 
-   //arrow_plot
-   double* maxval;
-   int* ymax;
-   int* zmax;
- };
-
- char* print_filename(const char* plotname, const char* proteinname) {
-   char* filename = new char[1024];
-   sprintf(filename,"data/shape-%s/%s%s%s%s-%s-%s-%1.2f-%1.2f-%1.2f-%1.2f-%1.2f-%s.dat",mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,plotname,proteinname,mem_f_shape.c_str(),A,B,C,D,density_factor,sim_type.c_str());
-   return filename;
- }
-
-void count_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
-                              double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr);
-
-void sym_check (double * mem_A){
-  char *out_filename = new char[1024];
-  sprintf(out_filename,"testingsym.txt");
-  FILE *out_file = fopen((const char *)out_filename, "w");
-  delete[] out_filename;
-  fprintf(out_file, "does this show up?\n");
-
-  FILE * out_files[10];
-  for (int count=0;count<10;count++){
-    char* filename = new char[1024];
-    sprintf(filename, "testingsym.txt%d",count);
-    out_files[count] = fopen((const char *)filename,"w");
-    delete[] filename;
-  }
-  //fprintf(out_file,"Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
-  for (int count=0;count<10;count++){
-    int xi = count+10;
-    for(int zi=0;zi<Nz;zi++){
-      for(int yi=0;yi<Ny;yi++){
-        fprintf(out_files[count], "%g\t",mem_A[xi*Ny*Nz+yi*Nz+zi]);
-      }
-    fprintf(out_files[count],"\n");
-    }
-  }
-  fprintf(out_file,"Done with mem_A print outs\n");
-  for(int zi=0;zi<Nz;zi++){
-    for(int yi=-Ny/2;yi<Ny/2;yi++){
-      //for(int yi=0;yi<Ny;yi++){
-      int xi = 7;
-      //int xa = Nx/2 + xi;
-      int ya = Ny/2 + yi;
-      //int xb = Nx/2 - xi;
-      int yb = Ny/2 - yi;
-      if (abs(mem_A[xi*Ny*Nz+ya*Nz+zi] - mem_A[xi*Ny*Nz+yb*Nz+zi]) > .000001) {
-        fprintf(out_file,"xi = %d ya = %d zi = %d mem(xa) = %g\n",xi,yi,zi,mem_A[xi*Ny*Nz+ya*Nz+zi]);
-        //fprintf(out_file,"\n");
-      }
-      //}
-      //fprintf(out_file, "%d\t",int(inside(xi,yi,Nz/2)));
-    }
-    fprintf(out_file,"\n");
-  }
-  //fprintf(out_file,"Done with mem_A symmetry comparisons\n");
-  // for(int zi=0;zi<Nz;zi++){
-  //   for(int xi=0;xi<Nx/2;xi++){
-  //     for(int yi=0;yi<Ny;yi++){
-  //       int xa = Nx/2 + xi;
-  //       //int ya = Ny/2 + yi;
-  //       int xb = Nx/2 - xi;
-  //       //int yb = Ny/2 - yi;
-  //       if (mem_f(xa*dx,yi*dx,zi*dx) - mem_f(xb*dx,yi*dx,zi*dx) > .000001) {
-  //         fprintf(out_file,"xa = %g ya = %g z = %g mem_A = %g\n",xa*dx,yi*dx,zi*dx,mem_f(xa*dx,yi*dx,zi*dx));//[xi*Ny*Nz+ya*Nz+zi]);
-  //         fprintf(out_file,"xa = %g ya = %g z = %g mem_A = %g\n",xb*dx,yi*dx,zi*dx,mem_f(xb*dx,yi*dx,zi*dx));//[xi*Ny*Nz+ya*Nz+zi]);
-  //       }
-  //     }
-  //     //fprintf(out_file, "%d\t",int(inside(xi,yi,Nz/2)));
-  //   }
-  //   fprintf(out_file,"\n");
-  // }
-  //fprintf(out_file,"Starting mem_f check\n!!!");
-  // for (int i=0;i<100000000;i++){
-  //   double xa = Nx*dx*(double(rand())/RAND_MAX);
-  //   double xb = Nx*dx -xa;
-  //   double y = Ny*dx*(double(rand())/RAND_MAX);
-  //   double z = Nz*dx*(double(rand())/RAND_MAX);
-  // for(double z=0;z<Nz*dx;z += dx/4.0){
-  //   for(double xa=0;xa<Nx*dx/2.0;xa += dx/4.0){
-  //     for(double y=0;y<Ny*dx;y += dx/4.0){
-  //       double xb = Nx*dx - xa;
-  //       if (abs(mem_f(xa,y,z) - mem_f(xb,y,z)) > .00000001) {
-  //         fprintf(out_file,"Nx*dx = %g\n",Nx*dx);
-  //         fprintf(out_file,"xa = %g yi = %g z = %g mem_A = %g\n",xa,y,z,mem_f(xa,y,z));//[xi*Ny*Nz+ya*Nz+zi]);
-  //         fprintf(out_file,"xb = %g yi = %g z = %g mem_A = %g\n",xb,y,z,mem_f(xb,y,z));//[xi*Ny*Nz+ya*Nz+zi]);
-  //       }
-  //       //fprintf(out_file,"No! ");
-  //     }
-  //   }
-  // }
-  // fprintf(out_file,"Done with mem_f symmetry comparisons\n");
-  for (int i=0;i<10;i++){
-    fclose(out_files[i]);
-  }
-  fclose(out_file);
-  // printf("Done with sym check!!!!!");
-  fflush(stdout);
-}
-
-
-bool only_once = true;
-string triangle_section (double y, double z) {
-  //needs editing!!!!!
-  //double Y = Ny*dx; double Z = Nz*dx; // total height and width of grid
-  double z1 = A/2.0+2*dx; double y1 = A/2.0+2*dx; // lower left corner of triangle
-  double z2 = B+A/2.0+2*dx; double y2 = y1; // lower right corner of triangle
-  //Using law of cosines from lengths of sides we get top corner:
-  double theta = acos((B*B+D*D-C*C)/(2*B*D));
-  double z3 = A/2.0+2*dx+D*cos(theta); double y3 = y1+D*sin(theta); // top corner of triangle
-  if (only_once == true) {
-    printf("z1 = %g y1 = %g\nz2 = %g y2 = %g\nz3 %g y3 = %g\n",z1,y1,z2,y2,z3,y3);
-  }
-
-  //get bisecting points and lines:
-  double y_21 = (y1 + y2)/2.0; double z_21 = (z2 + z1)/2.0;
-  double y_32 = (y3 + y2)/2.0; double z_32 = (z3 + z2)/2.0;
-  double y_13 = (y1 + y3)/2.0; double z_13 = (z1 + z3)/2.0;
-  double slope1 = (y_32-y1)/(z_32-z1); // from left corner to right line
-  double slope2 = (y2-y_13)/(z2-z_13); //from right corner to left line
-  double slope3 = (y_21-y3)/(z_21-z3); //from top corner to bottom
-  //running into nan issues when z3 is same as z_21, so I brute force a large negative slope:
-  if (abs(z_21-z3) < .000001){
-    slope3 = 1000000*(y_21-y3);
-  }
-  if (abs(z2-z_13) < .000001){
-    slope2 = 1000000*(y2-y_13);
-  }
-  if (only_once==true){
-    printf("slope1 = %g slope2 = %g slope3 = %g\n",slope1,slope2,slope3);
-  }
-  //find centroid, which is where all three lines above intersect:
-  double z_cen = (y3 - y1 + slope1*z1 - slope3*z3)/(slope1 -slope3);
-  double y_cen = slope1*(z_cen-z1) + y1;
-  if (only_once ==true){
-    printf("z_cen = %g y_cen = %g\n",z_cen,y_cen);
-    only_once = false;
-  }
-  //The density will start higher in the Right section, although there won't be a
-  //lot of symmetry (will also have some in the middle section).
-  if (z > z_cen) {
-    if (y > slope1*(z-z_cen)+y_cen) {
-      return "Mid";
-    }
-  } else {
-    if (y > slope2*(z-z_13)+y_13) {
-      return "Mid";
-    }
-  }
-  if (y > slope3*(z-z_cen)+y_cen) {
-    return "Right";
-  }
-  return "Left";
-}
-
-void trim_grid(double **pointer_to_mem_A, double *first_mem_A){//, int min_xi, int min_yi, int min_zi){
-  int max_xi = 0;
-  min_xi = Nx;
-  int max_yi = 0;
-  min_yi = Ny;
-  int max_zi = 0;
-  min_zi = Nz;
-  for(int xi=0;xi<Nx;xi++){
-    for(int yi=0;yi<Ny;yi++){
-      for(int zi=0;zi<Nz;zi++){
-        if (first_mem_A[xi*Ny*Nz+yi*Nz+zi] != 0) {
-          if (xi > max_xi){
-            max_xi = xi;
-          }
-          if (yi > max_yi){
-            max_yi = yi;
-          }
-          if (zi > max_zi){
-            max_zi = zi;
-          }
-          if (xi < min_xi){
-            min_xi = xi;
-          }
-          if (yi < min_yi){
-            min_yi = yi;
-          }
-          if (zi < min_zi){
-            min_zi = zi;
-          }
-        }
-      }
-    }
-  }
-  int new_Nx = max_xi-min_xi+3;
-  int new_Ny = max_yi-min_yi+3;
-  int new_Nz = max_zi-min_zi+3;
-  *pointer_to_mem_A = new double[new_Nx*new_Ny*new_Nz];
-  for(int xi=0;xi<new_Nx;xi++){
-    for(int yi=0;yi<new_Ny;yi++){
-      for(int zi=0;zi<new_Nz;zi++){
-        (*pointer_to_mem_A)[xi*new_Ny*new_Nz+yi*new_Nz+zi] = first_mem_A[(xi+min_xi-1)*Ny*Nz+(yi+min_yi-1)*Nz+(zi+min_zi-1)];
-      }
-    }
-  }
-  Nx = new_Nx;
-  Ny = new_Ny;
-  Nz = new_Nz;
-}
-
-void test_the_amount_of_area(double *first_mem_A, string mem_f_shape){
-  double A_ours = 0;
-  for (int i =0;i<Nx*Ny*Nz;i++){
-    A_ours += first_mem_A[i];
-  }
-  double A_ideal=0;
-  if (mem_f_shape=="stad"){
-    printf("This in here eh?\n");
-    double d_phi = 0.0001;
-    double Integral = 0;
-    for (double phi = 0; phi<M_PI; phi += d_phi){
-      double denominator = sqrt( (B*B*cos(phi)*cos(phi)) + (D*D*sin(phi)*sin(phi)) );
-      Integral += A*D*B*M_PI/2/denominator*d_phi;
-    }
-    A_ideal = 4*C*B + 2*M_PI*B*D + C*A*M_PI + M_PI*A*A/2 + 2*Integral;
-  }
-  else if (mem_f_shape=="p"){
-    A_ideal = 2*M_PI*B*A + 4*M_PI*B*B;
-  }
-  else if (mem_f_shape=="sp"){
-    A_ideal = 4*M_PI*A*A;
-  }
-  double percent_off = 100.0*abs(A_ideal-A_ours)/A_ideal;
-  if (A_ideal > A_ours) {
-    printf("\nOur mem_A area is too small and is %g%% off\n\n",percent_off);
-  }
-  else {
-    printf("\nOur mem_A area is too great and is %g%% off\n\n",percent_off);
-  }
-}
-
-
-
-struct stoch_params {
-  int xi;
-  int yi;
-  int zi;
-  int reaction;
+  //arrow_plot
+  double* maxval;
+  int* ymax;
+  int* zmax;
 };
+
+char* print_filename(const char* plotname, const char* proteinname) {
+  char* filename = new char[1024];
+  sprintf(filename,"data/shape-%s/%s%s%s%s-%s-%s-%1.2f-%1.2f-%1.2f-%1.2f-%1.2f-%s.dat",mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,plotname,proteinname,mem_f_shape.c_str(),A,B,C,D,density_factor,sim_type.c_str());
+  return filename;
+}
+
+void count_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND,
+                              int *s_NDEs_N_ATP, double *nATP, double *nADP, double *nE, double *ND,
+                              double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr);
 
 
 stoch_params index_to_parameters(int index) {
@@ -597,7 +109,6 @@ stoch_params index_to_parameters(int index) {
   p.zi = index - p.reaction*Nx*Ny*Nz - p.xi*Ny*Nz - p.yi*Nz;
   return p;
 }
-
 
 
 int main (int argc, char *argv[]) {
@@ -788,7 +299,6 @@ int main (int argc, char *argv[]) {
   //end random stuff
 
   double *first_mem_A = new double[Nx*Ny*Nz];
-  set_membrane(first_mem_A);
 
   if (mem_f_shape == "p" || mem_f_shape == "stad" || mem_f_shape == "sp"){
     test_the_amount_of_area(first_mem_A,mem_f_shape);
@@ -800,7 +310,7 @@ int main (int argc, char *argv[]) {
     double **pointer_to_mem_A;
     pointer_to_mem_A = &mem_A;
     printf("\nBefore Trim Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
-    trim_grid(pointer_to_mem_A,first_mem_A);//,min_xi,min_yi,min_zi);
+    trim_grid(pointer_to_mem_A,first_mem_A);
     printf("After Trim Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
     fflush(stdout);
   }
@@ -1832,348 +1342,6 @@ int main (int argc, char *argv[]) {
 }
 
 
-inline void initialize_densities_and_weighting(weights *ws, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
-  /* reminder of the order of the reaction enums and what d is:
-     enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
-                X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
-                X_ATP_pos, X_ATP_neg, Y_ATP_pos, Y_ATP_neg, Z_ATP_pos, Z_ATP_neg,
-                X_E_pos, X_E_neg, Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
-     const int d [6][3] = { {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}, {0,0,1}, {0,0,-1} };
-     Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
-     so dN/dt = jz*dA = difD*(n[z+1]-n[z])*dA/dx = difD*(N[z+1]-N[z])/(dA)
-  */
-  double dV = dx*dx*dx;
-  double dA = dx*dx;
-  for(int xi=0;xi<Nx;xi++){
-    for(int yi=0;yi<Ny;yi++){
-      for(int zi=0;zi<Nz;zi++){
-        ws->update(rate_ADP_ATP*s_N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//1
-        if (mem_A[xi*Ny*Nz+yi*Nz+zi] != 0.0) {
-          ws->update((rate_D*mem_A[xi*Ny*Nz+yi*Nz+zi] + rate_dD*(s_ND[xi*Ny*Nz+yi*Nz+zi] + s_NDE[xi*Ny*Nz+yi*Nz+zi]))
-                     *s_N_ATP[xi*Ny*Nz+yi*Nz+zi]/dV, ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//74
-          ws->update(rate_E*s_ND[xi*Ny*Nz+yi*Nz+zi]*s_N_E[xi*Ny*Nz+yi*Nz+zi]/dV, E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//74
-          ws->update(rate_de*s_NDE[xi*Ny*Nz+yi*Nz+zi], DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//.7
-        }
-        else {
-          ws->update( 0.0, ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          ws->update( 0.0, E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          ws->update( 0.0, DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-        }
-        for (int i=0;i<6;i++){
-          if (xi+d[i][0] > -0.5 && yi+d[i][1] > -0.5 && zi+d[i][2] > -0.5 &&
-              xi+d[i][0] < Nx-0.5 && yi+d[i][1] < Ny-0.5 && zi+d[i][2] < Nz-0.5) {
-            if ( s_N_ATP[xi*Ny*Nz+yi*Nz+zi] - s_N_ATP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
-              ws->update( difD*( s_N_ATP[xi*Ny*Nz+yi*Nz+zi] - s_N_ATP[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
-                          (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//1000
-            }
-            else {
-              ws->update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-            }
-            if (s_N_ADP[xi*Ny*Nz+yi*Nz+zi] - s_N_ADP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
-              ws->update( difD*( s_N_ADP[xi*Ny*Nz+yi*Nz+zi] - s_N_ADP[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] ) / dA,
-                          (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-            }
-            else {
-              ws->update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-            }
-            if ( s_N_E[xi*Ny*Nz+yi*Nz+zi] - s_N_E[(xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2])] >= 0) {
-              ws->update( difD*( s_N_E[xi*Ny*Nz+yi*Nz+zi] - s_N_E[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ] ) / dA,
-                          (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-            }
-            else {
-              ws->update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-            }
-          }
-        }
-      }
-    }
-  }
-  printf("We have allocated and initialized the probability weighting memory\n");
-}
-
-
-
-inline void update_densities_and_weighting_for_reaction(stoch_params p, weights *ws, bool *insideArr, int *s_N_ATP,
-                                                        int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
-  /* reminder of the order of the reaction enums and what d is:
-     enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
-                X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
-                X_ATP_pos, X_ATP_neg, Y_ATP_pos, Y_ATP_neg, Z_ATP_pos, Z_ATP_neg,
-                X_E_pos, X_E_neg, Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
-     const int d [6][3] = { {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}, {0,0,1}, {0,0,-1} };
-     Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
-     so dN/dt = difD*(n[z+1]-n[z])*dA/dx = difD*(N[z+1]-N[z])/(dA)
-  */
-  if (!insideArr[p.xi*Ny*Nz + p.yi*Nz + p.zi] || p.xi == 0 || p.yi == 0 || p.zi == 0) {
-    return;
-  }
-  double dV = dx*dx*dx;
-  double dA = dx*dx;
-  switch (p.reaction) {
-    case ADP_to_ATP:
-      s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-      s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-      break;
-    case DE_to_ADP_E:
-      s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-      s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-      s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-      break;
-    case ATP_to_D:
-      s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-      s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-      break;
-    case E_D_to_DE:
-      s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-      s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-      s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-      break;
-  }
-  if (p.reaction == ADP_to_ATP || p.reaction == DE_to_ADP_E) { //s_N_ADP has changed, need to change probs effected by this
-    ws->update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    //This loop goes around the changed lattice point and updates the diffusion propabilities for going to each adjacent lattice point
-    for (int i=0;i<6;i++){
-      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        if (s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-          ws->update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                      (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        else {
-          ws->update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-      }
-    }
-  }
-  if (p.reaction == ADP_to_ATP || p.reaction == ATP_to_D) { //s_N_ATP has changed
-    if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update((rate_D*mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]))
-                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    }
-    for (int i=0;i<6;i++){
-      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-          ws->update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dA,
-                      (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        else {
-          ws->update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-      }
-    }
-  }
-  if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //s_N_E has changed
-    if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    }
-    for (int i=0;i<6;i++){
-      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-          ws->update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) / dA,
-                      (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        else {
-          ws->update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-      }
-    }
-  }
-  if (p.reaction == ATP_to_D || p.reaction == E_D_to_DE) { //s_ND has changed
-    if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update((rate_D*mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]))
-                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    }
-  }
-  if (p.reaction == DE_to_ADP_E || p.reaction == E_D_to_DE) { //s_NDE has changed
-    if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update(rate_de*s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi], DE_to_ADP_E*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-      ws->update((rate_D*mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]))
-                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    }
-  }
-  return;
-}
-
-
-
-
-inline void update_densities_and_weighting_for_diffusion(stoch_params p, weights *ws, bool *insideArr, int *s_N_ATP,
-                                                         int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A){
-  /* reminder of the order of the reaction enums and what d is:
-     enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
-                X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
-                X_ATP_pos, X_ATP_neg, Y_ATP_pos, Y_ATP_neg, Z_ATP_pos, Z_ATP_neg,
-                X_E_pos, X_E_neg, Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
-     const int d [6][3] = { {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}, {0,0,1}, {0,0,-1} };
-     Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
-     so dN/dt = difD*(n[z+1]-n[z])*dx  */
-  if (!insideArr[p.xi*Ny*Nz + p.yi*Nz + p.zi] || p.xi < 0.5 || p.yi < 0.5 || p.zi < 0.5) {
-    return;
-  }
-  double dA = dx*dx;
-  double dV = dx*dx*dx;
-  if (p.reaction >= X_ADP_pos && p.reaction <= Z_ADP_neg) { //s_N_ADP has diffused
-    for (int i=0;i<6;i++){
-      if (p.reaction == (X_ADP_pos + i) && !insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ] ) {
-        return;
-      }
-    }
-    s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-    ws->update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    //This loop goes around the changed lattice point and updates the diffusion propabilities for going to each adjacent lattice point
-    for (int i=0;i<6;i++){
-      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        if ( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-          ws->update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                      (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        else {
-          ws->update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-      }
-    }
-    switch (p.reaction) {
-      case X_ADP_pos:
-        p.xi += 1; break;
-      case Y_ADP_pos:
-        p.yi += 1; break;
-      case Z_ADP_pos:
-        p.zi += 1; break;
-      case X_ADP_neg:
-        p.xi -= 1; break;
-      case Y_ADP_neg:
-        p.yi -= 1; break;
-      case Z_ADP_neg:
-        p.zi -= 1; break;
-    }
-    s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-    ws->update(rate_ADP_ATP*s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi], ADP_to_ATP*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    for (int i=0;i<6;i++){
-      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        if ( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-          ws->update( difD*( s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ADP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                      (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        else {
-          ws->update( 0.0, (X_ADP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-      }
-    }
-    return;
-  }
-  else if (p.reaction >= X_ATP_pos && p.reaction <= Z_ATP_neg) { //s_N_ATP has diffused
-    for (int i=0;i<6;i++){
-      if (p.reaction == (X_ATP_pos + i) && !insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        return;
-      }
-    }
-    s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-    if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update((rate_D*mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]))
-                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    }
-    for (int i=0;i<6;i++){
-      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-          ws->update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                      (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        else {
-          ws->update( 0.0, (X_ATP_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-      }
-    }
-    switch (p.reaction) {
-      case X_ATP_pos:
-        p.xi += 1; break;
-      case Y_ATP_pos:
-        p.yi += 1; break;
-      case Z_ATP_pos:
-        p.zi += 1; break;
-      case X_ATP_neg:
-        p.xi -= 1; break;
-      case Y_ATP_neg:
-        p.yi -= 1; break;
-      case Z_ATP_neg:
-        p.zi -= 1; break;
-    }
-    s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-    if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update((rate_D*mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] + rate_dD*(s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] + s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi]))
-                *s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, ATP_to_D*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    }
-    for (int i=0;i<6;i++){
-      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        if ( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-          ws->update( difD*( s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_ATP[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                      (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        else {
-          ws->update( 0.0, (X_ATP_pos + 1)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-      }
-    }
-    return;
-  }
-  else if (p.reaction >= X_E_pos && p.reaction <= Z_E_neg) { //s_N_E has diffused
-    for (int i=0;i<6;i++){
-      if (p.reaction == (X_E_pos + i) && !insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        return;
-      }
-    }
-    s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
-    if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    }
-    for (int i=0;i<6;i++){
-      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-          ws->update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                      (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        else {
-          ws->update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-      }
-    }
-    switch (p.reaction) {
-      case X_E_pos:
-        p.xi += 1; break;
-      case Y_E_pos:
-        p.yi += 1; break;
-      case Z_E_pos:
-        p.zi += 1; break;
-      case X_E_neg:
-        p.xi -= 1; break;
-      case Y_E_neg:
-        p.yi -= 1; break;
-      case Z_E_neg:
-        p.zi -= 1; break;
-    }
-    s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] += 1;
-    if (mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] != 0.0) {
-      ws->update(rate_E*s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi]*s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi]/dV, E_D_to_DE*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-    }
-    for (int i=0;i<6;i++){
-      // printf("Third p.reaction = %d p.xi = %d p.yi = %d p.zi = %d i = %d\n",p.reaction,p.xi,p.yi,p.zi,i);
-      // fflush(stdout);
-      if (insideArr[ (p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2]) ]) {
-        if ( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] >= 0) {
-          ws->update( difD*( s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] - s_N_E[(p.xi+d[i][0])*Ny*Nz + (p.yi+d[i][1])*Nz + (p.zi+d[i][2])] ) / dA,
-                      (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-        else {
-          ws->update( 0.0, (X_E_pos + i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi);
-        }
-      }
-      // printf("Fourth p.xi = %d p.yi = %d p.zi = %d\n",p.xi,p.yi,p.zi);
-      // fflush(stdout);
-    }
-    return;
-  }
-}
-
-
 
 void count_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
                               double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr) {
@@ -2235,310 +1403,6 @@ void count_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_
 
 
 
-void set_membrane(double mem_A[]) {
-  //int count = 0;
-  for(int xi=0;xi<Nx;xi++){
-    for(int yi=0;yi<Ny;yi++){
-      for(int zi=0;zi<Nz;zi++){
-        //count++;
-        double fXYZ = mem_f((xi+0.5)*dx, (yi+0.5)*dx, (zi+0.5)*dx);
-        double fXYz = mem_f((xi+0.5)*dx, (yi+0.5)*dx, (zi-0.5)*dx);
-        double fXyZ = mem_f((xi+0.5)*dx, (yi-0.5)*dx, (zi+0.5)*dx);
-        double fXyz = mem_f((xi+0.5)*dx, (yi-0.5)*dx, (zi-0.5)*dx);
-        double fxYZ = mem_f((xi-0.5)*dx, (yi+0.5)*dx, (zi+0.5)*dx);
-        double fxYz = mem_f((xi-0.5)*dx, (yi+0.5)*dx, (zi-0.5)*dx);
-        double fxyZ = mem_f((xi-0.5)*dx, (yi-0.5)*dx, (zi+0.5)*dx);
-        double fxyz = mem_f((xi-0.5)*dx, (yi-0.5)*dx, (zi-0.5)*dx);
-        double f = mem_f(xi*dx, yi*dx, zi*dx);
-        //printf("In set_membrane xi=%d yi=%d zi=%d and count = and Nx*Ny*Nz=%d\n",xi,yi,zi,Nx*Ny*Nz);
-        //fflush(stdout);
-        mem_A[xi*Ny*Nz+yi*Nz+zi] = find_intersection(fXYZ, fXYz, fXyZ, fXyz, fxYZ, fxYz, fxyZ, fxyz, f, false);
-      }
-    }
-  }
-}
-
-
-double find_intersection(const double fXYZ, const double fXYz, const double fXyZ, const double fXyz,
-                         const double fxYZ, const double fxYz, const double fxyZ, const double fxyz,
-                         double f, bool debugme) {
-  //Instead of evaluating mem_f in the middle of each cube we will average the corners for greater accuracy:
-  f =  (fXYZ + fXYz + fXyZ + fXyz + fxYZ + fxYz + fxyZ + fxyz + f)/9;
-  double dA = 0;
-  if (debugme) printf("I am debugging\n");
-  // "pts" is a set of points in 3D space (in units of distance) where
-  // the plane of f=0 intersects with the *edges* of the cube.
-  double *ptsx = new double[8];
-  double *ptsy = new double[8];
-  double *ptsz = new double[8];
-  for (int i=0;i<8;i++) ptsx[i] = 0;
-  for (int i=0;i<8;i++) ptsy[i] = 0;
-  for (int i=0;i<8;i++) ptsz[i] = 0;
-  int np = 0; // np is the number of intersections between edges of the cube and the plane f=0
-  double df_dx = (fXYZ + fXYz + fXyZ + fXyz - fxYZ - fxyZ - fxYz - fxyz)/(4*dx);
-  double df_dy = (fXYZ + fXYz + fxYZ + fxYz - fXyZ - fxyZ - fXyz - fxyz)/(4*dx);
-  double df_dz = (fXYZ + fXyZ + fxYZ + fxyZ - fXYz - fXyz - fxYz - fxyz)/(4*dx);
-  if (debugme) {
-    printf("df_dx = %g\n", df_dx);
-    printf("df_dy = %g\n", df_dy);
-    printf("df_dz = %g\n", df_dz);
-  }
-  for (double j=-0.5; j<1.0; j++){
-    for (double k=-0.5; k<1.0; k++){
-      if ((-f - j*dx*df_dy - k*dx*df_dz)/(df_dx*dx) < 0.5 && (-f - j*dx*df_dy - k*dx*df_dz)/(df_dx*dx) > -0.5){
-        ptsx[np] = (-f - j*dx*df_dy - k*dx*df_dz)/df_dx;
-        ptsy[np] = j*dx;
-        ptsz[np] = k*dx;
-        np++;
-      }
-    }
-  }
-  //printf("df_dy = %g and f = %g and -f/(df_dy*dx) = %g\n",df_dy,f,-f/(df_dy*dx));
-  for (double i=-0.5; i<1.0; i++){
-    for (double k=-0.5; k<1.0; k++){
-      if ((-f - i*dx*df_dx - k*dx*df_dz)/(df_dy*dx) < 0.5 && (-f - i*dx*df_dx - k*dx*df_dz)/(df_dy*dx) > -0.5){
-        ptsy[np] = (-f - i*dx*df_dx - k*dx*df_dz)/df_dy;
-        ptsx[np] = i*dx;
-        ptsz[np] = k*dx;
-        np++;
-      }
-    }
-  }
-  for (double j=-0.5; j<1.0; j++){
-    for (double i=-0.5; i<1.0; i++){
-      if ((-f - j*dx*df_dy - i*dx*df_dx)/(df_dz*dx) < 0.5 && (-f - j*dx*df_dy - i*dx*df_dx)/(df_dz*dx) > -0.5){
-        ptsz[np] = (-f - j*dx*df_dy - i*dx*df_dx)/df_dz;
-        ptsy[np] = j*dx;
-        ptsx[np] = i*dx;
-        np++;
-      }
-    }
-  }
-  //printf("np = %d\n",np);
-  if (np == 0) return 0.0; // no intersections ===> no area!
-  if (debugme) {
-    //printf("np = %d\n", np);
-    for (int i=0;i<np;i++) {
-      printf("\t%g %g %g\n", ptsx[i], ptsy[i], ptsz[i]);
-    }
-  }
-  for (int i=0; i<np;i++){
-    //printf("ptsx[%d]=%g, ptsy[%d]=%g, ptsy[%d]=%g\n",i,ptsx[i],i,ptsy[i],i,ptsz[i]);
-  }
-  int nz0 = 0;  // how many of our pts are on the negative z side
-  int ny0 = 0;
-  int nx0 = 0;
-  // "pt" is the same set of points in 3D space as pts, but reordered
-  // such that they go around the polygon of intersection in order.
-  double *ptx = new double[8];
-  double *pty = new double[8];
-  double *ptz = new double[8];
-  for (int i=0;i<8;i++) ptx[i] = 0;
-  for (int i=0;i<8;i++) pty[i] = 0;
-  for (int i=0;i<8;i++) ptz[i] = 0;
-  double *line = new double[8];
-  for (int i=0;i<8;i++) line[i] = 0;
-  double *cos = new double[8];
-  double cos_max = -2;
-  int as=0;
-  int bs=0;
-  int cs=0;
-  int ds=0;
-  int s = 1;
-  double eline = 0;
-  double p = 0;
-  for (int i=0;i<np;i++){
-    if (ptsz[i] == -0.5*dx) {ptz[nz0]=ptsz[i]; ptx[nz0]=ptsx[i]; pty[nz0]=ptsy[i]; nz0++;}
-  }
-  // at this point, we know how many times the f=0 plane intersects
-  // the edgest of the negative z square, which will be either 0, 2,
-  // or 4.
-  if (debugme) {
-    printf("nz0 = %d\n", nz0);
-  }
-  if (nz0 == 4) {
-    // the plane is coplanar with one edge, so our area is very easy.
-    return dx*dx;
-  }
-  if (nz0 == 2){
-    line[0] = sqrt((ptx[1]-ptx[0])*(ptx[1]-ptx[0]) + (pty[1]-pty[0])*(pty[1]-pty[0])
-                   + (ptz[1]-ptz[0])*(ptz[1]-ptz[0]));
-    for (int i=0;i<np;i++){
-      if (ptsz[i] != -0.5*dx){
-        line[s] = sqrt((ptsx[i]-ptx[0])*(ptsx[i]-ptx[0]) + (ptsy[i]-pty[0])*(ptsy[i]-pty[0])
-                       + (ptsz[i]-ptz[0])*(ptsz[i]-ptz[0]));
-        cos[s] = ((ptsx[i]-ptx[0])*(ptx[1]-ptx[0]) + (ptsy[i]-pty[0])*(pty[1]-pty[0])
-                  + (ptsz[i]-ptz[0])*(ptz[1]-ptz[0])) / (line[s]*line[0]);
-        ptz[s+1] = ptsz[i]; ptx[s+1] = ptsx[i]; pty[s+1] = ptsy[i];
-        s++;
-      }
-    }
-  } else {
-    // The plane doesn't intersect with the negative z side of the
-    // cube, so let's look at the negative *x* side...
-    for (int i=0;i<np;i++){
-      if (ptsx[i] == -0.5*dx) {ptz[nx0]=ptsz[i]; ptx[nx0]=ptsx[i]; pty[nx0]=ptsy[i]; nx0++;}
-    }
-    if (debugme) {
-      printf("nx0 = %d\n", nx0);
-    }
-    if (nx0 == 4) {
-      return dx*dx; // coplanar, as before
-    }
-    if (nx0 == 2){
-      line[0] = sqrt((ptx[1]-ptx[0])*(ptx[1]-ptx[0]) + (pty[1]-pty[0])*(pty[1]-pty[0])
-                     + (ptz[1]-ptz[0])*(ptz[1]-ptz[0]));
-      for (int i=0;i<np;i++){
-        if (ptsx[i] != -0.5*dx){
-          line[s] = sqrt((ptsx[i]-ptx[0])*(ptsx[i]-ptx[0]) + (ptsy[i]-pty[0])*(ptsy[i]-pty[0])
-                         + (ptsz[i]-ptz[0])*(ptsz[i]-ptz[0]));
-          cos[s] = ((ptsx[i]-ptx[0])*(ptx[1]-ptx[0]) + (ptsy[i]-pty[0])*(pty[1]-pty[0])
-                    + (ptsz[i]-ptz[0])*(ptz[1]-ptz[0])) / (line[s]*line[0]);
-          ptz[s+1] = ptsz[i]; ptx[s+1] = ptsx[i]; pty[s+1] = ptsy[i];
-          s++;
-        }
-      }
-    } else {
-      // No intersection with negative z or negative x side of the cube...
-      for (int i=0;i<np;i++){
-        if (ptsy[i] == -0.5*dx) {ptz[ny0]=ptsz[i]; ptx[ny0]=ptsx[i]; pty[ny0]=ptsy[i]; ny0++;}
-      }
-      if (debugme) {
-        printf("ny0 = %d\n", ny0);
-      }
-      if (ny0 == 4) {
-        return dx*dx; // coplanar, as before
-      }
-      if (ny0 == 2){
-        line[0] = sqrt((ptx[1]-ptx[0])*(ptx[1]-ptx[0]) + (pty[1]-pty[0])*(pty[1]-pty[0])
-                       + (ptz[1]-ptz[0])*(ptz[1]-ptz[0]));
-        for (int i=0;i<np;i++){
-          if (ptsy[i] != -0.5*dx){
-            line[s] = sqrt((ptsx[i]-ptx[0])*(ptsx[i]-ptx[0]) + (ptsy[i]-pty[0])*(ptsy[i]-pty[0])
-                           + (ptsz[i]-ptz[0])*(ptsz[i]-ptz[0]));
-            cos[s] = ((ptsx[i]-ptx[0])*(ptx[1]-ptx[0]) + (ptsy[i]-pty[0])*(pty[1]-pty[0])
-                      + (ptsz[i]-ptz[0])*(ptz[1]-ptz[0])) / (line[s]*line[0]);
-            ptz[s+1] = ptsz[i]; ptx[s+1] = ptsx[i]; pty[s+1] = ptsy[i];
-            s++;
-          }
-        }
-      } else {
-        // We now know that the plane must be going through the +x, +y, +z corner!
-        assert(np == 3);
-        //return 0.0;
-        const double dist01 = sqrt((ptsx[1]-ptsx[0])*(ptsx[1]-ptsx[0])
-                                   + (ptsy[1]-ptsy[0])*(ptsy[1]-ptsy[0])
-                                   + (ptsz[1]-ptsz[0])*(ptsz[1]-ptsz[0]));
-        const double dist02 = sqrt((ptsx[2]-ptsx[0])*(ptsx[2]-ptsx[0])
-                                   + (ptsy[2]-ptsy[0])*(ptsy[2]-ptsy[0])
-                                   + (ptsz[2]-ptsz[0])*(ptsz[2]-ptsz[0]));
-        const double dot012 = (ptsx[1]-ptsx[0])*(ptsx[2]-ptsx[0]) + (ptsy[1]-ptsy[0])*(ptsy[2]-ptsy[0]) + (ptsz[1]-ptsz[0])*(ptsz[2]-ptsz[0]);
-        return 0.5*sqrt(dist01*dist01*dist02*dist02 - dot012*dot012);
-      }
-    }
-  }
-  assert(s == np-1);
-  for (int i=1;i<s;i++){
-    if (cos[i] > cos_max){cos_max = cos[i]; as=i;}
-  }
-  if (debugme) {
-    printf("s = %d\n", s);
-  }
-  eline = sqrt((ptx[as+1]-ptx[1])*(ptx[as+1]-ptx[1]) + (pty[as+1]-pty[1])*(pty[as+1]-pty[1])
-               + (ptz[as+1]-ptz[1])*(ptz[as+1]-ptz[1]));
-  p = (line[as]+line[0]+eline)/2;
-  dA = sqrt(p*(p-line[as])*(p-line[0])*(p-eline));
-  //printf("First dA = %g\n",dA);
-  if (debugme) {
-    printf("dA = %g\n", dA);
-    printf("p = %g\n", p);
-    printf("eline = %g\n", eline);
-    printf("line[as] = %g\n", line[as]);
-    printf("line[0] = %g\n", line[0]);
-    printf("as = %d\n", as);
-  }
-  cos[as] = -2; cos_max = -2;
-
-  if (np==4 || np==5 || np==6){
-    for (int i=1;i<s;i++){
-      if (cos[i] > cos_max){cos_max = cos[i]; bs=i;}
-    }
-    eline = sqrt((ptx[bs+1]-ptx[as+1])*(ptx[bs+1]-ptx[as+1]) + (pty[bs+1]-pty[as+1])*(pty[bs+1]-pty[as+1])
-                 + (ptz[bs+1]-ptz[as+1])*(ptz[bs+1]-ptz[as+1]));
-    p = (line[bs]+line[as]+eline)/2;
-    dA += sqrt(p*(p-line[bs])*(p-line[as])*(p-eline));
-    //printf("Second dA = %g\n",sqrt(p*(p-line[bs])*(p-line[as])*(p-eline)));
-    cos[bs] = -2; cos_max = -2;
-  }
-
-  if (np==5 || np==6){
-    for (int i=1;i<s;i++){
-      if (cos[i] > cos_max){cos_max = cos[i]; cs=i;}
-    }
-    eline = sqrt((ptx[cs+1]-ptx[bs+1])*(ptx[cs+1]-ptx[bs+1]) + (pty[cs+1]-pty[bs+1])*(pty[cs+1]-pty[bs+1])
-                 + (ptz[cs+1]-ptz[bs+1])*(ptz[cs+1]-ptz[bs+1]));
-    p = (line[cs]+line[bs]+eline)/2;
-    dA += sqrt(p*(p-line[cs])*(p-line[bs])*(p-eline));
-    cos[cs] = -2; cos_max = -2;
-  }
-
-  if (np == 6) {
-    for (int i=1;i<s;i++){
-      if (cos[i] > cos_max){cos_max = cos[i]; ds=i;}
-    }
-    eline = sqrt((ptx[ds+1]-ptx[cs+1])*(ptx[ds+1]-ptx[cs+1]) + (pty[ds+1]-pty[cs+1])*(pty[ds+1]-pty[cs+1])
-                 + (ptz[ds+1]-ptz[cs+1])*(ptz[ds+1]-ptz[cs+1]));
-    p = (line[ds]+line[cs]+eline)/2;
-    dA += sqrt(p*(p-line[ds])*(p-line[cs])*(p-eline));
-  }
-  delete[] ptsx;
-  delete[] ptsy;
-  delete[] ptsz;
-  delete[] ptx;
-  delete[] pty;
-  delete[] ptz;
-  delete[] line;
-  delete[] cos;
-  return dA;
-}
-
-void set_insideArr(bool *insideArr){
-  for(int xi=0;xi<Nx;xi++){
-    for(int yi=0;yi<Ny;yi++){
-      for(int zi=0;zi<Nz;zi++){
-        insideArr[xi*Ny*Nz+yi*Nz+zi] = inside(xi,yi,zi);
-        if (xi < 0.5 || yi < 0.5 || zi < 0.5){
-          insideArr[xi*Ny*Nz+yi*Nz+zi] = false;
-        }
-      }
-    }
-  }
-}
-
-bool inside(int xi, int yi, int zi){
-  if (once_inside==true){
-    printf("\nxi = %d yi = %d zi = %d\n",xi,yi,zi);
-  }
-  xi = xi + min_xi-1;
-  yi = yi + min_yi-1;
-  zi = zi + min_zi-1;
-  if (once_inside==true){
-    printf("xi = %d yi = %d zi = %d\n\n",xi,yi,zi);
-    once_inside = false;
-  }
-  fflush(stdout);
-  if (mem_f((xi-0.5)*dx,(yi-0.5)*dx,(zi-0.5)*dx) <= 0) {return true;}
-  if (mem_f((xi+0.5)*dx,(yi-0.5)*dx,(zi-0.5)*dx) <= 0) {return true;}
-  if (mem_f((xi-0.5)*dx,(yi+0.5)*dx,(zi-0.5)*dx) <= 0) {return true;}
-  if (mem_f((xi-0.5)*dx,(yi-0.5)*dx,(zi+0.5)*dx) <= 0) {return true;}
-  if (mem_f((xi-0.5)*dx,(yi+0.5)*dx,(zi+0.5)*dx) <= 0) {return true;}
-  if (mem_f((xi+0.5)*dx,(yi-0.5)*dx,(zi+0.5)*dx) <= 0) {return true;}
-  if (mem_f((xi+0.5)*dx,(yi+0.5)*dx,(zi-0.5)*dx) <= 0) {return true;}
-  if (mem_f((xi+0.5)*dx,(yi+0.5)*dx,(zi+0.5)*dx) <= 0) {return true;}
-  return false;
-}
-
-
 int get_J(double difD, double *nATP, double *nADP, double *nE,
           double *JxATP, double *JyATP, double *JzATP,
           double *JxADP, double *JyADP, double *JzADP,
@@ -2560,6 +1424,8 @@ int get_J(double difD, double *nATP, double *nADP, double *nE,
   }
   return 0;
 }
+
+
 
 int get_next_density(double *mem_A, bool *insideArr, double *nATP, double *nADP,
                      double *nE, double *ND, double *NDE, double *NflD, double *NflE,
@@ -2633,6 +1499,8 @@ int get_next_density(double *mem_A, bool *insideArr, double *nATP, double *nADP,
   }
   return 0;
 }
+
+
 
 int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
                 int *s_ND, int *s_NDE, int *s_N_ATP, int *s_N_ADP, int *s_N_E, double *mem_A){
