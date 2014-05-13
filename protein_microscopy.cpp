@@ -64,8 +64,6 @@ double guass[3*starting_num_guassians]; //stores y,z, and sigma for each guassia
 int rand_seed = 0; //=14; at this point I have this passed in from the command line as the D argument
 
 
-
-
  //struct for storing plot information
 struct protein {
   char* name;
@@ -109,6 +107,7 @@ stoch_params index_to_parameters(int index) {
   p.zi = index - p.reaction*Nx*Ny*Nz - p.xi*Ny*Nz - p.yi*Nz;
   return p;
 }
+
 
 
 int main (int argc, char *argv[]) {
@@ -299,6 +298,7 @@ int main (int argc, char *argv[]) {
   //end random stuff
 
   double *first_mem_A = new double[Nx*Ny*Nz];
+  set_membrane(first_mem_A);
 
   if (mem_f_shape == "p" || mem_f_shape == "stad" || mem_f_shape == "sp"){
     test_the_amount_of_area(first_mem_A,mem_f_shape);

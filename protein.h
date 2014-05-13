@@ -45,6 +45,8 @@ struct stoch_params {
   int reaction;
 };
 
+//extern double *mem_A;
+
 const int starting_num_guassians=20;
 const int random_num_guassians=5;
 const double Norm = 15.0; //This is the height of the guassians that make the cell wall

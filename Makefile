@@ -9,4 +9,5 @@ test-weights: test-weights.cpp weights.h weights.cpp
 
 clean: rm -f protein_microscopy
 
-protein_microscopy: protein_microscopy.cpp protein.h weights.h weights.cpp
+protein_microscopy: protein_microscopy.cpp protein_weights.cpp protein_utils.cpp \
+	 protein_membrane.cpp weights.cpp

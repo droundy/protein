@@ -1,5 +1,6 @@
 #include "protein.h"
 
+
 void trim_grid(double **pointer_to_mem_A, double *first_mem_A){
   int max_xi = 0;
   min_xi = Nx;
@@ -36,7 +37,14 @@ void trim_grid(double **pointer_to_mem_A, double *first_mem_A){
   int new_Nx = max_xi-min_xi+3;
   int new_Ny = max_yi-min_yi+3;
   int new_Nz = max_zi-min_zi+3;
+  printf("Here first\nNx=%d,Ny=%d,Nz=%d",Nx,Ny,Nz);
+  printf("Here first\nnew_Nx=%d,newNy=%d,newNz=%d",new_Nx,new_Ny,new_Nz);
+  printf("Here first\nmax_Nx=%d,maxNy=%d,maxNz=%d",max_xi,max_yi,max_zi);
+  printf("Here first\nmin_Nx=%d,minNy=%d,minNz=%d",min_xi,min_yi,min_zi);
+  fflush(stdout);
   *pointer_to_mem_A = new double[new_Nx*new_Ny*new_Nz];
+  printf("Here next\n");
+  fflush(stdout);
   for(int xi=0;xi<new_Nx;xi++){
     for(int yi=0;yi<new_Ny;yi++){
       for(int zi=0;zi<new_Nz;zi++){
@@ -48,6 +56,7 @@ void trim_grid(double **pointer_to_mem_A, double *first_mem_A){
   Ny = new_Ny;
   Nz = new_Nz;
 }
+
 
 
 void sym_check (double * mem_A){
