@@ -1,6 +1,7 @@
 #pragma once
 using namespace std;
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <math.h>
 #include <cassert>
@@ -56,7 +57,7 @@ extern int rand_seed; //=14; at this point I have this passed in from the comman
 
 
 //protein_utils:
-void trim_grid(double **pointer_to_mem_A, double *first_mem_A);
+void trim_grid(double **pointer_to_mem_A,  double *first_mem_A, bool **pointer_to_insideArr, bool *first_insideArr);
 void sym_check (double * mem_A);
 std::string triangle_section(double y, double z);
 void test_the_amount_of_area(double *first_mem_A, std::string mem_f_shape);
@@ -70,8 +71,12 @@ void update_densities_and_weighting_for_reaction(stoch_params p, weights *ws, bo
                                     int *N_E, int *ND_st, int *NDE_st, double *mem_A);
 void update_densities_and_weighting_for_diffusion(stoch_params p, weights *ws, bool *insideArr, int *N_ATP, int *N_ADP,
                                     int *N_E, int *ND_st, int *NDE_st, double *mem_A);
-void initialize_densities_and_weighting(weights *ws, int *N_ATP, int *N_ADP, int *N_E,
+void initialize_densities_and_weighting(weights *ws, bool *insideArr, int *N_ATP, int *N_ADP, int *N_E,
                                         int *ND_st, int *NDE_st, double *mem_A);
+void update_all_densities_and_weighting_for_changing_gridpt(weights *ws, bool *insideArr, int *s_N_ATP,
+                                                   int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A,
+                                                   int xi, int yi, int zi);
+
 
 
 
@@ -90,7 +95,8 @@ void set_membrane(double mem_A[]);
 
 
 //protein_microscopy
-int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE, int *ND_st, int *NDE_st, int *N_ATP, int *N_ADP, int *N_E, double *mem_A);
+int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE, int *ND_st,
+                int *NDE_st, int *N_ATP, int *N_ADP, int *N_E, double *mem_A, bool *insideArr);
 int get_next_density(double *mem_A, bool *insideArr, double *nATP, double *nADP,
                      double *nE, double *Nd, double *Nde, double *NflD, double *NflE,
                      double *JxATP, double *JyATP, double *JzATP,
@@ -100,4 +106,4 @@ int get_J(double difD, double *nATP, double *nADP, double *nE,
           double *JxATP, double *JyATP, double *JzATP,
           double *JxADP, double *JyADP, double *JzADP,
           double *JxE, double *JyE, double *JzE);
-
+const char *reaction_name(int reaction);

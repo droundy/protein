@@ -1,7 +1,7 @@
 #include "protein.h"
 
 
-void trim_grid(double **pointer_to_mem_A, double *first_mem_A){
+void trim_grid(double **pointer_to_mem_A,  double *first_mem_A, bool **pointer_to_insideArr, bool *first_insideArr){
   int max_xi = 0;
   min_xi = Nx;
   int max_yi = 0;
@@ -34,21 +34,28 @@ void trim_grid(double **pointer_to_mem_A, double *first_mem_A){
       }
     }
   }
-  int new_Nx = max_xi-min_xi+3;
-  int new_Ny = max_yi-min_yi+3;
-  int new_Nz = max_zi-min_zi+3;
-  printf("Here first\nNx=%d,Ny=%d,Nz=%d",Nx,Ny,Nz);
-  printf("Here first\nnew_Nx=%d,newNy=%d,newNz=%d",new_Nx,new_Ny,new_Nz);
-  printf("Here first\nmax_Nx=%d,maxNy=%d,maxNz=%d",max_xi,max_yi,max_zi);
-  printf("Here first\nmin_Nx=%d,minNy=%d,minNz=%d",min_xi,min_yi,min_zi);
-  fflush(stdout);
+  int new_Nx = max_xi-min_xi+7;
+  int new_Ny = max_yi-min_yi+7;
+  int new_Nz = max_zi-min_zi+7;
   *pointer_to_mem_A = new double[new_Nx*new_Ny*new_Nz];
-  printf("Here next\n");
-  fflush(stdout);
-  for(int xi=0;xi<new_Nx;xi++){
-    for(int yi=0;yi<new_Ny;yi++){
-      for(int zi=0;zi<new_Nz;zi++){
-        (*pointer_to_mem_A)[xi*new_Ny*new_Nz+yi*new_Nz+zi] = first_mem_A[(xi+min_xi-1)*Ny*Nz+(yi+min_yi-1)*Nz+(zi+min_zi-1)];
+  for (int i=0;i<new_Nx*new_Ny*new_Nz;i++){
+    (*pointer_to_mem_A)[i] = 0.0;
+  }
+  for(int xi=0;xi<new_Nx-2;xi++){
+    for(int yi=0;yi<new_Ny-2;yi++){
+      for(int zi=0;zi<new_Nz-2;zi++){
+        (*pointer_to_mem_A)[(xi+2)*new_Ny*new_Nz + (yi+2)*new_Nz + (zi+2)] = first_mem_A[(xi+min_xi-1)*Ny*Nz+(yi+min_yi-1)*Nz+(zi+min_zi-1)];
+      }
+    }
+  }
+  *pointer_to_insideArr = new bool[new_Nx*new_Ny*new_Nz];
+  for (int i=0;i<new_Nx*new_Ny*new_Nz;i++){
+    (*pointer_to_insideArr)[i] = false;
+  }
+  for(int xi=0;xi<new_Nx-2;xi++){
+    for(int yi=0;yi<new_Ny-2;yi++){
+      for(int zi=0;zi<new_Nz-2;zi++){
+        (*pointer_to_insideArr)[(xi+2)*new_Ny*new_Nz + (yi+2)*new_Nz + (zi+2)] = first_insideArr[(xi+min_xi-1)*Ny*Nz+(yi+min_yi-1)*Nz+(zi+min_zi-1)];
       }
     }
   }
@@ -205,8 +212,9 @@ void set_insideArr(bool *insideArr){
     for(int yi=0;yi<Ny;yi++){
       for(int zi=0;zi<Nz;zi++){
         insideArr[xi*Ny*Nz+yi*Nz+zi] = inside(xi,yi,zi);
-        if (xi < 0.5 || yi < 0.5 || zi < 0.5){
-          insideArr[xi*Ny*Nz+yi*Nz+zi] = false;
+        if ( (xi == 0 || yi == 0 || zi == 0 || xi == Nx || yi == Ny || zi == Nz) && inside(xi,yi,zi)) {
+          printf("\nProblem! You're setting up your grid so that the very edges of the grid (x=0, etc) are still inside the cell, according to the inside() function\n\n");
+          exit(1);
         }
       }
     }
@@ -214,9 +222,6 @@ void set_insideArr(bool *insideArr){
 }
 
 bool inside(int xi, int yi, int zi){
-  xi = xi + min_xi-1;
-  yi = yi + min_yi-1;
-  zi = zi + min_zi-1;
   if (mem_f((xi-0.5)*dx,(yi-0.5)*dx,(zi-0.5)*dx) <= 0) {return true;}
   if (mem_f((xi+0.5)*dx,(yi-0.5)*dx,(zi-0.5)*dx) <= 0) {return true;}
   if (mem_f((xi-0.5)*dx,(yi+0.5)*dx,(zi-0.5)*dx) <= 0) {return true;}
