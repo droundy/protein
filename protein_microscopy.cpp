@@ -92,10 +92,11 @@ char* print_filename(const char* plotname, const char* proteinname) {
   return filename;
 }
 
-void count_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND,
-                              int *s_NDEs_N_ATP, double *nATP, double *nADP, double *nE, double *ND,
-                              double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr);
-
+void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND,
+                                      int *s_NDEs_N_ATP, double *nATP, double *nADP, double *nE, double *ND,
+                                      double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
+                                      double *prev_tot_NADP, double *prev_tot_NATP, double *prev_tot_NE,
+                                      double *prev_tot_ND, double *prev_tot_NDE);
 
 stoch_params index_to_parameters(int index) {
   stoch_params p;
@@ -738,6 +739,30 @@ int main (int argc, char *argv[]) {
     fflush(stdout);
   }
 
+  double prev_tot_NE = 0;
+  double prev_tot_NATP = 0;
+  double prev_tot_NADP = 0;
+  double prev_tot_NDE = 0;
+  double prev_tot_ND = 0;
+  if (sim_type != "exact") {
+    for (int h=0;h<Nx*Ny*Nz;h++) {
+      prev_tot_NE += s_N_E[h];
+      prev_tot_NDE += s_NDE[h];
+      prev_tot_NATP += s_N_ATP[h];
+      prev_tot_NADP += s_N_ADP[h];
+      prev_tot_ND += s_ND[h];
+    }
+  }
+  else {
+    for (int h=0;h<Nx*Ny*Nz;h++) {
+      prev_tot_NE += nE[h]*(dx*dx*dx);
+      prev_tot_NDE += NDE[h];
+      prev_tot_NATP += nATP[h]*(dx*dx*dx);
+      prev_tot_NADP += nADP[h]*(dx*dx*dx);
+      prev_tot_ND += ND[h];
+    }
+  }
+
   /////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
 
@@ -840,7 +865,8 @@ int main (int argc, char *argv[]) {
       for(int xi=0;xi<Nx;xi++){
         for(int yi=0;yi<Ny;yi++){
           for(int zi=0;zi<Nz;zi++){
-            if (s_N_E[xi*Ny*Nz+yi*Nz+zi] < 0 || s_N_ATP[xi*Ny*Nz+yi*Nz+zi] < 0 || s_N_ADP[xi*Ny*Nz+yi*Nz+zi] < 0) {
+            if (s_N_E[xi*Ny*Nz+yi*Nz+zi] < 0 || s_N_ATP[xi*Ny*Nz+yi*Nz+zi] < 0 || s_N_ADP[xi*Ny*Nz+yi*Nz+zi] < 0
+                || s_ND[xi*Ny*Nz+yi*Nz+zi] < 0 || s_NDE[xi*Ny*Nz+yi*Nz+zi] < 0) {
               printf("There is a negative protein at x %d, y %d, z %d! and its iteration %d\n",xi,yi,zi,i);
               negative_protein = true;
             }
@@ -850,7 +876,8 @@ int main (int argc, char *argv[]) {
       if (negative_protein) {
         exit(1);
       }
-      count_and_print_proteins(i,s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr);
+      count_compare_and_print_proteins(i,s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr,
+                                       &prev_tot_NADP, &prev_tot_NATP, &prev_tot_NE, &prev_tot_ND, &prev_tot_NDE);
       time = double(clock()/CLOCKS_PER_SEC) - start_time;
       printf("This is a %s simulation and it took %g seconds to get to interation %d\n",
              sim_type.c_str(), time, i);
@@ -1504,8 +1531,9 @@ int main (int argc, char *argv[]) {
 
 
 
-void count_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
-                              double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr) {
+void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
+                                      double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
+                                      double *prev_tot_NADP, double *prev_tot_NATP, double *prev_tot_NE, double *prev_tot_ND, double *prev_tot_NDE) {
   double dV = dx*dx*dx;
   double total_D_n = 0;
   double total_E_n = 0;
@@ -1550,6 +1578,8 @@ void count_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_
          sim_type.c_str(), tot_mem_A, number_of_membrane_gridpts, gridpoints_inside, ave_mem_A);
   // printf("\nAt iteration %d:\ntotal_D_n = %g\ntotal_E_n = %g\ntotal_D_N = %g\ntotal_E_N = %g\ntotal_NflD = %g\ntotal_NflE = %g\n"
   //        ,iteration,total_D_n,total_E_n,total_D_N,total_E_N,total_NflD,total_NflE);
+  printf("\nPrevious the previous totals: total_NE = %g\ntotal_NDE = %g\ntotal_NATP = %g\ntotal_NADP = %g\ntotal_ND = %g\n"
+         ,*prev_tot_NE,*prev_tot_NDE,*prev_tot_NATP,*prev_tot_NADP,*prev_tot_ND);
   printf("\ntotal_NE = %g\ntotal_NDE = %g\ntotal_NATP = %g\ntotal_NADP = %g\ntotal_ND = %g\n"
          ,total_NE,total_NDE,total_NATP,total_NADP,total_ND);
   printf("\nAverage for one gridpt:\nnE = %g\nsigmaDE = %g\nnATP = %g\nnADP = %g\nsigmaND = %g\n",
@@ -1559,6 +1589,19 @@ void count_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_
          total_NE/gridpoints_inside,total_NDE/number_of_membrane_gridpts,total_NATP/gridpoints_inside,
          total_NADP/gridpoints_inside,total_ND/number_of_membrane_gridpts);
   fflush(stdout);
+  if (fabs(*prev_tot_NADP + *prev_tot_NATP + *prev_tot_ND + *prev_tot_NDE - total_NADP - total_NATP - total_ND - total_NDE) > 10e-10) {
+    printf("\nTotal number of minD has changed!!\n\n");
+    exit(1);
+  }
+  if (fabs(*prev_tot_NDE + *prev_tot_NE - total_NDE - total_NE) > 10e-10) {
+    printf("\nTotal number of minE has changed!!\n\n");
+    exit(1);
+  }
+  *prev_tot_NADP = total_NADP;
+  *prev_tot_NATP = total_NATP;
+  *prev_tot_NE = total_NE;
+  *prev_tot_ND = total_ND;
+  *prev_tot_NDE = total_NDE;
   return;
 }
 
