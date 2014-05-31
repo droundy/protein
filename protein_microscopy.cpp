@@ -98,6 +98,12 @@ void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP,
                                       double *prev_tot_NADP, double *prev_tot_NATP, double *prev_tot_NE,
                                       double *prev_tot_ND, double *prev_tot_NDE);
 
+void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, int *s_N_ADP,
+                       int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
+                       double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
+                       double *tot_ave_NADP, double *tot_ave_NATP, double *tot_ave_NE, double *tot_ave_ND, double *tot_ave_NDE);
+
+
 stoch_params index_to_parameters(int index) {
   stoch_params p;
   //should I worry about these floors when the integer is right on?
@@ -282,8 +288,8 @@ int main (int argc, char *argv[]) {
 
   double size_modifier_92 = 1.5;
   double size_modifier_93 = 1.5;
-  double size_modifier_94 = 0.3;
-  double size_modifier_95 = 0.3;
+  double size_modifier_94 = 0.4;
+  double size_modifier_95 = 0.4;
   double size_modifier_96 = 1.0;
   double size_modifier_97 = 1.0;
   double size_modifier_98 = 1.0;
@@ -762,6 +768,12 @@ int main (int argc, char *argv[]) {
       prev_tot_ND += ND[h];
     }
   }
+  double tot_ave_NE = prev_tot_NE;
+  double tot_ave_NATP = prev_tot_NATP;
+  double tot_ave_NADP = prev_tot_NADP;
+  double tot_ave_NDE = prev_tot_NDE;
+  double tot_ave_ND = prev_tot_ND;
+  int compare_ave_counter = 0;
 
   /////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
@@ -884,6 +896,10 @@ int main (int argc, char *argv[]) {
       printf("Which means it would take %g seconds to get 1000 simulation seconds\n",
              (double(time)/double(i))*(1000.0/time_step));
       fflush(stdout);
+    }
+    if ( (sim_type == "exact" && i%int(1/time_step) == 0) || (sim_type != "exact" && i%int(1/time_step) == 0) ) {
+      compare_time_aves(i, &compare_ave_counter, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr,
+                        &tot_ave_NADP, &tot_ave_NATP, &tot_ave_NE, &tot_ave_ND, &tot_ave_NDE);
     }
     if (i%(int(100*print_denominator))==0) {
       printf("Finished sim loop # i=%d, We're %1.2f percent done\n",i,100*double(i)/iter);
@@ -1531,7 +1547,8 @@ int main (int argc, char *argv[]) {
 
 
 
-void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
+void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E,
+                                      int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
                                       double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
                                       double *prev_tot_NADP, double *prev_tot_NATP, double *prev_tot_NE, double *prev_tot_ND, double *prev_tot_NDE) {
   double dV = dx*dx*dx;
@@ -1629,6 +1646,48 @@ int get_J(double difD, double *nATP, double *nADP, double *nE,
   return 0;
 }
 
+void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
+                       double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
+                       double *tot_ave_NADP, double *tot_ave_NATP, double *tot_ave_NE, double *tot_ave_ND, double *tot_ave_NDE) {
+  int start_time = 1; //seconds
+  if (iteration*time_step - start_time < 0) {
+    return;
+  }
+  *compare_ave_counter += 1;
+  char* ave_filename = new char[1024];
+  sprintf(ave_filename,"data/shape-%s/compare-aves-%s-%1.2f-%1.2f-%1.2f-%1.2f-%1.2f-%s.dat",
+          mem_f_shape.c_str(),mem_f_shape.c_str(),A,B,C,D,density_factor,sim_type.c_str());
+  FILE* ave_file = fopen(ave_filename,"w");
+  delete[] ave_filename;
+  fprintf(ave_file,"Hello Cruel World!!");
+  if (sim_type != "exact") {
+    for (int h=0;h<Nx*Ny*Nz;h++) {
+      *tot_ave_NADP += double(s_N_ADP[h]);
+      *tot_ave_NATP += double(s_N_ATP[h]);
+      *tot_ave_NE += double(s_N_E[h]);
+      *tot_ave_ND += double(s_ND[h]);
+      *tot_ave_NDE += double(s_NDE[h]);
+    }
+  }
+  else {
+    for (int h=0;h<Nx*Ny*Nz;h++) {
+      *tot_ave_NADP += nADP[h]*(dx*dx*dx);
+      *tot_ave_NATP += nATP[h]*(dx*dx*dx);
+      *tot_ave_NE += nE[h]*(dx*dx*dx);
+      *tot_ave_ND += ND[h];
+      *tot_ave_NDE += NDE[h];
+    }
+  }
+  fprintf(ave_file,"Here we take the totals of all types of proteins once every simulation time second, and average them out, so have an average of what the totals are at any one time.\n");
+  fprintf(ave_file,"\nThe averages, starting after %g seconds, are:\n",iteration*time_step - start_time);
+  fprintf(ave_file,"Average Total NADP = %g\n",*tot_ave_NADP/(*compare_ave_counter));
+  fprintf(ave_file,"Average Total NATP = %g\n",*tot_ave_NATP/(*compare_ave_counter));
+  fprintf(ave_file,"Average Total NE = %g\n",*tot_ave_NE/(*compare_ave_counter));
+  fprintf(ave_file,"Average Total ND = %g\n",*tot_ave_ND/(*compare_ave_counter));
+  fprintf(ave_file,"Average Total NDE = %g\n",*tot_ave_NDE/(*compare_ave_counter));
+  fclose(ave_file);
+  return;
+}
 
 
 int get_next_density(double *mem_A, bool *insideArr, double *nATP, double *nADP,
@@ -1870,5 +1929,15 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
     }
   fflush(stdout);
   }
+  double tot_D = 0;
+  double tot_E = 0;
+  for (int h=0;h<Nx*Ny*Nz;h++){
+    tot_D += NflD[h];
+    tot_E += NflE[h];
+  }
+  printf("\n\nFor %s simulation and shape %s and %1.2f %1.2f %1.2f %1.2f:\ntot_D = %g and tot_E = %g\n",
+         sim_type.c_str(),mem_f_shape.c_str(),A,B,C,D,tot_D,tot_E);
+
+  fflush(stdout);
   return 0;
 }
