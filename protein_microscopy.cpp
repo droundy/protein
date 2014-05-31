@@ -376,6 +376,36 @@ int main (int argc, char *argv[]) {
   ///////////////
 
 
+  // for (int i=0;i<Nx;i++){
+  //   printf("\ninsideArr:\n");
+  //   for (int j=0;j<Ny;j++){
+  //     for (int k=0;k<Nz;k++){
+  //       if (first_insideArr[i*Ny*Nz+j*Nz+k]){
+  //         printf("%d",1);
+  //       }
+  //       else {
+  //         printf("%d",0);
+  //       }
+  //     }
+  //     printf("\n");
+  //   }
+  //   printf("Membrane:\n");
+  //   for (int j=0;j<Ny;j++){
+  //     for (int k=0;k<Nz;k++){
+  //       if (first_mem_A[i*Ny*Nz+j*Nz+k] != 0.0){
+  //         printf("%d",1);
+  //       }
+  //       else {
+  //         printf("%d",0);
+  //       }
+  //     }
+  //     printf("\n");
+  //   }
+  // }
+  // fflush(stdout);
+  // exit(1);
+
+
   //Trimming the grid
   double *mem_A;
   double **pointer_to_mem_A;
@@ -389,35 +419,35 @@ int main (int argc, char *argv[]) {
   fflush(stdout);
 
   ///////////////////////////////////////////////
-  // //Print outs comparing mem_A and insideArr:
-  // for (int i=0;i<Nx;i++){
-  //   printf("\ninsideArr:\n");
-  //   for (int j=0;j<Ny;j++){
-  //     for (int k=0;k<Nz;k++){
-  //       if (insideArr[i*Ny*Nz+j*Nz+k]){
-  //         printf("%d ",1);
-  //       }
-  //       else {
-  //         printf("%d ",0);
-  //       }
-  //     }
-  //     printf("\n");
-  //   }
-  //   printf("Membrane:\n");
-  //   for (int j=0;j<Ny;j++){
-  //     for (int k=0;k<Nz;k++){
-  //       if (mem_A[i*Ny*Nz+j*Nz+k] != 0.0){
-  //         printf("%d ",1);
-  //       }
-  //       else {
-  //         printf("%d ",0);
-  //       }
-  //     }
-  //     printf("\n");
-  //   }
-  // }
-  // fflush(stdout);
-  // exit(1);
+  //Print outs comparing mem_A and insideArr:
+  for (int i=Nx-4;i<Nx;i++){
+    printf("\ninsideArr:\n");
+    for (int j=0;j<Ny;j++){
+      for (int k=0;k<Nz;k++){
+        if (insideArr[i*Ny*Nz+j*Nz+k]){
+          printf("%d",1);
+        }
+        else {
+          printf("%d",0);
+        }
+      }
+      printf("\n");
+    }
+    printf("Membrane:\n");
+    for (int j=0;j<Ny;j++){
+      for (int k=0;k<Nz;k++){
+        if (mem_A[i*Ny*Nz+j*Nz+k] != 0.0){
+          printf("%d",1);
+        }
+        else {
+          printf("%d",0);
+        }
+      }
+      printf("\n");
+    }
+  }
+  fflush(stdout);
+  exit(1);
   ///////////////////////////////////////////////
 
   //global arrays for storing simulation data
@@ -780,6 +810,9 @@ int main (int argc, char *argv[]) {
 
   double start_time = double(clock()/CLOCKS_PER_SEC);
   double time = start_time;
+
+  count_compare_and_print_proteins(0,s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr,
+                                   &prev_tot_NADP, &prev_tot_NATP, &prev_tot_NE, &prev_tot_ND, &prev_tot_NDE);
 
   //starting simuation
   double spill_over_time = 0;
@@ -1595,7 +1628,7 @@ void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP,
          sim_type.c_str(), tot_mem_A, number_of_membrane_gridpts, gridpoints_inside, ave_mem_A);
   // printf("\nAt iteration %d:\ntotal_D_n = %g\ntotal_E_n = %g\ntotal_D_N = %g\ntotal_E_N = %g\ntotal_NflD = %g\ntotal_NflE = %g\n"
   //        ,iteration,total_D_n,total_E_n,total_D_N,total_E_N,total_NflD,total_NflE);
-  printf("\nPrevious the previous totals: total_NE = %g\ntotal_NDE = %g\ntotal_NATP = %g\ntotal_NADP = %g\ntotal_ND = %g\n"
+  printf("\nPrevious the previous totals:\ntotal_NE = %g\ntotal_NDE = %g\ntotal_NATP = %g\ntotal_NADP = %g\ntotal_ND = %g\n"
          ,*prev_tot_NE,*prev_tot_NDE,*prev_tot_NATP,*prev_tot_NADP,*prev_tot_ND);
   printf("\ntotal_NE = %g\ntotal_NDE = %g\ntotal_NATP = %g\ntotal_NADP = %g\ntotal_ND = %g\n"
          ,total_NE,total_NDE,total_NATP,total_NADP,total_ND);
@@ -1850,14 +1883,14 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
         }
       }
     }
-    printf("This is for exact!:\n\n");
-    for (int j=0;j<Ny;j++){
-      for (int k=0;k<Nz;k++){
-        printf("%g ",NflD[(Nx/2)*Ny*Nz+j*Nz+k]);
-      }
-      printf("\n");
-    }
-    fflush(stdout);
+    // printf("This is for exact!:\n\n");
+    // for (int j=0;j<Ny;j++){
+    //   for (int k=0;k<Nz;k++){
+    //     printf("%g ",NflD[(Nx/2)*Ny*Nz+j*Nz+k]);
+    //   }
+    //   printf("\n");
+    // }
+    // fflush(stdout);
   }
   else {
     int E_total = nE_starting_density*gridpoints_total*dV;
@@ -1920,14 +1953,14 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
       NflD[i] = s_ND[i] + s_NDE[i] + s_N_ATP[i] + s_N_ADP[i];
       NflE[i] = s_NDE[i] + s_N_E[i];
     }
-    printf("This is for %s simulation!:\n\n",sim_type.c_str());
-    for (int j=0;j<Ny;j++){
-      for (int k=0;k<Nz;k++){
-        printf("%g ",NflD[(Nx/2)*Ny*Nz+j*Nz+k]);
-      }
-      printf("\n");
-    }
-  fflush(stdout);
+  //   printf("This is for %s simulation!:\n\n",sim_type.c_str());
+  //   for (int j=0;j<Ny;j++){
+  //     for (int k=0;k<Nz;k++){
+  //       printf("%g ",NflD[(Nx/2)*Ny*Nz+j*Nz+k]);
+  //     }
+  //     printf("\n");
+  //   }
+  // fflush(stdout);
   }
   double tot_D = 0;
   double tot_E = 0;
@@ -1937,7 +1970,6 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
   }
   printf("\n\nFor %s simulation and shape %s and %1.2f %1.2f %1.2f %1.2f:\ntot_D = %g and tot_E = %g\n",
          sim_type.c_str(),mem_f_shape.c_str(),A,B,C,D,tot_D,tot_E);
-
   fflush(stdout);
   return 0;
 }

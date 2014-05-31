@@ -11,7 +11,7 @@ void trim_grid(double **pointer_to_mem_A,  double *first_mem_A, bool **pointer_t
   for(int xi=0;xi<Nx;xi++){
     for(int yi=0;yi<Ny;yi++){
       for(int zi=0;zi<Nz;zi++){
-        if (first_mem_A[xi*Ny*Nz+yi*Nz+zi] != 0) {
+        if (first_insideArr[xi*Ny*Nz+yi*Nz+zi]) {
           if (xi > max_xi){
             max_xi = xi;
           }
@@ -34,6 +34,10 @@ void trim_grid(double **pointer_to_mem_A,  double *first_mem_A, bool **pointer_t
       }
     }
   }
+  if (max_xi > Nx-3 || max_yi > Ny-3 || max_zi > Nz-3) {
+    printf("\nYour grid needs to be bigger for this simulation!\n\n");
+    //exit(1);
+  }
   int new_Nx = max_xi-min_xi+7;
   int new_Ny = max_yi-min_yi+7;
   int new_Nz = max_zi-min_zi+7;
@@ -41,10 +45,10 @@ void trim_grid(double **pointer_to_mem_A,  double *first_mem_A, bool **pointer_t
   for (int i=0;i<new_Nx*new_Ny*new_Nz;i++){
     (*pointer_to_mem_A)[i] = 0.0;
   }
-  for(int xi=0;xi<new_Nx-2;xi++){
-    for(int yi=0;yi<new_Ny-2;yi++){
-      for(int zi=0;zi<new_Nz-2;zi++){
-        (*pointer_to_mem_A)[(xi+2)*new_Ny*new_Nz + (yi+2)*new_Nz + (zi+2)] = first_mem_A[(xi+min_xi-1)*Ny*Nz+(yi+min_yi-1)*Nz+(zi+min_zi-1)];
+  for(int xi=0; xi< max_xi-min_xi+1; xi++){
+    for(int yi=0; yi< max_yi-min_yi+1; yi++){
+      for(int zi=0; zi< max_zi-min_zi+1; zi++){
+        (*pointer_to_mem_A)[(xi+3)*new_Ny*new_Nz + (yi+3)*new_Nz + (zi+3)] = first_mem_A[(xi+min_xi)*Ny*Nz+(yi+min_yi)*Nz+(zi+min_zi)];
       }
     }
   }
@@ -52,10 +56,10 @@ void trim_grid(double **pointer_to_mem_A,  double *first_mem_A, bool **pointer_t
   for (int i=0;i<new_Nx*new_Ny*new_Nz;i++){
     (*pointer_to_insideArr)[i] = false;
   }
-  for(int xi=0;xi<new_Nx-2;xi++){
-    for(int yi=0;yi<new_Ny-2;yi++){
-      for(int zi=0;zi<new_Nz-2;zi++){
-        (*pointer_to_insideArr)[(xi+2)*new_Ny*new_Nz + (yi+2)*new_Nz + (zi+2)] = first_insideArr[(xi+min_xi-1)*Ny*Nz+(yi+min_yi-1)*Nz+(zi+min_zi-1)];
+  for(int xi=0; xi< max_xi-min_xi+1; xi++){
+    for(int yi=0; yi< max_yi-min_yi+1; yi++){
+      for(int zi=0; zi< max_zi-min_zi+1; zi++){
+        (*pointer_to_insideArr)[(xi+3)*new_Ny*new_Nz + (yi+3)*new_Nz + (zi+3)] = first_insideArr[(xi+min_xi)*Ny*Nz+(yi+min_yi)*Nz+(zi+min_zi)];
       }
     }
   }

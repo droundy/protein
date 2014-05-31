@@ -495,9 +495,14 @@ void set_membrane(double mem_A[]) {
         double fxyZ = mem_f((xi-0.5)*dx, (yi-0.5)*dx, (zi+0.5)*dx);
         double fxyz = mem_f((xi-0.5)*dx, (yi-0.5)*dx, (zi-0.5)*dx);
         double f = mem_f(xi*dx, yi*dx, zi*dx);
-        //printf("In set_membrane xi=%d yi=%d zi=%d and count = and Nx*Ny*Nz=%d\n",xi,yi,zi,Nx*Ny*Nz);
-        //fflush(stdout);
+        if (xi == Nx-1 && (f < 0 || fXYZ < 0 || fXYz < 0 || fXyZ < 0 || fXyz < 0 || fxYZ < 0 || fxYz < 0 || fxyZ < 0 || fxyz < 0)) {
+          printf("\nx %d,y %d,z %d and fXYZ = %g fxyz = %g f = %g",xi,yi,zi,fXYZ,fxyz,f);
+          fflush(stdout);
+        }
         mem_A[xi*Ny*Nz+yi*Nz+zi] = find_intersection(fXYZ, fXYz, fXyZ, fXyz, fxYZ, fxYz, fxyZ, fxyz, f, false);
+        if (mem_A[xi*Ny*Nz+yi*Nz+zi] > 0 && xi == (Nx-1)) {
+          printf("\nx %d,y %d,z %d and mem_A =  %g",xi,yi,zi,mem_A[xi*Ny*Nz+yi*Nz+zi]);
+        }
       }
     }
   }
