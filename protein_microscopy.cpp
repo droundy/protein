@@ -14,6 +14,7 @@ const int stoch_iter = 1000; //this is just a placeholder, not sure how we want 
 const double nATP_starting_density = 1000.0/(M_PI*0.5*0.5); //proteins per micrometer^3 (values from paper)
 const double nE_starting_density = 350.0/(M_PI*0.5*0.5); // proteins per micrometer
 double density_factor;
+double size_modifier;
 
 int area_rating_flag = 0;
 int slice_flag = 0;
@@ -179,6 +180,7 @@ int main (int argc, char *argv[]) {
   C = atof(argv[4]);
   D = atof(argv[5]);
   density_factor = atof(argv[6]);
+  size_modifier = atof(argv[7]);
   sim_type = argv[8];
   dx=.05;
 
@@ -286,68 +288,55 @@ int main (int argc, char *argv[]) {
   double guass98[] = {2.0,2.0,.3,3,3,.6,4.2,3.4,.3,4.6,4.6,.6,3.4,5.6,.6};
   double guass99[] = {2.0,2.2,.5,3,3,.50,4.0,3.6,.50,3,4.2,.50,2.0,5,.5};
 
-  double size_modifier_92 = 1.5;
-  double size_modifier_93 = 1.5;
-  double size_modifier_94 = 0.4;
-  double size_modifier_95 = 0.4;
-  double size_modifier_96 = 1.0;
-  double size_modifier_97 = 1.0;
-  double size_modifier_98 = 1.0;
-  double size_modifier_99 = 1.3;
-
   {
     char *hn = (char *)malloc(1024);
     gethostname(hn, 1023);
     printf("Hostname:  %s\n", hn);
     free(hn);
   }
-  printf("\nsize_modifier 92 is = %g",size_modifier_92);
-  printf("\nsize_modifier 93 is = %g",size_modifier_93);
-  printf("\nsize_modifier 94 is = %g",size_modifier_94);
-  printf("\nsize_modifier 95 is = %g\n",size_modifier_95);
-  printf("\nsize_modifier 99 is = %g\n",size_modifier_99);
+  printf("\nsize_modifier for randst %d is = %g\n",rand_seed,size_modifier);
   fflush(stdout);
 
   bzero(guass,int(sizeof(guass)/sizeof(double)));
   if (rand_seed == 92) {
     printf("Hello? rand_seed = %d\n",rand_seed);
     for (int i=0;i<int(sizeof(guass92)/sizeof(double));i++){
-      guass[i] = size_modifier_92*guass92[i];
+      guass[i] = size_modifier*guass92[i];
     }
   }
   else if (rand_seed == 93) {
     for (int i=0;i<int(sizeof(guass93)/sizeof(double));i++){
-      guass[i] = size_modifier_93*guass93[i];
+      guass[i] = size_modifier*guass93[i];
     }
   }
   else if (rand_seed == 94) {
     for (int i=0;i<int(sizeof(guass94)/sizeof(double));i++){
-      guass[i] = size_modifier_94*guass94[i];
+      guass[i] = size_modifier*guass94[i];
     }
   }
   else if (rand_seed == 95) {
     for (int i=0;i<int(sizeof(guass95)/sizeof(double));i++){
-      guass[i] = size_modifier_95*guass95[i];
+      guass[i] = size_modifier*guass95[i];
     }
   }
   else if (rand_seed == 96) {
     for (int i=0;i<int(sizeof(guass96)/sizeof(double));i++){
-      guass[i] = size_modifier_96*guass96[i];
+      guass[i] = size_modifier*guass96[i];
     }
   }
   else if (rand_seed == 97) {
     for (int i=0;i<int(sizeof(guass97)/sizeof(double));i++){
-      guass[i] = size_modifier_97*guass97[i];
+      guass[i] = size_modifier*guass97[i];
     }
   }
   else if (rand_seed == 98) {
     for (int i=0;i<int(sizeof(guass98)/sizeof(double));i++){
-      guass[i] = size_modifier_98*guass98[i];
+      guass[i] = size_modifier*guass98[i];
     }
   }
   else if (rand_seed == 99) {
     for (int i=0;i<int(sizeof(guass99)/sizeof(double));i++){
-      guass[i] = size_modifier_99*guass99[i];
+      guass[i] = size_modifier*guass99[i];
     }
   }
   else {
@@ -627,37 +616,37 @@ int main (int argc, char *argv[]) {
 
   if (mem_f_shape=="randst") {
     if (rand_seed == 92) {
-      vert_div = size_modifier_92*(1.2/dx)-min_zi+1;
-      vert_div_two = size_modifier_92*(2.7/dx)-min_zi+1;
+      vert_div = size_modifier*(1.2/dx)-min_zi+1;
+      vert_div_two = size_modifier*(2.7/dx)-min_zi+1;
     }
     else if (rand_seed == 93) {
-      vert_div = size_modifier_93*(1.2/dx)-min_zi+1;
-      vert_div_two = size_modifier_93*(2.7/dx)-min_zi+1;
+      vert_div = size_modifier*(1.2/dx)-min_zi+1;
+      vert_div_two = size_modifier*(2.7/dx)-min_zi+1;
     }
     else if (rand_seed == 94) {
-      vert_div = size_modifier_94*(3.6/dx)-min_zi+1;
-      vert_div_two = size_modifier_94*(5.0/dx)-min_zi+1;
+      vert_div = size_modifier*(3.6/dx)-min_zi+1;
+      vert_div_two = size_modifier*(5.0/dx)-min_zi+1;
     }
     else if (rand_seed == 95) {
-      vert_div = size_modifier_95*(3.3/dx)-min_zi+1;
-      vert_div_two = size_modifier_95*(4.4/dx)-min_zi+1;
+      vert_div = size_modifier*(3.3/dx)-min_zi+1;
+      vert_div_two = size_modifier*(4.4/dx)-min_zi+1;
     }
     else if (rand_seed == 96) {
-      vert_div = size_modifier_96*(2.8/dx)-min_zi+1;
-      hor_div = size_modifier_96*(3.0/dx)-min_yi+1;
+      vert_div = size_modifier*(2.8/dx)-min_zi+1;
+      hor_div = size_modifier*(3.0/dx)-min_yi+1;
     }
     else if (rand_seed == 97) {
-      vert_div = size_modifier_97*(2.4/dx)-min_zi+1;
-      hor_div = size_modifier_97*(2.45/dx)-min_yi+1;
-      hor_div_two = size_modifier_97*(4.6/dx)-min_yi+1;
+      vert_div = size_modifier*(2.4/dx)-min_zi+1;
+      hor_div = size_modifier*(2.45/dx)-min_yi+1;
+      hor_div_two = size_modifier*(4.6/dx)-min_yi+1;
     }
     else if (rand_seed == 98) {
-      vert_div = size_modifier_98*(3.0/dx)-min_zi+1;
-      vert_div_two = size_modifier_98*(4.8/dx)-min_zi+1;
+      vert_div = size_modifier*(3.0/dx)-min_zi+1;
+      vert_div_two = size_modifier*(4.8/dx)-min_zi+1;
     }
     else if (rand_seed == 99) {
-      vert_div = size_modifier_99*(2.6/dx)-min_zi+1;
-      vert_div_two = size_modifier_99*(4.6/dx)-min_zi+1;
+      vert_div = size_modifier*(2.6/dx)-min_zi+1;
+      vert_div_two = size_modifier*(4.6/dx)-min_zi+1;
     }
   }
   if (mem_f_shape=="randst") {
