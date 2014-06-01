@@ -1677,7 +1677,7 @@ int get_J(double difD, double *nATP, double *nADP, double *nE,
 void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
                        double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
                        double *tot_ave_NADP, double *tot_ave_NATP, double *tot_ave_NE, double *tot_ave_ND, double *tot_ave_NDE) {
-  int start_time = 1; //seconds
+  int start_time = 100; //seconds
   if (iteration*time_step - start_time < 0) {
     return;
   }
@@ -1687,7 +1687,6 @@ void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, in
           mem_f_shape.c_str(),mem_f_shape.c_str(),A,B,C,D,density_factor,sim_type.c_str());
   FILE* ave_file = fopen(ave_filename,"w");
   delete[] ave_filename;
-  fprintf(ave_file,"Hello Cruel World!!");
   if (sim_type != "exact") {
     for (int h=0;h<Nx*Ny*Nz;h++) {
       *tot_ave_NADP += double(s_N_ADP[h]);
@@ -1707,7 +1706,7 @@ void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, in
     }
   }
   fprintf(ave_file,"Here we take the totals of all types of proteins once every simulation time second, and average them out, so have an average of what the totals are at any one time.\n");
-  fprintf(ave_file,"\nThe averages, starting after %g seconds, are:\n",iteration*time_step - start_time);
+  fprintf(ave_file,"\nThe averages at %g seconds after the start time, which is %d:\n",iteration*time_step - start_time, start_time);
   fprintf(ave_file,"Average Total NADP = %g\n",*tot_ave_NADP/(*compare_ave_counter));
   fprintf(ave_file,"Average Total NATP = %g\n",*tot_ave_NATP/(*compare_ave_counter));
   fprintf(ave_file,"Average Total NE = %g\n",*tot_ave_NE/(*compare_ave_counter));
