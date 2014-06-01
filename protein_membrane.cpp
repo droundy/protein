@@ -500,9 +500,9 @@ void set_membrane(double mem_A[]) {
           fflush(stdout);
         }
         mem_A[xi*Ny*Nz+yi*Nz+zi] = find_intersection(fXYZ, fXYz, fXyZ, fXyz, fxYZ, fxYz, fxyZ, fxyz, f, false);
-        if (mem_A[xi*Ny*Nz+yi*Nz+zi] > 0 && xi == (Nx-1)) {
-          printf("\nx %d,y %d,z %d and mem_A =  %g",xi,yi,zi,mem_A[xi*Ny*Nz+yi*Nz+zi]);
-        }
+        // if (mem_A[xi*Ny*Nz+yi*Nz+zi] > 0 && xi == (Nx-1)) {
+        //   printf("\nx %d,y %d,z %d and mem_A =  %g",xi,yi,zi,mem_A[xi*Ny*Nz+yi*Nz+zi]);
+        // }
       }
     }
   }

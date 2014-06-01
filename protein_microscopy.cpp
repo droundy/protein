@@ -420,35 +420,35 @@ int main (int argc, char *argv[]) {
 
   ///////////////////////////////////////////////
   //Print outs comparing mem_A and insideArr:
-  for (int i=Nx-4;i<Nx;i++){
-    printf("\ninsideArr:\n");
-    for (int j=0;j<Ny;j++){
-      for (int k=0;k<Nz;k++){
-        if (insideArr[i*Ny*Nz+j*Nz+k]){
-          printf("%d",1);
-        }
-        else {
-          printf("%d",0);
-        }
-      }
-      printf("\n");
-    }
-    printf("Membrane:\n");
-    for (int j=0;j<Ny;j++){
-      for (int k=0;k<Nz;k++){
-        if (mem_A[i*Ny*Nz+j*Nz+k] != 0.0){
-          printf("%d",1);
-        }
-        else {
-          printf("%d",0);
-        }
-      }
-      printf("\n");
-    }
-  }
-  fflush(stdout);
-  exit(1);
-  ///////////////////////////////////////////////
+  // for (int i=Nx-4;i<Nx;i++){
+  //   printf("\ninsideArr:\n");
+  //   for (int j=0;j<Ny;j++){
+  //     for (int k=0;k<Nz;k++){
+  //       if (insideArr[i*Ny*Nz+j*Nz+k]){
+  //         printf("%d",1);
+  //       }
+  //       else {
+  //         printf("%d",0);
+  //       }
+  //     }
+  //     printf("\n");
+  //   }
+  //   printf("Membrane:\n");
+  //   for (int j=0;j<Ny;j++){
+  //     for (int k=0;k<Nz;k++){
+  //       if (mem_A[i*Ny*Nz+j*Nz+k] != 0.0){
+  //         printf("%d",1);
+  //       }
+  //       else {
+  //         printf("%d",0);
+  //       }
+  //     }
+  //     printf("\n");
+  //   }
+  // }
+  // fflush(stdout);
+  // exit(1);
+  // ///////////////////////////////////////////////
 
   //global arrays for storing simulation data
   nATP = new double[Nx*Ny*Nz];
@@ -810,10 +810,6 @@ int main (int argc, char *argv[]) {
 
   double start_time = double(clock()/CLOCKS_PER_SEC);
   double time = start_time;
-
-  count_compare_and_print_proteins(0,s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr,
-                                   &prev_tot_NADP, &prev_tot_NATP, &prev_tot_NE, &prev_tot_ND, &prev_tot_NDE);
-
   //starting simuation
   double spill_over_time = 0;
   for (int i=0;i<iter;i++){
@@ -1581,33 +1577,32 @@ int main (int argc, char *argv[]) {
 
 
 void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E,
-                                      int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
+                                      int *s_ND, int *s_NDE, double *nATP, double *nADP,
                                       double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
                                       double *prev_tot_NADP, double *prev_tot_NATP, double *prev_tot_NE, double *prev_tot_ND, double *prev_tot_NDE) {
   double dV = dx*dx*dx;
-  double total_D_n = 0;
-  double total_E_n = 0;
-  double total_D_N = 0;
-  double total_E_N = 0;
-  double total_NflD = 0;
-  double total_NflE = 0;
   double total_NE = 0;
   double total_NDE = 0;
   double total_NATP = 0;
   double total_NADP = 0;
   double total_ND = 0;
-  for (int h=0;h<Nx*Ny*Nz;h++) {
-    total_D_n += (nATP[h] + nADP[h])*dx*dx*dx + ND[h] + NDE[h];
-    total_E_n += nE[h]*dx*dx*dx + NDE[h];
-    total_D_N += s_N_ATP[h] + s_N_ADP[h] + s_ND[h] + s_NDE[h];
-    total_E_N += s_N_E[h] + s_NDE[h];
-    total_NflD += NflD[h];
-    total_NflE += NflE[h];
-    total_NE += nE[h]*dx*dx*dx;
-    total_NDE += NDE[h];
-    total_NATP += nATP[h]*dx*dx*dx;
-    total_NADP += nADP[h]*dx*dx*dx;
-    total_ND += ND[h];
+  if (sim_type != "exact") {
+    for (int h=0;h<Nx*Ny*Nz;h++) {
+      total_NE += double(s_N_E[h]);
+      total_NDE += double(s_NDE[h]);
+      total_NATP += double(s_N_ATP[h]);
+      total_NADP += double(s_N_ADP[h]);
+      total_ND += double(s_ND[h]);
+    }
+  }
+  else {
+    for (int h=0;h<Nx*Ny*Nz;h++) {
+      total_NE += nE[h]*dx*dx*dx;
+      total_NDE += NDE[h];
+      total_NATP += nATP[h]*dx*dx*dx;
+      total_NADP += nADP[h]*dx*dx*dx;
+      total_ND += ND[h];
+    }
   }
   double gridpoints_inside=0;
   for (int h=0;h<Nx*Ny*Nz;h++) {
@@ -1639,7 +1634,7 @@ void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP,
          total_NE/gridpoints_inside,total_NDE/number_of_membrane_gridpts,total_NATP/gridpoints_inside,
          total_NADP/gridpoints_inside,total_ND/number_of_membrane_gridpts);
   fflush(stdout);
-  if (fabs(*prev_tot_NADP + *prev_tot_NATP + *prev_tot_ND + *prev_tot_NDE - total_NADP - total_NATP - total_ND - total_NDE) > 10e-10) {
+  if (fabs(*prev_tot_NADP + *prev_tot_NATP + *prev_tot_ND + *prev_tot_NDE - total_NADP - total_NATP - total_ND - total_NDE) > 10e-8) {
     printf("\nTotal number of minD has changed!!\n\n");
     exit(1);
   }

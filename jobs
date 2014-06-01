@@ -1,1 +1,20 @@
+p 0.35 0.35 0.00 0.00 15.00 0.00 full_array -dump
+p 0.35 0.35 0.00 0.00 15.00 0.00 exact -dump
+
 p 0.50 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 0.50 0.50 0.00 0.00 15.00 0.00 exact -dump
+
+p 6.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 6.00 0.50 0.00 0.00 15.00 0.00 exact -dump
+
+p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 3.00 0.50 0.00 0.00 15.00 0.00 exact -dump
+
+randst 0.25 9.00 16.00 94.00 15.00 0.00 full_array -dump
+randst 0.25 9.00 16.00 94.00 15.00 0.00 exact -dump
+
+randst 0.25 7.00 7.00 95.00 15.00 0.00 full_array -dump
+randst 0.25 7.00 7.00 95.00 15.00 0.00 exact -dump
+
+triangle 0.25 2.00 2.00 2.00 15.00 0.00 full_array -dump
+triangle 0.25 2.00 2.00 2.00 15.00 0.00 exact -dump
