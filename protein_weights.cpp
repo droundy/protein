@@ -55,7 +55,7 @@ void initialize_densities_and_weighting(weights *ws,  bool *insideArr, int *s_N_
 
 void update_all_densities_and_weighting_for_changing_gridpt(weights *ws, bool *insideArr, int *s_N_ATP,
                                                    int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A,
-                                                   int xi, int yi, int zi){
+                                                            int xi, int yi, int zi, char type){
  /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
                 X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
@@ -79,14 +79,40 @@ void update_all_densities_and_weighting_for_changing_gridpt(weights *ws, bool *i
     ws->update(rate_E*s_ND[xi*Ny*Nz+yi*Nz+zi]*s_N_E[xi*Ny*Nz+yi*Nz+zi]/dV, E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
     ws->update(rate_de*s_NDE[xi*Ny*Nz+yi*Nz+zi], DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
   }
-  for (int i=0;i<6;i++){
-    if (insideArr[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ]) {
-      ws->update( difD*s_N_ADP[xi*Ny*Nz+yi*Nz+zi] / dA,
-                  (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-      ws->update( difD*s_N_ATP[xi*Ny*Nz+yi*Nz+zi] / dA,
-                  (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-      ws->update( difD*s_N_E[xi*Ny*Nz+yi*Nz+zi] / dA,
-                  (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+  if (type == 'r'){
+    for (int i=0;i<6;i++){
+      if (insideArr[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ]) {
+        ws->update( difD*s_N_ADP[xi*Ny*Nz+yi*Nz+zi] / dA,
+                    (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        ws->update( difD*s_N_ATP[xi*Ny*Nz+yi*Nz+zi] / dA,
+                    (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        ws->update( difD*s_N_E[xi*Ny*Nz+yi*Nz+zi] / dA,
+                    (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+      }
+    }
+  }
+  else if (type == 'd'){
+    for (int i=0;i<6;i++){
+      if (insideArr[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ]) {
+        ws->update( difD*s_N_ADP[xi*Ny*Nz+yi*Nz+zi] / dA,
+                    (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+      }
+    }
+  }
+  else if (type == 't'){
+    for (int i=0;i<6;i++){
+      if (insideArr[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ]) {
+        ws->update( difD*s_N_ATP[xi*Ny*Nz+yi*Nz+zi] / dA,
+                    (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+      }
+    }
+  }
+  else if (type == 'e'){
+    for (int i=0;i<6;i++){
+      if (insideArr[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ]) {
+        ws->update( difD*s_N_E[xi*Ny*Nz+yi*Nz+zi] / dA,
+                    (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+      }
     }
   }
   return;

@@ -835,36 +835,37 @@ int main (int argc, char *argv[]) {
               exit(1);
           }
           update_all_densities_and_weighting_for_changing_gridpt(ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND,
-                                                        s_NDE, mem_A, p.xi, p.yi, p.zi);
+                                                                 s_NDE, mem_A, p.xi, p.yi, p.zi, 'r');
         }
         else if (p.reaction >= X_ADP_pos && p.reaction <= Z_ADP_neg) {
           s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
           update_all_densities_and_weighting_for_changing_gridpt(ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND,
-                                                                 s_NDE, mem_A, p.xi, p.yi, p.zi);
+                                                                 s_NDE, mem_A, p.xi, p.yi, p.zi, 'd');
           int q = p.reaction - X_ADP_pos;
           s_N_ADP[ (p.xi+d[q][0])*Ny*Nz + (p.yi+d[q][1])*Nz + (p.zi+d[q][2]) ] += 1;
           update_all_densities_and_weighting_for_changing_gridpt(ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND,
-                                                        s_NDE, mem_A, p.xi+d[q][0], p.yi+d[q][1], p.zi+d[q][2]);
+                                                                 s_NDE, mem_A, p.xi+d[q][0], p.yi+d[q][1], p.zi+d[q][2], 'd');
         }
         else if (p.reaction >= X_ATP_pos && p.reaction <= Z_ATP_neg) {
           s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
           update_all_densities_and_weighting_for_changing_gridpt(ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND,
-                                                                 s_NDE, mem_A, p.xi, p.yi, p.zi);
+                                                                 s_NDE, mem_A, p.xi, p.yi, p.zi, 't');
           int q = p.reaction - X_ATP_pos;
           s_N_ATP[ (p.xi+d[q][0])*Ny*Nz + (p.yi+d[q][1])*Nz + (p.zi+d[q][2]) ] += 1;
           update_all_densities_and_weighting_for_changing_gridpt(ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND,
-                                                        s_NDE, mem_A, p.xi+d[q][0], p.yi+d[q][1], p.zi+d[q][2]);
+                                                                 s_NDE, mem_A, p.xi+d[q][0], p.yi+d[q][1], p.zi+d[q][2], 't');
         }
         else if (p.reaction >= X_E_pos && p.reaction <= Z_E_neg) {
           s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] -= 1;
           update_all_densities_and_weighting_for_changing_gridpt(ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND,
-                                                                 s_NDE, mem_A, p.xi, p.yi, p.zi);
+                                                                 s_NDE, mem_A, p.xi, p.yi, p.zi, 'e');
           int q = p.reaction - X_E_pos;
           s_N_E[ (p.xi+d[q][0])*Ny*Nz + (p.yi+d[q][1])*Nz + (p.zi+d[q][2]) ] += 1;
           update_all_densities_and_weighting_for_changing_gridpt(ws, insideArr, s_N_ATP, s_N_ADP, s_N_E, s_ND,
-                                                        s_NDE, mem_A, p.xi+d[q][0], p.yi+d[q][1], p.zi+d[q][2]);
+                                                                 s_NDE, mem_A, p.xi+d[q][0], p.yi+d[q][1], p.zi+d[q][2], 'e');
         }
-        if (s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] < 0 || s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] < 0 || s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] < 0) {
+        if (s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] < 0 || s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] < 0 || s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] < 0
+            || s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] < 0 || s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi] < 0) {
           printf("There was a negative protein!! x %d,y %d,z %d,reaction %s, weight = %g, ADP = %d, ATP = %d, E = %d, wall = %g\n",
                  p.xi,p.yi,p.zi,reaction_name(p.reaction+i),ws->lookup_prob_for_specific_index((p.reaction+i)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi),
                  s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi],s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi],s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi],mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] );
