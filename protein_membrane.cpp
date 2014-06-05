@@ -105,7 +105,6 @@ double f_2D_randst(double y, double z){
   }
   return f;
 }
-
 bool only = true;
 double f_2D_stad(double y, double z){
   double f;
@@ -139,6 +138,9 @@ double f_2D_stad(double y, double z){
 //end randst shape functions
 
 
+
+
+
 //mem_f produces a scalar field on the grid. points where mem_f = 0 are cell wall.
 double mem_f(double x, double y, double z) {
   if(mem_f_shape=="randst" || mem_f_shape=="TIE_fighter" || mem_f_shape=="triangle" || mem_f_shape=="stad"){
@@ -152,16 +154,13 @@ double mem_f(double x, double y, double z) {
       printf("somethings wrong with the shape argument!!!");
       exit(1);
     }
+    //    printf("\nX/2.0 = %g\n",X/2.0);
     if (f_2d<=0) {
-      // if (abs(2*(x-(X/2.0))/A - 0.99999) < .1){
-      //   printf("f_2d = %g and X/2.0 = %g and 2*(x-(X/2.0))/A - 0.99999 = %g and x = %g\n",f_2d,X/2.0,2*(x-(X/2.0))/A - 0.99999,x);
-      //   fflush(stdout);
-      // }
-      return abs(2*(x-(X/2.0))/A) - 0.99999;//1.00001;
+      return fabs(2*(x-(X/2.0))/A) - 0.99999;//1.00001;
     }
     double closest_y0 = -100.0;
     double closest_z0 = -100.0;
-    //bool there_is_closest_point=0; unused
+    //closest pt is closest that is still inside 2d guassian boundaries of cell
     for (double y0 = y-(A/2.0+2.0*dx); y0<y+(A/2.0+2.0*dx); y0+=dx/2.0) {
       for (double z0 = z-(A/2.0+2.0*dx); z0<z+(A/2.0+2.0*dx); z0+=dx/2.0) {
         if ( (y-y0)*(y-y0)+(z-z0)*(z-z0) < (y-closest_y0)*(y-closest_y0)+(z-closest_z0)*(z-closest_z0) ) {
@@ -184,7 +183,6 @@ double mem_f(double x, double y, double z) {
       return 1.0;
     }
   }
-
   if (mem_f_shape=="p"){
     //A = length, B = radius of endcap and cylinder
     double f;
@@ -227,7 +225,6 @@ double mem_f(double x, double y, double z) {
     double f = sqrt( (x-x1)*(x-x1)/(B*B) + (y-y1)*(y-y1)/(C*C)+ (z-z1)*(z-z1)/(A*A) ) - 1;
     return f;
   }
-
    else {
      double f = 1;
      return f;
@@ -481,11 +478,9 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
 
 
 void set_membrane(double mem_A[]) {
-  //int count = 0;
   for(int xi=0;xi<Nx;xi++){
     for(int yi=0;yi<Ny;yi++){
       for(int zi=0;zi<Nz;zi++){
-        //count++;
         double fXYZ = mem_f((xi+0.5)*dx, (yi+0.5)*dx, (zi+0.5)*dx);
         double fXYz = mem_f((xi+0.5)*dx, (yi+0.5)*dx, (zi-0.5)*dx);
         double fXyZ = mem_f((xi+0.5)*dx, (yi-0.5)*dx, (zi+0.5)*dx);
@@ -495,14 +490,11 @@ void set_membrane(double mem_A[]) {
         double fxyZ = mem_f((xi-0.5)*dx, (yi-0.5)*dx, (zi+0.5)*dx);
         double fxyz = mem_f((xi-0.5)*dx, (yi-0.5)*dx, (zi-0.5)*dx);
         double f = mem_f(xi*dx, yi*dx, zi*dx);
-        if (xi == Nx-1 && (f < 0 || fXYZ < 0 || fXYz < 0 || fXyZ < 0 || fXyz < 0 || fxYZ < 0 || fxYz < 0 || fxyZ < 0 || fxyz < 0)) {
-          printf("\nx %d,y %d,z %d and fXYZ = %g fxyz = %g f = %g",xi,yi,zi,fXYZ,fxyz,f);
-          fflush(stdout);
-        }
-        mem_A[xi*Ny*Nz+yi*Nz+zi] = find_intersection(fXYZ, fXYz, fXyZ, fXyz, fxYZ, fxYz, fxyZ, fxyz, f, false);
-        // if (mem_A[xi*Ny*Nz+yi*Nz+zi] > 0 && xi == (Nx-1)) {
-        //   printf("\nx %d,y %d,z %d and mem_A =  %g",xi,yi,zi,mem_A[xi*Ny*Nz+yi*Nz+zi]);
+        // if (xi == Nx-1 && (f < 0 || fXYZ < 0 || fXYz < 0 || fXyZ < 0 || fXyz < 0 || fxYZ < 0 || fxYz < 0 || fxyZ < 0 || fxyz < 0)) {
+        //   printf("\nx %d,y %d,z %d and fXYZ = %g fxyz = %g f = %g",xi,yi,zi,fXYZ,fxyz,f);
+        //   fflush(stdout);
         // }
+        mem_A[xi*Ny*Nz+yi*Nz+zi] = find_intersection(fXYZ, fXYz, fXyZ, fXyz, fxYZ, fxYz, fxyZ, fxyz, f, false);
       }
     }
   }

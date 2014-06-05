@@ -93,6 +93,9 @@ char* print_filename(const char* plotname, const char* proteinname) {
   return filename;
 }
 
+
+////////////////////////////////////////////
+//These three functions are really for debugging purposes but I'd like to keep them
 void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND,
                                       int *s_NDEs_N_ATP, double *nATP, double *nADP, double *nE, double *ND,
                                       double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
@@ -103,6 +106,9 @@ void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, in
                        int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
                        double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
                        double *tot_ave_NADP, double *tot_ave_NATP, double *tot_ave_NE, double *tot_ave_ND, double *tot_ave_NDE);
+const char *reaction_name(int reaction);
+///////////////////////////////////////////////
+
 
 
 stoch_params index_to_parameters(int index) {
@@ -114,63 +120,6 @@ stoch_params index_to_parameters(int index) {
   p.zi = index - p.reaction*Nx*Ny*Nz - p.xi*Ny*Nz - p.yi*Nz;
   return p;
 }
-
-
-const char *reaction_name(int reaction) {
-  switch (reaction) {
-    case ADP_to_ATP:
-      return "ADP_to_ATP";
-    case DE_to_ADP_E:
-      return "DE_to_ADP_E";
-    case ATP_to_D:
-      return "ATP_to_D";
-    case E_D_to_DE:
-      return "E_D_to_DE";
-
-    case X_ADP_pos:
-      return "X_ADP_pos";
-    case Y_ADP_pos:
-      return "Y_ADP_pos";
-    case Z_ADP_pos:
-      return "Z_ADP_pos";
-    case X_ADP_neg:
-      return "X_ADP_neg";
-    case Y_ADP_neg:
-      return "Y_ADP_neg";
-    case Z_ADP_neg:
-      return "Z_ADP_neg";
-
-    case X_ATP_pos:
-      return "X_ATP_pos";
-    case Y_ATP_pos:
-      return "Y_ATP_pos";
-    case Z_ATP_pos:
-      return "Z_ATP_pos";
-    case X_ATP_neg:
-      return "X_ATP_neg";
-    case Y_ATP_neg:
-      return "Y_ATP_neg";
-    case Z_ATP_neg:
-      return "Z_ATP_neg";
-
-    case X_E_pos:
-      return "X_E_pos";
-    case Y_E_pos:
-      return "Y_E_pos";
-    case Z_E_pos:
-      return "Z_E_pos";
-    case X_E_neg:
-      return "X_E_neg";
-    case Y_E_neg:
-      return "Y_E_neg";
-    case Z_E_neg:
-      return "Z_E_neg";
-    default:
-      printf("I am crashing syou silly\n");
-      exit(1);
-  }
-}
-
 
 int main (int argc, char *argv[]) {
   //command line parameters
@@ -218,9 +167,9 @@ int main (int argc, char *argv[]) {
 
   //compute grid size based on cell parameters
   if (mem_f_shape=="p") {
-    Nx = round(2*B/dx) + 4;
-    Ny = round(2*B/dx) + 4;
-    Nz = round((A + 2*B)/dx) + 4;
+    Nx = round(2*B/dx) + 9;
+    Ny = round(2*B/dx) + 9;
+    Nz = round((A + 2*B)/dx) + 9;
     printf("Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
     box_divider_left = int(Nz/3);
     box_divider_right = int(2*Nz/3);
@@ -231,7 +180,7 @@ int main (int argc, char *argv[]) {
     Nz = round((C+2*D+2*A)/dx) + 3;
   }
   if (mem_f_shape=="randst") {
-    Nx = round(A/dx) + 5;
+    Nx = round(A/dx) + 8;
     Ny = round(B/dx) + 5;
     Nz = round(C/dx) + 5;
     rand_seed = int(D);
@@ -245,11 +194,11 @@ int main (int argc, char *argv[]) {
     Nz = ceil(C/dx) + 4;
   }
   if (mem_f_shape=="triangle") {
-    Nx = ceil(A/dx) + 5;
-    Nz = ceil((A+B)/dx) + 5;
+    Nx = ceil(A/dx) + 9;
+    Nz = ceil((A+B)/dx) + 9;
     //Using law of cosines we get height of triangle:
     double theta = acos((B*B+D*D-C*C)/(2*B*D));
-    Ny = ceil((A+D*sin(theta))/dx) + 4;
+    Ny = ceil((A+D*sin(theta))/dx) + 9;
   }
   if (mem_f_shape=="sp") {
     Nx = ceil(2*A/dx) + 5;
@@ -344,7 +293,9 @@ int main (int argc, char *argv[]) {
       randomize_cell_wall(guass);
     }
   }
+
   printf("Those are all the guassians!\n");
+  fflush(stdout);
   //end random stuff
 
   double *first_mem_A = new double[Nx*Ny*Nz];
@@ -366,18 +317,18 @@ int main (int argc, char *argv[]) {
 
 
   // for (int i=0;i<Nx;i++){
-  //   printf("\ninsideArr:\n");
-  //   for (int j=0;j<Ny;j++){
-  //     for (int k=0;k<Nz;k++){
-  //       if (first_insideArr[i*Ny*Nz+j*Nz+k]){
-  //         printf("%d",1);
-  //       }
-  //       else {
-  //         printf("%d",0);
-  //       }
-  //     }
-  //     printf("\n");
-  //   }
+  //   // printf("\ninsideArr:\n");
+  //   // for (int j=0;j<Ny;j++){
+  //   //   for (int k=0;k<Nz;k++){
+  //   //     if (first_insideArr[i*Ny*Nz+j*Nz+k]){
+  //   //       printf("%d",1);
+  //   //     }
+  //   //     else {
+  //   //       printf("%d",0);
+  //   //     }
+  //   //   }
+  //   //   printf("\n");
+  //   // }
   //   printf("Membrane:\n");
   //   for (int j=0;j<Ny;j++){
   //     for (int k=0;k<Nz;k++){
@@ -392,7 +343,6 @@ int main (int argc, char *argv[]) {
   //   }
   // }
   // fflush(stdout);
-  // exit(1);
 
 
   //Trimming the grid
@@ -404,24 +354,24 @@ int main (int argc, char *argv[]) {
   pointer_to_insideArr = &insideArr;
   printf("\nBefore Trim Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
   trim_grid(pointer_to_mem_A, first_mem_A, pointer_to_insideArr, first_insideArr);
-  printf("\nAfter trim, min_xi = %d min_yi = %d min_zi = %d\n",min_xi,min_yi,min_zi);
+  printf("\nAfter trim, Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
   fflush(stdout);
 
   ///////////////////////////////////////////////
   //Print outs comparing mem_A and insideArr:
-  // for (int i=Nx-4;i<Nx;i++){
-  //   printf("\ninsideArr:\n");
-  //   for (int j=0;j<Ny;j++){
-  //     for (int k=0;k<Nz;k++){
-  //       if (insideArr[i*Ny*Nz+j*Nz+k]){
-  //         printf("%d",1);
-  //       }
-  //       else {
-  //         printf("%d",0);
-  //       }
-  //     }
-  //     printf("\n");
-  //   }
+  // for (int i=0;i<Nx;i++){
+    // printf("\ninsideArr:\n");
+    // for (int j=0;j<Ny;j++){
+    //   for (int k=0;k<Nz;k++){
+    //     if (insideArr[i*Ny*Nz+j*Nz+k]){
+    //       printf("%d",1);
+    //     }
+    //     else {
+    //       printf("%d",0);
+    //     }
+    //   }
+    //   printf("\n");
+    // }
   //   printf("Membrane:\n");
   //   for (int j=0;j<Ny;j++){
   //     for (int k=0;k<Nz;k++){
@@ -436,7 +386,7 @@ int main (int argc, char *argv[]) {
   //   }
   // }
   // fflush(stdout);
-  // exit(1);
+  //exit(1);
   // ///////////////////////////////////////////////
 
   //global arrays for storing simulation data
@@ -624,8 +574,8 @@ int main (int argc, char *argv[]) {
       vert_div_two = size_modifier*(2.7/dx)-min_zi+1;
     }
     else if (rand_seed == 94) {
-      vert_div = size_modifier*(3.6/dx)-min_zi+1;
-      vert_div_two = size_modifier*(5.0/dx)-min_zi+1;
+      vert_div = size_modifier*(double(Nz-6)/2.7/dx)+3;
+      vert_div_two = size_modifier*(double(Nz-6)*2/3.3/dx)+3;
     }
     else if (rand_seed == 95) {
       vert_div = size_modifier*(3.3/dx)-min_zi+1;
@@ -729,7 +679,7 @@ int main (int argc, char *argv[]) {
             }
           }
         }
-        if (inside(int(Nx/2),a,b)==false) {
+        if (!insideArr[(Nx/2)*Ny*Nz+a*Nz+b]) {
           marker = 0;
         }
         fprintf(outfile_sections, "%g ",marker);
@@ -764,11 +714,13 @@ int main (int argc, char *argv[]) {
     fflush(stdout);
   }
 
+
   double prev_tot_NE = 0;
   double prev_tot_NATP = 0;
   double prev_tot_NADP = 0;
   double prev_tot_NDE = 0;
   double prev_tot_ND = 0;
+
   if (sim_type != "exact") {
     for (int h=0;h<Nx*Ny*Nz;h++) {
       prev_tot_NE += s_N_E[h];
@@ -797,8 +749,8 @@ int main (int argc, char *argv[]) {
   /////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
 
-  double start_time = double(clock()/CLOCKS_PER_SEC);
-  double time = start_time;
+  //double start_time = double(clock()/CLOCKS_PER_SEC);
+  //double time = start_time;
   //starting simuation
   double spill_over_time = 0;
   for (int i=0;i<iter;i++){
@@ -909,12 +861,12 @@ int main (int argc, char *argv[]) {
       }
       count_compare_and_print_proteins(i,s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr,
                                        &prev_tot_NADP, &prev_tot_NATP, &prev_tot_NE, &prev_tot_ND, &prev_tot_NDE);
-      time = double(clock()/CLOCKS_PER_SEC) - start_time;
-      printf("This is a %s simulation and it took %g seconds to get to interation %d\n",
-             sim_type.c_str(), time, i);
-      printf("Which means it would take %g seconds to get 1000 simulation seconds\n",
-             (double(time)/double(i))*(1000.0/time_step));
-      fflush(stdout);
+      // time = double(clock()/CLOCKS_PER_SEC) - start_time;
+      // printf("This is a %s simulation and it took %g seconds to get to interation %d\n",
+      //        sim_type.c_str(), time, i);
+      // printf("Which means it would take %g seconds to get 1000 simulation seconds\n",
+      //        (double(time)/double(i))*(1000.0/time_step));
+      // fflush(stdout);
     }
     if ( (sim_type == "exact" && i%int(1/time_step) == 0) || (sim_type != "exact" && i%int(1/time_step) == 0) ) {
       compare_time_aves(i, &compare_ave_counter, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr,
@@ -1570,7 +1522,7 @@ void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP,
                                       int *s_ND, int *s_NDE, double *nATP, double *nADP,
                                       double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
                                       double *prev_tot_NADP, double *prev_tot_NATP, double *prev_tot_NE, double *prev_tot_ND, double *prev_tot_NDE) {
-  double dV = dx*dx*dx;
+  //double dV = dx*dx*dx;
   double total_NE = 0;
   double total_NDE = 0;
   double total_NATP = 0;
@@ -1608,22 +1560,22 @@ void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP,
       tot_mem_A += mem_A[h];
     }
   }
-  double ave_mem_A = tot_mem_A/number_of_membrane_gridpts;
-  printf("\nFor %s simulation:\ntot_mem_A=%g number_of_membrane_gridpts=%g gridpoints_inside=%g ave_mem_A=%g",
-         sim_type.c_str(), tot_mem_A, number_of_membrane_gridpts, gridpoints_inside, ave_mem_A);
-  // printf("\nAt iteration %d:\ntotal_D_n = %g\ntotal_E_n = %g\ntotal_D_N = %g\ntotal_E_N = %g\ntotal_NflD = %g\ntotal_NflE = %g\n"
-  //        ,iteration,total_D_n,total_E_n,total_D_N,total_E_N,total_NflD,total_NflE);
-  printf("\nPrevious the previous totals:\ntotal_NE = %g\ntotal_NDE = %g\ntotal_NATP = %g\ntotal_NADP = %g\ntotal_ND = %g\n"
-         ,*prev_tot_NE,*prev_tot_NDE,*prev_tot_NATP,*prev_tot_NADP,*prev_tot_ND);
-  printf("\ntotal_NE = %g\ntotal_NDE = %g\ntotal_NATP = %g\ntotal_NADP = %g\ntotal_ND = %g\n"
-         ,total_NE,total_NDE,total_NATP,total_NADP,total_ND);
-  printf("\nAverage for one gridpt:\nnE = %g\nsigmaDE = %g\nnATP = %g\nnADP = %g\nsigmaND = %g\n",
-         total_NE/(gridpoints_inside*dV),total_NDE/(number_of_membrane_gridpts*ave_mem_A),total_NATP/(gridpoints_inside*dV),
-         total_NADP/(gridpoints_inside*dV),total_ND/(number_of_membrane_gridpts*ave_mem_A));
-  printf("\nMore Average for one gridpt:\nNE = %g\nNDE = %g\nNATP = %g\nNADP = %g\nND = %g\n",
-         total_NE/gridpoints_inside,total_NDE/number_of_membrane_gridpts,total_NATP/gridpoints_inside,
-         total_NADP/gridpoints_inside,total_ND/number_of_membrane_gridpts);
-  fflush(stdout);
+  //double ave_mem_A = tot_mem_A/number_of_membrane_gridpts;
+  // printf("\nFor %s simulation:\ntot_mem_A=%g number_of_membrane_gridpts=%g gridpoints_inside=%g ave_mem_A=%g",
+  //        sim_type.c_str(), tot_mem_A, number_of_membrane_gridpts, gridpoints_inside, ave_mem_A);
+  // // printf("\nAt iteration %d:\ntotal_D_n = %g\ntotal_E_n = %g\ntotal_D_N = %g\ntotal_E_N = %g\ntotal_NflD = %g\ntotal_NflE = %g\n"
+  // //        ,iteration,total_D_n,total_E_n,total_D_N,total_E_N,total_NflD,total_NflE);
+  // printf("\nPrevious the previous totals:\ntotal_NE = %g\ntotal_NDE = %g\ntotal_NATP = %g\ntotal_NADP = %g\ntotal_ND = %g\n"
+  //        ,*prev_tot_NE,*prev_tot_NDE,*prev_tot_NATP,*prev_tot_NADP,*prev_tot_ND);
+  // printf("\ntotal_NE = %g\ntotal_NDE = %g\ntotal_NATP = %g\ntotal_NADP = %g\ntotal_ND = %g\n"
+  //        ,total_NE,total_NDE,total_NATP,total_NADP,total_ND);
+  // printf("\nAverage for one gridpt:\nnE = %g\nsigmaDE = %g\nnATP = %g\nnADP = %g\nsigmaND = %g\n",
+  //        total_NE/(gridpoints_inside*dV),total_NDE/(number_of_membrane_gridpts*ave_mem_A),total_NATP/(gridpoints_inside*dV),
+  //        total_NADP/(gridpoints_inside*dV),total_ND/(number_of_membrane_gridpts*ave_mem_A));
+  // printf("\nMore Average for one gridpt:\nNE = %g\nNDE = %g\nNATP = %g\nNADP = %g\nND = %g\n",
+  //        total_NE/gridpoints_inside,total_NDE/number_of_membrane_gridpts,total_NATP/gridpoints_inside,
+  //        total_NADP/gridpoints_inside,total_ND/number_of_membrane_gridpts);
+  //fflush(stdout);
   if (fabs(*prev_tot_NADP + *prev_tot_NATP + *prev_tot_ND + *prev_tot_NDE - total_NADP - total_NATP - total_ND - total_NDE) > 10e-8) {
     printf("\nTotal number of minD has changed!!\n\n");
     exit(1);
@@ -1642,27 +1594,6 @@ void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP,
 
 
 
-int get_J(double difD, double *nATP, double *nADP, double *nE,
-          double *JxATP, double *JyATP, double *JzATP,
-          double *JxADP, double *JyADP, double *JzADP,
-          double *JxE, double *JyE, double *JzE){
-  for(int xi=0;xi<Nx-1;xi++){
-    for(int yi=0;yi<Ny-1;yi++){
-      for(int zi=0;zi<Nz-1;zi++){
-        JzATP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nATP[xi*Ny*Nz+yi*Nz+zi+1]-nATP[xi*Ny*Nz+yi*Nz+zi])/dx;
-        JyATP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nATP[xi*Ny*Nz+(yi+1)*Nz+zi]-nATP[xi*Ny*Nz+yi*Nz+zi])/dx;
-        JxATP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nATP[(xi+1)*Ny*Nz+yi*Nz+zi]-nATP[xi*Ny*Nz+yi*Nz+zi])/dx;
-        JzADP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nADP[xi*Ny*Nz+yi*Nz+zi+1]-nADP[xi*Ny*Nz+yi*Nz+zi])/dx;
-        JyADP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nADP[xi*Ny*Nz+(yi+1)*Nz+zi]-nADP[xi*Ny*Nz+yi*Nz+zi])/dx;
-        JxADP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nADP[(xi+1)*Ny*Nz+yi*Nz+zi]-nADP[xi*Ny*Nz+yi*Nz+zi])/dx;
-        JzE[xi*Ny*Nz+yi*Nz+zi] = -difD*(nE[xi*Ny*Nz+yi*Nz+zi+1]-nE[xi*Ny*Nz+yi*Nz+zi])/dx;
-        JyE[xi*Ny*Nz+yi*Nz+zi] = -difD*(nE[xi*Ny*Nz+(yi+1)*Nz+zi]-nE[xi*Ny*Nz+yi*Nz+zi])/dx;
-        JxE[xi*Ny*Nz+yi*Nz+zi] = -difD*(nE[(xi+1)*Ny*Nz+yi*Nz+zi]-nE[xi*Ny*Nz+yi*Nz+zi])/dx;
-      }
-    }
-  }
-  return 0;
-}
 
 void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
                        double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
@@ -1704,6 +1635,88 @@ void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, in
   fprintf(ave_file,"Average Total NDE = %g\n",*tot_ave_NDE/(*compare_ave_counter));
   fclose(ave_file);
   return;
+}
+
+
+
+const char *reaction_name(int reaction) {
+  switch (reaction) {
+    case ADP_to_ATP:
+      return "ADP_to_ATP";
+    case DE_to_ADP_E:
+      return "DE_to_ADP_E";
+    case ATP_to_D:
+      return "ATP_to_D";
+    case E_D_to_DE:
+      return "E_D_to_DE";
+
+    case X_ADP_pos:
+      return "X_ADP_pos";
+    case Y_ADP_pos:
+      return "Y_ADP_pos";
+    case Z_ADP_pos:
+      return "Z_ADP_pos";
+    case X_ADP_neg:
+      return "X_ADP_neg";
+    case Y_ADP_neg:
+      return "Y_ADP_neg";
+    case Z_ADP_neg:
+      return "Z_ADP_neg";
+
+    case X_ATP_pos:
+      return "X_ATP_pos";
+    case Y_ATP_pos:
+      return "Y_ATP_pos";
+    case Z_ATP_pos:
+      return "Z_ATP_pos";
+    case X_ATP_neg:
+      return "X_ATP_neg";
+    case Y_ATP_neg:
+      return "Y_ATP_neg";
+    case Z_ATP_neg:
+      return "Z_ATP_neg";
+
+    case X_E_pos:
+      return "X_E_pos";
+    case Y_E_pos:
+      return "Y_E_pos";
+    case Z_E_pos:
+      return "Z_E_pos";
+    case X_E_neg:
+      return "X_E_neg";
+    case Y_E_neg:
+      return "Y_E_neg";
+    case Z_E_neg:
+      return "Z_E_neg";
+    default:
+      printf("I am crashing syou silly\n");
+      exit(1);
+  }
+}
+
+
+
+
+int get_J(double difD, double *nATP, double *nADP, double *nE,
+          double *JxATP, double *JyATP, double *JzATP,
+          double *JxADP, double *JyADP, double *JzADP,
+          double *JxE, double *JyE, double *JzE){
+  for(int xi=0;xi<Nx-1;xi++){
+    for(int yi=0;yi<Ny-1;yi++){
+      for(int zi=0;zi<Nz-1;zi++){
+        JzATP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nATP[xi*Ny*Nz+yi*Nz+zi+1]-nATP[xi*Ny*Nz+yi*Nz+zi])/dx;
+        JyATP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nATP[xi*Ny*Nz+(yi+1)*Nz+zi]-nATP[xi*Ny*Nz+yi*Nz+zi])/dx;
+        JxATP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nATP[(xi+1)*Ny*Nz+yi*Nz+zi]-nATP[xi*Ny*Nz+yi*Nz+zi])/dx;
+        JzADP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nADP[xi*Ny*Nz+yi*Nz+zi+1]-nADP[xi*Ny*Nz+yi*Nz+zi])/dx;
+        JyADP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nADP[xi*Ny*Nz+(yi+1)*Nz+zi]-nADP[xi*Ny*Nz+yi*Nz+zi])/dx;
+        JxADP[xi*Ny*Nz+yi*Nz+zi] = -difD*(nADP[(xi+1)*Ny*Nz+yi*Nz+zi]-nADP[xi*Ny*Nz+yi*Nz+zi])/dx;
+        JzE[xi*Ny*Nz+yi*Nz+zi] = -difD*(nE[xi*Ny*Nz+yi*Nz+zi+1]-nE[xi*Ny*Nz+yi*Nz+zi])/dx;
+        JyE[xi*Ny*Nz+yi*Nz+zi] = -difD*(nE[xi*Ny*Nz+(yi+1)*Nz+zi]-nE[xi*Ny*Nz+yi*Nz+zi])/dx;
+        JxE[xi*Ny*Nz+yi*Nz+zi] = -difD*(nE[(xi+1)*Ny*Nz+yi*Nz+zi]-nE[xi*Ny*Nz+yi*Nz+zi])/dx;
+      }
+    }
+  }
+  return 0;
 }
 
 
