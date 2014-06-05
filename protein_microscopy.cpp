@@ -574,12 +574,12 @@ int main (int argc, char *argv[]) {
       vert_div_two = size_modifier*(2.7/dx)-min_zi+1;
     }
     else if (rand_seed == 94) {
-      vert_div = size_modifier*(double(Nz-6)/2.7/dx)+3;
-      vert_div_two = size_modifier*(double(Nz-6)*2/3.3/dx)+3;
+      vert_div = double(Nz-6)/3.3 + 3;
+      vert_div_two = 2*double(Nz-6)/3.0+3;
     }
     else if (rand_seed == 95) {
-      vert_div = size_modifier*(3.3/dx)-min_zi+1;
-      vert_div_two = size_modifier*(4.4/dx)-min_zi+1;
+      vert_div = double(Nz-6)/3.3+3;
+      vert_div_two = 2*double(Nz-6)/3.0+3;
     }
     else if (rand_seed == 96) {
       vert_div = size_modifier*(2.8/dx)-min_zi+1;
@@ -595,8 +595,8 @@ int main (int argc, char *argv[]) {
       vert_div_two = size_modifier*(4.8/dx)-min_zi+1;
     }
     else if (rand_seed == 99) {
-      vert_div = size_modifier*(2.6/dx)-min_zi+1;
-      vert_div_two = size_modifier*(4.6/dx)-min_zi+1;
+      vert_div = double(Nz-6)/3.3+3;
+      vert_div_two = 2*double(Nz-6)/3.1+3;
     }
   }
   if (mem_f_shape=="randst") {
