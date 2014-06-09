@@ -1,161 +1,141 @@
-;This file is written in lisp.
-;Pill normal is for the establishing that we have what works, reference other paper, then modify, is the idea.
 
-;testing new branch
 
-rene's short list:
-       - modify batch submit to support special flags ("include=debug")
-       - section printouts
-       - make plots nicer
-       - put plots in figure
-       - integrate batch with make
+06/03/2014:
 
-Pill Normal -
-Pill Short -
-     Run for longer to see periods of oscillations and if they die out.
-     -Test a 4.00 3.50 and maybe a 4.00 3.75
-     -Test with very lopsided density see if settles down into same max intensity oscillations
-     -Know how short is too short
-     -Are the movies in the plots right now microscopy view or otherwise?  Important to know if going to compare densities of proteins close to walls.
-          Look up distance that the aversion can take place over, so how far does cell have to be to "push away" other cells?  Then look at cell densities
-          that distance from walls.
-     -Look at a larger amount of density and see if settles down to different (more extreme difference) values.
-     -The time map plots seem inconsistent in that some show the highest
-densities on the poles, some in the centers, some on just one pole.
-For these want to run starting from a time when the proteins are
-evenly spread out (so between two maxima) and stop at a similar point
-at the end.
-   -The time map plots that I believe show the max density to be in the middle of the cell!  Show this definately and then play with plotting every time it goes above a certain density of protein, so maybe its the extreme nature of the oscillations that stop the polymer.
+p 0.30 0.30 0.00 0.00 15.00 0.00 full_array -dump
+p 0.45 0.45 0.00 0.00 15.00 0.00 full_array -dump
 
-Look more at randst plots.  Investigate with both the interplay with the different protein plots.  Try to verify the qualitative story told in the other paper.
+p 0.30 0.30 0.00 0.00 15.00 0.00 exact -dump
+p 0.45 0.45 0.00 0.00 15.00 0.00 exact -dump
 
-   -Start the randst so that density is max at the pole to start
-   (the bottom), now its only on the side and that doesn't work as
-   well
-   -Start the star shape Randst 96 with density max only in one corner, now it starts with it on the side and so there's an equal max in the two poles on the right.
+p 2.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 4.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 9.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
 
-   -nflE has short burst maxima in the poles, mostly right along the walls.
-   -Randst 97 with density max starting on the bottom of cell.  And then also with density max starting in the left little bump.
-
-   -Want to run everything twice as long.
+p 9.00 0.50 0.00 0.00 15.00 0.00 exact -dump
 
 
 
-Randst 99 -
-Randst 98 -
-Randst 97 -
-Randst 96 -
-Triangle -
+
+randst 0.25 8.00 15.00 94.00 15.00 0.30 full_array -dump
+randst 0.25 9.00 16.00 94.00 15.00 0.40 full_array -dump
+randst 0.25 6.00 6.00 95.00 15.00 0.30 full_array -dump
+randst 0.25 7.00 7.00 95.00 15.00 0.40 full_array -dump
+
+randst 0.25 8.00 15.00 94.00 15.00 0.30 exact -dump
+randst 0.25 9.00 16.00 94.00 15.00 0.40 exact -dump
+randst 0.25 6.00 6.00 95.00 15.00 0.30 exact -dump
+randst 0.25 7.00 7.00 95.00 15.00 0.40 exact -dump
+
+randst 0.25 18.00 18.00 95.00 15.00 1.30 full_array -dump
+randst 0.25 18.50 18.50 95.00 15.00 1.35 full_array -dump
+randst 0.25 19.00 19.00 95.00 15.00 1.40 full_array -dump
+randst 0.25 20.00 20.00 95.00 15.00 1.50 full_array -dump
+
+randst 0.25 18.00 25.00 94.00 15.00 1.30 full_array -dump
+randst 0.25 18.50 28.00 94.00 15.00 1.50 full_array -dump
+randst 0.25 18.80 28.80 94.00 15.00 1.56 full_array -dump
+randst 0.25 19.00 29.00 94.00 15.00 1.60 full_array -dump
+randst 0.25 20.00 30.00 95.00 15.00 1.70 full_array -dump
 
 
-Official to do:
--Once you get data, time_map needs to be run with more selective beginning and ending
--Try time_map with cuttoff minimum densities
 
-Run everything below for twice as long as we did before.
-Run everything with both slices and microscopy
-Add the Nde movies and plots.  We now plot everything else but these.
-
-pill:
-4.00 3.75
-4.00 3.50
-4.00 3.00
-4.00 2.00
-4.00 0.50
-4.00 2.00 - Very lopsided density (like 500)
-4.00 0.50 - Very lopsided density (like 500)
-
-Weds Jul 24: I have re-run all of the simulations, but nflE and nflD are now NflE and NflD, and the subsequent plots show counts rather than densities. The individual nATP are either densities or counts depending on whether or not the first letter is capitalized. Working on running the slice data, then will be running randst. Since the program now sims for 10x as long, the box plots need to be re-run for just one period.
-
-
-Randst:
-96 - As before
-96 - With density max starting in one corner
-97 - As before
-97 - With denisty max filling the little bump on the left
-97 - With density max starting in bottom pole
-98 - As before but run for three times as long
-99 - As before
-
-Mon Jul 29: Test randst 96 running right now. Started at 9:28 am. Marker: 15.01 density.
+triangle 0.25 2.00 2.00 2.00 15.00 0.00 full_array -dump
+triangle 0.25 2.33 2.33 2.00 15.00 0.00 full_array -dump
+triangle 0.25 2.66 2.66 2.00 15.00 0.00 full_array -dump
+triangle 0.25 3.00 3.00 3.00 15.00 0.00 full_array -dump
+triangle 0.25 6.00 6.00 6.00 15.00 0.00 full_array -dump
+triangle 0.25 8.00 8.00 8.00 15.00 0.00 full_array -dump
 
 
 
 
 
 
+06/04/2104;
+
+The following dashed were still running today, the undashed were not, something killed the jobs, not sure what yet
+
+p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+
+-p 0.30 0.30 0.00 0.00 15.00 0.00 full_array -dump
+-p 0.45 0.45 0.00 0.00 15.00 0.00 full_array -dump
+
+-p 0.30 0.30 0.00 0.00 15.00 0.00 exact -dump
+-p 0.45 0.45 0.00 0.00 15.00 0.00 exact -dump
+
+-p 2.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+protein box plot flattens out at 270 seconds
+-p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+no flatten out yet
+-p 4.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+protein box plot flattens out at 150 seconds
+
+p 9.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+no box plot file
+p 9.00 0.50 0.00 0.00 15.00 0.00 exact -dump
+box file only has one column of info
 
 
-randst 0.25 10.01 11.01 94.00 will be normal sized mannik shape, with nE on the left, ND on the right.
-randst 0.25 11.01 11.01 95.00 will be normal sized mannik shape, with nE on the left, ND on the right.
-randst 0.25 6.04 6.04 96.00 will be normal sized clover shape, with nE on the bottom left, ND on the bottom right, and nATP on the top right.
-randst 0.25 9.03 9.03 96.00 will be 1.5 times the size clover shape, with nE on the bottom left, ND on the bottom right, and nATP on the top right.
-randst 0.25 9.02 9.02 96.00 will be 1.5 times the size clover shape, with nE on bopttom right and ND on bottom left
-randst 0.25 6.01 6.01 99.00 will be lambda shape, nE in the left lower corner and ND on the right lower corner
-randst 0.25 6.04 6.04 99.00 will be lambda shape, nE in the left lower corner and ND on the right lower corner, and one of the sized will have a larger guassian
-randst 0.25 8.02 8.02 99.00 will be lambda shape but 1.1 times the size of the normal on, nE in the left lower corner and ND on the right lower corner
-randst 0.25 10.03 10.03 99.00 will be lambda shape but 1.5 times the size of the normal on, nE in the left lower corner and ND on the right lower corner
--randst 0.25 10.05 10.05 99.00 will be lambda shape but 1.5 times the size of the normal on, nE in the left lower corner and ND on the right lower corner, and one of the sized will have a larger guassian
+-triangle 0.25 2.00 2.00 2.00 15.00 0.00 full_array -dump
+box plots goes to 300 seconds, doesn't flatten out
+-triangle 0.25 2.33 2.33 2.00 15.00 0.00 full_array -dump
+box plots goes to 300 seconds, doesn't flatten out
+-triangle 0.25 2.66 2.66 2.00 15.00 0.00 full_array -dump
+box plots goes to 300 seconds, doesn't flatten out
+-triangle 0.25 3.00 3.00 3.00 15.00 0.00 full_array -dump
+box plots goes to 300 seconds, doesn't flatten out
+triangle 0.25 6.00 6.00 6.00 15.00 0.00 full_array -dump
+box plots goes to 120 seconds, doesn't flatten out
+triangle 0.25 8.00 8.00 8.00 15.00 0.00 full_array -dump
+box plot data has only one column of info
 
-the dashed above should be rerun.
+(noticed in the box plot that in some of these, the corners may be cut off)
 
-randst 0.25 6.02 6.02 96.00 will be normal sized clover shape, with nE on bopttom right and ND on bottom left
+-randst 0.25 8.00 15.00 94.00 15.00 0.30 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 9.00 16.00 94.00 15.00 0.40 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 6.00 6.00 95.00 15.00 0.30 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 7.00 7.00 95.00 15.00 0.40 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
 
+-randst 0.25 8.00 15.00 94.00 15.00 0.30 exact -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 9.00 16.00 94.00 15.00 0.40 exact -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 6.00 6.00 95.00 15.00 0.30 exact -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 7.00 7.00 95.00 15.00 0.40 exact -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
 
+randst 0.25 18.50 18.50 95.00 15.00 1.35 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 160 seconds
+-randst 0.25 19.00 19.00 95.00 15.00 1.40 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+data flattens out at 150 seconds
+randst 0.25 20.00 20.00 95.00 15.00 1.50 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 120 seconds
 
-randst 0.25 7.00 7.00 96.00 15.00 0.00 10.00 -dump
-randst 0.25 8.00 6.00 97.00 15.00 0.00 10.00 -dump
-randst 0.25 6.00 8.00 98.00 15.00 0.00 10.00 -dump
-randst 0.25 6.00 6.00 99.00 15.00 0.00 10.00 -dum
-randst 0.25 13.00 20.00 94.00 15.00 0.00 10.00 -dump
-randst 0.25 11.00 11.00 95.00 15.00 0.00 10.00 -dump
+-randst 0.25 18.80 28.80 94.00 15.00 1.56 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+Flatten out at 150 seconds
+randst 0.25 19.00 29.00 94.00 15.00 1.60 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 140 seconds
+-randst 0.25 20.00 30.00 95.00 15.00 1.70 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+Flatten out at 100 seconds
 
-
-p 4.00 0.50 0.00 0.00 15.00 10.00 -dump
-p 2.00 0.50 0.00 0.00 15.00 10.00 -dump
-p 1.00 0.50 0.00 0.00 15.00 10.00 -dump
-
-
-randst 0.25 6.01 6.01 99.00 will be lambda shape, nE in the left lower corner and ND on the right lower corner
-randst 0.25 8.02 8.02 99.00 will be lambda shape but 1.1 times the size of the normal on, nE in the left lower corner and ND on the right lower corner
-randst 0.25 6.03 6.03 99.00 will be lambda shape, nE in the left lower corner and ND on the right lower corner, and one of the sized will have a larger guassian
-randst 0.25 6.04 6.04 99.00 will be lambda shape, nE in the left lower corner and nATP on the right lower corner
-randst 0.25 10.02 10.02 99.00 will be lambda shape, but 1.3 times the size of the normal one,nE in the left lower corner and nATP on the right lower corner
-
-triangle 0.25 6.00 4.80 3.60 15.00 4.00 9.50 -dump
-triangle 0.25 4.00 4.00 4.00 15.00 4.00 9.50 -dump
-triangle 0.25 5.00 3.00 5.00 15.00 4.00 9.50 -dump
-triangle 0.25 4.01 4.01 4.01 will be triangle with nE on left, ND in right
-triangle 0.25 6.01 6.01 6.01 will be triangle with nE on left, ND in right
-triangle 0.25 4.02 4.02 4.02 will be triangle with nE on right, ND in right, and nATP on left
-triangle 0.25 6.02 6.02 6.02 will be triangle with nE on right, ND in right, and nATP on left.
-For these there should be the same amount of MinD and MinE as there are in the normal starting conditions
-
-p 4.00 0.48 0.00 0.00 15.00 10.00 -dump  All these are standard starting conditions, with nATP on right and nE on left,
-p 2.00 0.48 0.00 0.00 15.00 10.00 -dump  but slightly different size so maybe assymetry is gone.
-p 1.00 0.48 0.00 0.00 15.00 10.00 -dump
-
-randst 0.25 11.01 11.01 95.00 15.00 0.00 10.00 -dump -paper starts with nATP on the left and nE on the right, hoping to break up the simple polarized back and forth
-randst 0.25 11.02 11.02 95.00 15.00 0.00 10.00 -dump -paper starts with nATP on the left and nE on the right, with a very small variation in shape to see effect
-randst 0.25 11.03 11.03 95.00 15.00 0.00 10.00 -dump -paper starts with nATP on the left and nE on the right, with an even more varied variation in shape to see effect
-
-
-randst 0.25 6.01 6.01 99.00 will be lambda shape, nE in the left lower corner and ND on the right lower corner
-       movie shows very consistent pattern of double corner maximizations.
-       Seems small variations, not totaly sure. 2880 seconds showed little variation (end of sim)
-randst 0.25 8.02 8.02 99.00 will be lambda shape but 1.1 times the size of the normal on, nE in the left lower corner and ND on the right lower corner
-       Pattern looks normal then breaks up.  Abberation at roughly 500 seconds: Looks like you have four peaks on right, and three peaks on the left, so peak on right followed by small peak on left, then on right, then large peak on left, then on right, then small peak on left, then on right again.
-       abberation at roughly 1400 seconds followes the same pattern
-randst 0.25 6.03 6.03 99.00 will be lambda shape, nE in the left lower corner and ND on the right lower corner, and one of the sized will have a larger guassian
-       very regular double maxima oscillations for entire simulation of 1500 seconds (worth looking at box plots when describing)
-
-randst 0.25 6.04 6.04 99.00 will be lambda shape, nE in the left lower corner and nATP on the right lower corner
-randst 0.25 10.02 10.02 99.00 will be lambda shape, but 1.3 times the size of the normal one,nE in the left lower corner and nATP on the right lower corner
-randst 0.25 14.02 14.02 99.00 will be lambda shape, but 2.0 times the size of the normal one,nE in the left lower corner and nATP on the right lower corner
-randst 0.25 5.02 5.02 99.00 will be lambda shape, but .6 times the size of the normal one,nE in the left lower corner and nATP on the right lower corner
-randst 0.25 20.02 20.02 99.00 will be lambda shape, but 3.0 times the size of the normal one,nE in the left lower corner and nATP on the right lower corner
-
-randst 0.25 11.02 11.02 99.00 will be lambda shape, but 1.3 times the size of the normal one,nE in the left lower corner and nATP on the right lower corner
-randst 0.25 15.02 15.02 99.00 will be lambda shape, but 2.0 times the size of the normal one,nE in the left lower corner and nATP on the right lower corner
-randst 0.25 5.03 5.03 99.00 will be lambda shape, but .6 times the size of the normal one,nE in the left lower corner and nATP on the right lower corner
-randst 0.25 19.02 19.02 99.00 will be lambda shape, but 3.0 times the size of the normal one,nE in the left lower corner and nATP on the right lower corner

@@ -12,38 +12,41 @@ void initialize_densities_and_weighting(weights *ws,  bool *insideArr, int *s_N_
      Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
      so dN/dt = jz*dA = difD*(n[z+1]-n[z])*dA/dx = difD*(N[z+1]-N[z])/(dA)
   */
+  // for (int i=0; i<num_pos_reactions*Nx*Ny*Nz;i++) {
+  //   ws->update(0.0,i);
+  // }
   double dV = dx*dx*dx;
   double dA = dx*dx;
   for(int xi=0;xi<Nx;xi++){
     for(int yi=0;yi<Ny;yi++){
       for(int zi=0;zi<Nz;zi++){
-        ws->update(rate_ADP_ATP*s_N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//1
-        if (mem_A[xi*Ny*Nz+yi*Nz+zi] != 0.0) {
-          ws->update((rate_D*mem_A[xi*Ny*Nz+yi*Nz+zi] + rate_dD*(s_ND[xi*Ny*Nz+yi*Nz+zi] + s_NDE[xi*Ny*Nz+yi*Nz+zi]))
-                     *s_N_ATP[xi*Ny*Nz+yi*Nz+zi]/dV, ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//74
-          ws->update(rate_E*s_ND[xi*Ny*Nz+yi*Nz+zi]*s_N_E[xi*Ny*Nz+yi*Nz+zi]/dV, E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//74
-          ws->update(rate_de*s_NDE[xi*Ny*Nz+yi*Nz+zi], DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//.7
-        }
-        else {
-          ws->update( 0.0, ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          ws->update( 0.0, E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-          ws->update( 0.0, DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-        }
-        for (int i=0;i<6;i++){
-          if (insideArr[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ]) {
-            ws->update( difD*s_N_ATP[xi*Ny*Nz+yi*Nz+zi] / dA,
-                        (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//1000
-            ws->update( difD*s_N_ADP[xi*Ny*Nz+yi*Nz+zi] / dA,
-                        (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-            ws->update( difD*s_N_E[xi*Ny*Nz+yi*Nz+zi] / dA,
-                        (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+        if (insideArr[xi*Ny*Nz+yi*Nz+zi]) {
+          ws->update(rate_ADP_ATP*s_N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//1
+          if (mem_A[xi*Ny*Nz+yi*Nz+zi] != 0.0) {
+            ws->update((rate_D*mem_A[xi*Ny*Nz+yi*Nz+zi] + rate_dD*(s_ND[xi*Ny*Nz+yi*Nz+zi] + s_NDE[xi*Ny*Nz+yi*Nz+zi]))
+                       *s_N_ATP[xi*Ny*Nz+yi*Nz+zi]/dV, ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//74
+            ws->update(rate_E*s_ND[xi*Ny*Nz+yi*Nz+zi]*s_N_E[xi*Ny*Nz+yi*Nz+zi]/dV, E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//74
+            ws->update(rate_de*s_NDE[xi*Ny*Nz+yi*Nz+zi], DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//.7
+          }
+          else {
+            ws->update( 0.0, ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+            ws->update( 0.0, E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+            ws->update( 0.0, DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+          }
+          for (int i=0;i<6;i++){
+            if (insideArr[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ]) {
+              ws->update( difD*s_N_ATP[xi*Ny*Nz+yi*Nz+zi] / dA,
+                          (X_ATP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);//1000
+              ws->update( difD*s_N_ADP[xi*Ny*Nz+yi*Nz+zi] / dA,
+                          (X_ADP_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+              ws->update( difD*s_N_E[xi*Ny*Nz+yi*Nz+zi] / dA,
+                          (X_E_pos + i)*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
+            }
           }
         }
       }
     }
   }
-  printf("\ngot HHHHHHHHHHhere\n");
-  fflush(stdout);
   printf("We have allocated and initialized the probability weighting memory\n");
   fflush(stdout);
 }
@@ -67,21 +70,22 @@ void update_all_densities_and_weighting_for_changing_gridpt(weights *ws, bool *i
      const int d [6][3] = { {1,0,0}, {-1,0,0}, {0,1,0}, {0,-1,0}, {0,0,1}, {0,0,-1} };
      Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
      so dN/dt = difD*(n[z+1]-n[z])*dA/dx = difD*(N[z+1]-N[z])/(dA)
-  */
+ */
   if (!insideArr[xi*Ny*Nz + yi*Nz + zi]) {
-    printf("Error!  You're trying to update probs for a gird point that is completely outside the cell.  There shouldn't be a reason to do that.\n");
+    printf("Error!  You're trying to update probs for a grid point that is completely outside the cell.  There shouldn't be a reason to do that.\n");
+    printf("Grid pt is at x %d, y %d, z %d and type = %c\n",xi,yi,zi,type);
     exit(1);
   }
   double dV = dx*dx*dx;
   double dA = dx*dx;
   ws->update(rate_ADP_ATP*s_N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
-  //This loop goes around the changed lattice point and updates the diffusion propabilities for going to each adjacent lattice point
   if (mem_A[xi*Ny*Nz+yi*Nz+zi] != 0.0) {
     ws->update((rate_D*mem_A[xi*Ny*Nz+yi*Nz+zi] + rate_dD*(s_ND[xi*Ny*Nz+yi*Nz+zi] + s_NDE[xi*Ny*Nz+yi*Nz+zi]))
                *s_N_ATP[xi*Ny*Nz+yi*Nz+zi]/dV, ATP_to_D*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
     ws->update(rate_E*s_ND[xi*Ny*Nz+yi*Nz+zi]*s_N_E[xi*Ny*Nz+yi*Nz+zi]/dV, E_D_to_DE*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
     ws->update(rate_de*s_NDE[xi*Ny*Nz+yi*Nz+zi], DE_to_ADP_E*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);
   }
+  //These loops go around the changed lattice point and update the diffusion propabilities for going to each adjacent lattice point
   if (type == 'r'){
     for (int i=0;i<6;i++){
       if (insideArr[ (xi+d[i][0])*Ny*Nz + (yi+d[i][1])*Nz + (zi+d[i][2]) ]) {

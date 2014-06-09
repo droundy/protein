@@ -96,7 +96,7 @@ void weights::update(double w, int i) {
 
 int weights::lookup(double p) const { // p is from 0 to 1
   /*protein_microscopy.cpp will give a random number and this
-    returns where in the memory allocated this is (in terms of index i)*/
+    returns the index i corresponding to where this lands in the array)*/
   if (sim_type == 'h') {
     p *= ws[0];
     int index = 1;
@@ -118,6 +118,13 @@ int weights::lookup(double p) const { // p is from 0 to 1
   }
   else {//if (sim_type == 'f') {
     p *= (ws[0] + ws[1]);
+    if (p == 0.0) {
+      int i = num_below + 1;
+      while (ws[i] == 0.0) {
+        i++;
+      }
+      return i;
+    }
     int index = 0;
     while (index < num_below) {
       if (p > ws[index]) {

@@ -114,9 +114,9 @@ const char *reaction_name(int reaction);
 stoch_params index_to_parameters(int index) {
   stoch_params p;
   //should I worry about these floors when the integer is right on?
-  p.reaction = floor( index/(Nx*Ny*Nz) );
-  p.xi = floor( (index - p.reaction*Nx*Ny*Nz) / (Ny*Nz) );
-  p.yi = floor( (index - p.reaction*Nx*Ny*Nz - p.xi*Ny*Nz) / Nz);
+  p.reaction = index/(Nx*Ny*Nz);
+  p.xi = (index - p.reaction*Nx*Ny*Nz) / (Ny*Nz);
+  p.yi = (index - p.reaction*Nx*Ny*Nz - p.xi*Ny*Nz) / Nz;
   p.zi = index - p.reaction*Nx*Ny*Nz - p.xi*Ny*Nz - p.yi*Nz;
   return p;
 }
@@ -509,7 +509,7 @@ int main (int argc, char *argv[]) {
             left_area_total += mem_A[a*Ny*Nz+j*Nz+i];
           }
         }
-        if (inside(int(Nx/2),j,i)==false) {
+        if (insideArr[(Nx/2)*Ny*Nz+j*Nz+i]) {
           marker = 0;
         }
         fprintf(outfile_sections,"%g ",marker);
@@ -548,7 +548,7 @@ int main (int argc, char *argv[]) {
             middle_area_total += mem_A[c*Ny*Nz+a*Nz+b];
           }
         }
-        if (inside(int(Nx/2),a,b)==false) {
+        if (insideArr[(Nx/2)*Ny*Nz+a*Nz+b]) {
           marker = 0;
         }
         fprintf(outfile_sections, "%g ",marker);
@@ -714,6 +714,27 @@ int main (int argc, char *argv[]) {
     fflush(stdout);
   }
 
+  // for (int xi=0; xi<Nx; xi++) {
+  //   for (int yi=0; yi<Ny; yi++) {
+  //     for (int zi=0; zi<Nz; zi++) {
+  //       for (int j=0;j<4;j++){
+  //         if (!insideArr[xi*Ny*Nz+yi*Nz+zi]){
+  //           printf("%g ",ws->lookup_prob_for_specific_index(j*Nx*Ny*Nz + xi*Ny*Nz + yi*Nz + zi));
+  //           // printf("\nReaction probability is != 0 but its outside the array\n");
+  //           // printf("Reaction is %s\n",reaction_name(j));
+  //           // printf("At xi %d, yi %d, zi %d\n",xi,yi,zi);
+  //           // printf("s_N_ADP[xi*Ny*Nz+yi*Nz+zi] = %d\ns_N_ATP[xi*Ny*Nz+yi*Nz+zi] = %d\ns_N_E[xi*Ny*Nz+yi*Nz+zi] = %d\n",
+  //           //        s_N_ADP[xi*Ny*Nz+yi*Nz+zi],s_N_ATP[xi*Ny*Nz+yi*Nz+zi],s_N_E[xi*Ny*Nz+yi*Nz+zi]);
+  //           // printf("s_ND[xi*Ny*Nz+yi*Nz+zi] = %d\ns_NDE[xi*Ny*Nz+yi*Nz+zi] = %d\nmem_A[xi*Ny*Nz+yi*Nz+zi] = %g\n",
+  //           //        s_ND[xi*Ny*Nz+yi*Nz+zi],s_NDE[xi*Ny*Nz+yi*Nz+zi],mem_A[xi*Ny*Nz+yi*Nz+zi]);
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+  // printf("After\n");
+  // fflush(stdout);
+  // exit(1);
 
   double prev_tot_NE = 0;
   double prev_tot_NATP = 0;
@@ -754,13 +775,24 @@ int main (int argc, char *argv[]) {
   //starting simuation
   double spill_over_time = 0;
   for (int i=0;i<iter;i++){
-    int debug = 0;
+    // int debug = 0;
     if (sim_type != "exact") {
       double elapsed_time = spill_over_time;
       while (elapsed_time < time_step) {
-        int index = ws->lookup( (double)rand()/(RAND_MAX) );//random number is from 0 to 1
+        double random_number = (double)rand()/(RAND_MAX);
+        int index = ws->lookup(random_number);//random number is from 0 to 1
+        // if (index == 0){
+        //   double total_prob = ws->get_total();
+        //   printf("\nLookup gave zero at iteration %d and with random_number = %g\n",i,random_number);
+        //   printf("rand_num*total_prob = %g, This is the first step in the lookup function\n",
+        //          random_number*total_prob);
+        //   for (int j=0;j<21;j++){
+        //     printf("Prob for %s is %g\n",reaction_name(j),ws->lookup_prob_for_specific_index(j*Nx*Ny*Nz));
+        //   }
+        //   fflush(stdout);
+        // }
         stoch_params p = index_to_parameters(index);
-        debug += 1;
+        // debug += 1;
         if (p.reaction <= E_D_to_DE) {
           switch (p.reaction) {
             case ADP_to_ATP:
@@ -824,6 +856,44 @@ int main (int argc, char *argv[]) {
           fflush(stdout);
           exit(1);
         }
+        //Testing the zero pt everytime
+        // for (int j=0;j<21;j++){
+        //   if (ws->lookup_prob_for_specific_index(j*Nx*Ny*Nz) != 0.0 ) {//pt at (0,0,0)
+        //     printf("\nReaction probability is != 0 but its outside the array\n");
+        //     printf("Reaction is %s\n",reaction_name(j));
+        //     printf("The reaction that just occured in the simulation is %s\n",reaction_name(p.reaction));
+        //     printf("At p.xi %d, p.yi %d, p.zi %d\n",p.xi,p.yi,p.zi);
+        //     printf("Iteration number = %d\n",i);
+        //     printf("s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %d\ns_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %d\ns_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %d\n",
+        //            s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi],s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi],s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi]);
+        //     printf("s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %d\ns_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %d\nmem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %g\n",
+        //            s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi],s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi],mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]);
+        //     for (int j=0;j<6;j++){
+        //       printf("Prob for index %s = %g\n",reaction_name(X_ADP_pos + j),
+        //              ws->lookup_prob_for_specific_index((X_ADP_pos + j)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi));
+        //       printf("Prob for index %s = %g\n",reaction_name(X_ATP_pos + j),
+        //              ws->lookup_prob_for_specific_index((X_ATP_pos + j)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi));
+        //       printf("Prob for index %s = %g\n",reaction_name(X_E_pos + j),
+        //              ws->lookup_prob_for_specific_index((X_E_pos + j)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi));
+        //       printf("Reaction is %s\n",reaction_name(p.reaction));
+        //       printf("Iteration number %d\n",i);
+        //       printf("s_N_ADP[ (p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])] = %d\n",
+        //              s_N_ADP[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
+        //       printf("s_N_ATP[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2]) = %d\n",
+        //              s_N_ATP[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
+        //       printf("s_N_E[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2]) = %d\n",
+        //              s_N_E[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
+        //       printf("s_ND[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])] = %d\n",
+        //              s_ND[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
+        //       printf("s_NDE[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])] = %d\n",
+        //              s_NDE[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
+        //       printf("mem_A[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])] = %g\n",
+        //              mem_A[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
+        //     }
+        //     fflush(stdout);
+        //     exit(1);
+        //   }
+        // }
         elapsed_time -= log( (double)rand()/(RAND_MAX) ) / ws->get_total();
       }
       spill_over_time = elapsed_time - time_step;
@@ -868,7 +938,7 @@ int main (int argc, char *argv[]) {
       //        (double(time)/double(i))*(1000.0/time_step));
       // fflush(stdout);
     }
-    if ( (sim_type == "exact" && i%int(1/time_step) == 0) || (sim_type != "exact" && i%int(1/time_step) == 0) ) {
+    if (i%int(1/time_step) == 0) {
       compare_time_aves(i, &compare_ave_counter, s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr,
                         &tot_ave_NADP, &tot_ave_NATP, &tot_ave_NE, &tot_ave_ND, &tot_ave_NDE);
     }
@@ -1880,14 +1950,6 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
         }
       }
     }
-    // printf("This is for exact!:\n\n");
-    // for (int j=0;j<Ny;j++){
-    //   for (int k=0;k<Nz;k++){
-    //     printf("%g ",NflD[(Nx/2)*Ny*Nz+j*Nz+k]);
-    //   }
-    //   printf("\n");
-    // }
-    // fflush(stdout);
   }
   else {
     int E_total = nE_starting_density*gridpoints_total*dV;
@@ -1950,20 +2012,24 @@ int set_density(double *nATP, double *nADP, double *nE, double *ND, double *NDE,
       NflD[i] = s_ND[i] + s_NDE[i] + s_N_ATP[i] + s_N_ADP[i];
       NflE[i] = s_NDE[i] + s_N_E[i];
     }
-  //   printf("This is for %s simulation!:\n\n",sim_type.c_str());
-  //   for (int j=0;j<Ny;j++){
-  //     for (int k=0;k<Nz;k++){
-  //       printf("%g ",NflD[(Nx/2)*Ny*Nz+j*Nz+k]);
-  //     }
-  //     printf("\n");
-  //   }
-  // fflush(stdout);
   }
   double tot_D = 0;
   double tot_E = 0;
   for (int h=0;h<Nx*Ny*Nz;h++){
     tot_D += NflD[h];
     tot_E += NflE[h];
+  }
+  for (int i=0;i<Nx;i++){
+    for (int j=0;j<Ny;j++){
+      for (int k=0;k<Nz;k++){
+        if (!insideArr[i*Ny*Nz+j*Nz+k] && (s_N_ATP[i*Ny*Nz+j*Nz+k] != 0 || s_NDE[i*Ny*Nz+j*Nz+k] != 0 ||
+                                           s_ND[i*Ny*Nz+j*Nz+k] != 0 || s_N_ADP[i*Ny*Nz+j*Nz+k] != 0 || s_N_E[i*Ny*Nz+j*Nz+k] != 0)) {
+          printf("\nError!!  In set_density, there are grid pts outside the cell, according to insideArr, that have proteins in them\n");
+          fflush(stdout);
+          exit(1);
+        }
+      }
+    }
   }
   printf("\n\nFor %s simulation and shape %s and %1.2f %1.2f %1.2f %1.2f:\ntot_D = %g and tot_E = %g\n",
          sim_type.c_str(),mem_f_shape.c_str(),A,B,C,D,tot_D,tot_E);
