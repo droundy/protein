@@ -294,6 +294,8 @@ int main (int argc, char *argv[]) {
     }
   }
 
+
+
   printf("Those are all the guassians!\n");
   fflush(stdout);
   //end random stuff
@@ -509,7 +511,7 @@ int main (int argc, char *argv[]) {
             left_area_total += mem_A[a*Ny*Nz+j*Nz+i];
           }
         }
-        if (insideArr[(Nx/2)*Ny*Nz+j*Nz+i]) {
+        if (!insideArr[(Nx/2)*Ny*Nz+j*Nz+i]) {
           marker = 0;
         }
         fprintf(outfile_sections,"%g ",marker);
@@ -548,7 +550,7 @@ int main (int argc, char *argv[]) {
             middle_area_total += mem_A[c*Ny*Nz+a*Nz+b];
           }
         }
-        if (insideArr[(Nx/2)*Ny*Nz+a*Nz+b]) {
+        if (!insideArr[(Nx/2)*Ny*Nz+a*Nz+b]) {
           marker = 0;
         }
         fprintf(outfile_sections, "%g ",marker);
@@ -714,28 +716,6 @@ int main (int argc, char *argv[]) {
     fflush(stdout);
   }
 
-  // for (int xi=0; xi<Nx; xi++) {
-  //   for (int yi=0; yi<Ny; yi++) {
-  //     for (int zi=0; zi<Nz; zi++) {
-  //       for (int j=0;j<4;j++){
-  //         if (!insideArr[xi*Ny*Nz+yi*Nz+zi]){
-  //           printf("%g ",ws->lookup_prob_for_specific_index(j*Nx*Ny*Nz + xi*Ny*Nz + yi*Nz + zi));
-  //           // printf("\nReaction probability is != 0 but its outside the array\n");
-  //           // printf("Reaction is %s\n",reaction_name(j));
-  //           // printf("At xi %d, yi %d, zi %d\n",xi,yi,zi);
-  //           // printf("s_N_ADP[xi*Ny*Nz+yi*Nz+zi] = %d\ns_N_ATP[xi*Ny*Nz+yi*Nz+zi] = %d\ns_N_E[xi*Ny*Nz+yi*Nz+zi] = %d\n",
-  //           //        s_N_ADP[xi*Ny*Nz+yi*Nz+zi],s_N_ATP[xi*Ny*Nz+yi*Nz+zi],s_N_E[xi*Ny*Nz+yi*Nz+zi]);
-  //           // printf("s_ND[xi*Ny*Nz+yi*Nz+zi] = %d\ns_NDE[xi*Ny*Nz+yi*Nz+zi] = %d\nmem_A[xi*Ny*Nz+yi*Nz+zi] = %g\n",
-  //           //        s_ND[xi*Ny*Nz+yi*Nz+zi],s_NDE[xi*Ny*Nz+yi*Nz+zi],mem_A[xi*Ny*Nz+yi*Nz+zi]);
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  // printf("After\n");
-  // fflush(stdout);
-  // exit(1);
-
   double prev_tot_NE = 0;
   double prev_tot_NATP = 0;
   double prev_tot_NADP = 0;
@@ -770,29 +750,16 @@ int main (int argc, char *argv[]) {
   /////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
 
-  //double start_time = double(clock()/CLOCKS_PER_SEC);
-  //double time = start_time;
-  //starting simuation
+
+  MTRand mt(1);//0 is a valid pointer so we're using 1!!
   double spill_over_time = 0;
   for (int i=0;i<iter;i++){
-    // int debug = 0;
     if (sim_type != "exact") {
       double elapsed_time = spill_over_time;
       while (elapsed_time < time_step) {
-        double random_number = (double)rand()/(RAND_MAX);
-        int index = ws->lookup(random_number);//random number is from 0 to 1
-        // if (index == 0){
-        //   double total_prob = ws->get_total();
-        //   printf("\nLookup gave zero at iteration %d and with random_number = %g\n",i,random_number);
-        //   printf("rand_num*total_prob = %g, This is the first step in the lookup function\n",
-        //          random_number*total_prob);
-        //   for (int j=0;j<21;j++){
-        //     printf("Prob for %s is %g\n",reaction_name(j),ws->lookup_prob_for_specific_index(j*Nx*Ny*Nz));
-        //   }
-        //   fflush(stdout);
-        // }
+        elapsed_time -= log(mt.randDblExc()) / ws->get_total();
+        int index = ws->lookup(mt.randDblExc());//random number is from 0 to 1
         stoch_params p = index_to_parameters(index);
-        // debug += 1;
         if (p.reaction <= E_D_to_DE) {
           switch (p.reaction) {
             case ADP_to_ATP:
@@ -856,45 +823,6 @@ int main (int argc, char *argv[]) {
           fflush(stdout);
           exit(1);
         }
-        //Testing the zero pt everytime
-        // for (int j=0;j<21;j++){
-        //   if (ws->lookup_prob_for_specific_index(j*Nx*Ny*Nz) != 0.0 ) {//pt at (0,0,0)
-        //     printf("\nReaction probability is != 0 but its outside the array\n");
-        //     printf("Reaction is %s\n",reaction_name(j));
-        //     printf("The reaction that just occured in the simulation is %s\n",reaction_name(p.reaction));
-        //     printf("At p.xi %d, p.yi %d, p.zi %d\n",p.xi,p.yi,p.zi);
-        //     printf("Iteration number = %d\n",i);
-        //     printf("s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %d\ns_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %d\ns_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %d\n",
-        //            s_N_ADP[p.xi*Ny*Nz+p.yi*Nz+p.zi],s_N_ATP[p.xi*Ny*Nz+p.yi*Nz+p.zi],s_N_E[p.xi*Ny*Nz+p.yi*Nz+p.zi]);
-        //     printf("s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %d\ns_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %d\nmem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi] = %g\n",
-        //            s_ND[p.xi*Ny*Nz+p.yi*Nz+p.zi],s_NDE[p.xi*Ny*Nz+p.yi*Nz+p.zi],mem_A[p.xi*Ny*Nz+p.yi*Nz+p.zi]);
-        //     for (int j=0;j<6;j++){
-        //       printf("Prob for index %s = %g\n",reaction_name(X_ADP_pos + j),
-        //              ws->lookup_prob_for_specific_index((X_ADP_pos + j)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi));
-        //       printf("Prob for index %s = %g\n",reaction_name(X_ATP_pos + j),
-        //              ws->lookup_prob_for_specific_index((X_ATP_pos + j)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi));
-        //       printf("Prob for index %s = %g\n",reaction_name(X_E_pos + j),
-        //              ws->lookup_prob_for_specific_index((X_E_pos + j)*Nx*Ny*Nz + p.xi*Ny*Nz+p.yi*Nz+p.zi));
-        //       printf("Reaction is %s\n",reaction_name(p.reaction));
-        //       printf("Iteration number %d\n",i);
-        //       printf("s_N_ADP[ (p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])] = %d\n",
-        //              s_N_ADP[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
-        //       printf("s_N_ATP[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2]) = %d\n",
-        //              s_N_ATP[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
-        //       printf("s_N_E[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2]) = %d\n",
-        //              s_N_E[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
-        //       printf("s_ND[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])] = %d\n",
-        //              s_ND[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
-        //       printf("s_NDE[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])] = %d\n",
-        //              s_NDE[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
-        //       printf("mem_A[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])] = %g\n",
-        //              mem_A[(p.xi+d[j][0])*Ny*Nz+(p.yi+d[j][1])*Nz+(p.zi+d[j][2])]);
-        //     }
-        //     fflush(stdout);
-        //     exit(1);
-        //   }
-        // }
-        elapsed_time -= log( (double)rand()/(RAND_MAX) ) / ws->get_total();
       }
       spill_over_time = elapsed_time - time_step;
       for (int j=0;j<Nx*Ny*Nz;j++) {
@@ -904,6 +832,7 @@ int main (int argc, char *argv[]) {
         ND[j] = double(s_ND[j]);
         NDE[j] = double(s_NDE[j]);
         NflD[j] = (nATP[j] + nADP[j])*(dx*dx*dx) + ND[j] + NDE[j];
+        // alternatively NflD[j] = double(s_NDE[j] + s_ND[j] + s_N_ADP[j] + s_N_ATP[j]);
         NflE[j] = nE[j]*dx*dx*dx + NDE[j];
       }
     }
@@ -1041,7 +970,7 @@ int main (int argc, char *argv[]) {
       }
 
       //arrow plot
-      if (i<arrow_iter) {
+      if (i<arrow_iter && false) {
         double storemaxval = 0;
         double currentval;
         for (int a=0; a<Ny; a++) {
@@ -1297,9 +1226,8 @@ int main (int argc, char *argv[]) {
     }
 
     time_step = .1*dx*dx/difD;//sec
-    int plot_denominator = 100000;
     int i_dat = i/print_denominator;
-    if (i%plot_denominator==0){
+    if (i%100000==0){
       //boxplot
       char *boxname = print_filename("box-plot","");
       printf("\nPrinting the box plots %s\n",boxname);
@@ -1472,9 +1400,11 @@ int main (int argc, char *argv[]) {
     }
 
     for (int pNum=0; pNum<numProteins; pNum++) {
-      if (i<arrow_iter) {
+      if (i<arrow_iter && false) {
         //would like to know how long this algorithm takes and change it if should
         if (i%printout_iterations == 0) {
+          time_t starting_time;
+          time(&starting_time);
           int* time_maxima_y = new int[arrow_iter];
           int* time_maxima_z = new int[arrow_iter];
           double* time_maxima_value = new double[arrow_iter];
@@ -1512,6 +1442,11 @@ int main (int argc, char *argv[]) {
           delete[] time_maxima_y;
           delete[] time_maxima_z;
           delete[] time_maxima_value;
+          time_t time_next;
+          time(&time_next);
+          printf("\nArrow plots took %g seconds for iteration %d, %d secs simulation time\n",
+                 double(time_next)-double(starting_time),i,int(i*time_step));
+          fflush(stdout);
         }
       }
     }
@@ -1678,23 +1613,12 @@ void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, in
           mem_f_shape.c_str(),mem_f_shape.c_str(),A,B,C,D,density_factor,sim_type.c_str());
   FILE* ave_file = fopen(ave_filename,"w");
   delete[] ave_filename;
-  if (sim_type != "exact") {
-    for (int h=0;h<Nx*Ny*Nz;h++) {
-      *tot_ave_NADP += double(s_N_ADP[h]);
-      *tot_ave_NATP += double(s_N_ATP[h]);
-      *tot_ave_NE += double(s_N_E[h]);
-      *tot_ave_ND += double(s_ND[h]);
-      *tot_ave_NDE += double(s_NDE[h]);
-    }
-  }
-  else {
-    for (int h=0;h<Nx*Ny*Nz;h++) {
-      *tot_ave_NADP += nADP[h]*(dx*dx*dx);
-      *tot_ave_NATP += nATP[h]*(dx*dx*dx);
-      *tot_ave_NE += nE[h]*(dx*dx*dx);
-      *tot_ave_ND += ND[h];
-      *tot_ave_NDE += NDE[h];
-    }
+  for (int h=0;h<Nx*Ny*Nz;h++) {
+    *tot_ave_NADP += nADP[h]*(dx*dx*dx);
+    *tot_ave_NATP += nATP[h]*(dx*dx*dx);
+    *tot_ave_NE += nE[h]*(dx*dx*dx);
+    *tot_ave_ND += ND[h];
+    *tot_ave_NDE += NDE[h];
   }
   fprintf(ave_file,"Here we take the totals of all types of proteins once every simulation time second, and average them out, so have an average of what the totals are at any one time.\n");
   fprintf(ave_file,"\nThe averages at %g seconds after the start time, which is %d:\n",iteration*time_step - start_time, start_time);

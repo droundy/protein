@@ -10,7 +10,7 @@ class weights {
     delete[] ws;
   }
   void update(double w, int i);
-  int lookup(double p) const;
+  int lookup(double p) const;// p is between 0 and 1
   double get_total();
   double lookup_prob_for_specific_index(int index);
 

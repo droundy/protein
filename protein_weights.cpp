@@ -1,8 +1,9 @@
 #include "protein.h"
+#include <cassert>
 
 
-void initialize_densities_and_weighting(weights *ws,  bool *insideArr, int *s_N_ATP, int *s_N_ADP, int *s_N_E,
-                                        int *s_ND, int *s_NDE, double *mem_A){
+void initialize_densities_and_weighting(weights *ws,  const bool *insideArr, int *s_N_ATP, int *s_N_ADP, int *s_N_E,
+                                        int *s_ND, int *s_NDE, const double *mem_A){
   /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
                 X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos, Z_ADP_neg,
@@ -59,8 +60,8 @@ void initialize_densities_and_weighting(weights *ws,  bool *insideArr, int *s_N_
 
 
 
-void update_all_densities_and_weighting_for_changing_gridpt(weights *ws, bool *insideArr, int *s_N_ATP,
-                                                   int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A,
+void update_all_densities_and_weighting_for_changing_gridpt(weights *ws, const bool *insideArr, int *s_N_ATP,
+                                                   int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, const double *mem_A,
                                                             int xi, int yi, int zi, char type){
  /* reminder of the order of the reaction enums and what d is:
      enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE,
@@ -71,11 +72,12 @@ void update_all_densities_and_weighting_for_changing_gridpt(weights *ws, bool *i
      Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
      so dN/dt = difD*(n[z+1]-n[z])*dA/dx = difD*(N[z+1]-N[z])/(dA)
  */
-  if (!insideArr[xi*Ny*Nz + yi*Nz + zi]) {
-    printf("Error!  You're trying to update probs for a grid point that is completely outside the cell.  There shouldn't be a reason to do that.\n");
-    printf("Grid pt is at x %d, y %d, z %d and type = %c\n",xi,yi,zi,type);
-    exit(1);
-  }
+  assert(insideArr[xi*Ny*Nz + yi*Nz + zi]);
+  // if (!insideArr[xi*Ny*Nz + yi*Nz + zi]) {
+  //   printf("Error!  You're trying to update probs for a grid point that is completely outside the cell.  There shouldn't be a reason to do that.\n");
+  //   printf("Grid pt is at x %d, y %d, z %d and type = %c\n",xi,yi,zi,type);
+  //   exit(1);
+  // }
   double dV = dx*dx*dx;
   double dA = dx*dx;
   ws->update(rate_ADP_ATP*s_N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);

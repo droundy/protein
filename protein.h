@@ -46,7 +46,7 @@ struct stoch_params {
   int reaction;
 };
 
-//extern double *mem_A;
+
 
 const int starting_num_guassians=20;
 const int random_num_guassians=5;
@@ -67,10 +67,11 @@ bool inside(int xi, int yi, int zi);
 
 
 //protein_weights:
-void initialize_densities_and_weighting(weights *ws, bool *insideArr, int *N_ATP, int *N_ADP, int *N_E,
-                                        int *ND_st, int *NDE_st, double *mem_A);
-void update_all_densities_and_weighting_for_changing_gridpt(weights *ws, bool *insideArr, int *s_N_ATP,
-                                                   int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, double *mem_A,
+//FIXME  this name is deceptive, change (no density), also const the int arrays
+void initialize_densities_and_weighting(weights *ws, const bool *insideArr, int *N_ATP, int *N_ADP, int *N_E,
+                                        int *ND_st, int *NDE_st, const double *mem_A);
+void update_all_densities_and_weighting_for_changing_gridpt(weights *ws, const bool *insideArr, int *s_N_ATP,
+                                                   int *s_N_ADP, int *s_N_E, int *s_ND, int *s_NDE, const double *mem_A,
                                                             int xi, int yi, int zi, char type);
 
 
