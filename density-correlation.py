@@ -50,8 +50,6 @@ def correlation(data,protein,time):
             * (data[protein,i+int(time/dt)] - mean) * dt
     return integral/(mean*mean)
 
-#print correlation(boxfull,0,75)
-#print boxfull
 difD = 2.5
 dx = .05
 time_step = .1*dx*dx/difD;#sec
@@ -66,5 +64,23 @@ for i in range(len(time_array)):
 
 pylab.figure()
 pylab.plot(time_array,correlation_array)
-pylab.savefig("density-correlation.pdf")
+pylab.xlabel('time (sec)')
+pylab.ylabel('Correlation (no units)')
+printout_file = 'data/shape-%s/plots/correlation-box-%s-%s-%s-%s-%s-%s-full_array.pdf'% \
+    (sys.argv[1],sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
+pylab.savefig(printout_file)
+
+
+time_array =  np.arange(0,.5*len(boxexact[0,:])*dt,dt)
+correlation_array =  np.zeros(len(time_array))
+for i in range(len(time_array)):
+    correlation_array[i] = correlation(boxexact,0,time_array[i])
+
+pylab.figure()
+pylab.plot(time_array,correlation_array)
+pylab.xlabel('time (sec)')
+pylab.ylabel('Correlation (no units)')
+printout_file = 'data/shape-%s/plots/correlation-box-%s-%s-%s-%s-%s-%s-exact.pdf'% \
+    (sys.argv[1],sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
+pylab.savefig(printout_file)
 
