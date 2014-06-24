@@ -7,6 +7,7 @@ import os
 import sys
 import time
 import file_loader as load
+import math
 
 
 f_shape = sys.argv[1]
@@ -18,6 +19,7 @@ dens_factor = sys.argv[6]
 sim_type = sys.argv[7]
 f_param6 = sys.argv[8]
 f_param7 = sys.argv[9]
+
 
 
 #create data objects (see file_loader.py)
@@ -70,45 +72,50 @@ print "size video_list = ",len(video_list)
 # ND = load.data(protein="ND")
 # NDE = load.data(protein="NDE")
 
-#computes the maximum of a two dimensional array - REPLACE with method
-def maxnum(page):
-    Z = [0. for i in range(page.shape[0])]
-    for i in range(page.shape[0]):
-        Z[i] = max(page[i])
-    maxval = max(Z)
-    return maxval
-
-#computes the minimum of a two dimensional array - REPLACE with method
-def minnum(page):
-    Z = [0. for i in range(page.shape[0])]
-    for i in range(page.shape[0]):
-        Z[i] = min(page[i])
-        if Z[i] == 0:
-            Z[i] = 50000000 #eh
-    minval = min(Z)
-    return minval
 
 #computes the global maximum over a set of two dimensional arrays (stored as files)
-def timemax(protein):
-    Z = [0. for i in range(protein.tsteps)]
-    for i in (range(protein.tsteps-1)):
-        Z[i+1] = maxnum(protein.dataset[i+1])
-    maxval = max(Z)
-    return maxval
+def timemax(data):
+    spatial_maxes = np.zeros(data.shape[0])
+    for i in range(len(spatial_maxes)):
+        spatial_maxes[i] = np.max(data[i])
+        print spatial_maxes[i]
+    return np.max(spatial_maxes)
 
 #computes the global minimum over a set of two dimensional arrays (stored as files)
-def timemin(protein):
-    Z = [0. for i in range(protein.tsteps)]
-    for i in (range(protein.tsteps-1)):
-        Z[i+1] = minnum(protein.dataset[i+1])
-    minval = min(Z)
-    return minval
+def timemin(data):
+    spatial_mins = np.zeros(data.shape[0])
+    for i in range(len(spatial_mins)):
+        spatial_mins[i] = np.min(data[i])
+        print spatial_mins[i]
+    return np.min(spatial_mins)
+
+
+def gaussian_smear(data,wavelength):
+    new = np.zeros_like(data)
+    print 'shape '+ str(new.shape)
+    print 'len [0,0] ' +str(len(new[0,0]))
+    print 'shape [0] '+ str(new[0].shape)
+    print 'shape [0,0] '+ str(new[0,0].shape)
+    n_sin_theta = 1.5
+    sigma = 1.5*wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
+    dis = int(2*sigma/0.05) #for now
+    for num in range(new.shape[0]):
+        for x in range(new.shape[1]):
+            for y in range(new.shape[2]):
+                for i in np.arange(-dis,dis,1):
+                    for j in np.arange(-dis,dis,1):
+                        if (x+i >= 0 and x+i < new.shape[1]-1 and y+j >= 0 and y+j < new.shape[2]-1):
+                            new[num,x+i,y+j] += data[num,x,y]*math.exp( -(abs(i)+abs(j))*.05/sigma/sigma )
+    return new
 
 #function to carry out the animation generation
 def contourplt(protein,video_number):
     #get extrema values for color bar (global extrema in time)
-    maxval = timemax(protein)/2.0
-    minval = timemin(protein)
+    ###############The max vals here are really messy still need to do it properly for smeared data
+    smeared_data = gaussian_smear(protein.dataset,.5) #green light at 500nm
+    maxval = timemax(smeared_data)
+    minval = timemin(smeared_data)
+
     plt.figure(1)
 
     #shell command to clean up any previous .png's, just in case (perhaps a process was cancelled midway)
@@ -119,12 +126,13 @@ def contourplt(protein,video_number):
     Z, Y = np.meshgrid(np.arange(0,(len(protein.dataset[1][0])-.9)*0.05,0.05), np.arange(0,len(protein.dataset[1])*0.05,0.05))
     #generate a sequence of .png's for each file (printed time step). these will be used to create a gif.
     for k in range(len(protein.dataset)): #fig.dpi method
-        page = protein.dataset[k]
+
+        #page = protein.dataset[k]
         print './data/shape-'+f_shape+'/plots/'+load.debug_str+load.hires_str+load.slice_str+'tmp_'+str(k)+'-'+str(protein.protein)+ \
                         '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.png'
         plt.clf()
         plt.axes().set_aspect('equal', 'datalim')
-        CS = plt.contourf(Z, Y, page, cmap=plt.cm.jet,origin='lower',levels=np.arange(minval,maxval+10,1))
+        CS = plt.contourf(Z, Y, smeared_data[k], cmap=plt.cm.jet,origin='lower',levels=np.arange(minval,maxval+10,1))
         cbar = plt.colorbar(CS)
         plt.clim(minval,maxval)
         plt.title(str(protein.protein)+" volume density at time: "+str(k*dump_time_step)+" sec")
