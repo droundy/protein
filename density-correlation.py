@@ -31,7 +31,7 @@ def readbox(name):
 boxfull = readbox(datafile + '-full_array.dat')
 boxexact = readbox(datafile + '-exact.dat')
 
-proteins = ['nATP', 'nADP', 'nE', 'ND', 'NDE', 'NflD', 'NflE']
+#proteins = ['nATP', 'nADP', 'nE', 'ND', 'NDE', 'NflD', 'NflE']
 
 
 def mean_density(data,protein):
@@ -44,11 +44,12 @@ def mean_density(data,protein):
 dt = .1
 def correlation(data,protein,time):
     integral = 0
+    total_time = dt*float(len(data[protein,:])-int(time/dt))
     mean = mean_density(data,protein)
     for i in range(len(data[protein,:])-int(time/dt)):
         integral += (data[protein,i] - mean) \
             * (data[protein,i+int(time/dt)] - mean) * dt
-    return integral/(mean*mean)
+    return integral/(mean*mean*total_time)
 
 difD = 2.5
 dx = .05
@@ -60,27 +61,48 @@ dt = time_step*print_denominator
 time_array =  np.arange(0,.5*len(boxfull[0,:])*dt,dt)
 correlation_array =  np.zeros(len(time_array))
 for i in range(len(time_array)):
-    correlation_array[i] = correlation(boxfull,0,time_array[i])
+    correlation_array[i] = correlation(boxfull,3,time_array[i])
+
+#Running on the first half of the data to compare between the two:
+boxfull_short = np.copy(boxfull[:,:len(boxfull[0,:])/2])
+
+time_array_short =  np.arange(0,.5*len(boxfull_short[0,:])*dt,dt)
+correlation_array_short =  np.zeros(len(time_array_short))
+for i in range(len(time_array_short)):
+    correlation_array_short[i] = correlation(boxfull_short,3,time_array_short[i])
+
+
+
 
 pylab.figure()
+pylab.subplot(311)
+pylab.title('Full data')
 pylab.plot(time_array,correlation_array)
-pylab.xlabel('time (sec)')
-pylab.ylabel('Correlation (no units)')
-printout_file = 'data/shape-%s/plots/correlation-box-%s-%s-%s-%s-%s-%s-full_array.pdf'% \
-    (sys.argv[1],sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
-pylab.savefig(printout_file)
+#pylab.xlabel('time (sec)')
+#pylab.ylabel('Auto Correlation')
+
+pylab.subplots_adjust(hspace=0.4)
+
+pylab.subplot(312)
+pylab.title('Shortened data')
+pylab.plot(time_array_short,correlation_array_short)
+#pylab.xlabel('time (sec)')
+pylab.ylabel('Auto Correlation')
 
 
 time_array =  np.arange(0,.5*len(boxexact[0,:])*dt,dt)
 correlation_array =  np.zeros(len(time_array))
 for i in range(len(time_array)):
-    correlation_array[i] = correlation(boxexact,0,time_array[i])
+    correlation_array[i] = correlation(boxexact,3,time_array[i])
 
-pylab.figure()
+pylab.subplots_adjust(hspace=0.4)
+#pylab.figure()
+pylab.subplot(313)
+pylab.title('Continuous')
 pylab.plot(time_array,correlation_array)
 pylab.xlabel('time (sec)')
-pylab.ylabel('Correlation (no units)')
-printout_file = 'data/shape-%s/plots/correlation-box-%s-%s-%s-%s-%s-%s-exact.pdf'% \
+#pylab.ylabel('Auto Correlation')
+printout_file = 'data/shape-%s/plots/correlation-box-%s-%s-%s-%s-%s-%s.pdf'% \
     (sys.argv[1],sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
 pylab.savefig(printout_file)
 
