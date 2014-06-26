@@ -105,38 +105,23 @@ double f_2D_randst(double y, double z){
   }
   return f;
 }
-bool only = true;
+
 double f_2D_stad(double y, double z){
   double f;
   double Y = Ny*dx;
   double Z = Nz*dx;
-  double z1 = (Z-C)/2;
-  if(only){
-    printf("z1 = %g Z = %g C = %g\n",z1,Z,C);
-    fflush(stdout);
-    only = false;
-  }
-  double z2 = (C +(Z-C)/2);
-  double y1 = Y/2;
+  double z1 = (Z-B)/2.0;
+  double z2 = z1 + B;
+  double y1 = Y/2.0;
+  f = sqrt((y-y1)*(y-y1))-C;
   if (z < z1) {
-    f = (y-y1)*(y-y1)/(B*B)+(z-z1)*(z-z1)/(D*D)-1;
-    if (f > 0.0){
-      return 0.1;
-    }
+    f = sqrt((y-y1)*(y-y1)+(z-z1)*(z-z1))-C;
   }
   if (z > z2) {
-    f = (y-y1)*(y-y1)/(B*B)+(z-z2)*(z-z2)/(D*D)-1;
-    if (f > 0.0){
-      return 0.1;
-    }
+    f = sqrt((y-y1)*(y-y1)+(z-z2)*(z-z2))-C;
   }
-  if (abs(y-y1) > B){
-    return 0.1;
-  }
-  return -0.1;
+  return f;
 }
-//end randst shape functions
-
 
 
 

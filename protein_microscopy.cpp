@@ -175,9 +175,9 @@ int main (int argc, char *argv[]) {
     box_divider_right = int(2*Nz/3);
   }
   if (mem_f_shape=="stad") {
-    Nx = round(A/dx) + 3;
-    Ny = round((2*B+2*A)/dx) + 3;
-    Nz = round((C+2*D+2*A)/dx) + 3;
+    Nx = round(A/dx) + 8;
+    Ny = round((2*C + A)/dx) + 9;
+    Nz = round((B + 2*C + A)/dx) + 9;
   }
   if (mem_f_shape=="randst") {
     Nx = round(A/dx) + 8;
@@ -212,7 +212,7 @@ int main (int argc, char *argv[]) {
   }
 
   //fixed simulation parameters
-  tot_time = 4000; //sec
+  tot_time = 20000; //sec
   if (debug_flag==1) {
     tot_time = 15;
   }
@@ -311,10 +311,10 @@ int main (int argc, char *argv[]) {
   }
 
   ///////////////?
-  if (mem_f_shape == "stad"){
-    printf("Trying to do stadium shape.  Not coded propperly to do that yet\n");
-    exit(1);
-  }
+  // if (mem_f_shape == "stad"){
+  //   printf("Trying to do stadium shape.  Not coded propperly to do that yet\n");
+  //   exit(1);
+  // }
   ///////////////
 
 
