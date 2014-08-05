@@ -13,6 +13,7 @@
 *.pdf
 *.gif
 *.dat
+data/shape-*
 
 # for latex:
 *.aux
