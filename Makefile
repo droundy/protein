@@ -36,7 +36,7 @@ data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf: pyplots/image_plot.py fixm
 	mkdir -p data/shape-p/plots
 	python $< p 3.00 0.50 0.00 0.00 15.00 266.00 304.00
 
-data/shape-randst/plots/paper-arrow-plot.pdf: paper/arrow-plot.py $(wildcard data/shape-randst/*.dat)
+data/shape-randst/plots/paper-arrow-plot.pdf: paper/arrow-plot.py fixme-add-data-here.dat
 	mkdir -p data/shape-randst/plots
 	python $<
 
