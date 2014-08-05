@@ -34,10 +34,12 @@ from mpl_toolkits.axes_grid.anchored_artists import AnchoredSizeBar
 def returnData(boxName,proteinType):
 
     #open the data file, grab the line with the correct protein type and box partition, load it as a [string] (so we can use list comprehensions)
-    with open("./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s-%s.dat"%
-              (load.f_shape,load.debug_str,load.hires_str,load.slice_str,
-               load.f_shape,load.f_param1,load.f_param2,load.f_param3,
-               load.f_param4,load.f_param5,load.sim_type),"r") as boxData:
+    filename = "./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s-%s.dat" % (load.f_shape,load.debug_str,load.hires_str,
+                                                                             load.slice_str,load.f_shape,load.f_param1,
+                                                                             load.f_param2,load.f_param3,
+                                                                             load.f_param4,load.f_param5,load.sim_type)
+    print 'loading', filename
+    with open(filename,"r") as boxData:
         proteinsOverTime = [line for line in boxData if (proteinType in line) and (boxName in line)]
 
 
@@ -106,7 +108,9 @@ def find_period(f):
     return (penultimate_min, lastmin)
 
 def main():
-    with open("./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s-%s.dat"%(load.f_shape,load.debug_str,load.hires_str,load.slice_str,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5,load.sim_type),"r") as boxData:
+    filename = "./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s-%s.dat"%(load.f_shape,load.debug_str,load.hires_str,load.slice_str,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5,load.sim_type)
+    print 'loading', filename
+    with open(filename, "r") as boxData:
         fileLines = boxData.readlines()
 
     #get number of boxes and protein types. little hokey but it works. in boxData.readlines(), there is exactly one '\n' newline string
@@ -231,9 +235,12 @@ def main():
     sectionax = plt.subplot2grid((2,5), (0,4), colspan=1,rowspan=2)
 
     # first plot the section data...
-    sectiondata = np.loadtxt("data/shape-%s/membrane_files/%s%s%ssections-%s-%s-%s-%s-%s-%s.dat"
-                             % (load.f_shape,load.debug_str,load.hires_str,load.slice_str,load.f_shape,
-                                load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5))
+    filename = "data/shape-%s/membrane_files/%s%s%ssections-%s-%s-%s-%s-%s-%s.dat" % (load.f_shape,load.debug_str,load.hires_str,
+                                                                                      load.slice_str,load.f_shape,
+                                                                                      load.f_param1,load.f_param2,load.f_param3,
+                                                                                      load.f_param4,load.f_param5)
+    print 'loading', filename
+    sectiondata = np.loadtxt(filename)
 
     def plot_sections(sectionax, sectiondata):
         dx = load.dx

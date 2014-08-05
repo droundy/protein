@@ -54,6 +54,8 @@ class data(object):
         self.filenames = get_filenames(protein,sim_type,start_time,end_time)
         self.tsteps = len(self.filenames)
         self.dataset = np.array([np.loadtxt(file) for file in self.filenames])
+        for file in self.filenames:
+            print 'loading', file
         self.datashape = self.dataset[0].shape
         self.axes = [[i*dx for i in range(self.datashape[1])],[j*dx for j in range(self.datashape[0])]]
 
