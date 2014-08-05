@@ -67,7 +67,7 @@ def get_filenames(protein,sim_type,start_time,end_time):
         file_num = round(f_num/dump_time_step)
         fname = "./data/shape-%s/%s%s%s%s-%s-%s-%s-%s-%s-%s-%03d-%s.dat"% \
         (f_shape,debug_str,hires_str,slice_str,protein,f_shape,f_param1,f_param2,f_param3,f_param4,f_param5,file_num,sim_type)
-        print fname
+        #print fname
         if os.path.isfile(fname):
             dat_filenames.append(fname)
     if git_add_files:

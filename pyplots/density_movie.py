@@ -19,8 +19,7 @@ dens_factor = sys.argv[6]
 sim_type = sys.argv[7]
 f_param6 = sys.argv[8]
 f_param7 = sys.argv[9]
-
-
+print "hello"
 
 #create data objects (see file_loader.py)
 
@@ -42,12 +41,13 @@ for i in range(0,20000):
     if (not os.path.isfile(fname)):
         break
 if (input_end_time >= total_number_of_files*dump_time_step):
+    print "For ", fname
     print "This end_time is too great, there are only enough files to support a end_time less than ", total_number_of_files*dump_time_step
     exit(1)
 
 
 time_left = input_end_time - input_start_time
-video_limit = 700 #time of each gif created
+video_limit = 2 #time of each gif created
 video_list = []#list of video_limit long movies
 video_number = 0
 
@@ -92,43 +92,38 @@ def timemin(data):
 
 def gaussian_smear(data,wavelength):
     new = np.zeros_like(data)
-    print 'shape '+ str(new.shape)
-    print 'len [0,0] ' +str(len(new[0,0]))
-    print 'shape [0] '+ str(new[0].shape)
-    print 'shape [0,0] '+ str(new[0,0].shape)
     n_sin_theta = 1.5
-    sigma = 1.5*wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
-    dis = int(2*sigma/0.05) #for now
+    sigma = wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
+    dis = int(3*sigma/0.05) #for now
     for num in range(new.shape[0]):
         for x in range(new.shape[1]):
             for y in range(new.shape[2]):
                 for i in np.arange(-dis,dis,1):
                     for j in np.arange(-dis,dis,1):
                         if (x+i >= 0 and x+i < new.shape[1]-1 and y+j >= 0 and y+j < new.shape[2]-1):
-                            new[num,x+i,y+j] += data[num,x,y]*math.exp( -(abs(i)+abs(j))*.05/sigma/sigma )
+                            new[num,x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/sigma/sigma )
     return new
 
 #function to carry out the animation generation
 def contourplt(protein,video_number):
     #get extrema values for color bar (global extrema in time)
     ###############The max vals here are really messy still need to do it properly for smeared data
-    smeared_data = gaussian_smear(protein.dataset,.5) #green light at 500nm
+    smeared_data = gaussian_smear(protein.dataset,.6) #this is in microns green light at 500nm,
     maxval = timemax(smeared_data)
     minval = timemin(smeared_data)
 
     plt.figure(1)
 
     #shell command to clean up any previous .png's, just in case (perhaps a process was cancelled midway)
-    os.system("rm -f ./data/shape-"+f_shape+"/plots/"+load.debug_str+load.hires_str+load.slice_str+"tmp_*" \
-    +"-"+str(protein.protein)+"-"+f_shape+"-"+f_param1+"-"+f_param2 \
-    +"-"+f_param3+"-"+f_param4+"-"+dens_factor+"-"+sim_type+".png")
+    # os.system("rm -f ./data/shape-"+f_shape+"/plots/images/"+load.debug_str+load.hires_str+load.slice_str+"tp_*" \
+    # +"-"+str(protein.protein)+"-"+f_shape+"-"+f_param1+"-"+f_param2 \
+    # +"-"+f_param3+"-"+f_param4+"-"+dens_factor+"-"+sim_type+".png")
 
     Z, Y = np.meshgrid(np.arange(0,(len(protein.dataset[1][0])-.9)*0.05,0.05), np.arange(0,len(protein.dataset[1])*0.05,0.05))
     #generate a sequence of .png's for each file (printed time step). these will be used to create a gif.
     for k in range(len(protein.dataset)): #fig.dpi method
-
         #page = protein.dataset[k]
-        print './data/shape-'+f_shape+'/plots/'+load.debug_str+load.hires_str+load.slice_str+'tmp_'+str(k)+'-'+str(protein.protein)+ \
+        print './data/shape-'+f_shape+'/plots/images/'+load.debug_str+load.hires_str+load.slice_str+'tp_'+str(k)+'-'+str(protein.protein)+ \
                         '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.png'
         plt.clf()
         plt.axes().set_aspect('equal', 'datalim')
@@ -139,24 +134,28 @@ def contourplt(protein,video_number):
         #plt.clabel(CS, fontsize=9, inline=1)
         plt.xlabel("Z position")
         plt.ylabel("Y position")
-        plt.savefig('./data/shape-'+f_shape+'/plots/'+load.debug_str+load.hires_str+load.slice_str+'tmp_%06d'%k+'-'+str(protein.protein)+ \
+        plt.savefig('./data/shape-'+f_shape+'/plots/images/'+load.debug_str+load.hires_str+load.slice_str+'tp_%06d'%k+'-'+str(protein.protein)+ \
                         '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.png',dpi=50)
 
     #shell command to convert all of the recently generated .png's to a single .gif using convert utility
-    os.system("convert -delay 10 ./data/shape-"+f_shape+"/plots/"+load.debug_str+load.hires_str+load.slice_str+"tmp_*" \
-    +"-"+str(protein.protein)+"-"+f_shape+"-"+f_param1+"-"+f_param2 \
-    +"-"+f_param3+"-"+f_param4+"-"+dens_factor+"-"+sim_type+".png ./data/shape-"+f_shape \
-    +"/plots/"+load.debug_str+load.hires_str+load.slice_str+"density_movie-"+str(protein.protein)+"-"+str(video_number)+"-"+f_shape \
-    +"-"+f_param1+"-"+f_param2+"-"+f_param3+"-"+f_param4+"-"+dens_factor+"-"+sim_type+".gif")
+    # os.system("convert -delay 10 ./data/shape-"+f_shape+"/plots/images/"+load.debug_str+load.hires_str+load.slice_str+"tp_*" \
+    # +"-"+str(protein.protein)+"-"+f_shape+"-"+f_param1+"-"+f_param2 \
+    # +"-"+f_param3+"-"+f_param4+"-"+dens_factor+"-"+sim_type+".png ./data/shape-"+f_shape \
+    # +"/plots/images/"+load.debug_str+load.hires_str+load.slice_str+"density_movie-"+str(protein.protein)+"-"+str(video_number)+"-"+f_shape \
+    # +"-"+f_param1+"-"+f_param2+"-"+f_param3+"-"+f_param4+"-"+dens_factor+"-"+sim_type+".gif")
 
     # shell command to clean up the .png's
-    os.system("rm -f ./data/shape-"+f_shape+"/plots/"+load.debug_str+load.hires_str+load.slice_str+"tmp_*" \
-    +"-"+str(protein.protein)+"-"+f_shape+"-"+f_param1+"-"+f_param2 \
-    +"-"+f_param3+"-"+f_param4+"-"+dens_factor+"-"+sim_type+".png")
+    # os.system("rm -f ./data/shape-"+f_shape+"/plots/images/"+load.debug_str+load.hires_str+load.slice_str+"tp_*" \
+    # +"-"+str(protein.protein)+"-"+f_shape+"-"+f_param1+"-"+f_param2 \
+    # +"-"+f_param3+"-"+f_param4+"-"+dens_factor+"-"+sim_type+".png")
+    # print "Done!  "+f_shape+' '+f_param1+' '+f_param2+' '+f_param3+' '+f_param4+' '+dens_factor+' '+sim_type
     return 0
 
 # contourplt(NDE)
 for j in range(video_number):
+    print "huh"
+    print f_shape
+    print len(f_shape)
     contourplt(video_list[j],j)
 
 # contourplt(NflE)

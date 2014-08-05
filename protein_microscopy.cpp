@@ -1583,10 +1583,16 @@ void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP,
   //fflush(stdout);
   if (fabs(*prev_tot_NADP + *prev_tot_NATP + *prev_tot_ND + *prev_tot_NDE - total_NADP - total_NATP - total_ND - total_NDE) > 10e-8) {
     printf("\nTotal number of minD has changed!!\n\n");
+    printf("\nThis crashing sim is %s %g %g %g %g %g %g %s\n\n\n",
+           mem_f_shape.c_str(), A, B, C, D, density_factor, size_modifier, sim_type.c_str());
+    fflush(stdout);
     exit(1);
   }
   if (fabs(*prev_tot_NDE + *prev_tot_NE - total_NDE - total_NE) > 10e-10) {
-    printf("\nTotal number of minE has changed!!\n\n");
+    printf("\nTotal number of minE has changed!!\n");
+    printf("\nThis crashing sim is %s %g %g %g %g %g %g %s\n\n\n",
+           mem_f_shape.c_str(), A, B, C, D, density_factor, size_modifier, sim_type.c_str());
+    fflush(stdout);
     exit(1);
   }
   *prev_tot_NADP = total_NADP;

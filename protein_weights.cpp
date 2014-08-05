@@ -72,12 +72,12 @@ void update_all_densities_and_weighting_for_changing_gridpt(weights *ws, const b
      Also jz = -difD*(n[z+1]-n[z])/dx and jz is #/(dA*dt) and I want dN/dt units for our probabilities
      so dN/dt = difD*(n[z+1]-n[z])*dA/dx = difD*(N[z+1]-N[z])/(dA)
  */
-  assert(insideArr[xi*Ny*Nz + yi*Nz + zi]);
-  // if (!insideArr[xi*Ny*Nz + yi*Nz + zi]) {
-  //   printf("Error!  You're trying to update probs for a grid point that is completely outside the cell.  There shouldn't be a reason to do that.\n");
-  //   printf("Grid pt is at x %d, y %d, z %d and type = %c\n",xi,yi,zi,type);
-  //   exit(1);
-  // }
+  //assert(insideArr[xi*Ny*Nz + yi*Nz + zi]);
+  if (!insideArr[xi*Ny*Nz + yi*Nz + zi]) {
+    printf("Error!  You're trying to update probs for a grid point that is completely outside the cell.  There shouldn't be a reason to do that.\n");
+    printf("Grid pt is at x %d, y %d, z %d and type = %c\n",xi,yi,zi,type);
+    exit(1);
+  }
   double dV = dx*dx*dx;
   double dA = dx*dx;
   ws->update(rate_ADP_ATP*s_N_ADP[xi*Ny*Nz+yi*Nz+zi], ADP_to_ATP*Nx*Ny*Nz + xi*Ny*Nz+yi*Nz+zi);

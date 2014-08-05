@@ -174,25 +174,25 @@ def main():
 
     start_time_as_frac_of_ten = float(load.f_param6)
     end_time_as_frac_of_ten = float(load.f_param7)
-    tot_time = float(len(plotCurveList_D[0]))*box_time_step
-    start = int(tot_time*start_time_as_frac_of_ten/10.0/box_time_step)
-    end = int(tot_time*end_time_as_frac_of_ten/10.0/box_time_step)
+    tot_time = len(plotCurveList_D[0])*box_time_step
+    # start = int(tot_time*start_time_as_frac_of_ten/10.0/box_time_step)
+    # end = int(tot_time*end_time_as_frac_of_ten/10.0/box_time_step)
     # (start, end) = find_period(plotCurveList_D[len(plotCurveList_D)-2])
-    # (start, end) = find_period(np.array(returnData(boxList[len(boxList)-1], 'D_ND')))
-    # start = end - 2*(end-start)
-    # end = int(tot_time/box_time_step)
-    # if (load.f_shape == 'triangle') or (load.f_param4 == '95.00') or (load.f_param4 == '94.00'):
-    #     start = 0
-    #     end = int(tot_time*.5/box_time_step)
-    # if ((load.f_param2 == '14.00' or load.f_param2 == '5.50') and load.f_param4 == '99.00'):
-    #     start = 0
-    #     end = int(tot_time/box_time_step)
+    (start, end) = find_period(np.array(returnData(boxList[len(boxList)-1], 'D_ND')))
+    start = end - 2*(end-start)
+    end = int(tot_time/box_time_step)
+    if (load.f_shape == 'triangle') or (load.f_param4 == '95.00') or (load.f_param4 == '94.00'):
+        start = 0
+        end = int(tot_time*.5/box_time_step)
+    if load.f_param2 == '14.00' and load.f_param4 == '99.00':
+        start = 0
+        end = int(tot_time/box_time_step)
 
-    # periods_file = open('periods.txt','a')
-    # periods_file.write('Box period= '+str(box_time_step*(end-start)) +' for simulation '+load.f_shape+
-    #                    ' '+load.f_param1+' '+load.f_param2+' '+load.f_param3+' '+load.f_param4+' '+
-    #                    load.f_param5+', with start = '+str(start*box_time_step)+' and end = '+str(end*box_time_step)+'\n')
-    # periods_file.close()
+    periods_file = open('periods.txt','a')
+    periods_file.write('Box period= '+str(box_time_step*(end-start)) +' for simulation '+load.f_shape+
+                       ' '+load.f_param1+' '+load.f_param2+' '+load.f_param3+' '+load.f_param4+' '+
+                       load.f_param5+', with start = '+str(start*box_time_step)+' and end = '+str(end*box_time_step)+'\n')
+    periods_file.close()
 
     # print useful coordination data
     period = timeAxis[end-1] - timeAxis[start]

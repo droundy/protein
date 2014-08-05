@@ -13,6 +13,10 @@
 *.pdf
 *.gif
 *.dat
+data/shape-*
+
+test
+test-weights
 
 # for latex:
 *.aux
