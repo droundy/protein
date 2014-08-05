@@ -1,28 +1,80 @@
-Actual todo list:
+06/03/2014:
 
-* Decide which figures to keep in paper
-* Tune box plots: (Jeff)
-  - pick nice time frames (two periods?)
-  - add 2.1 micron bar (or circle)
-  - consider making them all use same length scale
-  - tune color for grayscale and beauty
-* Tune arrow plot: (David)
-  - pick plots to keep:
-  - make all same scale
-  - add 2.1 micron bar (or circle)
-*Read/rewrite Stability/Mannik and Triangle sections (David)
-*Write V shape section (Jeff)
+p 0.30 0.30 0.00 0.00 15.00 0.00 full_array -dump
+p 0.45 0.45 0.00 0.00 15.00 0.00 full_array -dump
 
+p 0.30 0.30 0.00 0.00 15.00 0.00 exact -dump
+p 0.45 0.45 0.00 0.00 15.00 0.00 exact -dump
 
+p 2.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 4.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 9.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+
+p 9.00 0.50 0.00 0.00 15.00 0.00 exact -dump
 
 
-11/07/2013:
 
-All simulations will have nE starting on right and nATP startin on left:
-p 4.00 0.50 0.00 0.00 15.00 10.00 -dump
-p 3.00 0.50 0.00 0.00 15.00 10.00 -dump
-p 2.00 0.50 0.00 0.00 15.00 10.00 -dump
 
+randst 0.25 8.00 15.00 94.00 15.00 0.30 full_array -dump
+randst 0.25 9.00 16.00 94.00 15.00 0.40 full_array -dump
+randst 0.25 6.00 6.00 95.00 15.00 0.30 full_array -dump
+randst 0.25 7.00 7.00 95.00 15.00 0.40 full_array -dump
+
+randst 0.25 8.00 15.00 94.00 15.00 0.30 exact -dump
+randst 0.25 9.00 16.00 94.00 15.00 0.40 exact -dump
+randst 0.25 6.00 6.00 95.00 15.00 0.30 exact -dump
+randst 0.25 7.00 7.00 95.00 15.00 0.40 exact -dump
+
+randst 0.25 18.00 18.00 95.00 15.00 1.30 full_array -dump
+randst 0.25 18.50 18.50 95.00 15.00 1.35 full_array -dump
+randst 0.25 19.00 19.00 95.00 15.00 1.40 full_array -dump
+randst 0.25 20.00 20.00 95.00 15.00 1.50 full_array -dump
+
+randst 0.25 18.00 25.00 94.00 15.00 1.30 full_array -dump
+randst 0.25 18.50 28.00 94.00 15.00 1.50 full_array -dump
+randst 0.25 18.80 28.80 94.00 15.00 1.56 full_array -dump
+randst 0.25 19.00 29.00 94.00 15.00 1.60 full_array -dump
+randst 0.25 20.00 30.00 95.00 15.00 1.70 full_array -dump
+
+
+
+triangle 0.25 2.00 2.00 2.00 15.00 0.00 full_array -dump
+triangle 0.25 2.33 2.33 2.00 15.00 0.00 full_array -dump
+triangle 0.25 2.66 2.66 2.00 15.00 0.00 full_array -dump
+triangle 0.25 3.00 3.00 3.00 15.00 0.00 full_array -dump
+triangle 0.25 6.00 6.00 6.00 15.00 0.00 full_array -dump
+triangle 0.25 8.00 8.00 8.00 15.00 0.00 full_array -dump
+
+
+
+
+
+
+06/04/2104;
+
+The following dashed were still running today, the undashed were not, something killed the jobs, not sure what yet
+
+p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+
+-p 0.30 0.30 0.00 0.00 15.00 0.00 full_array -dump
+-p 0.45 0.45 0.00 0.00 15.00 0.00 full_array -dump
+
+-p 0.30 0.30 0.00 0.00 15.00 0.00 exact -dump
+-p 0.45 0.45 0.00 0.00 15.00 0.00 exact -dump
+
+-p 2.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+protein box plot flattens out at 270 seconds
+-p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+no flatten out yet
+-p 4.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+protein box plot flattens out at 150 seconds
+
+p 9.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+no box plot file
+p 9.00 0.50 0.00 0.00 15.00 0.00 exact -dump
+box file only has one column of info
+>>>>>>> b0da4b8bccddc2e0d36a7c01213aac7dbe10c9b6
 
 triangle 0.25 2.00 2.00 2.00 15.00 4.00 9.50 -dump GOOD
 triangle 0.25 2.33 2.33 2.33 15.00 4.00 9.50 -dump GOOD
@@ -32,6 +84,7 @@ triangle 0.25 4.00 4.00 4.00 15.00 4.00 9.50 -dump GOOD
 triangle 0.25 5.00 5.00 5.00 15.00 4.00 9.50 -dump GOOD
 triangle 0.25 6.00 6.00 6.00 15.00 4.00 9.50 -dump GOOD
 
+<<<<<<< HEAD
 triangle 0.25 2.00 1.20 2.00 15.00 4.00 9.50 -dump GOOD
 triangle 0.25 2.50 1.50 2.50 15.00 4.00 9.50 -dump GOOD
 triangle 0.25 3.00 1.80 3.00 15.00 4.00 9.50 -dump GOOD
@@ -133,3 +186,64 @@ So this is terrible, but there are two different 94 shapes, one should
 be right on shape wise and the other is slightly modified.  Once the
 current simulation prints out the sections file test it and see if
 it's the real one or the slightly modified one.  Then act accordingly!
+=======
+-triangle 0.25 2.00 2.00 2.00 15.00 0.00 full_array -dump
+box plots goes to 300 seconds, doesn't flatten out
+-triangle 0.25 2.33 2.33 2.00 15.00 0.00 full_array -dump
+box plots goes to 300 seconds, doesn't flatten out
+-triangle 0.25 2.66 2.66 2.00 15.00 0.00 full_array -dump
+box plots goes to 300 seconds, doesn't flatten out
+-triangle 0.25 3.00 3.00 3.00 15.00 0.00 full_array -dump
+box plots goes to 300 seconds, doesn't flatten out
+triangle 0.25 6.00 6.00 6.00 15.00 0.00 full_array -dump
+box plots goes to 120 seconds, doesn't flatten out
+triangle 0.25 8.00 8.00 8.00 15.00 0.00 full_array -dump
+box plot data has only one column of info
+
+(noticed in the box plot that in some of these, the corners may be cut off)
+
+-randst 0.25 8.00 15.00 94.00 15.00 0.30 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 9.00 16.00 94.00 15.00 0.40 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 6.00 6.00 95.00 15.00 0.30 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 7.00 7.00 95.00 15.00 0.40 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+
+-randst 0.25 8.00 15.00 94.00 15.00 0.30 exact -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 9.00 16.00 94.00 15.00 0.40 exact -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 6.00 6.00 95.00 15.00 0.30 exact -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+-randst 0.25 7.00 7.00 95.00 15.00 0.40 exact -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 300 seconds
+
+randst 0.25 18.50 18.50 95.00 15.00 1.35 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 160 seconds
+-randst 0.25 19.00 19.00 95.00 15.00 1.40 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+data flattens out at 150 seconds
+randst 0.25 20.00 20.00 95.00 15.00 1.50 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 120 seconds
+
+-randst 0.25 18.80 28.80 94.00 15.00 1.56 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+Flatten out at 150 seconds
+randst 0.25 19.00 29.00 94.00 15.00 1.60 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+No flatten out, goes to 140 seconds
+-randst 0.25 20.00 30.00 95.00 15.00 1.70 full_array -dump
+The shape looks way wrong (also, no green shows, even though there's a green section in the data)
+Flatten out at 100 seconds

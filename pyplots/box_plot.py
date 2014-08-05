@@ -29,13 +29,15 @@ from mpl_toolkits.axes_grid.anchored_artists import AnchoredSizeBar
 
 #opens the file and grabs a particular line matching proteinType and
 #boxName. returns list of protein counts at each time.
+#box-plot--p-0.50-0.50-0.00-0.00-15.00-exact.dat
+
 def returnData(boxName,proteinType):
 
     #open the data file, grab the line with the correct protein type and box partition, load it as a [string] (so we can use list comprehensions)
-    with open("./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s.dat"%
+    with open("./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s-%s.dat"%
               (load.f_shape,load.debug_str,load.hires_str,load.slice_str,
                load.f_shape,load.f_param1,load.f_param2,load.f_param3,
-               load.f_param4,load.f_param5),"r") as boxData:
+               load.f_param4,load.f_param5,load.sim_type),"r") as boxData:
         proteinsOverTime = [line for line in boxData if (proteinType in line) and (boxName in line)]
 
 
@@ -104,7 +106,7 @@ def find_period(f):
     return (penultimate_min, lastmin)
 
 def main():
-    with open("./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s.dat"%(load.f_shape,load.debug_str,load.hires_str,load.slice_str,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5),"r") as boxData:
+    with open("./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s-%s.dat"%(load.f_shape,load.debug_str,load.hires_str,load.slice_str,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5,load.sim_type),"r") as boxData:
         fileLines = boxData.readlines()
 
     #get number of boxes and protein types. little hokey but it works. in boxData.readlines(), there is exactly one '\n' newline string
@@ -268,7 +270,7 @@ def main():
         # box plot.
         xdir, ydir = xweighted - xmean, yweighted - ymean
         xdir, ydir = xdir/np.sqrt(xdir**2+ydir**2), ydir/np.sqrt(xdir**2+ydir**2)
-        extraxspace = .5
+        extraxspace = 0.5
         extrayspace = 0
         Yrotated = X*xdir + Y*ydir
         Xrotated = X*ydir - Y*xdir
@@ -285,11 +287,11 @@ def main():
         sectionax.axes.get_yaxis().set_visible(False)
         sectionax.add_artist(AnchoredSizeBar(
                 sectionax.transData,
-                1.00, # length of the bar in the data reference
-                "1$\mu$", # label of the bar
-                #bbox_to_anchor=(0.,0.,1.,1.),
+                2.13, # length of the bar in the data reference
+                "2.13$\mu$", # label of the bar
+                # bbox_to_anchor=(0.,0.,1.,1.),
                 loc=8, # 'best', # location (lower right)
-                pad=-(ymax-ymin)/2.0 + 0.4, borderpad=0.25, sep=3,
+                pad=-(ymax-ymin)/2.0 -.4, borderpad=0.25, sep=3,
                 frameon=False
                 ))
     plot_sections(sectionax, sectiondata)
@@ -365,7 +367,7 @@ def main():
 
     #bax.legend(plotNameList_D,bbox_to_anchor=(0.3,-0.05,1.0,1.0),loc=4,prop={'size':8}).draw_frame(False)
 
-
+    print load.print_string("box-plot_D","")
     plt.savefig(load.print_string("box-plot_D",""))
     plt.figure()
 

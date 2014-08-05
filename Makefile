@@ -3,13 +3,14 @@ CXXFLAGS = -g -O2 -Wall -Werror
 .SUFFIXES: .tex .dvi .ps .bib .bbl .pdf .fig .eps .aux .jpg .png .svg \
 		.gp .mf .2602gf .pl .xgr
 
-all: sim paper/paper.pdf
+all: protein_microscopy
 
-test: test.cpp
+test-weights: test-weights.cpp weights.h weights.cpp
 
-clean: rm -f protein_microscopy paper/paper.pdf
+clean: rm -f protein_microscopy protein_test
 
-sim: protein_microscopy
+protein_microscopy: protein_microscopy.cpp protein_weights.cpp protein_utils.cpp \
+	 protein_membrane.cpp weights.cpp
 
 ALL_FIGURES = \
 	data/shape-p/plots/box-plot_D--p-300-50-0-0-1500.pdf
@@ -37,6 +38,5 @@ data/shape-randst/plots/paper-arrow-plot.pdf: paper/arrow-plot.py $(wildcard dat
 	mkdir -p data/shape-randst/plots
 	python $<
 
-#arrow plots
-#box plots
-#frequency plots
+protein_test: protein_test.cpp protein_utils.cpp protein_membrane.cpp weights.cpp
+

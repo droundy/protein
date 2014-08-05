@@ -10,6 +10,7 @@ f_param2 = sys.argv[3]
 f_param3 = sys.argv[4]
 f_param4 = sys.argv[5]
 f_param5 = sys.argv[6]
+sim_type = sys.argv[7]
 
 git_add_files = False # set this to True to automagically git add dat
                       # files that we need to do the plots
@@ -39,8 +40,8 @@ for arg in sys.argv:
         expected_arg_number+=1
 
 if len(sys.argv)>expected_arg_number:
-    f_param6 = sys.argv[7]
-    f_param7 = sys.argv[8]
+    f_param6 = round(float(sys.argv[8]))
+    f_param7 = round(float(sys.argv[9]))
 
 filename_tuple = (f_shape,hires_str,slice_str,f_shape,f_param1,f_param2,f_param3,f_param4,f_param5)
 
@@ -48,37 +49,32 @@ filename_tuple = (f_shape,hires_str,slice_str,f_shape,f_param1,f_param2,f_param3
 
 #data object, to create in another plot: proteinname=data(protein="proteinname")
 class data(object):
-    def __init__(self,protein,start_time=0,end_time=0):
+    def __init__(self,protein,sim_type,start_time,end_time):
         self.protein = protein
-        self.filenames = get_filenames(protein,start_time,end_time)
+        self.filenames = get_filenames(protein,sim_type,start_time,end_time)
         self.tsteps = len(self.filenames)
         self.dataset = np.array([np.loadtxt(file) for file in self.filenames])
         self.datashape = self.dataset[0].shape
         self.axes = [[i*dx for i in range(self.datashape[1])],[j*dx for j in range(self.datashape[0])]]
 
 #loads the files for creating the data object.
-def get_filenames(protein,start_time,end_time):
+def get_filenames(protein,sim_type,start_time,end_time):
     dump_time_step = 0.5 # seconds
     dat_filenames = []
     if end_time == 0:
-        for fn in glob.iglob("./data/shape-%s/%s%s%s%s-%s-%s-%s-%s-%s-%s-*.dat"%(f_shape,debug_str,hires_str,slice_str,protein,f_shape,f_param1,f_param2,f_param3,f_param4,f_param5)):
-            dat_filenames.append(fn)
-    if end_time != 0:
-        for i in np.arange(start_time,end_time,dump_time_step):
-            file_num = round(i/dump_time_step)
-            dat_filenames.append("./data/shape-%s/%s%s%s%s-%s-%s-%s-%s-%s-%s-%03d.dat"%
-                                 (f_shape,debug_str,hires_str,slice_str,protein,f_shape,f_param1,f_param2,f_param3,f_param4,f_param5,file_num))
-    dat_filenames = sorted(dat_filenames)
-    i=0 #pop the first 10% of file names to let things equillibriate a bit
-    # while i<round(len(dat_filenames)/10):
-    #     dat_filenames.pop(0)
-    #     i+=1
+        end_time = 10000
+    for f_num in np.arange(start_time,end_time,dump_time_step):
+        file_num = round(f_num/dump_time_step)
+        fname = "./data/shape-%s/%s%s%s%s-%s-%s-%s-%s-%s-%s-%03d-%s.dat"% \
+        (f_shape,debug_str,hires_str,slice_str,protein,f_shape,f_param1,f_param2,f_param3,f_param4,f_param5,file_num,sim_type)
+        print fname
+        if os.path.isfile(fname):
+            dat_filenames.append(fname)
     if git_add_files:
         for filename in dat_filenames:
             os.system('git add -f %s' % filename)
     if (dat_filenames == []):
         print "File loading error: filename list is empty."
-        print "./data/shape-%s/%s%s%s%s-%s-%s-%s-%s-%s-%s-*.dat"%(f_shape,debug_str,hires_str,slice_str,protein,f_shape,f_param1,f_param2,f_param3,f_param4,f_param5)
         exit(1)
     else:
         return dat_filenames
@@ -86,7 +82,8 @@ def get_filenames(protein,start_time,end_time):
 #function for easier plot name printing. probably should be renamed itself.
 def print_string(plot_name,p):
     arg = [str(int(100*(float(i)))) for i in sys.argv[2:7]]
-    filename = "./data/shape-%s/plots/%s%s%s%s-%s-%s-%s-%s-%s-%s-%s.pdf"%(f_shape, debug_str, hires_str, slice_str, plot_name, p, f_shape, arg[0], arg[1], arg[2], arg[3], arg[4])
+    filename = "./data/shape-%s/plots/%s%s%s%s-%s-%s-%s-%s-%s-%s-%s-%s.pdf"% \
+    (f_shape, debug_str, hires_str, slice_str, plot_name, p, f_shape, arg[0], arg[1], arg[2], arg[3], arg[4],sim_type)
     return filename
 
 #"./data/shape-"+f_shape+"/"debug_str+hires_str+slice_str+protein+"-"+f_shape+"-"+f_param1+"-"+f_param2+"-"+f_param3+"-"+f_param4+"-"+f_param5+"*.dat"

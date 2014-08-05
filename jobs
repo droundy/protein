@@ -1,13 +1,20 @@
-triangle 0.25 2.33 2.33 2.33 15.00 0.00 10.00 -dump -paper
-triangle 0.25 2.66 2.66 2.66 15.00 0.00 10.00 -dump -paper
-triangle 0.25 8.00 8.00 8.00 15.00 0.00 10.00 -dump -paper
+p 0.35 0.35 0.00 0.00 15.00 0.00 full_array -dump
+p 0.35 0.35 0.00 0.00 15.00 0.00 exact -dump
 
-randst 0.25 8.00 8.00 95.00 15.00 0.00 10.00 -dump -paper
-randst 0.25 10.00 17.00 94.00 15.00 0.00 10.00 -dump -paper
+p 0.50 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 0.50 0.50 0.00 0.00 15.00 0.00 exact -dump
 
-randst 0.25 5.25 5.25 99.00 15.00 0.00 10.00 -dump -paper
-randst 0.25 5.50 5.50 99.00 15.00 0.00 10.00 -dump -paper
-randst 0.25 6.00 6.00 99.00 15.00 0.00 10.00 -dump -paper
-randst 0.25 14.00 14.00 99.00 15.00 0.00 10.00 -dump -paper
+p 6.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 6.00 0.50 0.00 0.00 15.00 0.00 exact -dump
 
-p 3.00 0.50 0.00 0.00 15.00 0.00 10.00 -dump -paper
+p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 3.00 0.50 0.00 0.00 15.00 0.00 exact -dump
+
+randst 0.25 9.00 16.00 94.00 15.00 0.00 full_array -dump
+randst 0.25 9.00 16.00 94.00 15.00 0.00 exact -dump
+
+randst 0.25 7.00 7.00 95.00 15.00 0.00 full_array -dump
+randst 0.25 7.00 7.00 95.00 15.00 0.00 exact -dump
+
+triangle 0.25 2.00 2.00 2.00 15.00 0.00 full_array -dump
+triangle 0.25 2.00 2.00 2.00 15.00 0.00 exact -dump
