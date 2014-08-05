@@ -241,19 +241,25 @@ cells that are slightly larger than this range.
 
 \begin{figure*}
   \includegraphics[width=\textwidth]{../data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf}
+  \includegraphics[width=\textwidth]{../data/shape-p/plots/single-image-stoch}
   \caption{Countour plot images of the concentration of each protein
     species in a natural pill-shaped bacterium at regular intervals in
     time (one second intervals), with darker regions indicating higher
-    concentration.  The cells pictured are $4\micron$ in length,
-    measured from end to end.  The order of frames is such that
-    individual MinD proteins begin at the bottom of the plot (in the
-    MinD:ATP state in the cytoplasm), and progress upward until they
-    reach the MinE:MinD:ATP membrane-bound complex.  At that point,
-    they will spontaneously dissociate into cytoplasmic MinE (the top
-    row) and the starting state of cytoplasmic MinD:ADP.  The
+    concentration. The upper plots shows results from the
+    deterministic simulation and the lower shows results from the
+    stochastic simulation.  The cells pictured are $4\micron$ in
+    length, measured from end to end.  The order of frames is such
+    that individual MinD proteins begin at the bottom of the plot (in
+    the MinD:ATP state in the cytoplasm), and progress upward until
+    they reach the MinE:MinD:ATP membrane-bound complex.  At that
+    point, they will spontaneously dissociate into cytoplasmic MinE
+    (the top row) and the starting state of cytoplasmic MinD:ADP.  The
     densities plotted are integrated along the axis orthogonal to the
     page, and the color scale is chosen separately for each species
-    with black as the maximum value over space and time.}
+    with black as the maximum value over space and time.  The
+    stochastic densities are smeared out over space as guassians with
+    characteristic length equal to the Abbe diffraction limit of
+    $600nm$ wavelength light}
   \label{image-p}
 \end{figure*}
 
@@ -263,12 +269,19 @@ a cylinder.  This shape follows the early simulations of Huang
 \emph{et al.} but differs in that we have added the end caps for a
 more natural shape, expecting similar results.  We test cells of
 radius $.5\micron$ and of lengths $2\micron$, $3\micron$, and
-$5\micron$ measured from the tip of one end cap to the top of the
-other. In each case, we observe quick establishement (within a few
-periods) of extremely regular oscillatory behavoir that lasts
-indefinitely.  The period increases with cell length, as shown in
+$5\micron$ measured from the tip of one end cap to the tip of the
+other. In each case, we observe in the deterministic simulations a
+quick establishement (within a few periods) of extremely regular
+oscillatory behavoir that lasts indefinitely.  The stochastic results
+show oscillitions that are similarly regular in time, with periods
+that nearly match those of the deterministic (they differ roughly by a
+factor of .05). The stochastic results also show a slight variation in
+the height of the density maxima, but the peaks are still very well
+defined. The period increases with cell length, as shown in
 Table~\ref{tab:pill-periods}, in agreement with the results of Huang
-\emph{et al.}
+\emph{et al.}.  The stochastic simulations show a similar pattern.
+The MinD maxima occur at the ends of the cell in a back and forth
+manner, and with the same approximate period.
 
 \begin{table}
   \begin{tabular}{|r|c|c|c|l|}
@@ -279,19 +292,23 @@ Table~\ref{tab:pill-periods}, in agreement with the results of Huang
     \hline
   \end{tabular}
   \caption{Period of oscillation according to length of cell for
-    pill-shaped cells.}\label{tab:pill-periods}\fixme{the 'sim' here
-    means that it's waiting for a simulation.  Not sure where it went
-    but I'm rerunning it.}
+    pill-shaped cells.}\label{tab:pill-periods}
 \end{table}
 
 This simple cell shape is a good starting point for observing in
 detail the dynamic interaction between the different stages of protein
 that lead to their qualitatively distinct behavoir. Figure
 \ref{image-p} shows the process in a series of frames taken from
-simulation animations.  Each frame is 2.5 seconds ahead of the last,
-and each image shows a the concentration of a given state of protein
-summed over the coordinate orthogonal to the page.  The color scale
-for each protein state is set according to the maximum density
+simulation animations for both the deterministic and stochastic
+simulations.  The stochastic concentrations have been 'smeared out' in
+a manner meant to reproduce the images shown by a diffraction limited
+microscope.  The protein densities which are located at specific grid
+points give light to sorrounding grid points with a guassian weighting
+function that has a variance equal to the Abbe diffraction limit of
+$600nm$ wavelength light.  Each frame is 2.5 seconds ahead of the
+last, and each image shows a the concentration of a given state of
+protein summed over the coordinate orthogonal to the page.  The color
+scale for each protein state is set according to the maximum values
 observed.
 
 At $t=0$ in Figs.~\ref{image-p}, the cytoplasmic MinE is concentrated
@@ -326,7 +343,6 @@ bound to the membrane on the lower third of the cell, a high
 concentration of cytoplasmic MinE in the upper half of the cell, and a
 MinE ring pushing downward on the membrane-bound MinD:ATP.
 
-
 \begin{figure}
   \includegraphics[width=\columnwidth]{stability-analysis}
   \caption{Infinite slab stability analysis yields characteristic half
@@ -334,22 +350,19 @@ MinE ring pushing downward on the membrane-bound MinD:ATP.
     \label{fig:stability-analysis}
 \end{figure}
 
-\section{Stability Analysis and Mannik's Experimental Shapes}
-In general we have found that the protein reaction sequence discussed
-above results in extremely robust oscillatory behavoir of polar
-selection and oscillation in a wide variety of cell shapes.  We have
-also found that while all sizes of cell will in time settle into
-regular oscillations, there are size dependent distinctions in the
-number and placement of the spatial positions of maximization.
-Regular oscillatory behavoir between two poles at opposite ends of the
-longer cellular direction is found in cells which are long enough in
-one dimension for the reaction chain to be unstable but short enough
-in the perpendicular dimension to be stable.  The limits are seen when
+
+\section{Stability Analysis}
+We have found that in both methods of simulation there is a lower
+length scale that characterizes much of the behavoir.  Regular
+oscillatory behavoir between two poles at opposite ends of the longer
+cellular direction is found in cells which are long enough in one
+dimension for the reaction chain to be unstable but short enough in
+the perpendicular dimension to be stable.  The limits are seen when
 both dimensions are too short to be unstable, so that initial
-assymetry in protein concentration relaxes into a motionless steady
-state (see Figure~\ref{box-mannik}), or when both are too great, so
-that the proteins exhibit more than two poles and those at extreme
-postitions in both dimensions.
+assymetry in protein concentration relaxes into a state of no
+oscillation.  In these cell sizes, the deterministic simulations show
+a motionless steady state and the stochastic simulations show random
+fluctuations without any bulk behavoir (see Figure~\ref{box-mannik}).
 
 In order to explain this theoretically, we have performed stability
 analysis of the five differential equations in an infinite slab that
@@ -358,9 +371,9 @@ oscillations at which the system becomes unstable.  This length is
 dependent upon slab thickness as shown in
 Figure~\ref{fig:stability-analysis}.  When increasing the lengths and
 widths of our simulated flattened cells, the cells stop exhibiting two
-pole oscillalitory behavior and instead exhibit multiple
-positions of maximization when the shortest distance across the cell
-is approximately equal to the characteristic half wavelength at the
+pole oscillalitory behavior and instead exhibit multiple positions of
+maximization when the shortest distance across the cell is
+approximately equal to the characteristic half wavelength at the
 particular thickness at which we simulate (our simulations of cells
 with thickness $0.25\mu m$ corresponds to half wavelengths of $2.13\mu
 m$).  Huang~\cite{huang2003dynamic} performs a similar analysis for a
@@ -386,11 +399,48 @@ Figure~\ref{box-mannik} shows box plots of the largest cells simulated
 whose oscillations relax into the steady state solution.  Both have a
 long axis of roughly 2.2$\mu m$, in agreement with theory.
 
+%% \begin{figure}
+%%   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/paper-arrow-plot}
+%%   \caption{Arrow plots for our simulation and mannik's experimental}
+%%   \label{arrow-compare-mannik}
+%% \end{figure}
+
+\section{Comparison of Mannik's Experimental and Our Stadium Shapes}
+In general we have found that the deterministic simulations of the
+protein reaction sequence discussed above results in robust
+oscillatory behavoir of polar selection and oscillation in a wide
+variety of cell shapes.  On the other hand, the stochastic simulations
+show back and forth behavoir that breaks down in more assymetric
+shapes with larger sizes, which is similar to what Mannik has observed
+experimentally.
+
 \begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/plots/paper-arrow-plot}
-  \caption{Arrow plots for our simulation and mannik's experimental}
-  \label{arrow-compare-mannik}
+  \includegraphics[width=\columnwidth]{../data/shape-stad/plots/arrow-400-stoch}
+  \caption{Arrow plots of our stadium shape}
+  \label{stadium-arrow}
 \end{figure}
+
+\begin{figure}
+  \includegraphics[width=\columnwidth]{../paper/plot-ave}
+  %% \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-1500-95-stoch}
+  %% \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-1850-95-stoch}
+  %% \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-2500-95-stoch}
+  \caption{Arrow plots of our randst shape}
+  \label{stadium-arrow}
+\end{figure}
+
+%% \begin{figure}
+%%   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-1400-94-stoch}
+%%   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-1860-94-stoch}
+%%   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-2500-94-stoch}
+%%   \caption{Arrow plots of our randst shape}
+%%   \label{stadium-arrow}
+%% \end{figure}
+
+
+\fixme{specifically design other arrow plot (with many comparisons) to
+  illustrate point}
+
 
 Figure~\ref{arrow-compare-mannik} shows plots of total MinD
 concentration maxima that are global in space and local in time.  The
@@ -411,44 +461,44 @@ simulations.  Stochastic methods would perhaps show more random
 behavoir at these sizes.  We consider this to be a limitation of the
 exact solution method.
 
-\section{Triangular Shapes}
+%% \section{Triangular Shapes}
 
-\begin{figure}
-%  \includegraphics[width=4.2cm]{../data/shape-triangle/plots/box-plot_D--triangle-25-233-233-233-1500}
-%  \includegraphics[width=4.2cm]{../data/shape-triangle/plots/box-plot_D--triangle-25-266-266-266-1500}
-  \includegraphics[width=\columnwidth]{../data/shape-triangle/plots/box-plot_D--triangle-25-233-233-233-1500}
-  \includegraphics[width=\columnwidth]{../data/shape-triangle/plots/box-plot_D--triangle-25-266-266-266-1500}
-  %\includegraphics[width=4.2cm]{../data/shape-triangle/plots/box-plot_D--triangle-25-800-800-800-1500}
-  \caption{Two box plots of triangle shapes.  The two smaller show
-    sizes at the lower stability threshhold, one just below, one just
-    above.  The larger triangle is the largest simulated. The vertical
-    axis shows stacked and changing over time the total number of
-    proteins that are of four different compound stages and in the
-    different sections of the cell.}
-  \label{box-triangle}
-\end{figure}
+%% \begin{figure}
+%% %  \includegraphics[width=4.2cm]{../data/shape-triangle/plots/box-plot_D--triangle-25-233-233-233-1500}
+%% %  \includegraphics[width=4.2cm]{../data/shape-triangle/plots/box-plot_D--triangle-25-266-266-266-1500}
+%%   \includegraphics[width=\columnwidth]{../data/shape-triangle/plots/box-plot_D--triangle-25-233-233-233-1500}
+%%   \includegraphics[width=\columnwidth]{../data/shape-triangle/plots/box-plot_D--triangle-25-266-266-266-1500}
+%%   %\includegraphics[width=4.2cm]{../data/shape-triangle/plots/box-plot_D--triangle-25-800-800-800-1500}
+%%   \caption{Two box plots of triangle shapes.  The two smaller show
+%%     sizes at the lower stability threshhold, one just below, one just
+%%     above.  The larger triangle is the largest simulated. The vertical
+%%     axis shows stacked and changing over time the total number of
+%%     proteins that are of four different compound stages and in the
+%%     different sections of the cell.}
+%%   \label{box-triangle}
+%% \end{figure}
 
-Along with our other shapes we have chosen to simulate both
-equilateral and iscoscolese triangular flattened shapes, since these
-offer in a way the simplest shapes that are geometrically more
-complicated than our pills.
+%% Along with our other shapes we have chosen to simulate both
+%% equilateral and iscoscolese triangular flattened shapes, since these
+%% offer in a way the simplest shapes that are geometrically more
+%% complicated than our pills.
 
-Both triangle types show a similar oscillation pattern.  The
-iscosolese exhibit regular oscillations characterized by one distinct
-pole in the more accute angle of the three, and another 'pole' along
-the opposite wall, peaking in the two more obtuse angles at the same
-time.  The equilateral triangles settle very quickly into the same
-pattern, where the choice of which is one pole corner is dependent
-upon initial conditions.  As with the Mannik simulated shapes, there
-is a critical small size below which the oscillations dampen out and
-will not achieve a regular pattern.  Figure~\ref{box-triangle} shows
-two plots of equilateral triangles.  The two smaller show the
-largest that showed damped out behavoir and the smallest that
-developed regular oscillations.  The larger shows the largest traingle
-that we simulated, showing that at even very large sizes the behavoir
-is consistent and stable.  Above the small size threshold, all
-simulated triangles show regular patterns for as long as simulated
-(roughly 800 seconds).
+%% Both triangle types show a similar oscillation pattern.  The
+%% iscosolese exhibit regular oscillations characterized by one distinct
+%% pole in the more accute angle of the three, and another 'pole' along
+%% the opposite wall, peaking in the two more obtuse angles at the same
+%% time.  The equilateral triangles settle very quickly into the same
+%% pattern, where the choice of which is one pole corner is dependent
+%% upon initial conditions.  As with the Mannik simulated shapes, there
+%% is a critical small size below which the oscillations dampen out and
+%% will not achieve a regular pattern.  Figure~\ref{box-triangle} shows
+%% two plots of equilateral triangles.  The two smaller show the
+%% largest that showed damped out behavoir and the smallest that
+%% developed regular oscillations.  The larger shows the largest traingle
+%% that we simulated, showing that at even very large sizes the behavoir
+%% is consistent and stable.  Above the small size threshold, all
+%% simulated triangles show regular patterns for as long as simulated
+%% (roughly 800 seconds).
 
 
 
