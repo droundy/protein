@@ -350,6 +350,9 @@ def main():
                              alpha=alphaScale_D[k],facecolor=colorScale[j])
             k+=1
     bax.set_xlim(timeAxis[start],timeAxis[end-1])
+    print timeAxis[start]
+    bax.set_xticklabels(np.arange(timeAxis[start]+100, timeAxis[end-1]+100, 0.5))
+    #bax.set_xticklabels(np.arange(0, 10, 0.5))
     bax.get_yaxis().set_visible(False)
     bax.set_ylim(0, 1)
     bax.set_title("MinD protein counts over time")

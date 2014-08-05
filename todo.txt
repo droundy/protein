@@ -66,76 +66,281 @@ p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
 -p 0.45 0.45 0.00 0.00 15.00 0.00 exact -dump
 
 -p 2.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
-protein box plot flattens out at 270 seconds
 -p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
-no flatten out yet
 -p 4.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
-protein box plot flattens out at 150 seconds
 
 p 9.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
-no box plot file
 p 9.00 0.50 0.00 0.00 15.00 0.00 exact -dump
-box file only has one column of info
 
 
 -triangle 0.25 2.00 2.00 2.00 15.00 0.00 full_array -dump
-box plots goes to 300 seconds, doesn't flatten out
 -triangle 0.25 2.33 2.33 2.00 15.00 0.00 full_array -dump
-box plots goes to 300 seconds, doesn't flatten out
 -triangle 0.25 2.66 2.66 2.00 15.00 0.00 full_array -dump
-box plots goes to 300 seconds, doesn't flatten out
 -triangle 0.25 3.00 3.00 3.00 15.00 0.00 full_array -dump
-box plots goes to 300 seconds, doesn't flatten out
 triangle 0.25 6.00 6.00 6.00 15.00 0.00 full_array -dump
-box plots goes to 120 seconds, doesn't flatten out
 triangle 0.25 8.00 8.00 8.00 15.00 0.00 full_array -dump
-box plot data has only one column of info
 
 (noticed in the box plot that in some of these, the corners may be cut off)
 
 -randst 0.25 8.00 15.00 94.00 15.00 0.30 full_array -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 300 seconds
 -randst 0.25 9.00 16.00 94.00 15.00 0.40 full_array -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 300 seconds
 -randst 0.25 6.00 6.00 95.00 15.00 0.30 full_array -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 300 seconds
 -randst 0.25 7.00 7.00 95.00 15.00 0.40 full_array -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 300 seconds
 
 -randst 0.25 8.00 15.00 94.00 15.00 0.30 exact -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 300 seconds
 -randst 0.25 9.00 16.00 94.00 15.00 0.40 exact -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 300 seconds
 -randst 0.25 6.00 6.00 95.00 15.00 0.30 exact -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 300 seconds
 -randst 0.25 7.00 7.00 95.00 15.00 0.40 exact -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 300 seconds
 
 randst 0.25 18.50 18.50 95.00 15.00 1.35 full_array -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 160 seconds
 -randst 0.25 19.00 19.00 95.00 15.00 1.40 full_array -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-data flattens out at 150 seconds
+
 randst 0.25 20.00 20.00 95.00 15.00 1.50 full_array -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 120 seconds
 
 -randst 0.25 18.80 28.80 94.00 15.00 1.56 full_array -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-Flatten out at 150 seconds
 randst 0.25 19.00 29.00 94.00 15.00 1.60 full_array -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-No flatten out, goes to 140 seconds
--randst 0.25 20.00 30.00 95.00 15.00 1.70 full_array -dump
-The shape looks way wrong (also, no green shows, even though there's a green section in the data)
-Flatten out at 100 seconds
+-randst 0.25 20.00 30.00 94.00 15.00 1.70 full_array -dump
 
+
+Errors:
+
+For these, data flattens out:
+triangle 0.25 8.00 8.00 8.00 15.00 0.00 full_array -dump
+
+p 9.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+
+
+06/13/2014:
+Tasks:
+--Show Dr. Roundy the checks for negative proteins, total proteins, and if update something outside cell
+--Show averages that are computed for small shapes, that they're the same solutions
+Just less these:
+compare-aves-randst-0.25-6.00-6.00-95.00-15.00-exact.dat
+compare-aves-randst-0.25-6.00-6.00-95.00-15.00-full_array.dat
+compare-aves-randst-0.25-7.00-7.00-95.00-15.00-exact.dat
+compare-aves-randst-0.25-7.00-7.00-95.00-15.00-full_array.dat
+compare-aves-randst-0.25-8.00-15.00-94.00-15.00-exact.dat
+compare-aves-randst-0.25-8.00-15.00-94.00-15.00-full_array.dat
+compare-aves-randst-0.25-9.00-16.00-94.00-15.00-exact.dat
+compare-aves-randst-0.25-9.00-16.00-94.00-15.00-full_array.dat
+
+---Investigate lower limit of oscillations
+-For triangle
+looking at 2,2.33,2.66,3 side lengths, goes from irregular to interesting regularity
+run 3.33, 3.66 4.00,7,9 side lengths
+
+-For randst 94
+randst 0.25 10.00 17.00 94.00 15.00 0.00 10.00 -dump GOOD .5 times the size
+randst 0.25 11.00 18.00 94.00 15.00 0.00 10.00 -dump GOOD .6 times the size
+randst 0.25 12.00 19.00 94.00 15.00 0.00 10.00 -dump GOOD .8 time the size
+
+
+For randst 95
+randst 0.25 8.00 8.00 95.00 15.00 0.00 10.00 -dump GOOD .5 times the size
+randst 0.25 9.00 9.00 95.00 15.00 0.00 10.00 -dump GOOD .6 times the size
+randst 0.25 10.00 10.00 95.00 15.00 0.00 10.00 -dump GOOD .8 times the size
+
+
+-Investigate large triangles
+Boxplots, movies, report on what does, go to sig. larger than Mannik size cells
+
+look at time_ave for all the larger things.  Mannik uses these.
+
+
+-Ivestigate mannik sizes and above
+Watch videos, arrow plots, box plots
+look for going from robust back and forth oscillations to chaotic or multiple pole oscillations
+just go up by .1 size modification intervals, except do the one that is exactly the mannik size, which I do for other sims.
+
+randst-0.25-18.50-18.50-95.00-15.00 size_mod = 1.35
+randst-0.25-20.00-20.00-95.00-15.00 size_mod = 1.5
+randst-0.25-21.00-21.00-95.00-15.00 size_mod = 1.6
+randst-0.25-28.00-28.00-95.00-15.00 size_mod = 2.0
+
+randst-0.25-18.50-28.00-94.00-15.00 size_mod = 1.5
+randst-0.25-18.60-28.60-94.00-15.00 size_mod = 1.53
+randst-0.25-18.80-28.80-94.00-15.00 size_mod = 1.56
+
+
+06/25
+New simulations:
+
+p 1.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 2.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 3.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+p 4.00 0.50 0.00 0.00 15.00 0.00 full_array -dump
+
+randst 0.25 10.00 17.00 94.00 15.00 .5 full_array -dump
+randst 0.25 12.00 19.00 94.00 15.00 .8 full_array -dump
+
+randst 0.25 8.00 8.00 95.00 15.00 .5 full_array -dump
+randst 0.25 10.00 10.00 95.00 15.00 .8 full_array -dump
+
+randst 0.25 18.50 18.50 95.00 15.00 1.35 full_array -dump
+randst 0.25 21.00 21.00 95.00 15.00 1.6 full_array -dump
+randst 0.25 28.00 28.00 95.00 15.00 2.0 full_array -dump
+
+randst 0.25 18.50 28.00 94.00 15.00 1.5 full_array -dump
+randst 0.25 18.60 28.60 94.00 15.00 1.53 full_array -dump
+randst 0.25 19.00 29.00 94.00 15.00 1.6 full_array -dump
+randst 0.25 23.00 32.00 94.00 15.00 2.0 full_array -dump
+
+stad 0.25 3.00 1.50 0.00 15.00 0.00 full_array -dump
+stad 0.25 4.00 1.00 0.00 15.00 0.00 full_array -dump
+stad 0.25 4.00 1.50 0.00 15.00 0.00 full_array -dump
+stad 0.25 3.00 2.00 0.00 15.00 0.00 full_array -dump
+stad 0.25 3.00 0.50 0.00 15.00 0.00 full_array -dump
+stad 0.25 4.00 2.00 0.00 15.00 0.00 full_array -dump
+
+stad 0.25 3.00 1.50 0.00 15.00 0.00 exact -dump
+stad 0.25 4.00 1.00 0.00 15.00 0.00 exact -dump
+
+06/30
+randst 0.25 28.00 28.00 95.00 15.00 full_array 0.00 10.00
+got one file output but then got cut off
+
+randst 0.25 19.00 29.00 94.00 15.00 1.6 full_array -dump
+got to 8647 output files than quit
+
+randst 0.25 23.00 32.00 94.00 15.00 2.0 full_array -dump
+got one file output but then got cut off
+
+randst 0.25 10.00 17.00 94.00 15.00 .5 full_array -dump
+goes up to file 18895 and then gets cut off
+
+randst 0.25 12.00 19.00 94.00 15.00 .8 full_array -dump
+goes up to file 16435 gets cut off
+
+randst 0.25 8.00 8.00 95.00 15.00 .5 full_array -dump
+file 40008 and then gets cut off
+
+randst 0.25 10.00 10.00 95.00 15.00 .8 full_array -dump
+file 19687 and then gets cut off
+
+randst 0.25 23.00 23.00 95.00 15.00 1.8 full_array -dump
+randst 0.25 21.00 31.00 94.00 15.00 1.8 full_array -dump
+
+07/01
+Watching movies:
+
+randst 0.25 10.00 17.00 94.00 15.00 .5 full_array -dump
+randst 0.25 12.00 19.00 94.00 15.00 .8 full_array -dump
+
+randst 0.25 18.50 28.00 94.00 15.00 1.5 full_array -dump
+randst 0.25 18.60 28.60 94.00 15.00 1.53 full_array -dump
+randst 0.25 19.00 29.00 94.00 15.00 1.6 full_array -dump
+randst 0.25 23.00 32.00 94.00 15.00 2.0 full_array -dump
+
+randst 0.25 8.00 8.00 95.00 15.00 .5 full_array -dump
+randst 0.25 10.00 10.00 95.00 15.00 .8 full_array -dump
+
+randst 0.25 18.50 18.50 95.00 15.00 1.35 full_array -dump
+randst 0.25 21.00 21.00 95.00 15.00 1.6 full_array -dump
+randst 0.25 28.00 28.00 95.00 15.00 2.0 full_array -dump
+
+
+07/03
+New simulations:
+
+randst 0.25 16.00 26.00 94.00 15.00 1.3 full_array -dump
+randst 0.25 14.00 24.00 94.00 15.00 1.1 full_array -dump
+
+randst 0.25 17.00 17.00 95.00 15.00 1.2 full_array -dump
+randst 0.25 15.00 15.00 95.00 15.00 1.0 full_array -dump
+
+randst 0.25 25.00 25.00 95.00 15.00 2.0 full_array -dump
+randst 0.25 23.00 32.00 94.00 15.00 2.0 full_array -dump
+
+
+07/15
+
+movies:
+randst 0.25 15.00 15.00 95.00 15.00 1.0 full_array -dump while there
+does seem to be a back and forth behavoir, the peaks themselves seem
+to pop up in different places, within the range of an entire side,
+sometimes even not along the edges of the cell (although most often at
+the edges of the cell)
+
+randst 0.25 17.00 17.00 95.00 15.00 1.2 full_array -dump not a lot of
+red peaks, the near red peaks seem to pop up in roughly a back and
+forth manner, but once again picking different positions within the
+broader end sections
+
+randst 0.25 18.50 18.50 95.00 15.00 full_array -dump very faint
+back and forth behavoir but very random.  Also for the most part
+weaker maxima, or at least what seemed like weaker maxima.  Bottom
+left corner (which has high radii of curvature) did seem to see a lot
+forth maxima, however
+
+randst 0.25 21.00 21.00 95.00 15.00 full_array -dump Random
+placement of maxima, maybe see very faint back and forth pattern.
+
+randst 0.25 25.00 25.00 95.00 15.00 full_array -dump Random
+placement of maxima, don't see much back and forth maxima, more like a
+roaming group of protein that choose to maximize sometimes.
+
+******************************************
+The 94.00 mannik shape, which my version is more pill shaped than my
+other mannik shape, shows more regular pole to pole oscillation
+
+
+randst 0.25 14.00 24.00 94.00 15.00 full_array -dump the just red
+peaks seemed to be a little more regular in where they occured, on
+opposite ends, but there were definitely a few peaks in odd places
+(along top or in middle) and many yellow, almost red peaks in
+non-corner places.  Also there's a few dominant maxima in the corner and
+most of the rest of the peaks were very weak compared.
+
+randst 0.25 16.00 26.00 94.00 15.00 full_array -dump the just red
+peaks seemed to be a little more regular in where they occured, on
+opposite ends, but there were definitely a few peaks in odd places
+(along top or in middle) and many yellow, almost red peaks in
+non-corner places.  Also there's a few dominant maxima in the corner and
+most of the rest of the peaks were very weak compared.
+
+randst 0.25 18.60 28.60 94.00 15.00 full_array -dump Hard to see
+the difference between this and those smaller than this.
+
+
+*******************************************
+stadium shapes:
+
+stad 0.25 4.00 2.00 0.00 15.00 full_array -dump Definite back and
+forth, maximia almost always at ends
+
+stad 0.25 3.00 2.00 0.00 15.00 full_array -dump Definite back and
+forth, maximia almost always at ends. Same as above
+
+stad 0.25 6.00 2.00 0.00 15.00 full_array -dump Definite back and
+forth maximizing, everytime maximized on the ends.  Seemed there's a
+bias towards the upper side, which terrifies me (means something is
+wrong with simulation? I'll check this out and if need be run slightly
+different shape)
+
+pill definitely back and forth.
+
+So the message is that it is indeed the shape.  As it gets larger it
+gets more random, as it gets further away from the pill shape it gets
+more random as well.  Need arrow plots to show this.  Which ones?
+
+Mannik shapes, smaller, like 1.1, mannik size, and 2.0, showing arrows
+showing random nature.
+
+
+box:
+stad 0.25 5.00 2.50 0.00 15.00 full_array 100.00 1000.00 &
+stad 0.25 6.00 2.00 0.00 15.00 full_array 100.00 1000.00 &
+Both these have very regular oscillations throughout simulation.  Similar to pill box
+plots.
+
+All pills show the back and forth oscillations in box plots.
+
+Time-map-plots:
+Pills show perfect increase on edges
+
+stad 0.25 5.00 2.50 0.00 15.00 full_array 100.00 1000.00 & shows equal
+bias on edges, about 1.4 of that in middle, although middle varies too
+
+stad 0.25 6.00 2.00 0.00 15.00 full_array 100.00 1000.00 & shows
+higher bias on edges, although it's assymetric between up and down
+directions.  This simulation went for less time
