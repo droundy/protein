@@ -31,13 +31,19 @@ from mpl_toolkits.axes_grid.anchored_artists import AnchoredSizeBar
 #boxName. returns list of protein counts at each time.
 #box-plot--p-0.50-0.50-0.00-0.00-15.00-exact.dat
 
+sim_type = load.sim_type
+if sim_type == "full_array":
+    sim_type = "-full_array"
+else:
+    sim_type = ""
+
 def returnData(boxName,proteinType):
 
     #open the data file, grab the line with the correct protein type and box partition, load it as a [string] (so we can use list comprehensions)
-    filename = "./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s-%s.dat" % (load.f_shape,load.debug_str,load.hires_str,
+    filename = "./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s%s.dat" % (load.f_shape,load.debug_str,load.hires_str,
                                                                              load.slice_str,load.f_shape,load.f_param1,
                                                                              load.f_param2,load.f_param3,
-                                                                             load.f_param4,load.f_param5,load.sim_type)
+                                                                             load.f_param4,load.f_param5,sim_type)
     print 'loading', filename
     with open(filename,"r") as boxData:
         proteinsOverTime = [line for line in boxData if (proteinType in line) and (boxName in line)]
@@ -108,7 +114,7 @@ def find_period(f):
     return (penultimate_min, lastmin)
 
 def main():
-    filename = "./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s-%s.dat"%(load.f_shape,load.debug_str,load.hires_str,load.slice_str,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5,load.sim_type)
+    filename = "./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s%s.dat"%(load.f_shape,load.debug_str,load.hires_str,load.slice_str,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5,sim_type)
     print 'loading', filename
     with open(filename, "r") as boxData:
         fileLines = boxData.readlines()

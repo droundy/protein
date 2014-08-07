@@ -54,8 +54,8 @@ class data(object):
         self.filenames = get_filenames(protein,sim_type,start_time,end_time)
         self.tsteps = len(self.filenames)
         self.dataset = np.array([np.loadtxt(file) for file in self.filenames])
-        for file in self.filenames:
-            print 'loading', file
+        # for file in self.filenames:
+        #     print 'loading', file
         self.datashape = self.dataset[0].shape
         self.axes = [[i*dx for i in range(self.datashape[1])],[j*dx for j in range(self.datashape[0])]]
 
@@ -67,9 +67,13 @@ def get_filenames(protein,sim_type,start_time,end_time):
         end_time = 10000
     for f_num in np.arange(start_time,end_time,dump_time_step):
         file_num = round(f_num/dump_time_step)
-        fname = "./data/shape-%s/%s%s%s%s-%s-%s-%s-%s-%s-%s-%03d-%s.dat"% \
-        (f_shape,debug_str,hires_str,slice_str,protein,f_shape,f_param1,f_param2,f_param3,f_param4,f_param5,file_num,sim_type)
-        #print fname
+        fname = ""
+        if sim_type == "":
+            fname = "./data/shape-%s/%s%s%s%s-%s-%s-%s-%s-%s-%s-%03d.dat"% \
+                (f_shape,debug_str,hires_str,slice_str,protein,f_shape,f_param1,f_param2,f_param3,f_param4,f_param5,file_num)
+        else:
+            fname = "./data/shape-%s/%s%s%s%s-%s-%s-%s-%s-%s-%s-%03d-%s.dat"% \
+                (f_shape,debug_str,hires_str,slice_str,protein,f_shape,f_param1,f_param2,f_param3,f_param4,f_param5,file_num,sim_type)
         if os.path.isfile(fname):
             dat_filenames.append(fname)
     if git_add_files:
@@ -85,7 +89,8 @@ def get_filenames(protein,sim_type,start_time,end_time):
 def print_string(plot_name,p):
     arg = [str(int(100*(float(i)))) for i in sys.argv[2:7]]
     filename = "./data/shape-%s/plots/%s%s%s%s-%s-%s-%s-%s-%s-%s-%s-%s.pdf"% \
-    (f_shape, debug_str, hires_str, slice_str, plot_name, p, f_shape, arg[0], arg[1], arg[2], arg[3], arg[4],sim_type)
+        (f_shape, debug_str, hires_str, slice_str, plot_name, p, f_shape, arg[0], arg[1], arg[2], arg[3], arg[4],sim_type)
+    print "printing to ",filename
     return filename
 
 #"./data/shape-"+f_shape+"/"debug_str+hires_str+slice_str+protein+"-"+f_shape+"-"+f_param1+"-"+f_param2+"-"+f_param3+"-"+f_param4+"-"+f_param5+"*.dat"

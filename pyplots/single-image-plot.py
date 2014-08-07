@@ -26,62 +26,45 @@ start_time = float(f_param6)
 end_time = float(f_param7)
 
 
-def gaussian_smear(data,wavelength):
-    new = np.zeros_like(data)
-    new = new[0:len(new)/skip_times]
-    n_sin_theta = 1.5
-    sigma = wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
-    dis = int(3*sigma/0.05) #for now
-    for num in range(new.shape[0]):
-        print "num ",num," of ",new.shape[0]-1
-        for x in range(new.shape[1]):
-            print x," of ",new.shape[1]-1
-            for y in range(new.shape[2]):
-                for i in np.arange(-dis,dis,1):
-                    for j in np.arange(-dis,dis,1):
-                        if (x+i >= 0 and x+i < new.shape[1]-1 and y+j >= 0 and y+j < new.shape[2]-1):
-                            new[num,x+i,y+j] += data[num*skip_times,x,y]*math.exp( -(i*i+j*j)*.05*.05/sigma/sigma )
-    return new
+proteinList = ["nADP","nATP","ND","NDE","nE",]
+proteinLabels = ["MinD:ADP (cyto)","MinD:ATP (cyto)","MinD:ATP (mem)","MinD:MinE:ATP (mem)","MinD:E (cyto)",]
+
+plt.figure(figsize=(9,3.5))
+times  = np.arange(float(start_time),float(end_time),1.0)
+print "Starting single image plot."
+print times
 
 
 #computes the global maximum over a set of two dimensional arrays (stored as files)
-def timemax(protein):
-    return max([v.max() for v in protein])
-
-proteinList = ["nADP","nATP","ND","NDE","nE",]
-#proteinList = ["nATP"]
-proteinLabels = ["MinD:ADP (cyto)","MinD:ATP (cyto)","MinD:ATP (mem)","MinD:MinE:ATP (mem)","MinD:E (cyto)",]
-
-proteins = [0]*len(proteinList)
-
-for i in range(len(proteinList)):
-    proteins[i] = load.data(proteinList[i],sim_type,start_time,end_time)
+def timemax(data):
+    return max([v.max() for v in data])
 
 plt.figure(figsize=(9,3.5))
 numtimes = int(end_time/dump_time_step)- int(start_time/dump_time_step)
-numproteins = len(proteins)
-dZ = proteins[0].datashape[1]*1.05
-dY = proteins[0].datashape[0]*2.00/skip_times
+numproteins = len(proteinList)
 
 #axes = plt.subplot(1, 1, 1, axisbg='black')
 
-for i in range(len(proteins)):
+for i in range(len(proteinList)):
     print proteinList[i]
     nlevels = 20
-    Z, Y = np.meshgrid(np.arange(0,proteins[i].dataset[0].shape[1],1),
-                       np.arange(0,proteins[i].dataset[0].shape[0],1))
 #generate a sequence of .png's for each file (printed time step). these will be used to create a gif.
-    smeared_data = gaussian_smear(proteins[i].dataset,.6) #this is in microns green light at 500nm,
-    # if (proteinList[i]=="ND" or proteinList[i]=="NDE"):
-    #     maxval = timemax(proteins[i].dataset)/4
-    # else:
-    #     maxval = timemax(proteins[i].dataset)
+    smeared_data = [0]*len(times)
+    for j in range(len(times)):
+        arrow_file = './data/shape-'+f_shape+'/plots/gaussian-data/'+str(proteinList[i])+ \
+            '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-' \
+            +sim_type+'-'+str(times[j])+'.dat'
+        smeared_data[j] = np.loadtxt(arrow_file) #this is in microns green light at 500nm,
+    dZ = smeared_data[0].shape[1]*1.05
+    dY = smeared_data[0].shape[0]*2.00/skip_times
+    Z, Y = np.meshgrid(np.arange(0,smeared_data[0].shape[1],1),
+                       np.arange(0,smeared_data[0].shape[0],1))
     maxval = timemax(smeared_data)
     mylevels = np.linspace(0,(1+1.0/nlevels)*maxval,nlevels)
     for k in range(len(smeared_data)):
         page = smeared_data[k]
         page[page>maxval] = maxval
-        plt.contourf(Y+k*dY, proteins[0].datashape[1]-Z+i*dZ, page, cmap=plt.cm.hot_r, levels=mylevels)
+        plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=plt.cm.hot_r, levels=mylevels)
 plt.axes().get_yaxis().set_ticks([(i+0.5)*dZ for i in range(len(proteinList))])
 plt.axes().get_yaxis().set_ticklabels(proteinLabels)
 plt.axes().get_xaxis().set_ticks([(0.5+k)*dY for k in range(len(smeared_data))[::int(2.5*skip_times)]])

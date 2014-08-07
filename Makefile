@@ -17,8 +17,12 @@ protein_microscopy: protein_microscopy.cpp protein_weights.cpp protein_utils.cpp
 # to build our paper.  Or jpg files or whatever.
 ALL_FIGURES = \
 	paper/reactions.pdf \
-	data/shape-randst/plots/box-plot_D--randst-25-800-800-9500-1500.pdf \
-	data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf
+	data/shape-randst/plots/box-plot_D--randst-25-800-800-9500-1500-exact.pdf \
+	data/shape-randst/plots/box-plot_D--randst-25-1000-1700-9400-1500-exact.pdf \
+	data/shape-stad/plots/ave-time/plot-time-averaged-arrow-300-1600-NflD-stad-25-400-150-0-1500-full_array.pdf \
+	data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf \
+	data/shape-p/plots/single-image-plot--p-300-50-0-0-1500-full_array.pdf \
+	paper/plot-ave.pdf
 
 paper/paper.pdf: paper/paper.tex ${ALL_FIGURES}
 	echo ${ALL_FIGURES}
@@ -32,13 +36,25 @@ paper/reactions.pdf: paper/reactions.svg
 	inkscape --export-pdf $@ $<
 
 # start time 29.501, period 45.002
-data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf: pyplots/image_plot.py fixme-add-data-here.dat
+data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf: pyplots/image_plot.py
 	mkdir -p data/shape-p/plots
-	python $< p 3.00 0.50 0.00 0.00 15.00 266.00 304.00
+	python $< p 3.00 0.50 0.00 0.00 15.00 exact 266.00 304.00
 
-data/shape-randst/plots/paper-arrow-plot.pdf: paper/arrow-plot.py fixme-add-data-here.dat
-	mkdir -p data/shape-randst/plots
-	python $<
+data/shape-p/plots/single-image-plot--p-300-50-0-0-1500-full_array.pdf: pyplots/single-image-plot.py
+	python $< p 3.00 0.50 0.00 0.00 15.00 full_array 330.00 368.00
 
-data/shape-randst/plots/box-plot_D--randst-25-800-800-9500-1500.pdf: pyplots/box_plot.py fix-me-add-files-here.dat
-	python pyplots/box_plot.py randst .25 8.00 8.00 95.00 15.00 exact 0 10
+paper/plot-ave.pdf: paper/plot-arrow-ave.py \
+	./data/shape-randst/plots/ave-time/maxima-arrowNflD-randst-0.25-18.50-18.50-95.00-15.00-full_array.dat \
+	./data/shape-randst/plots/ave-time/contour-values-300-1500-NflD-randst-0.25-18.50-18.50-95.00-15.00-full_array.dat
+	python paper/plot-arrow-ave.py
+
+data/shape-stad/plots/ave-time/plot-time-averaged-arrow-300-1600-NflD-stad-25-400-150-0-1500-full_array.pdf: pyplots/plot-ave-arrow.py \
+	./data/shape-stad/plots/ave-time/maxima-arrowNflD-stad-0.25-4.00-1.50-0.00-15.00-full_array.dat \
+	./data/shape-stad/plots/ave-time/contour-values-300-1600-NflD-stad-0.25-4.00-1.50-0.00-15.00-full_array.dat
+	python pyplots/plot-ave-arrow.py stad 0.25 4.00 1.50 0.00 15.00 full_array 300 1600
+
+data/shape-randst/plots/box-plot_D--randst-25-800-800-9500-1500-exact.pdf: pyplots/box_plot.py data/shape-randst/box-plot--randst-0.25-8.00-8.00-95.00-15.00.dat
+	python pyplots/box_plot.py randst 0.25 8.00 8.00 95.00 15.00 exact 0 5
+
+data/shape-randst/plots/box-plot_D--randst-25-1000-1700-9400-1500-exact.pdf: pyplots/box_plot.py data/shape-randst/box-plot--randst-0.25-10.00-17.00-94.00-15.00.dat
+	python pyplots/box_plot.py randst 0.25 10.00 17.00 94.00 15.00 exact 0 5

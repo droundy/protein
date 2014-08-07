@@ -36,6 +36,9 @@ contour_values = './data/shape-'+f_shape+'/plots/ave-time/contour-values-'+str(i
     +str(end_time)+'-'+protein_name+'-'+f_shape+'-'+f_param1+'-'+f_param2+'-' \
     +f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.dat'
 
+print arrow_file
+print contour_values
+
 c_data = np.loadtxt(contour_values)
 a_data = np.loadtxt(arrow_file)
 
@@ -112,6 +115,8 @@ plt.axis('off')
 #plt.title("Time-averaged density from "+str(start_time)+" to "+str(input_end_time))
 #plt.xlabel("Z position")
 #plt.ylabel("Y position")
-plt.savefig('./data/shape-'+f_shape+'/plots/ave-time/plot-time-averaged-arrow-'+str(int(start_time))+'-' \
-                +str(end_time)+'-'+protein_name+'-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-' \
-                +f_param4+'-'+dens_factor+'-'+sim_type+'.pdf')
+save_file_name = './data/shape-'+f_shape+'/plots/ave-time/plot-time-averaged-arrow-'+str(int(start_time))+'-' \
+                +str(end_time)+'-'+protein_name+'-'+f_shape+'-'+str(int(100*float(f_param1)))+'-'+str(int(100*float(f_param2))) \
+                +'-'+str(int(100*float(f_param3)))+'-'+str(int(100*float(f_param4)))+'-'+str(int(100*float(dens_factor)))+'-'+sim_type+'.pdf'
+print save_file_name
+plt.savefig(save_file_name)

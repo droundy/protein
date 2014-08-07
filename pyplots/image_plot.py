@@ -15,8 +15,8 @@ f_param2 = sys.argv[3]
 f_param3 = sys.argv[4]
 f_param4 = sys.argv[5]
 f_param5 = sys.argv[6]
-start_time = float(sys.argv[7])
-end_time = float(sys.argv[8])
+start_time = float(sys.argv[8])
+end_time = float(sys.argv[9])
 
 
 dump_time_step = 0.5
@@ -39,7 +39,7 @@ proteinLabels = ["MinD:ADP (cyto)",
 proteins = [0]*len(proteinList)
 
 for i in range(len(proteinList)):
-    proteins[i] = load.data(proteinList[i],start_time,end_time)
+    proteins[i] = load.data(proteinList[i],"",start_time,end_time)
 
 plt.figure(figsize=(9,3.5)).patch.set_alpha(0)
 numtimes = int(end_time/dump_time_step)- int(start_time/dump_time_step)
@@ -48,6 +48,8 @@ skip_times = 2 # only plot every skip_times of the snapshots
 dZ = proteins[0].datashape[1]*1.05
 dY = proteins[0].datashape[0]*1.1/skip_times
 kvals = range(0, int(end_time/dump_time_step)-int(start_time/dump_time_step), skip_times)
+
+print "Starting image plot."
 
 for i in range(len(proteins)):
     if (proteinList[i]=="ND" or proteinList[i]=="NDE"):
