@@ -89,10 +89,18 @@ for i in range(len(a_data[:,1])):
 print x_vals
 print y_vals
 
-plt.figure()
-plt.clf()
 #don't know why but the stad 5.00 nees to switch this second value to c_data.shape[0]-.9 not c_data.shape[0]
 Z, Y = np.meshgrid(np.arange(0,(c_data.shape[1]-.9)*dx,dx),np.arange(0,(c_data.shape[0]-.9)*dx,dx))
+
+print '*******************************************************************'
+print c_data.shape
+print '*******************************************************************'
+zwidth = Z.max() - Z.min()
+ywidth = Y.max() - Y.min()
+figwidth = 6
+barwidth = 0.2*6
+plt.figure(figsize=(figwidth,(figwidth - barwidth)*ywidth/zwidth)) # leave room for the colorbar!
+plt.clf()
 
 print "start"
 print len(Z)
@@ -103,12 +111,28 @@ print len(c_data)
 print len(c_data[0])
 
 plt.axes().set_aspect('equal', 'datalim')
-CS = plt.contourf(Z, Y, c_data, cmap=plt.cm.jet,origin='lower',levels=np.arange(0,time_max+1.0,1))
-#cbar = plt.colorbar(CS)
+cdata = np.array([[0  ,1,1,1],
+                  [.1 ,1,1,1],
+                  [.25,0.8,.8,1],
+                  [.5 ,0,.8,.8],
+                  [.7 ,1,1,0],
+                  [.9 ,1,0,0],
+                  [1  ,0,0,0]])
+cdict = {'red':   [],
+         'green': [],
+         'blue':  []}
+for i in range(cdata.shape[0]):
+    print 'color', i
+    cdict['red']   += [(cdata[i, 0], cdata[i, 1], cdata[i, 1])]
+    cdict['green'] += [(cdata[i, 0], cdata[i, 2], cdata[i, 2])]
+    cdict['blue']  += [(cdata[i, 0], cdata[i, 3], cdata[i, 3])]
+cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
+CS = plt.contourf(Z, Y, c_data, cmap=cmap,origin='lower',levels=np.arange(0,time_max+1.0,1))
+cbar = plt.colorbar(CS)
 
 for i in range(len(x_vals)-1):
     plt.annotate('%g'%i,xy=(y_vals[i+1],x_vals[i+1]),xytext=(y_vals[i],x_vals[i]),
-                 fontsize=7,
+                 fontsize=9,
                  arrowprops=dict(color='red',shrink=0.01, width=.3, headwidth=5.))
 plt.clim(0,time_max)
 plt.axis('off')
