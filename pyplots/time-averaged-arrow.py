@@ -50,7 +50,7 @@ def gaussian_smear(data,wavelength,protein):
     n_sin_theta = 1.5
     sigma = wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
     dis = int(3*sigma/0.05) #for now
-    arrow_file = './data/shape-'+f_shape+'/plots/ave-time/maxima-arrow'+str(protein)+ \
+    arrow_file = './data/shape-'+f_shape+'/plots/ave-time/maxima-arrow-'+str(int(input_start_time))+'-'+str(protein)+ \
         '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.dat'
     p_file = open(arrow_file,'w')
     p_file.close()

@@ -19,11 +19,6 @@ import matplotlib.gridspec as gridspec
 
 
 
-  # \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-1500-95-stoch}
-  # \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-1850-95-stoch}
-  # \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-2500-95-stoch}
-
-
 
 dx =0.05
 dump_time_step = 0.5
@@ -32,13 +27,10 @@ protein_name = "NflD"
 # input_end_time = float(f_param7)
 #end_time = int(input_end_time - input_end_time%10)
 
-# arg_set = ["randst-0.25-15.00-15.00-95.00-15.00",
-#            "randst-0.25-18.50-18.50-95.00-15.00",
-#            "randst-0.25-25.00-25.00-95.00-15.00"]
+arg_set = ["randst-0.25-18.50-18.50-95.00-15.00",
+           "randst-0.25-18.60-28.60-94.00-15.00"]
 
-arg_set = ["randst-0.25-18.50-18.50-95.00-15.00"]
-
-bound_times = ["300","1500","300","1100","300","920"]
+bound_times = ["300","1500","300","1100"]
 
 arrow_files = []
 contour_values = []
@@ -67,28 +59,38 @@ for i in range(len(contour_values)):
 if len(contour_values) > 1:
     hts += [hts[1]]
 
-# gs = gridspec.GridSpec(len(arg_set)+1,1,
-#                        height_ratios=hts,
-#                        )
-gs = gridspec.GridSpec(len(arg_set)+1,1)
+gs = gridspec.GridSpec(2,2)
 
-for arg_num in range(len(arg_set)+1):
+for arg_num in range(len(arg_set)+2):
 #    plt.subplot2grid((len(arg_set)+1,1),(arg_num,0),aspect='equal')
-    plt.subplot(gs[arg_num,0],aspect='equal')
     #gs_in = gridspec.GridSpec(arg_num,0)
     #gs_in.update(left=.3+arg_num*.1,right=.8)
-    if arg_num == len(arg_set):
-            m1=mpimg.imread('mannik-1.png')
-            dx = 7.0/380
-            print m1.shape[1]
-            y1 = -dx*np.arange(0, m1.shape[0])
-            x1 = dx*np.arange(0, m1.shape[1])
-            x1, y1 = np.meshgrid(x1, y1)
-            xcenter = x1[m1[:,:,0] > 0].mean()
-            y1off = 1.7#1.7 and there was only one yoff, not two
-            plt.contourf(x1-xcenter, y1-y1off, m1[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
-            plt.contourf(x1-xcenter, y1-y1off, m1[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
+    if arg_num == 2:
+        plt.subplot(gs[0,0],aspect='equal')
+        m1=mpimg.imread('mannik-1.png')
+        dx = 7.0/380
+        print m1.shape[1]
+        y1 = -dx*np.arange(0, m1.shape[0])
+        x1 = dx*np.arange(0, m1.shape[1])
+        x1, y1 = np.meshgrid(x1, y1)
+        xcenter = x1[m1[:,:,0] > 0].mean()
+        y1off = 1.7#1.7 and there was only one yoff, not two
+        plt.contourf(x1-xcenter, y1-y1off, m1[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
+        plt.contourf(x1-xcenter, y1-y1off, m1[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
+    elif arg_num == 3:
+        plt.subplot(gs[0,1],aspect='equal')
+        m1=mpimg.imread('mannik-2.png')
+        dx = 7.0/380
+        print m1.shape[1]
+        y1 = -dx*np.arange(0, m1.shape[0])
+        x1 = dx*np.arange(0, m1.shape[1])
+        x1, y1 = np.meshgrid(x1, y1)
+        xcenter = x1[m1[:,:,0] > 0].mean()
+        y1off = 1.7#1.7 and there was only one yoff, not two
+        plt.contourf(x1-xcenter, y1-y1off, m1[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
+        plt.contourf(x1-xcenter, y1-y1off, m1[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
     else:
+        plt.subplot(gs[1,arg_num],aspect='equal')
     #plt.set_aspect('equal')
         # rect = [.2, .2+arg_num*.3, .6, .3]
         # plt.axes(rect)
@@ -117,7 +119,7 @@ for arg_num in range(len(arg_set)+1):
                 exit(0)
 
         time_max = np.max(c_data)
-        arrow_cutoff = 3.5*(np.max(a_data[:,1]))/5.0
+        arrow_cutoff = 3.0*(np.max(a_data[:,1]))/5.0
 
         high_maximas = np.zeros(0)
         times = np.zeros(0)

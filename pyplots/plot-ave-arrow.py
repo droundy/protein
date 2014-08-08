@@ -29,7 +29,7 @@ start_time = float(f_param6)
 input_end_time = float(f_param7)
 end_time = int(input_end_time - input_end_time%10)
 
-arrow_file = './data/shape-'+f_shape+'/plots/ave-time/maxima-arrow'+protein_name+ \
+arrow_file = './data/shape-'+f_shape+'/plots/ave-time/maxima-arrow-'+str(int(start_time))+'-'+protein_name+ \
     '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.dat'
 
 contour_values = './data/shape-'+f_shape+'/plots/ave-time/contour-values-'+str(int(start_time))+'-' \
@@ -40,13 +40,15 @@ print arrow_file
 print contour_values
 
 c_data = np.loadtxt(contour_values)
+print os.path.isfile(arrow_file)
 a_data = np.loadtxt(arrow_file)
 
-print a_data[:,0]
+print a_data
+print "this ",a_data[:,0]
 print len(a_data[:,0])
 
 print "hello",str((end_time-start_time)*dump_time_step)
-a_data = a_data[int((start_time-300)/dump_time_step):int((end_time-start_time)/dump_time_step)]
+a_data = a_data[0:int((end_time-start_time)/dump_time_step)]
 
 print a_data[:,0]
 print len(a_data[:,0])
@@ -82,10 +84,6 @@ for i in range(len(a_data[:,1])):
             times = np.append(times,a_data[i,0])
             last_x = a_data[i,2]*dx
             last_y = a_data[i,3]*dx
-            # print ""
-            # print 'v ',a_data[i,1]
-            # print 'x ',a_data[i,2]*dx
-            # print 'y ',a_data[i,3]*dx
 print x_vals
 print y_vals
 
@@ -112,10 +110,7 @@ for i in range(len(x_vals)-1):
                  arrowprops=dict(color='red',shrink=0.01, width=.3, headwidth=5.))
 plt.clim(0,time_max)
 plt.axis('off')
-#plt.title("Time-averaged density from "+str(start_time)+" to "+str(input_end_time))
-#plt.xlabel("Z position")
-#plt.ylabel("Y position")
-save_file_name = './data/shape-'+f_shape+'/plots/ave-time/plot-time-averaged-arrow-'+str(int(start_time))+'-' \
+save_file_name = './data/shape-'+f_shape+'/plots/plot-time-averaged-arrow-'+str(int(start_time))+'-' \
                 +str(end_time)+'-'+protein_name+'-'+f_shape+'-'+str(int(100*float(f_param1)))+'-'+str(int(100*float(f_param2))) \
                 +'-'+str(int(100*float(f_param3)))+'-'+str(int(100*float(f_param4)))+'-'+str(int(100*float(dens_factor)))+'-'+sim_type+'.pdf'
 print save_file_name
