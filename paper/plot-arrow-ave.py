@@ -20,6 +20,7 @@ import matplotlib.gridspec as gridspec
 
 
 
+
 dx =0.05
 dump_time_step = 0.5
 protein_name = "NflD"
@@ -38,8 +39,6 @@ for i in range(len(arg_set)):
     arrow_files += ['./data/shape-randst/plots/ave-time/maxima-arrowNflD-'+arg_set[i]+'-full_array.dat']
     contour_values += ['./data/shape-randst/plots/ave-time/contour-values-'+bound_times[i*2]+'-' \
         +bound_times[i*2+1]+'-NflD-'+arg_set[i]+'-full_array.dat']
-    print arrow_files
-    print contour_values
 
 
 plt.figure(1)
@@ -56,6 +55,7 @@ hts = []
 for i in range(len(contour_values)):
     c_data = np.loadtxt(contour_values[i])
     hts += [float(c_data.shape[1])]
+
 if len(contour_values) > 1:
     hts += [hts[1]]
 
