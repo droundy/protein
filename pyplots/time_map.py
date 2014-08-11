@@ -26,7 +26,10 @@ def gaussian_smear(data,wavelength):
 proteinList = ["NflD"]
 
 for protein in proteinList:
-    data_file = np.loadtxt("./data/shape-%s/time-map-%s-%s-%s-%s-%s-%s-%s-%s.dat"%(load.f_shape,protein,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5,load.sim_type))
+    data_file_name = "./data/shape-%s/time-map-%s-%s-%s-%s-%s-%s-%s-%s.dat"%(load.f_shape,protein,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5,load.sim_type)
+    data_file = np.loadtxt(data_file_name)
+
+    print "starting time_map.p for ",data_file_name
 
     data = gaussian_smear(data_file,.6)
     timemax = np.max(data)

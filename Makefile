@@ -22,6 +22,12 @@ ALL_FIGURES = \
 	data/shape-stad/plots/plot-time-averaged-arrow-500-520-NflD-stad-25-400-150-0-1500-full_array.pdf \
 	data/shape-p/plots/image-plot--p-300-50-0-0-1500.pdf \
 	data/shape-p/plots/single-image-plot--p-300-50-0-0-1500-full_array.pdf \
+	data/shape-stad/plots/time-map-NflD-stad-25-600-200-0-1500-full_array.pdf \
+	data/shape-stad/plots/time-map-NflD-stad-25-400-150-0-1500-full_array.pdf \
+	data/shape-randst/plots/time-map-NflD-randst-25-1850-1850-9500-1500-full_array.pdf \
+	data/shape-randst/plots/time-map-NflD-randst-25-2500-2500-9500-1500-full_array.pdf \
+	data/shape-randst/plots/time-map-NflD-randst-25-1860-2860-9400-1500-full_array.pdf \
+	data/shape-randst/plots/time-map-NflD-randst-25-2300-3200-9400-1500-full_array.pdf \
 	paper/plot-ave.pdf
 
 paper/paper.pdf: paper/paper.tex ${ALL_FIGURES}
@@ -58,3 +64,22 @@ data/shape-randst/plots/box-plot_D--randst-25-800-800-9500-1500-exact.pdf: pyplo
 
 data/shape-randst/plots/box-plot_D--randst-25-1000-1700-9400-1500-exact.pdf: pyplots/box_plot.py data/shape-randst/box-plot--randst-0.25-10.00-17.00-94.00-15.00.dat
 	python pyplots/box_plot.py randst 0.25 10.00 17.00 94.00 15.00 exact 0 5
+
+data/shape-stad/plots/time-map-NflD-stad-25-600-200-0-1500-full_array.pdf: pyplots/time_map.py \
+	data/shape-stad/time-map-NflD-stad-0.25-6.00-2.00-0.00-15.00-full_array.dat
+	python pyplots/time_map.py stad 0.25 6.00 2.00 0.00 15.00 full_array 0.00 10.00
+data/shape-stad/plots/time-map-NflD-stad-25-400-150-0-1500-full_array.pdf: pyplots/time_map.py \
+	data/shape-stad/time-map-NflD-stad-0.25-4.00-1.50-0.00-15.00-full_array.dat
+	python pyplots/time_map.py stad 0.25 4.00 1.50 0.00 15.00 full_array 0.00 10.00
+data/shape-randst/plots/time-map-NflD-randst-25-1850-1850-9500-1500-full_array.pdf: pyplots/time_map.py \
+	data/shape-randst/time-map-NflD-randst-0.25-18.50-18.50-95.00-15.00-full_array.dat
+	python pyplots/time_map.py randst 0.25 18.50 18.50 95.00 15.00 full_array 0.00 10.00
+data/shape-randst/plots/time-map-NflD-randst-25-2500-2500-9500-1500-full_array.pdf: pyplots/time_map.py \
+	data/shape-randst/time-map-NflD-randst-0.25-25.00-25.00-95.00-15.00-full_array.dat
+	python pyplots/time_map.py randst 0.25 25.00 25.00 95.00 15.00 full_array 0.00 10.00
+data/shape-randst/plots/time-map-NflD-randst-25-1860-2860-9400-1500-full_array.pdf: pyplots/time_map.py \
+	data/shape-randst/time-map-NflD-randst-0.25-18.60-28.60-94.00-15.00-full_array.dat
+	python pyplots/time_map.py randst 0.25 18.60 28.60 94.00 15.00 full_array 0.00 10.00
+data/shape-randst/plots/time-map-NflD-randst-25-2300-3200-9400-1500-full_array.pdf: pyplots/time_map.py \
+	data/shape-randst/time-map-NflD-randst-0.25-23.00-32.00-94.00-15.00-full_array.dat
+	python pyplots/time_map.py randst 0.25 23.00 32.00 94.00 15.00 full_array 0.00 10.00
