@@ -64,7 +64,7 @@ for i in range(1,len(a_data[:,0])):
 
 
 time_max = np.max(c_data)
-arrow_cutoff = 3.0*(np.max(a_data[:,1]))/5.0
+arrow_cutoff = 3.2*(np.max(a_data[:,1]))/5.0
 
 high_maximas = np.zeros(0)
 times = np.zeros(0)
@@ -133,7 +133,7 @@ for i in range(len(x_vals)-1):
                  fontsize=9,
                  arrowprops=dict(color='red',shrink=0.01, width=.3, headwidth=5.))
 plt.clim(0,time_max)
-plt.axis('off')
+#plt.axis('off')
 save_file_name = './data/shape-'+f_shape+'/plots/plot-time-averaged-arrow-'+str(int(start_time))+'-' \
                 +str(end_time)+'-'+protein_name+'-'+f_shape+'-'+str(int(100*float(f_param1)))+'-'+str(int(100*float(f_param2))) \
                 +'-'+str(int(100*float(f_param3)))+'-'+str(int(100*float(f_param4)))+'-'+str(int(100*float(dens_factor)))+'-'+sim_type+'.pdf'
