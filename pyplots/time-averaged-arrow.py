@@ -47,8 +47,9 @@ if (input_end_time >= total_number_of_files*dump_time_step):
 
 def gaussian_smear(data,wavelength,protein):
     new = np.zeros_like(data[0])
-    n_sin_theta = 1.5
-    sigma = wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
+    N_A = 1.3
+    sigma = .21*wavelength/N_A #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
+    print "sigma ",sigma
     dis = int(3*sigma/0.05) #for now
     arrow_file = './data/shape-'+f_shape+'/plots/ave-time/maxima-arrow-'+str(int(input_start_time))+'-'+str(protein)+ \
         '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.dat'
@@ -67,9 +68,9 @@ def gaussian_smear(data,wavelength,protein):
                 for i in np.arange(-dis,dis,1):
                     for j in np.arange(-dis,dis,1):
                         if (x+i >= 0 and x+i < new.shape[0]-1 and y+j >= 0 and y+j < new.shape[1]-1):
-                            new[x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/sigma/sigma )
+                            new[x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
                             total_light += new[x+i,y+j]
-                            max_data[x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/sigma/sigma )
+                            max_data[x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
         print "total proteins = ",total_light/(num+1)
         print "total proteins = ",total_proteins
         maxima = 0
@@ -98,4 +99,4 @@ def gaussian_smear(data,wavelength,protein):
 
 
 data = load.data(protein=protein_name, sim_type=sim_type,start_time = input_start_time, end_time = input_end_time)
-smeared_data = gaussian_smear(data.dataset,.6,data.protein) #this is in microns green light at 500nm,
+smeared_data = gaussian_smear(data.dataset,.509,data.protein) #this is in microns green light at 500nm,

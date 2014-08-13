@@ -11,15 +11,16 @@ import math
 
 def gaussian_smear(data,wavelength):
     new = np.zeros_like(data)
-    n_sin_theta = 1.5
-    sigma = wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
+    N_A = 1.3
+    sigma = .21*wavelength/N_A #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
+    print "new way sigma ",sigma
     dis = int(3*sigma/0.05) #for now
     for x in range(new.shape[0]):
         for y in range(new.shape[1]):
             for i in np.arange(-dis,dis,1):
                 for j in np.arange(-dis,dis,1):
                     if (x+i >= 0 and x+i < new.shape[0]-1 and y+j >= 0 and y+j < new.shape[1]-1):
-                        new[x+i,y+j] += data[x,y]*math.exp( -(i*i+j*j)*.05*.05/sigma/sigma )
+                        new[x+i,y+j] += data[x,y]*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
     return new
 
 
@@ -31,7 +32,7 @@ for protein in proteinList:
 
     print "starting time_map.p for ",data_file_name
 
-    data = gaussian_smear(data_file,.6)
+    data = gaussian_smear(data_file,.509)
     timemax = np.max(data)
 
     plt.figure()
