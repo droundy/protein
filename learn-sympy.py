@@ -1,10 +1,32 @@
 from __future__ import division
-import matplotlib
-matplotlib.use('Agg')
-from sympy import *
-import numpy as np
-import difflib
-import matplotlib.pyplot as plt
+# import matplotlib
+# matplotlib.use('Agg')
+# from sympy import *
+# import numpy as np
+# import difflib
+# import matplotlib.pyplot as plt
+
+
+fac = 1
+A = .25
+B = 5.5
+C = B*(.5/3.0)
+pi = 3.14
+print "C ",C,"B ",B
+
+
+volume = pi*C*C*A + 2.0*C*B*A + (2.0*B + 2.0*pi*C)*pi*A*A/2.0
+
+print "stad volume = ",volume
+
+print "then for pill:"
+
+A = 3.4
+B = A*(.5/3.0)
+volume = 4.0/3.0*pi*B*B*B + pi*B*B*A
+print "B ",B,"A ",A
+print "pill volume = ",volume
+exit(0)
 
 
 rAD,rAT,rE,sDE,sD = symbols(r'\rho_{AD} \rho_{AT} \rho_{E} \sigma_{DE} \sigma_{D}')

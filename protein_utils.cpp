@@ -185,13 +185,14 @@ void test_the_amount_of_area(double *first_mem_A, std::string mem_f_shape){
   double A_ideal=0;
   if (mem_f_shape=="stad"){
     printf("This in here eh?\n");
-    double d_phi = 0.0001;
-    double Integral = 0;
-    for (double phi = 0; phi<M_PI; phi += d_phi){
-      double denominator = sqrt( (B*B*cos(phi)*cos(phi)) + (D*D*sin(phi)*sin(phi)) );
-      Integral += A*D*B*M_PI/2/denominator*d_phi;
-    }
-    A_ideal = 4*C*B + 2*M_PI*B*D + C*A*M_PI + M_PI*A*A/2 + 2*Integral;
+    // double d_phi = 0.0001;
+    // double Integral = 0;
+    // for (double phi = 0; phi<M_PI; phi += d_phi){
+    //   double denominator = sqrt( (B*B*cos(phi)*cos(phi)) + (D*D*sin(phi)*sin(phi)) );
+    //   Integral += A*D*B*M_PI/2/denominator*d_phi;
+    // }
+    //following is not perfect (you'd have to do an integral, but close enough:)
+    A_ideal = 2*C*B + 2*M_PI*C*C + 2*B*M_PI*A + 2*M_PI*C*M_PI*A;//2*Integral;
   }
   else if (mem_f_shape=="p"){
     A_ideal = 2*M_PI*B*A + 4*M_PI*B*B;
