@@ -34,6 +34,11 @@ if (input_start_time > input_end_time):
     exit(1)
 
 for i in range(0,20000):
+    job_string = "/data/shape-%s/%s-%s-%s-%s-%s%s/" % (load.f_shape,load.f_param1,load.f_param2,
+                                                       load.f_param3,load.f_param4,load.f_param5,sim_type)
+    p = re.compile('[.]')
+    job_string = p.sub('_',job_string)
+
     fname = "./data/shape-%s/%s-%s-%s-%s-%s-%s-%s-%03d-%s.dat"%(f_shape,protein_name,f_shape,f_param1,
                                                                 f_param2,f_param3,f_param4,dens_factor,i,sim_type)
     total_number_of_files += 1

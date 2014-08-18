@@ -91,6 +91,8 @@ struct protein {
   int* zmax;
 };
 
+
+
 char* print_filename(const char* plotname, const char* proteinname = NULL, int number = -1) {
   char* shape_dirname = new char[1024];
   sprintf(shape_dirname, "data/shape-%s", mem_f_shape.c_str());
@@ -456,15 +458,16 @@ int main (int argc, char *argv[]) {
 
   const int numProteins = 7;
 
-  protein* nATP_plot = new protein;
-  protein* nE_plot = new protein;
-  protein* nADP_plot = new protein;
-  protein* NDE_plot = new protein;
-  protein* ND_plot = new protein;
-  protein* NflD_plot = new protein;
-  protein* NflE_plot = new protein;
+  // protein* nATP_plot = new protein;
+  // protein* nE_plot = new protein;
+  // protein* nADP_plot = new protein;
+  // protein* NDE_plot = new protein;
+  // protein* ND_plot = new protein;
+  // protein* NflD_plot = new protein;
+  // protein* NflE_plot = new protein;
 
-  protein* proteinList[numProteins] = { nATP_plot, nADP_plot, nE_plot, ND_plot, NDE_plot, NflD_plot, NflE_plot };
+  // protein* proteinList[numProteins] = { nATP_plot, nADP_plot, nE_plot, ND_plot, NDE_plot, NflD_plot, NflE_plot };
+  protein* proteinList[numProteins] = { new protein, new protein, new protein, new protein, new protein, new protein, new protein};
   double* protein_arrs[numProteins] = { nATP, nADP, nE, ND, NDE, NflD, NflE };
 
   //initialize things
@@ -1045,7 +1048,6 @@ int main (int argc, char *argv[]) {
 
       //begin nATP printing.
       char *outfilenameATP = print_filename("movie-frame", "nATP", k);
-
       FILE *nATPfile = fopen((const char *)outfilenameATP,"w");
       delete[] outfilenameATP;
 
@@ -1417,7 +1419,17 @@ int main (int argc, char *argv[]) {
 
       for (int pNum=0; pNum<numProteins; pNum++) {
         //time map
-        char *timename = print_filename("time-map",proteinList[pNum]->name);
+        char *timename;
+        // the following cuts out the D_ and E_ that is extra
+        if (pNum == 4) {
+          timename = print_filename("time-map",proteinList[pNum]->name+4);
+        }
+        else if (pNum < 5) {
+          timename = print_filename("time-map",proteinList[pNum]->name+2);
+        }
+        else {
+          timename = print_filename("time-map",proteinList[pNum]->name);
+        }
         FILE* time_map = fopen(timename,"w");
         delete[] timename;
         for (int a=0; a<Ny; a++) {
@@ -1429,6 +1441,7 @@ int main (int argc, char *argv[]) {
         fclose(time_map);
       }
     }
+    exit(0);
 
     for (int pNum=0; pNum<numProteins; pNum++) {
       if (i<arrow_iter && false) {
