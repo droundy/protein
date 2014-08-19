@@ -104,6 +104,9 @@ char* print_filename(const char* plotname, const char* proteinname = NULL, int n
     if (job_dirname[i] == '.') job_dirname[i] = '_';
   }
   mkdir(job_dirname, 0777);
+  char* plots_dirname = new char[1024];
+  sprintf(plots_dirname, "%s/plots", job_dirname);
+  mkdir(plots_dirname, 0777);
   char* proteinname_dirname = new char[1024];
   if (proteinname) {
     sprintf(proteinname_dirname, "%s/%s", job_dirname, proteinname);
@@ -1441,7 +1444,6 @@ int main (int argc, char *argv[]) {
         fclose(time_map);
       }
     }
-    exit(0);
 
     for (int pNum=0; pNum<numProteins; pNum++) {
       if (i<arrow_iter && false) {

@@ -7,10 +7,15 @@ if "show" not in sys.argv:
     matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pylab
+import re
 
-data_file = './data/shape-%s/plots/corr/correlation-%s-%s-%s-%s-%s-%s.dat'% \
-    (sys.argv[1],sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
+job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
+                                                    sys.argv[5],sys.argv[6],sys.argv[7])
+p = re.compile('[.]')
+job_string = p.sub('_',job_string)
+print job_string
 
+data_file = '.' + job_string + 'correlation.dat'
 data = np.loadtxt(data_file)
 
 time_array = data[0]
@@ -38,20 +43,5 @@ pylab.plot(time_array,correlation_array_short,color='r' )
 pylab.ylabel('Auto Correlation')
 
 
-# if plot_exact:
-#     time_array =  np.arange(0,.5*len(boxexact[0,:])*dt,dt)
-#     correlation_array =  np.zeros(len(time_array))
-#     for i in range(len(time_array)):
-#         correlation_array[i] = correlation(boxexact,3,time_array[i])
-#     pylab.subplots_adjust(hspace=0.4)
-#     #pylab.figure()
-#     pylab.subplot(212)
-#     pylab.title('Continuous')
-#     pylab.plot(time_array,correlation_array)
-#     pylab.xlim(time_array[-1])
-#     pylab.xlabel('time (sec)')
-#     #pylab.ylabel('Auto Correlation')
-
-printout_file = 'data/shape-%s/plots/correlation-box-%s-%s-%s-%s-%s-%s.pdf'% \
-    (sys.argv[1],sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6])
+printout_file = '.' + job_string + 'plots/correlation.pdf'
 pylab.savefig(printout_file)

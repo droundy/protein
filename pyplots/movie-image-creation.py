@@ -8,6 +8,7 @@ import sys
 import time
 import file_loader as load
 import math
+import re
 
 
 f_shape = sys.argv[1]
@@ -34,9 +35,12 @@ if (input_start_time > input_end_time):
     print "Your start time is greater than your end time"
     exit(1)
 
+job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,f_param1,f_param2,
+                                                    f_param3,f_param4,dens_factor,sim_type)
+p = re.compile('[.]')
+job_string = p.sub('_',job_string)
 for i in range(0,20000):
-    fname = "./data/shape-%s/%s-%s-%s-%s-%s-%s-%s-%03d-%s.dat"%(f_shape,protein_name,f_shape,f_param1,
-                                                                f_param2,f_param3,f_param4,dens_factor,i,sim_type)
+    fname = '.' + job_string + protein_name + '/movie-frame-%05d.dat'%(i)
     total_number_of_files += 1
     if (not os.path.isfile(fname)):
         break
@@ -148,8 +152,11 @@ def contourplt(protein,video_number):
         #plt.clabel(CS, fontsize=9, inline=1)
         plt.xlabel("Z position")
         plt.ylabel("Y position")
-        plt.savefig('./data/shape-'+f_shape+'/plots/images/'+load.debug_str+load.hires_str+load.slice_str+'tp_%d'%k+'-'+str(protein.protein)+ \
-                        '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.png',dpi=50)
+        dir_name = '.' + job_string + protein_name + '/images'
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+        name = '.' + job_string + protein_name + '/images/frame-%05d.png'%(k)
+        plt.savefig(name,dpi=50)
     return 0
 
 # contourplt(NDE)

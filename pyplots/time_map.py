@@ -6,6 +6,7 @@ import numpy as np
 import file_loader as load
 import sys
 import math
+import re
 
 # WIP
 
@@ -24,13 +25,17 @@ def gaussian_smear(data,wavelength):
     return new
 
 
-proteinList = ["NflD"]
+proteinList = ['NflD']
 
 for protein in proteinList:
-    data_file_name = "./data/shape-%s/time-map-%s-%s-%s-%s-%s-%s-%s-%s.dat"%(load.f_shape,protein,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5,load.sim_type)
-    data_file = np.loadtxt(data_file_name)
+    job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,load.f_param1,load.f_param2,
+                                                       load.f_param3,load.f_param4,load.f_param5,load.sim_type)
+    p = re.compile('[.]')
+    job_string = p.sub('_',job_string)
+    data_filename = '.' + job_string + protein + '/' + 'time-map.dat'
+    data_file = np.loadtxt(data_filename)
 
-    print "starting time_map.p for ",data_file_name
+    print "starting time_map.p for ",data_filename
 
     data = gaussian_smear(data_file,.509)
     timemax = np.max(data)

@@ -8,7 +8,7 @@ import sys
 import time
 import file_loader as load
 import math
-
+import re
 
 f_shape = sys.argv[1]
 f_param1 = sys.argv[2]
@@ -36,9 +36,14 @@ if (start_time > end_time):
 
 min_file_num = 100000
 max_file_num = 0
+
+job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,f_param1,f_param2,
+                                                    f_param3,f_param4,dens_factor,sim_type)
+p = re.compile('[.]')
+job_string = p.sub('_',job_string)
+
 for i in range(0,20000):
-    fname = "./data/shape-"+f_shape+"/plots/images/"+load.debug_str+load.hires_str+load.slice_str+"tp_"+str(i) \
-        +"-"+str(protein_name)+"-"+f_shape+"-"+f_param1+"-"+f_param2+"-"+f_param3+"-"+f_param4+"-"+dens_factor+"-"+sim_type+".png"
+    fname = '.' + job_string + protein_name + '/images/frame-%05d.png'%(i)
     total_number_of_files += 1
     if (os.path.isfile(fname)):
         if i < min_file_num:
@@ -68,13 +73,17 @@ for video_num in range(number_of_videos):
         end_file = int(end_time/float(dump_time_step))
     file_names = ""
     for i in range(start_file,end_file):
-        file_names += "./data/shape-"+f_shape+"/plots/images/"+load.debug_str+load.hires_str \
-            +load.slice_str+"tp_%d"%i +"-"+str(protein_name)+"-"+f_shape+"-"+f_param1+"-"+f_param2 \
-            +"-"+f_param3+"-"+f_param4+"-"+dens_factor+"-"+sim_type+".png "
-    os.system("convert -delay 10 "+file_names+ "./data/shape-"+f_shape+"/plots/"+load.debug_str+load.hires_str \
-                  +load.slice_str+"density_movie-"+str(protein_name)+"-"+str(int(start_file*dump_time_step))+"-" \
-                  +str(int(end_file*dump_time_step))+"-"+f_shape+"-"+f_param1+"-"+f_param2+"-"+f_param3 \
-                  +"-"+f_param4+"-"+dens_factor+"-"+sim_type+".mp4")
+        file_names += '.' + job_string + protein_name + '/images/frame-%05d.png '%(i)
+    os.system('convert -delay 10 '+file_names+ '.' + job_string + 'plots/density-movie-'+str(protein_name) \
+                  +str(int(start_file*dump_time_step))+ '-' +str(int(end_file*dump_time_step))+'.mp4')
+
+
+
+
+# ./data/shape-"+f_shape+"/plots/"+load.debug_str+load.hires_str \
+#                   +load.slice_str+"density_movie-"+str(protein_name)+"-"+str(int(start_file*dump_time_step))+"-" \
+#                   +str(int(end_file*dump_time_step))+"-"+f_shape+"-"+f_param1+"-"+f_param2+"-"+f_param3 \
+#                   +"-"+f_param4+"-"+dens_factor+"-"+sim_type+".mp4")
 
 # contourplt(NDE)
 # for j in range(video_number):

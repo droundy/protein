@@ -9,6 +9,7 @@ import time
 import file_loader as load
 import Image
 import math
+import re
 
 f_shape = sys.argv[1]
 f_param1 = sys.argv[2]
@@ -23,6 +24,20 @@ f_param7 = sys.argv[9]
 dump_time_step = 0.5
 start_time = float(f_param6)
 end_time = float(f_param7)
+
+job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,load.f_param1,load.f_param2,
+                                                   load.f_param3,load.f_param4,load.f_param5,sim_type)
+p = re.compile('[.]')
+job_string = p.sub('_',job_string)
+
+proteinList = ["nADP","nATP","ND","NDE","nE",]
+proteins = [0]*len(proteinList)
+
+for i in range(len(proteins)):
+    directory = '.' + job_string + str(proteinList[i]) + '/images'
+    print directory
+    if (not os.path.isdir(directory)):
+        os.makedirs(directory)
 
 # n_sin_theta = 1.5
 # wavelength = .6
@@ -42,7 +57,7 @@ end_time = float(f_param7)
 def gaussian_smear(data,wavelength):
     new = np.zeros_like(data)
     print "here ",new.shape[0]
-    n_sin_theta = 1.5
+    n_sin_theta = 10.5
     #sigma below is tha Abbe resolution.  n is the diffraction of the medium, sin_theta the aperture angle
     #So far I've wiki'd the guassian form of the Airy disk for this
     sigma = wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
@@ -62,9 +77,6 @@ def gaussian_smear(data,wavelength):
 
 #computes the global maximum over a set of two dimensional arrays (stored as files)
 
-proteinList = ["nADP","nATP","ND","NDE","nE",]
-proteins = [0]*len(proteinList)
-
 for i in range(len(proteinList)):
     proteins[i] = load.data(proteinList[i],sim_type,start_time,end_time)
 
@@ -74,34 +86,13 @@ for i in range(len(proteins)):
     print proteinList[i]
     smeared_data = gaussian_smear(proteins[i].dataset,.6) #this is in microns green light at 500nm,
     for j in range(len(times)):
-        arrow_file = './data/shape-'+f_shape+'/plots/gaussian-data/'+str(proteinList[i])+ \
-            '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-' \
-            +sim_type+'-'+str(times[j])+'.dat'
-        p_file = open(arrow_file,'w')
+        image_data_file = '.' + job_string +str(proteinList[i])+'/images/single-'+str(times[j])+'.dat'
+        p_file = open(image_data_file,'w')
         p_file.close()
-        p_file = open(arrow_file,'a')
+        p_file = open(image_data_file,'a')
         for y in range(smeared_data.shape[1]):
             for x in range(smeared_data.shape[2]):
                 p_file.write('%g '%smeared_data[j,y,x])
             p_file.write('\n')
         p_file.close()
-
-
-
-
-
-
-
-
-
-    # p_file = open(arrow_file,'w')
-    # p_file.close()
-
-    #     p_file = open(arrow_file,'a')
-    #     p_file.write('%g %g %g %g\n'%(input_start_time+num*dump_time_step,maxima,max_x,max_y))
-    #     p_file.close()
-
-
-    # plt.savefig(load.print_string("single-image-plot",""))
-
 

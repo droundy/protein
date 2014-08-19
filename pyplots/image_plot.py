@@ -15,6 +15,7 @@ f_param2 = sys.argv[3]
 f_param3 = sys.argv[4]
 f_param4 = sys.argv[5]
 f_param5 = sys.argv[6]
+sim_type = sys.argv[7]
 start_time = float(sys.argv[8])
 end_time = float(sys.argv[9])
 
@@ -39,7 +40,7 @@ proteinLabels = ["MinD:ADP (cyto)",
 proteins = [0]*len(proteinList)
 
 for i in range(len(proteinList)):
-    proteins[i] = load.data(proteinList[i],"",start_time,end_time)
+    proteins[i] = load.data(proteinList[i],sim_type,start_time,end_time)
 
 plt.figure(figsize=(9,3.5)).patch.set_alpha(0)
 numtimes = int(end_time/dump_time_step)- int(start_time/dump_time_step)

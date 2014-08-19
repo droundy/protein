@@ -9,7 +9,6 @@ import re
 import file_loader as load
 import matplotlib.patheffects
 from matplotlib.font_manager import FontProperties
-
 from mpl_toolkits.axes_grid.anchored_artists import AnchoredSizeBar
 
 

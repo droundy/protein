@@ -8,6 +8,7 @@ import sys
 import time
 import file_loader as load
 import math
+import re
 
 
 f_shape = sys.argv[1]
@@ -33,16 +34,17 @@ if (input_start_time > input_end_time):
     print "Your start time is greater than your end time"
     exit(1)
 
+
+job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,f_param1,f_param2,
+                                                    f_param3,f_param4,dens_factor,sim_type)
 for i in range(0,20000):
-    job_string = "/data/shape-%s/%s-%s-%s-%s-%s%s/" % (load.f_shape,load.f_param1,load.f_param2,
-                                                       load.f_param3,load.f_param4,load.f_param5,sim_type)
     p = re.compile('[.]')
     job_string = p.sub('_',job_string)
+    fname = '.' + job_string + protein_name + '/movie-frame-%05d.dat'%(i)
 
-    fname = "./data/shape-%s/%s-%s-%s-%s-%s-%s-%s-%03d-%s.dat"%(f_shape,protein_name,f_shape,f_param1,
-                                                                f_param2,f_param3,f_param4,dens_factor,i,sim_type)
     total_number_of_files += 1
     if (not os.path.isfile(fname)):
+        print fname + ' is not a file'
         break
 if (input_end_time >= total_number_of_files*dump_time_step):
     print "For ", fname
@@ -56,8 +58,8 @@ def gaussian_smear(data,wavelength,protein):
     sigma = .21*wavelength/N_A #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
     print "sigma ",sigma
     dis = int(3*sigma/0.05) #for now
-    arrow_file = './data/shape-'+f_shape+'/plots/ave-time/maxima-arrow-'+str(int(input_start_time))+'-'+str(protein)+ \
-        '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.dat'
+    arrow_file = '.'+ job_string +'ave-time/ave-time-arrow-'+str(int(input_start_time))+'-'+str(protein)+'.dat'
+    print arrow_file
     p_file = open(arrow_file,'w')
     p_file.close()
     last_max_x = 0
@@ -91,9 +93,9 @@ def gaussian_smear(data,wavelength,protein):
         p_file.write('%g %g %g %g\n'%(input_start_time+num*dump_time_step,maxima,max_x,max_y))
         p_file.close()
         if (num%40 == 0 and num > 1):
-            contour_values = './data/shape-'+f_shape+'/plots/ave-time/contour-values-'+str(int(input_start_time))+'-' \
-                +str(int(input_start_time+num*dump_time_step))+'-'+str(protein)+'-'+f_shape+'-'+f_param1+'-'+f_param2+'-' \
-                +f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.dat'
+            contour_values = '.'+ job_string +'ave-time/contour-values-' + str(protein) +'-'+ str(int(input_start_time))+'-' \
+                +str(int(input_start_time+num*dump_time_step))+'.dat'
+            print contour_values
             c_file = open(contour_values,'w')
             for x in range(new.shape[0]):
                 for y in range(new.shape[1]):
