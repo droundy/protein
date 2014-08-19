@@ -6,6 +6,8 @@
 #include "MersenneTwister.h"
 #include "weights.h"
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 const bool stochastic = true;
 
@@ -25,6 +27,8 @@ char* hires_flag_str = new char[1024];
 char* slice_flag_str = new char[1024];
 char* debug_flag_str = new char[1024];
 
+double start_tot_E;
+double start_tot_D;
 
 double tot_time; //total simulation time
 double time_step; //simulation time step
@@ -87,9 +91,33 @@ struct protein {
   int* zmax;
 };
 
-char* print_filename(const char* plotname, const char* proteinname) {
+
+
+char* print_filename(const char* plotname, const char* proteinname = NULL, int number = -1) {
+  char* shape_dirname = new char[1024];
+  sprintf(shape_dirname, "data/shape-%s", mem_f_shape.c_str());
+  mkdir(shape_dirname, 0777);
+  char* job_dirname = new char[1024];
+  sprintf(job_dirname, "%s/%s%s%1.2f-%1.2f-%1.2f-%1.2f-%1.2f-%s",
+          shape_dirname, hires_flag_str,slice_flag_str, A,B,C,D,density_factor,sim_type.c_str());
+  for (unsigned int i=0; i<strlen(job_dirname); i++) {
+    if (job_dirname[i] == '.') job_dirname[i] = '_';
+  }
+  mkdir(job_dirname, 0777);
+  char* proteinname_dirname = new char[1024];
+  if (proteinname) {
+    sprintf(proteinname_dirname, "%s/%s", job_dirname, proteinname);
+    mkdir(proteinname_dirname, 0777);
+  } else {
+    proteinname_dirname = job_dirname;
+  }
+
   char* filename = new char[1024];
-  sprintf(filename,"data/shape-%s/%s%s%s%s-%s-%s-%1.2f-%1.2f-%1.2f-%1.2f-%1.2f-%s.dat",mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,plotname,proteinname,mem_f_shape.c_str(),A,B,C,D,density_factor,sim_type.c_str());
+  if (number >= 0) {
+    sprintf(filename, "%s/%s-%05d.dat", proteinname_dirname, plotname, number);
+  } else {
+    sprintf(filename, "%s/%s.dat", proteinname_dirname, plotname);
+  }
   return filename;
 }
 
@@ -100,7 +128,7 @@ void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP,
                                       int *s_NDEs_N_ATP, double *nATP, double *nADP, double *nE, double *ND,
                                       double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
                                       double *prev_tot_NADP, double *prev_tot_NATP, double *prev_tot_NE,
-                                      double *prev_tot_ND, double *prev_tot_NDE);
+                                      double *prev_tot_ND, double *prev_tot_NDE, double start_tot_D, double start_tot_E);
 
 void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, int *s_N_ADP,
                        int *s_N_E, int *s_ND, int *s_NDEs_N_ATP, double *nATP, double *nADP,
@@ -123,6 +151,10 @@ stoch_params index_to_parameters(int index) {
 
 int main (int argc, char *argv[]) {
   //command line parameters
+  if (argc < 9) {
+    printf("Not enough arguments!");
+    exit(1);
+  }
   mem_f_shape = argv[1];
   A = atof(argv[2]);
   B = atof(argv[3]);
@@ -357,6 +389,13 @@ int main (int argc, char *argv[]) {
   printf("\nBefore Trim Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
   trim_grid(pointer_to_mem_A, first_mem_A, pointer_to_insideArr, first_insideArr);
   printf("\nAfter trim, Nx = %d Ny = %d Nz = %d\n",Nx,Ny,Nz);
+  double volume = 0.0;
+  for (int i=0;i<Nx*Ny*Nz;i++){
+    if(insideArr[i]) {
+      volume += dx*dx*dx;
+    }
+  }
+  printf("\nTotal cell volume is = %f\n",volume);
   fflush(stdout);
 
   ///////////////////////////////////////////////
@@ -374,21 +413,23 @@ int main (int argc, char *argv[]) {
     //   }
     //   printf("\n");
     // }
+  // for (int i=0;i<Nx;i++){
   //   printf("Membrane:\n");
   //   for (int j=0;j<Ny;j++){
   //     for (int k=0;k<Nz;k++){
-  //       if (mem_A[i*Ny*Nz+j*Nz+k] != 0.0){
-  //         printf("%d",1);
-  //       }
-  //       else {
-  //         printf("%d",0);
-  //       }
+  //       // if (mem_A[i*Ny*Nz+j*Nz+k] != 0.0){
+  //       //   printf("%d",1);
+  //       // }
+  //       // else {
+  //       //   printf("%d",0);
+  //       // }
+  //       printf("%g",mem_A[i*Ny*Nz+j*Nz+k]);
   //     }
   //     printf("\n");
   //   }
   // }
   // fflush(stdout);
-  //exit(1);
+  // exit(0);
   // ///////////////////////////////////////////////
 
   //global arrays for storing simulation data
@@ -417,15 +458,16 @@ int main (int argc, char *argv[]) {
 
   const int numProteins = 7;
 
-  protein* nATP_plot = new protein;
-  protein* nE_plot = new protein;
-  protein* nADP_plot = new protein;
-  protein* NDE_plot = new protein;
-  protein* ND_plot = new protein;
-  protein* NflD_plot = new protein;
-  protein* NflE_plot = new protein;
+  // protein* nATP_plot = new protein;
+  // protein* nE_plot = new protein;
+  // protein* nADP_plot = new protein;
+  // protein* NDE_plot = new protein;
+  // protein* ND_plot = new protein;
+  // protein* NflD_plot = new protein;
+  // protein* NflE_plot = new protein;
 
-  protein* proteinList[numProteins] = { nATP_plot, nADP_plot, nE_plot, ND_plot, NDE_plot, NflD_plot, NflE_plot };
+  // protein* proteinList[numProteins] = { nATP_plot, nADP_plot, nE_plot, ND_plot, NDE_plot, NflD_plot, NflE_plot };
+  protein* proteinList[numProteins] = { new protein, new protein, new protein, new protein, new protein, new protein, new protein};
   double* protein_arrs[numProteins] = { nATP, nADP, nE, ND, NDE, NflD, NflE };
 
   //initialize things
@@ -486,9 +528,7 @@ int main (int argc, char *argv[]) {
 
 
   if (mem_f_shape=="triangle") {
-    char* outfilename_sections = new char[1024];
-    sprintf(outfilename_sections, "data/shape-%s/membrane_files/%s%s%ssections-%s-%4.02f-%4.02f-%4.02f-%4.02f-%4.02f.dat",mem_f_shape.c_str(),
-            debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor);
+    char* outfilename_sections = print_filename("sections");
     FILE *outfile_sections = fopen((const char*)outfilename_sections,"w");
     for (int j=0;j<Ny;j++){
       for (int i=0;i<Nz;i++) {
@@ -525,9 +565,7 @@ int main (int argc, char *argv[]) {
   if (mem_f_shape=="p" || mem_f_shape=="stad"){
     box_divider_left = int(Nz/3);
     box_divider_right = int(2*Nz/3);
-    char* outfilename_sections = new char[1024];
-    sprintf(outfilename_sections, "data/shape-%s/membrane_files/%s%s%ssections-%s-%4.02f-%4.02f-%4.02f-%4.02f-%4.02f.dat",mem_f_shape.c_str(),
-            debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor);
+    char* outfilename_sections = print_filename("sections");
     FILE *outfile_sections = fopen((const char*)outfilename_sections,"w");
     for (int a=0; a<Ny; a++) {
       for (int b=0; b<Nz; b++) {
@@ -602,9 +640,7 @@ int main (int argc, char *argv[]) {
     }
   }
   if (mem_f_shape=="randst") {
-    char* outfilename_sections = new char[1024];
-    sprintf(outfilename_sections, "data/shape-%s/membrane_files/%s%s%ssections-%s-%4.02f-%4.02f-%4.02f-%4.02f-%4.02f.dat",mem_f_shape.c_str(),
-            debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor);
+    char* outfilename_sections = print_filename("sections");
     FILE *outfile_sections = fopen((const char*)outfilename_sections,"w");
     for (int a=0; a<Ny; a++) {
       for (int b=0; b<Nz; b++) {
@@ -745,6 +781,8 @@ int main (int argc, char *argv[]) {
   double tot_ave_NADP = prev_tot_NADP;
   double tot_ave_NDE = prev_tot_NDE;
   double tot_ave_ND = prev_tot_ND;
+  start_tot_D = tot_ave_NATP + tot_ave_NADP + tot_ave_NDE + tot_ave_ND;
+  start_tot_E = tot_ave_NE + tot_ave_NDE;
   int compare_ave_counter = 0;
 
   /////////////////////////////////////////////////////////////
@@ -858,8 +896,10 @@ int main (int argc, char *argv[]) {
       if (negative_protein) {
         exit(1);
       }
-      count_compare_and_print_proteins(i,s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr,
-                                       &prev_tot_NADP, &prev_tot_NATP, &prev_tot_NE, &prev_tot_ND, &prev_tot_NDE);
+      if (sim_type != "exact") {
+        count_compare_and_print_proteins(i,s_N_ATP, s_N_ADP, s_N_E, s_ND, s_NDE, nATP, nADP, nE, ND, NDE, NflD, NflE, mem_A, insideArr,
+                                         &prev_tot_NADP, &prev_tot_NATP, &prev_tot_NE, &prev_tot_ND, &prev_tot_NDE, start_tot_D, start_tot_E);
+      }
       // time = double(clock()/CLOCKS_PER_SEC) - start_time;
       // printf("This is a %s simulation and it took %g seconds to get to interation %d\n",
       //        sim_type.c_str(), time, i);
@@ -1007,9 +1047,7 @@ int main (int argc, char *argv[]) {
       int k = i/printout_iterations;
 
       //begin nATP printing.
-      char *outfilenameATP = new char[1024];
-      sprintf(outfilenameATP, "data/shape-%s/%s%s%snATP-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat",
-              mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
+      char *outfilenameATP = print_filename("movie-frame", "nATP", k);
       FILE *nATPfile = fopen((const char *)outfilenameATP,"w");
       delete[] outfilenameATP;
 
@@ -1039,8 +1077,7 @@ int main (int argc, char *argv[]) {
       //end nATP printing
 
       //nE printing
-      char *outfilenameE = new char[1000];
-      sprintf(outfilenameE, "data/shape-%s/%s%s%snE-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
+      char *outfilenameE = print_filename("movie-frame", "nE", k);
       FILE *nEfile = fopen((const char *)outfilenameE,"w");
       delete[] outfilenameE;
 
@@ -1070,8 +1107,7 @@ int main (int argc, char *argv[]) {
       //end nE printing
 
       //nADP printing
-      char *outfilenameADP = new char[1000];
-      sprintf(outfilenameADP, "data/shape-%s/%s%s%snADP-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
+      char *outfilenameADP = print_filename("movie-frame", "nADP", k);
       FILE *nADPfile = fopen((const char *)outfilenameADP,"w");
       delete[] outfilenameADP;
 
@@ -1101,8 +1137,7 @@ int main (int argc, char *argv[]) {
       //end nADP printing
 
       //begin ND printing
-      char *outfilenameD = new char[1000];
-      sprintf(outfilenameD, "data/shape-%s/%s%s%sND-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
+      char *outfilenameD = print_filename("movie-frame", "ND", k);
       FILE *NDfile = fopen((const char *)outfilenameD,"w");
       delete[] outfilenameD;
 
@@ -1132,8 +1167,7 @@ int main (int argc, char *argv[]) {
       //end ND printing
 
       //begin NDE printing
-      char *outfilenameDE = new char[1000];
-      sprintf(outfilenameDE, "data/shape-%s/%s%s%sNDE-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
+      char *outfilenameDE = print_filename("movie-frame", "NDE", k);
       FILE *NDEfile = fopen((const char *)outfilenameDE,"w");
       delete[] outfilenameDE;
 
@@ -1163,8 +1197,7 @@ int main (int argc, char *argv[]) {
       //end NDE printing
 
       //begin NflE printing
-      char *outfilenameflE = new char[1000];
-      sprintf(outfilenameflE, "data/shape-%s/%s%s%sNflE-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
+      char *outfilenameflE = print_filename("movie-frame", "NflE", k);
       FILE *NflEfile = fopen((const char *)outfilenameflE,"w");
       delete[] outfilenameflE;
 
@@ -1194,8 +1227,7 @@ int main (int argc, char *argv[]) {
       //end NflE printing
 
       //begin NflD printing
-      char *outfilenameflD = new char[1000];
-      sprintf(outfilenameflD, "data/shape-%s/%s%s%sNflD-%s-%03.2f-%03.2f-%03.2f-%03.2f-%03.2f-%03d-%s.dat", mem_f_shape.c_str(),debug_flag_str,hires_flag_str,slice_flag_str,mem_f_shape.c_str(),A,B,C,D,density_factor,k,sim_type.c_str());
+      char *outfilenameflD = print_filename("movie-frame", "NflD", k);
       FILE *NflDfile = fopen((const char *)outfilenameflD,"w");
       delete[] outfilenameflD;
 
@@ -1230,7 +1262,7 @@ int main (int argc, char *argv[]) {
     int i_dat = i/print_denominator;
     if (i%100000==0){
       //boxplot
-      char *boxname = print_filename("box-plot","");
+      char *boxname = print_filename("box-plot");
       printf("\nPrinting the box plots %s\n",boxname);
       fflush(stdout);
       FILE* box_plot = fopen(boxname,"w");
@@ -1307,7 +1339,7 @@ int main (int argc, char *argv[]) {
 
       for (int pNum=0; pNum<numProteins; pNum++) {
         char *avename = new char[1024];
-        sprintf(avename,"%s",print_filename("ave_plot",""));
+        sprintf(avename,"%s",print_filename("ave_plot"));
         FILE* ave_plot = fopen(avename,"w");
 
         if (mem_f_shape == "p" || mem_f_shape == "triangle" || rand_seed == 98 || rand_seed == 95 || rand_seed == 94 || rand_seed == 93 || rand_seed == 92 ||
@@ -1387,7 +1419,17 @@ int main (int argc, char *argv[]) {
 
       for (int pNum=0; pNum<numProteins; pNum++) {
         //time map
-        char *timename = print_filename("time-map",proteinList[pNum]->name);
+        char *timename;
+        // the following cuts out the D_ and E_ that is extra
+        if (pNum == 4) {
+          timename = print_filename("time-map",proteinList[pNum]->name+4);
+        }
+        else if (pNum < 5) {
+          timename = print_filename("time-map",proteinList[pNum]->name+2);
+        }
+        else {
+          timename = print_filename("time-map",proteinList[pNum]->name);
+        }
         FILE* time_map = fopen(timename,"w");
         delete[] timename;
         for (int a=0; a<Ny; a++) {
@@ -1399,6 +1441,7 @@ int main (int argc, char *argv[]) {
         fclose(time_map);
       }
     }
+    exit(0);
 
     for (int pNum=0; pNum<numProteins; pNum++) {
       if (i<arrow_iter && false) {
@@ -1527,7 +1570,8 @@ int main (int argc, char *argv[]) {
 void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP, int *s_N_E,
                                       int *s_ND, int *s_NDE, double *nATP, double *nADP,
                                       double *nE, double *ND, double *NDE, double *NflD, double *NflE, double *mem_A, bool *insideArr,
-                                      double *prev_tot_NADP, double *prev_tot_NATP, double *prev_tot_NE, double *prev_tot_ND, double *prev_tot_NDE) {
+                                      double *prev_tot_NADP, double *prev_tot_NATP, double *prev_tot_NE, double *prev_tot_ND,
+                                      double *prev_tot_NDE, double start_tot_D, double start_tot_E) {
   //double dV = dx*dx*dx;
   double total_NE = 0;
   double total_NDE = 0;
@@ -1586,13 +1630,16 @@ void count_compare_and_print_proteins(int iteration, int *s_N_ATP, int *s_N_ADP,
     printf("\nTotal number of minD has changed!!\n\n");
     printf("\nThis crashing sim is %s %g %g %g %g %g %g %s\n\n\n",
            mem_f_shape.c_str(), A, B, C, D, density_factor, size_modifier, sim_type.c_str());
+    printf("\nAnd change from begginning is %g\n\n\n\n",fabs(start_tot_D - total_NADP - total_NATP - total_ND - total_NDE));
     fflush(stdout);
     exit(1);
   }
   if (fabs(*prev_tot_NDE + *prev_tot_NE - total_NDE - total_NE) > 10e-10) {
     printf("\nTotal number of minE has changed!!\n");
-    printf("\nThis crashing sim is %s %g %g %g %g %g %g %s\n\n\n",
+    printf("\nThis crashing sim is %s %g %g %g %g %g %g %s\n",
            mem_f_shape.c_str(), A, B, C, D, density_factor, size_modifier, sim_type.c_str());
+    printf("\nAmount it changed was %g\n\n\n\n",fabs(*prev_tot_NDE + *prev_tot_NE - total_NDE - total_NE));
+    printf("\nAnd change from begginning is %g\n\n\n\n",fabs(start_tot_E - total_NDE - total_NE));
     fflush(stdout);
     exit(1);
   }
@@ -1615,9 +1662,7 @@ void compare_time_aves(int iteration, int *compare_ave_counter, int *s_N_ATP, in
     return;
   }
   *compare_ave_counter += 1;
-  char* ave_filename = new char[1024];
-  sprintf(ave_filename,"data/shape-%s/compare-aves-%s-%1.2f-%1.2f-%1.2f-%1.2f-%1.2f-%s.dat",
-          mem_f_shape.c_str(),mem_f_shape.c_str(),A,B,C,D,density_factor,sim_type.c_str());
+  char* ave_filename = print_filename("compare-aves");
   FILE* ave_file = fopen(ave_filename,"w");
   delete[] ave_filename;
   for (int h=0;h<Nx*Ny*Nz;h++) {

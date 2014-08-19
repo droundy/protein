@@ -5,12 +5,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import sys
 import pylab
+import re
 import file_loader as load
 import matplotlib.patheffects
 from matplotlib.font_manager import FontProperties
 
-
 from mpl_toolkits.axes_grid.anchored_artists import AnchoredSizeBar
+
 
 ## WIP!!
 
@@ -38,13 +39,9 @@ else:
     sim_type = ""
 
 def returnData(boxName,proteinType):
-
     #open the data file, grab the line with the correct protein type and box partition, load it as a [string] (so we can use list comprehensions)
-    filename = "./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s%s.dat" % (load.f_shape,load.debug_str,load.hires_str,
-                                                                             load.slice_str,load.f_shape,load.f_param1,
-                                                                             load.f_param2,load.f_param3,
-                                                                             load.f_param4,load.f_param5,sim_type)
-    print 'loading', filename
+    filename = '.' + job_string + 'box-plot.dat'
+
     with open(filename,"r") as boxData:
         proteinsOverTime = [line for line in boxData if (proteinType in line) and (boxName in line)]
 
@@ -114,8 +111,9 @@ def find_period(f):
     return (penultimate_min, lastmin)
 
 def main():
-    filename = "./data/shape-%s/%s%s%sbox-plot--%s-%s-%s-%s-%s-%s%s.dat"%(load.f_shape,load.debug_str,load.hires_str,load.slice_str,load.f_shape,load.f_param1,load.f_param2,load.f_param3,load.f_param4,load.f_param5,sim_type)
-    print 'loading', filename
+    filename = '.' + job_string + 'box-plot.dat'
+    print "loading ",filename
+
     with open(filename, "r") as boxData:
         fileLines = boxData.readlines()
 
@@ -241,11 +239,7 @@ def main():
     sectionax = plt.subplot2grid((2,5), (0,4), colspan=1,rowspan=2)
 
     # first plot the section data...
-    filename = "data/shape-%s/membrane_files/%s%s%ssections-%s-%s-%s-%s-%s-%s.dat" % (load.f_shape,load.debug_str,load.hires_str,
-                                                                                      load.slice_str,load.f_shape,
-                                                                                      load.f_param1,load.f_param2,load.f_param3,
-                                                                                      load.f_param4,load.f_param5)
-    print 'loading', filename
+    filename = '.' + job_string + 'sections.dat'
     sectiondata = np.loadtxt(filename)
 
     def plot_sections(sectionax, sectiondata):
@@ -418,6 +412,14 @@ def main():
 
     plt.show()
     return 0
+
+job_string = "/data/shape-%s/%s-%s-%s-%s-%s%s/" % (load.f_shape,load.f_param1,load.f_param2,
+                                                   load.f_param3,load.f_param4,load.f_param5,sim_type)
+p = re.compile('[.]')
+job_string = p.sub('_',job_string)
+
+
+
 
 if __name__ == '__main__':
     main()

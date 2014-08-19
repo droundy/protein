@@ -3,7 +3,7 @@ CXXFLAGS = -g -O2 -Wall -Werror
 .SUFFIXES: .tex .dvi .ps .bib .bbl .pdf .fig .eps .aux .jpg .png .svg \
 		.gp .mf .2602gf .pl .xgr
 
-all: protein_microscopy paper/paper.pdf test-weights
+all: protein_microscopy #paper/paper.pdf test-weights
 
 test-weights: test-weights.cpp weights.cpp weights.h
 	g++ ${CXXFLAGS} -o test-weights test-weights.cpp weights.cpp
