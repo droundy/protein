@@ -10,7 +10,7 @@ import file_loader as load
 import matplotlib.patheffects
 from matplotlib.font_manager import FontProperties
 from mpl_toolkits.axes_grid.anchored_artists import AnchoredSizeBar
-
+import os
 
 ## WIP!!
 
@@ -31,15 +31,12 @@ from mpl_toolkits.axes_grid.anchored_artists import AnchoredSizeBar
 #boxName. returns list of protein counts at each time.
 #box-plot--p-0.50-0.50-0.00-0.00-15.00-exact.dat
 
+
 sim_type = load.sim_type
-if sim_type == "full_array":
-    sim_type = "-full_array"
-else:
-    sim_type = ""
 
 def returnData(boxName,proteinType):
     #open the data file, grab the line with the correct protein type and box partition, load it as a [string] (so we can use list comprehensions)
-    filename = '.' + job_string + 'box-plot.dat'
+    filename = job_string + 'box-plot.dat'
 
     with open(filename,"r") as boxData:
         proteinsOverTime = [line for line in boxData if (proteinType in line) and (boxName in line)]
@@ -110,7 +107,7 @@ def find_period(f):
     return (penultimate_min, lastmin)
 
 def main():
-    filename = '.' + job_string + 'box-plot.dat'
+    filename = job_string + 'box-plot.dat'
     print "loading ",filename
 
     with open(filename, "r") as boxData:
@@ -238,7 +235,7 @@ def main():
     sectionax = plt.subplot2grid((2,5), (0,4), colspan=1,rowspan=2)
 
     # first plot the section data...
-    filename = '.' + job_string + 'sections.dat'
+    filename = job_string + 'sections.dat'
     sectiondata = np.loadtxt(filename)
 
     def plot_sections(sectionax, sectiondata):
@@ -412,10 +409,18 @@ def main():
     plt.show()
     return 0
 
-job_string = "/data/shape-%s/%s-%s-%s-%s-%s%s/" % (load.f_shape,load.f_param1,load.f_param2,
+job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,load.f_param1,load.f_param2,
                                                    load.f_param3,load.f_param4,load.f_param5,sim_type)
+print job_string
+print sim_type
 p = re.compile('[.]')
 job_string = p.sub('_',job_string)
+
+dir_name = job_string + 'plots'
+
+if not os.path.exists(dir_name):
+    print "making directory "+dir_name+" because doesnt exist"
+    os.makedirs(dir_name)
 
 
 

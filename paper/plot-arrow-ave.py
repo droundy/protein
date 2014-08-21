@@ -14,6 +14,7 @@ import imp
 #load = imp.load_source('load', 'pyplots/file_loader.py')
 import math
 import matplotlib.gridspec as gridspec
+import re
 
 #create data objects (see file_loader.py)
 
@@ -28,17 +29,24 @@ protein_name = "NflD"
 # input_end_time = float(f_param7)
 #end_time = int(input_end_time - input_end_time%10)
 
-arg_set = ["randst-0.25-18.50-18.50-95.00-15.00",
-           "randst-0.25-18.60-28.60-94.00-15.00"]
+arg_set = ["0.25-18.50-18.50-95.00-15.00-full_array",
+           "0.25-18.60-28.60-94.00-15.00-full_array"]
 
-bound_times = ["300","1500","300","1100"]
+bound_times = ["500","540","500","540"]
 
 arrow_files = []
 contour_values = []
 for i in range(len(arg_set)):
-    arrow_files += ['./data/shape-randst/plots/ave-time/maxima-arrowNflD-'+arg_set[i]+'-full_array.dat']
-    contour_values += ['./data/shape-randst/plots/ave-time/contour-values-'+bound_times[i*2]+'-' \
-        +bound_times[i*2+1]+'-NflD-'+arg_set[i]+'-full_array.dat']
+    job_string = "data/shape-randst/%s/" % (arg_set[i])
+    p = re.compile('[.]')
+    job_string = p.sub('_',job_string)
+    arrow_files += [job_string +'ave-time/ave-time-arrow-'+str(int(bound_times[i*2]))+'-'+protein_name+'.dat']
+    contour_values += [ job_string +'ave-time/contour-values-' + protein_name +'-'+ str(int(bound_times[i*2]))+'-' \
+                            +str(bound_times[i*2+1])+'.dat']
+    print i
+    print arrow_files[i]
+    print contour_values[i]
+
 
 
 plt.figure(1)
@@ -107,7 +115,7 @@ for arg_num in range(len(arg_set)+2):
         # left  = 0.125  # the left side of the subplots of the figure
         # right = 0.9    # the right side of the subplots of the figure
 
-        a_data = a_data[int((start_time-300)/dump_time_step):int((end_time-start_time)/dump_time_step)]
+        a_data = a_data[int((start_time-float(bound_times[arg_num*2]))/dump_time_step):int((end_time-start_time)/dump_time_step)]
 
         last_time = a_data[0,0]
         for i in range(1,len(a_data[:,0])):

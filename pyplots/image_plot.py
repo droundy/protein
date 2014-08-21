@@ -85,6 +85,8 @@ cax = divider.append_axes("right", "3%", pad="1%")
 cbar = plt.colorbar(cax=cax,ticks=[0,maxval])
 cbar.ax.set_yticklabels(['0', 'max'])
 
+
 #plt.colorbar(ticks=[])
 plt.tight_layout()
+print load.print_string("image-plot","")
 plt.savefig(load.print_string("image-plot",""))

@@ -68,11 +68,11 @@ def get_filenames(protein,sim_type,start_time,end_time):
         end_time = 10000
     for f_num in np.arange(start_time,end_time,dump_time_step):
         file_num = round(f_num/dump_time_step)
-        job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (f_shape,f_param1,f_param2,
+        job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (f_shape,f_param1,f_param2,
                                                             f_param3,f_param4,f_param5,sim_type)
         p = re.compile('[.]')
         job_string = p.sub('_',job_string)
-        fname = '.' + job_string + protein + '/movie-frame-%05d.dat'%(file_num)
+        fname = job_string + protein + '/movie-frame-%05d.dat'%(file_num)
         print fname
         if os.path.isfile(fname):
             dat_filenames.append(fname)
@@ -87,13 +87,17 @@ def get_filenames(protein,sim_type,start_time,end_time):
 
 #function for easier plot name printing. probably should be renamed itself.
 def print_string(plot_name,protein):
-    job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (f_shape,sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6],sim_type)
+    job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (f_shape,sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6],sim_type)
     p = re.compile('[.]')
     job_string = p.sub('_',job_string)
+    dir_name = job_string + 'plots'
+    if not os.path.exists(dir_name):
+        print "making directory "+dir_name+" because doesnt exist"
+        os.makedirs(dir_name)
     filename = ''
     if (protein == ''):
-        filename = '.' + job_string + 'plots/' + plot_name + '.pdf'
+        filename = job_string + 'plots/' + plot_name + '.pdf'
     else:
-        filename = '.' + job_string + 'plots/' + protein + '-' + plot_name + '.pdf'
+        filename = job_string + 'plots/' + protein + '-' + plot_name + '.pdf'
     print "printing to ",filename
     return filename

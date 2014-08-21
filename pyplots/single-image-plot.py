@@ -26,7 +26,7 @@ skip_times = 2 # only plot every skip_times of the snapshots (which are seperate
 start_time = float(f_param6)
 end_time = float(f_param7)
 
-job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,load.f_param1,load.f_param2,
+job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,load.f_param1,load.f_param2,
                                                    load.f_param3,load.f_param4,load.f_param5,sim_type)
 p = re.compile('[.]')
 job_string = p.sub('_',job_string)
@@ -56,7 +56,7 @@ for i in range(len(proteinList)):
 #generate a sequence of .png's for each file (printed time step). these will be used to create a gif.
     smeared_data = [0]*len(times)
     for j in range(len(times)):
-        image_data_file = '.' + job_string +str(proteinList[i])+'/images/single-'+str(times[j])+'.dat'
+        image_data_file = job_string +str(proteinList[i])+'/images/single-'+str(times[j])+'.dat'
         smeared_data[j] = np.loadtxt(image_data_file) #this is in microns green light at 500nm,
     dZ = smeared_data[0].shape[1]*1.05
     dY = smeared_data[0].shape[0]*2.00/skip_times

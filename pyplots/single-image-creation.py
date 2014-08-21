@@ -33,9 +33,11 @@ job_string = p.sub('_',job_string)
 proteinList = ["nADP","nATP","ND","NDE","nE",]
 proteins = [0]*len(proteinList)
 
+
 for i in range(len(proteins)):
     directory = '.' + job_string + str(proteinList[i]) + '/images'
     print directory
+    print os.path.isdir(directory)
     if (not os.path.isdir(directory)):
         os.makedirs(directory)
 

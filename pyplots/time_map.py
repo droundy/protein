@@ -28,11 +28,11 @@ def gaussian_smear(data,wavelength):
 proteinList = ['NflD']
 
 for protein in proteinList:
-    job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,load.f_param1,load.f_param2,
+    job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,load.f_param1,load.f_param2,
                                                        load.f_param3,load.f_param4,load.f_param5,load.sim_type)
     p = re.compile('[.]')
     job_string = p.sub('_',job_string)
-    data_filename = '.' + job_string + protein + '/' + 'time-map.dat'
+    data_filename = job_string + protein + '/' + 'time-map.dat'
     data_file = np.loadtxt(data_filename)
 
     print "starting time_map.p for ",data_filename

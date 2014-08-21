@@ -22,10 +22,11 @@ f_param7 = sys.argv[9]
 
 #create data objects (see file_loader.py)
 
+print "starting plot ave arrow"
 dx =0.05
 dump_time_step = 0.5
 protein_name = "NflD"
-job_string = "/data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,f_param1,f_param2,
+job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,f_param1,f_param2,
                                                     f_param3,f_param4,dens_factor,sim_type)
 p = re.compile('[.]')
 job_string = p.sub('_',job_string)
@@ -33,9 +34,10 @@ job_string = p.sub('_',job_string)
 start_time = float(f_param6)
 input_end_time = float(f_param7)
 end_time = 0
-for end in np.arange(int(start_time+20),int(input_end_time),20):
-    contour_values = '.'+ job_string +'ave-time/contour-values-' + protein_name +'-'+ str(int(start_time))+'-' \
+for end in np.arange(int(start_time+20),int(input_end_time+20),20):
+    contour_values = job_string +'ave-time/contour-values-' + protein_name +'-'+ str(int(start_time))+'-' \
         +str(end)+'.dat'
+    print contour_values
     if os.path.isfile(contour_values):
         end_time = end
 
@@ -43,22 +45,18 @@ if end_time == 0:
     print "there are no contour files that work for these times!"
     exit(1)
 
-contour_values = '.'+ job_string +'ave-time/contour-values-' + protein_name +'-'+ str(int(start_time))+'-' \
+contour_values = job_string +'ave-time/contour-values-' + protein_name +'-'+ str(int(start_time))+'-' \
     +str(end_time)+'.dat'
 print "actually using end time of " + str(end_time) + " because that's the highest that exists"
 print contour_values
 
-arrow_file = '.'+ job_string +'ave-time/ave-time-arrow-'+str(int(start_time))+'-'+str(protein_name)+'.dat'
+arrow_file = job_string +'ave-time/ave-time-arrow-'+str(int(start_time))+'-'+str(protein_name)+'.dat'
 print arrow_file
 
 
 num = 0
 while (start_time + num/2 < end_time):
     num += 40
-    print end_time
-    print start_time
-    print num/2
-    print ""
 num -= 40
 
 print arrow_file
@@ -158,8 +156,14 @@ for i in range(len(x_vals)-1):
                  fontsize=9,
                  arrowprops=dict(color='red',shrink=0.01, width=.3, headwidth=5.))
 plt.clim(0,time_max)
-#plt.axis('off')
-save_file_name = '.'+ job_string +'plots/plot-time-averaged-arrow-' + protein_name +'-'+ str(int(start_time))+'-' \
+
+dir_name = job_string + 'plots'
+
+if not os.path.exists(dir_name):
+    print "making directory "+dir_name+" because doesnt exist"
+    os.makedirs(dir_name)
+
+save_file_name = job_string +'plots/plot-time-averaged-arrow-' + protein_name +'-'+ str(int(start_time))+'-' \
     +str(end_time)+'.pdf'
 print save_file_name
 plt.savefig(save_file_name)
