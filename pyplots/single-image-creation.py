@@ -59,7 +59,7 @@ for i in range(len(proteins)):
 def gaussian_smear(data,wavelength):
     new = np.zeros_like(data)
     print "here ",new.shape[0]
-    n_sin_theta = 10.5
+    n_sin_theta = 1.5
     #sigma below is tha Abbe resolution.  n is the diffraction of the medium, sin_theta the aperture angle
     #So far I've wiki'd the guassian form of the Airy disk for this
     sigma = wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
