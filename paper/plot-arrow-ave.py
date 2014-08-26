@@ -70,7 +70,7 @@ if len(contour_values) > 1:
     hts += [hts[1]]
 
 gs = gridspec.GridSpec(len(arg_set)+2,2)
-plt.subplots_adjust(wspace=.01)#left=.3,right=.7)
+plt.subplots_adjust(left=.1,right=.9,top=1.0,bottom=-.9)#left=.3,right=.7)
 #gs.tight_layout(w_pad=.2)
 
 for arg_num in range(len(arg_set)+2):
@@ -80,8 +80,8 @@ for arg_num in range(len(arg_set)+2):
     if arg_num == len(arg_set):
         plt.subplot(gs[0,0],aspect='equal')
         m1=mpimg.imread('mannik-1.png')
-        dx = 7.0/380
-        print m1.shape[1]
+        #dx = 7.0/380
+        print "shape, ",m1.shape[1]
         y1 = -dx*np.arange(0, m1.shape[0])
         x1 = dx*np.arange(0, m1.shape[1])
         x1, y1 = np.meshgrid(x1, y1)
