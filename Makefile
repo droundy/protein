@@ -60,12 +60,12 @@ data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/plot-time-averaged-ar
 data/shape-randst/0_25-8_00-8_00-95_00-15_00-exact/plots/box-plot_D.pdf: pyplots/box_plot.py \
 	data/shape-randst/0_25-8_00-8_00-95_00-15_00-exact/box-plot.dat \
 	data/shape-randst/0_25-8_00-8_00-95_00-15_00-exact/sections.dat
-	python pyplots/box_plot.py randst 0.25 8.00 8.00 95.00 15.00 exact 0 5
+	python pyplots/box_plot.py randst 0.25 8.00 8.00 95.00 15.00 exact 0 1
 
 data/shape-randst/0_25-10_00-17_00-94_00-15_00-exact/plots/box-plot_D.pdf: pyplots/box_plot.py \
 	data/shape-randst/0_25-10_00-17_00-94_00-15_00-exact/box-plot.dat \
 	data/shape-randst/0_25-8_00-8_00-95_00-15_00-exact/sections.dat
-	python pyplots/box_plot.py randst 0.25 10.00 17.00 94.00 15.00 exact 0 5
+	python pyplots/box_plot.py randst 0.25 10.00 17.00 94.00 15.00 exact 0 1
 
 data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/NflD-time-map.pdf: pyplots/time_map.py \
 	data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/NflD/time-map.dat
