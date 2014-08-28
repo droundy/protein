@@ -75,7 +75,6 @@ def gaussian_smear(data,wavelength,protein):
     last_max_y = 0
     for num in range(data.shape[0]):
         total_proteins = 0
-        total_light = 0
         max_data = np.zeros_like(data[0])
         print "num ",num
         for x in range(new.shape[0]):
@@ -85,9 +84,7 @@ def gaussian_smear(data,wavelength,protein):
                     for j in np.arange(-dis,dis,1):
                         if (x+i >= 0 and x+i < new.shape[0]-1 and y+j >= 0 and y+j < new.shape[1]-1):
                             new[x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
-                            total_light += new[x+i,y+j]
                             max_data[x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
-        print "total proteins = ",total_light/(num+1)
         print "total proteins = ",total_proteins
         maxima = 0
         max_x = 0

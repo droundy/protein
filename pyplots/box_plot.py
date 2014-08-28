@@ -1,7 +1,7 @@
 from __future__ import division
 import numpy as np
 import matplotlib
-matplotlib.use("Agg")
+#matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import sys
 import pylab
@@ -176,8 +176,8 @@ def main():
 
     #begin messy code (to deal with matplotlib) - don't judge me
 
-    start_time_as_frac_of_ten = float(load.f_param6)
-    end_time_as_frac_of_ten = float(load.f_param7)
+    start_time_as_frac_of_ten = float(sys.argv[8])
+    end_time_as_frac_of_ten = float(sys.argv[9])
     tot_time = float(len(plotCurveList_D[0]))*box_time_step
     start = int(tot_time*start_time_as_frac_of_ten/10.0/box_time_step)
     end = int(tot_time*end_time_as_frac_of_ten/10.0/box_time_step)
@@ -375,6 +375,8 @@ def main():
 
     print load.print_string("box-plot_D","")
     plt.savefig(load.print_string("box-plot_D",""))
+    #plt.show()
+
     plt.figure()
 
     #f, (bax,sectionax) = plt.subplots(1, 2)
@@ -405,8 +407,6 @@ def main():
     bax.set_ylabel("Fraction of proteins")
     bax.legend(plotNameList_E,bbox_to_anchor=(0.3,-0.05,1.0,1.0),loc="lower right",prop={'size':8}).draw_frame(False)
     plt.savefig(load.print_string("box-plot_E",""))
-
-    plt.show()
     return 0
 
 job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (load.f_shape,load.f_param1,load.f_param2,

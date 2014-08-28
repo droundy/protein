@@ -34,7 +34,8 @@ arg_set = ["0.25-18.50-18.50-95.00-15.00-full_array",
            "0.25-18.50-18.50-95.00-15.00-exact",
            "0.25-18.60-28.60-94.00-15.00-exact"]
 
-bound_times = ["500","1500","500","540","500","520","500","520"]
+bound_times = ["500","1900","500","980","500","1800","500","1400"]
+arrow_cutoffs = [3.0/5.0,2.5/5.0,2.0/5.0,3.0/5.0]
 
 arrow_files = []
 contour_values = []
@@ -56,27 +57,14 @@ plt.figure(1)
 #plt.clf()
 print "len",len(arg_set)
 
-# half_width = float(c_data.shape[1]/max_width)/2.0
-# print half_width
-#gs.update(left=.5-half_width,right=.5+half_width)
-#plt.title("%f"%half_width)
 
-hts = []
 for i in range(len(contour_values)):
     c_data = np.loadtxt(contour_values[i])
-    hts += [float(c_data.shape[1])]
-
-if len(contour_values) > 1:
-    hts += [hts[1]]
 
 gs = gridspec.GridSpec(len(arg_set)+2,2)
 plt.subplots_adjust(left=.1,right=.9,top=1.0,bottom=-.9)#left=.3,right=.7)
-#gs.tight_layout(w_pad=.2)
 
 for arg_num in range(len(arg_set)+2):
-#    plt.subplot2grid((len(arg_set)+1,1),(arg_num,0),aspect='equal')
-    #gs_in = gridspec.GridSpec(arg_num,0)
-    #gs_in.update(left=.3+arg_num*.1,right=.8)
     if arg_num == len(arg_set):
         plt.subplot(gs[0,0],aspect='equal')
         m1=mpimg.imread('mannik-1.png')
@@ -111,6 +99,8 @@ for arg_num in range(len(arg_set)+2):
 
         a_data = a_data[int((start_time-float(bound_times[arg_num*2]))/dump_time_step):int((end_time-start_time)/dump_time_step)]
 
+        print a_data
+
         last_time = a_data[0,0]
         for i in range(1,len(a_data[:,0])):
             if (a_data[i,0] <= last_time):
@@ -121,7 +111,7 @@ for arg_num in range(len(arg_set)+2):
                 exit(0)
 
         time_max = np.max(c_data)
-        arrow_cutoff = 3.0*(np.max(a_data[:,1]))/5.0
+        arrow_cutoff = arrow_cutoffs[arg_num]*(np.max(a_data[:,1]))
 
         high_maximas = np.zeros(0)
         times = np.zeros(0)
@@ -130,8 +120,6 @@ for arg_num in range(len(arg_set)+2):
         last_x = 0
         last_y = 0
         index = 0
-        # print np.max(a_data[:,1])
-        # print "arrow cutoff ",arrow_cutoff
         for i in range(len(a_data[:,1])):
             if (a_data[i,1] > arrow_cutoff):
                 if ( (a_data[i,2]*dx != last_x or a_data[i,3]*dx != last_y) \
@@ -142,23 +130,16 @@ for arg_num in range(len(arg_set)+2):
                     last_x = a_data[i,2]*dx
                     last_y = a_data[i,3]*dx
 
-        print "arg ",arg_num
-
-
-    #cbar = plt.colorbar(CS)
-
-
 
         Ny = len(c_data[:,0])
         Nz = len(c_data[0,:])
 
         Z, Y = np.meshgrid(np.arange(0,(c_data.shape[1]-.9)*dx,dx),np.arange(0,(c_data.shape[0]-.9)*dx,dx))
-    #plt.contourf(originx+cell_x,originy+cell_y,c_data, linewidths=2,levels=[.99])
         plt.contourf(Z, Y, c_data, cmap=plt.cm.jet,origin='lower',levels=np.arange(0,time_max+1.0,1))
 
 
         for i in range(len(x_vals)-1):
-            plt.annotate('%g'%i,xy=(y_vals[i+1],x_vals[i+1]),xytext=(y_vals[i],x_vals[i]),
+            plt.annotate('',xy=(y_vals[i+1],x_vals[i+1]),xytext=(y_vals[i],x_vals[i]),
                          fontsize=11,
                          arrowprops=dict(color='red',shrink=0.01, width=.3, headwidth=5.))
             plt.clim(0,time_max)

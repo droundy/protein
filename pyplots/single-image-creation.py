@@ -59,11 +59,10 @@ for i in range(len(proteins)):
 def gaussian_smear(data,wavelength):
     new = np.zeros_like(data)
     print "here ",new.shape[0]
-    n_sin_theta = 1.5
-    #sigma below is tha Abbe resolution.  n is the diffraction of the medium, sin_theta the aperture angle
-    #So far I've wiki'd the guassian form of the Airy disk for this
-    sigma = wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
-    dis = int(3.5*sigma/0.05) #for now
+    N_A = 1.3
+    sigma = .21*wavelength/N_A #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
+    print "new way sigma ",sigma
+    dis = int(3*sigma/0.05) #for now
     for num in range(new.shape[0]):
         print "num ",num," of ",new.shape[0]-1
         for x in range(new.shape[1]):
@@ -86,7 +85,7 @@ times  = np.arange(float(start_time),float(end_time),dump_time_step)
 
 for i in range(len(proteins)):
     print proteinList[i]
-    smeared_data = gaussian_smear(proteins[i].dataset,.6) #this is in microns green light at 500nm,
+    smeared_data = gaussian_smear(proteins[i].dataset,.509) #this is in microns green light at 500nm,
     for j in range(len(times)):
         image_data_file = '.' + job_string +str(proteinList[i])+'/images/single-'+str(times[j])+'.dat'
         p_file = open(image_data_file,'w')
