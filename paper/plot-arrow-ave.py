@@ -1,7 +1,7 @@
 from __future__ import division
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import matplotlib.patheffects
@@ -46,16 +46,12 @@ for i in range(len(arg_set)):
     arrow_files += [job_string +'ave-time/ave-time-arrow-'+str(int(bound_times[i*2]))+'-'+protein_name+'.dat']
     contour_values += [ job_string +'ave-time/contour-values-' + protein_name +'-'+ str(int(bound_times[i*2]))+'-' \
                             +str(bound_times[i*2+1])+'.dat']
-    print i
-    print arrow_files[i]
-    print contour_values[i]
 
 
 
 plt.figure(1)
 
 #plt.clf()
-print "len",len(arg_set)
 
 
 for i in range(len(contour_values)):
@@ -66,12 +62,12 @@ plt.subplots_adjust(left=.1,right=.9,top=1.0,bottom=-.9)#left=.3,right=.7)
 
 for arg_num in range(len(arg_set)+2):
     if arg_num == len(arg_set):
+        gs.update(wspace=0)
         plt.subplot(gs[0,0],aspect='equal')
         m1=mpimg.imread('mannik-1.png')
-        #dx = 7.0/380
         print "shape, ",m1.shape[1]
-        y1 = -dx*np.arange(0, m1.shape[0])
-        x1 = dx*np.arange(0, m1.shape[1])
+        y1 = -np.arange(0, m1.shape[0])
+        x1 = np.arange(0, m1.shape[1])
         x1, y1 = np.meshgrid(x1, y1)
         xcenter = x1[m1[:,:,0] > 0].mean()
         y1off = 1.7#1.7 and there was only one yoff, not two
@@ -80,17 +76,27 @@ for arg_num in range(len(arg_set)+2):
     elif arg_num == len(arg_set)+1:
         plt.subplot(gs[0,1],aspect='equal')
         m1=mpimg.imread('mannik-2.png')
-        dx = 7.0/380
         print m1.shape[1]
-        y1 = -dx*np.arange(0, m1.shape[0])
-        x1 = dx*np.arange(0, m1.shape[1])
+        y1 = -np.arange(0, m1.shape[0])
+        x1 = np.arange(0, m1.shape[1])
         x1, y1 = np.meshgrid(x1, y1)
         xcenter = x1[m1[:,:,0] > 0].mean()
         y1off = 1.7#1.7 and there was only one yoff, not two
         plt.contourf(x1-xcenter, y1-y1off, m1[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
         plt.contourf(x1-xcenter, y1-y1off, m1[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
     else:
-        plt.subplot(gs[int(arg_num/2)+1,arg_num%2],aspect='equal')
+        ax = plt.subplot(gs[int(arg_num/2)+1,arg_num%2],aspect='equal')
+        if arg_num == len(arg_set)-1 or arg_num == len(arg_set)-2:
+            ax.add_artist(AnchoredSizeBar(
+                    ax.transData,
+                    5, # length of the bar in the data reference
+                    "5$\mu$", # label of the bar
+                    # bbox_to_anchor=(0.,0.,1.,1.),
+                    loc=8, # 'best', # location (lower right)
+                    borderpad=-1.8, sep=3, 
+                    frameon=False
+                    ))
+
         print int(arg_num/2)+1,"",arg_num%2
         c_data = np.loadtxt(contour_values[arg_num])
         a_data = np.loadtxt(arrow_files[arg_num])
@@ -134,10 +140,10 @@ for arg_num in range(len(arg_set)+2):
         Ny = len(c_data[:,0])
         Nz = len(c_data[0,:])
 
+
         Z, Y = np.meshgrid(np.arange(0,(c_data.shape[1]-.9)*dx,dx),np.arange(0,(c_data.shape[0]-.9)*dx,dx))
         plt.contourf(Z, Y, c_data, cmap=plt.cm.jet,origin='lower',levels=np.arange(0,time_max+1.0,1))
-
-
+        #plt.bar(.2,6,.2)
         for i in range(len(x_vals)-1):
             plt.annotate('',xy=(y_vals[i+1],x_vals[i+1]),xytext=(y_vals[i],x_vals[i]),
                          fontsize=11,
@@ -147,6 +153,15 @@ for arg_num in range(len(arg_set)+2):
     #plt.savefig('./paper/plot-ave-%d.pdf'%arg_num)
 
 
+# add_artist(AnchoredSizeBar(
+#         sectionax.transData,
+#         2.13, # length of the bar in the data reference
+#         "2.13$\mu$", # label of the bar
+#         # bbox_to_anchor=(0.,0.,1.,1.),
+#         loc=8, # 'best', # location (lower right)
+#         pad=-(ymax-ymin)/2.0 -.4, borderpad=0.25, sep=3,
+#         frameon=False
+#         ))
 
 #ax.get_xaxis().set_visible(True)
 #plt.xlim((0,dx*c_data.shape[1]))
@@ -165,5 +180,5 @@ plt.ylabel("Y grid position")
 
 plt.savefig('./paper/plot-ave.pdf')
 
-plt.show()
+#plt.show()
 

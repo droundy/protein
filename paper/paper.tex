@@ -399,28 +399,40 @@ Figure~\ref{box-mannik} shows box plots of the largest cells simulated
 whose oscillations relax into the steady state solution.  Both have a
 long axis of roughly 2.2$\mu m$, in agreement with theory.
 
-%% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/paper-arrow-plot}
-%%   \caption{Arrow plots for our simulation and mannik's experimental}
-%%   \label{arrow-compare-mannik}
-%% \end{figure}
-
 \section{Comparison of Mannik's Experimental and Our Stadium Shapes}
-We have made and studied movies that show the change in concentration
-of MinD over time We have found that the deterministic simulations of
-the protein reaction sequence discussed above results in robust
-oscillatory behavoir of polar selection and oscillation in a wide
-variety of cell shapes.  This differs with Mannik's experimental
-findings that show much less regular behavoir, with a large variation
-in the location of maxima.  On the other hand, our stochastic
-simulations show irregular behavoir in the irregular shapes and more
-regular, pole to pole oscillations in the pill and stadium shaped
-cells.
+We have made and studied different plots and movies that show the
+change in concentration of MinD over time We have found that the
+deterministic simulations of the protein reaction sequence discussed
+above results in robust oscillatory behavoir of polar selection and
+oscillation in a wide variety of cell shapes.  This differs with
+Mannik's experimental findings that show much less regular behavoir,
+with a large variation in the location of maxima.  On the other hand,
+our stochastic simulations show irregular behavoir in the irregular
+shapes and more regular, pole to pole oscillations in the pill and
+stadium shaped cells.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{../paper/plot-ave}
+  \caption{Arrows depicting global maxima in space and local maxima in
+    time overlayed on color plots of time averaged total MinD density.
+    At this point the data is over varying amounts of time but its all
+    roughly 1000 seconds\fixme{fix this}.  The top row shows plots
+    published by Mannik of the MinD maxima behavoir and the bottom two
+    rows show our pancake shapes that are designed to have the same
+    shape.  The middle row shows results from the stochastic
+    simulation and the bottom shows results from the deterministic.
+    We can see that the stochastic method shows behavoir that is
+    similar to experiment while the deterministic method shows
+    maximization that is too regular and robust.}
+  \label{randst-plot-ave}
+\end{figure}
+
 
 Figure \ref{randst-plot-ave} shows a comparison of irregular shapes
 simulated with the stochastic method and with the deterministic
 method, along with a plot taken from Mannik showing the location of
-sequential MinD maxima in the experimental cells.  Like Manniks, the
+sequential MinD maxima in the experimental cells.  Like Mannik's, the
 tips of the arrows in our plots show subsequent maxima, and the data
 overlays a color plot of time averaged MinD concentration.  These
 plots illustrate the adequacy of the stochastic method and inadequacy
@@ -428,37 +440,44 @@ of the deterministic one.  The stochastic plots show similar random behavoir to 
 
 \begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/plot-time-averaged-arrow-NflD-500-2000}
-  \caption{Arrow plots of our stadium shape}
-  \label{stadium-arrow}
-\end{figure}
-
-\begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/plot-time-averaged-arrow-NflD-500-2000}
-  \caption{Arrow plots of our pill shape}
-  \label{pill-arrow}
+  \caption{Arrows depicting global maxima in space and local maxima in
+    time overlayed on color plots of time averaged total MinD
+    density.\fixme{how much of time of data is shown?}.  Although
+    there is variation in the specific location of maxima on each edge
+    of the cell, the behavoir for both of these regular shapes is
+    robust and exhibits a back and forth oscillatory manner.  The
+    wildtype pill shape behavoir matches well with experiment.
+    Regular pancake shapes have not been observed experimentally, but
+    our stochastic simulations would suggest that they would exhibit
+    regular robust oscillations similar to the pill shapes.  This is
+    in contrast to the behavoir of Mannik cells seen in
+    Figure~{randst-plot-ave}}
+  \label{arrow-pill-stadium}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/box-plot_D}
   \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/plots/box-plot_D}
-  \caption{box plots of Mannik's shapes}
+  \caption{A comparison of our box plots that show a disparity between
+    the behavoir of the stochastic and deterministic simulations in
+    our Mannik cells.  The deterministic show a regular, robust
+    oscillatory behavoir between the two ends of the cell. The
+    stochastic simulation do show a general back and forth tendency
+    between two ends of the cell, but it is not robust and tends to
+    break down.}
   \label{box-mannik}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/box-plot_D}
   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-5_50-1_00-0_00-15_00-exact/plots/box-plot_D}
-  \caption{box plots of stadium shape}
+  \caption{A comparison of our box plots that show the similarity
+    between the stadium shapes simulated stochastically and
+    deterministically.  Both show regular oscillatory maxima with
+    similar periods.  This is in contrast to our boxpplot comparison
+    of one of the Mannik shapes in Figure~\ref{box-mannik}}
   \label{box-stadium}
-\end{figure}
-
-\begin{figure}
-  \includegraphics[width=\columnwidth]{../paper/plot-ave}
-  %% \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-1500-95-stoch}
-  %% \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-1850-95-stoch}
-  %% \includegraphics[width=\columnwidth]{../data/shape-randst/plots/arrow-2500-95-stoch}
-  \caption{Arrow plots of our randst shape}
-  \label{randst-plot-ave}
 \end{figure}
 
 
