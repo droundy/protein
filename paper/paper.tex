@@ -426,9 +426,32 @@ begin to lose their consistanty.  The Mannik reported cells already
 seem to be rather large (wild type cells are typically smaller than
 those observed my Mannik
 \cite{kubitschek1990cell,kubitschek1968linear,mannik2012robustness}),
-so we left off simulating cells any larger than twice this size.
+so we left off simulating cells any larger than twice this size. The
+movies show sharp peaks of MinD in specific locatations, typically at
+the edges of the cell and in regions of high radius of curvature,
+followed by a spreading out of the MinD out into the cell, with no
+real bias towards any location, until it aggregates again in a
+specific location at the opposite edge of the cell, maximizing there.
+The pattern is repeated again and again with surprising consistency,
+which can be seen on the right of Figure~\ref{box-mannik}.  This is
+the same plotting method as our box plots above, here showing
+stochastic and deterministic simulations of cells that are the same
+shape and size of one of Mannik's reported cells.
 
-This differs with Mannik's experimental findings
+\begin{figure}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/box-plot_D}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/plots/box-plot_D}
+  \caption{A comparison of our box plots that show a disparity between
+    the behavoir of the stochastic and deterministic simulations in
+    our Mannik cells.  The deterministic show a regular, robust
+    oscillatory behavoir between the two ends of the cell. The
+    stochastic simulation do show a general back and forth tendency
+    between two ends of the cell, but it is not robust and tends to
+    break down.}
+  \label{box-mannik}
+\end{figure}
+
+The findings differ with Mannik's experimental findings
 that show much less regular behavoir, with a large variation in the
 location of maxima.  On the other hand, our stochastic simulations
 show both robust pole to pole oscillations in the symmetric cells and
@@ -467,19 +490,6 @@ inadequate.
     behavoir that is similar to experiment while the deterministic
     method shows maximization that is too regular and robust.}
   \label{randst-plot-ave}
-\end{figure}
-
-\begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/box-plot_D}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/plots/box-plot_D}
-  \caption{A comparison of our box plots that show a disparity between
-    the behavoir of the stochastic and deterministic simulations in
-    our Mannik cells.  The deterministic show a regular, robust
-    oscillatory behavoir between the two ends of the cell. The
-    stochastic simulation do show a general back and forth tendency
-    between two ends of the cell, but it is not robust and tends to
-    break down.}
-  \label{box-mannik}
 \end{figure}
 
 Judging that at this point that we have a fair idea of how our two
