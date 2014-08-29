@@ -192,5 +192,5 @@ plt.ylabel("Y grid position")
 
 plt.savefig('./paper/plot-ave.pdf')
 
-plt.show()
+#plt.show()
 

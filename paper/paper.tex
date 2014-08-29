@@ -415,14 +415,25 @@ section~\ref{sec:stability-analysis}.
 We have found that the deterministic simulations of the protein
 reaction sequence discussed above results in robust oscillatory
 behavoir of polar selection and oscillation in not only symmetrical
-shapes, such as the wild type pill shape, but also in very
-assymetrical, flatttened cells, such as those studied by Mannik.  This
-differs with Mannik's experimental findings that show much less
-regular behavoir, with a large variation in the location of maxima.
-On the other hand, our stochastic simulations show both robust pole to
-pole oscillations in the symmetric cells and irregular behavoir in the
-assymetrical shapes, agreeing well with Mannik's experimental
-findings.
+shapes, such as the wildtype pill shape, but also in very
+assymetrical, flatttened cells, such as those studied by Mannik.
+After the lower stability limit of
+section~\ref{sec:stability-analysis} has been surpassed, this
+qualitative behavoir doesn't seem to have size dependence until cells
+reach sizes that have more than twice the dimensions of the Mannik
+cells.  At this point the robust oscillations, while still evident,
+begin to lose their consistanty.  The Mannik reported cells already
+seem to be rather large (wild type cells are typically smaller than
+those observed my Mannik
+\cite{kubitschek1990cell,kubitschek1968linear,mannik2012robustness}),
+so we left off simulating cells any larger than twice this size.
+
+This differs with Mannik's experimental findings
+that show much less regular behavoir, with a large variation in the
+location of maxima.  On the other hand, our stochastic simulations
+show both robust pole to pole oscillations in the symmetric cells and
+irregular behavoir in the assymetrical shapes, agreeing well with
+Mannik's experimental findings.
 
 Figure~\ref{arrow-pill-stadium} and Figure~\ref{randst-plot-ave} show
 color plots of time-averaged MinD overlayed by arrows depicting
@@ -445,13 +456,14 @@ inadequate.
     time overlayed on color plots of time averaged total MinD density.
     A density threshold is chosen and only maxima above this threshold
     are shown. The plots serve to illistrate what is observed in our
-    movies.  At this point the data is over varying amounts of time
-    but its all roughly 1000 seconds\fixme{fix this}.  The top row
-    shows plots published by Mannik of the MinD maxima behavoir and
-    the bottom two rows show our pancake shapes that are designed to
-    have the same shape.  The middle row shows results from the
-    stochastic simulation and the bottom shows results from the
-    deterministic.  We can see that the stochastic method shows
+    movies.  The simulation time covered in these is 1000 seconds
+    \fixme{this is not true yet - need to change the data once its
+      finished right now 2 of them are 1000 the others are like 980}.
+    The top row shows plots published by Mannik of the MinD maxima
+    behavoir and the bottom two rows show our pancake shapes that are
+    designed to have the same shape.  The middle row shows results
+    from the stochastic simulation and the bottom shows results from
+    the deterministic.  We can see that the stochastic method shows
     behavoir that is similar to experiment while the deterministic
     method shows maximization that is too regular and robust.}
   \label{randst-plot-ave}
