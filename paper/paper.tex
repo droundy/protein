@@ -400,6 +400,7 @@ whose oscillations relax into the steady state solution.  Both have a
 long axis of roughly 2.2$\mu m$, in agreement with theory.
 
 \section{Comparison of Mannik's Experimental and Our Stadium Shapes}
+\fixme{should I say anything about different/large sizes?}
 We have made and studied plots and movies of the MinD in a number of
 simulated cell shapes and sizes. We have found that the deterministic
 simulations of the protein reaction sequence discussed above results
@@ -409,24 +410,23 @@ also in very assymetrical, flatttened cells, such as those studied by
 Mannik.  This differs with Mannik's experimental findings that show
 much less regular behavoir, with a large variation in the location of
 maxima.  On the other hand, our stochastic simulations show both
-irregular behavoir in the assymetrical shapes and more regular, pole
-to pole oscillations in the symmetric pill and stadium shaped cells,
-agreeing well with Mannik's experimental findings.
+robust pole to pole oscillations in the symmetric cells and irregular
+behavoir in the assymetrical shapes, agreeing well with Mannik's
+experimental findings.
 
-Figure~\ref{arrow-pill-stadium} and Figure~\ref{randst-plot-ave} show color
-plots of time-averaged MinD overlayed by arrows depicting sequential
-maxima that are global in space and local in time.  Our shapes that
-are designed to look like Mannik cells show well the inadequacy of the
-deterministic method of simulation and conversely the accuracy of the
-stochastic method.  Our stochastic method movies (and arrow plots of
-Figure~\ref{randst-plot-ave}) show irregular location of maxima that is
-similar to what is observed experimentally by Mannik. There is a
+Figure~\ref{arrow-pill-stadium} and Figure~\ref{randst-plot-ave} show
+color plots of time-averaged MinD overlayed by arrows depicting
+sequential maxima that are global in space and local in time.  Our
+stochastic method movies (and arrow plots of
+Figure~\ref{randst-plot-ave}) show irregular location of maxima that
+is similar to what is observed experimentally by Mannik. There is a
 general bias towards back and forth behavoir, which can be seen in the
-box plots of Figure~\ref{box-mannik}, but the behavoir is irregular and
-the location of the maxima vary a significant amount.  On the other
-hand, the deterministic simulations show behavoir that is much too
-regular when compared with experiment, exhibiting locations of maxima
-that do not vary.  The deterministic method is seen to be inadequate.
+box plots of Figure~\ref{box-mannik}, but the behavoir is irregular
+and the location of the maxima vary a significant amount.  On the
+other hand, the deterministic simulations show behavoir that is much
+too regular when compared with experiment, exhibiting locations of
+maxima that do not vary.  The deterministic method is seen to be
+inadequate.
 
 \begin{figure}
   \centering
@@ -460,14 +460,6 @@ that do not vary.  The deterministic method is seen to be inadequate.
   \label{box-mannik}
 \end{figure}
 
-
-Our simulations of pill shapes show behavoir that is once again well
-matched by experiment, but this time the deterministic method seems to
-be as aduaquet as the stochastic in giving accurate results.  The
-experimental cells show regular back and forth behavoir, as do both
-simulations.  In this case the natural bias of the deterministic
-method towards robustness and regularity works in its favor.
-
 Judging that at this point that we have a fair idea of how our two
 methods compare with experiment, we investigate the limits of the
 break down of regular activity, by simulating large, regular,
@@ -478,11 +470,11 @@ ellipse connected on either end.  They are also made to have a large
 volume that is similar to the Mannik shapes.
 
 We find that both the stochastic and the deterministic solutions show
-regular back and forth oscillations the stadium shaped cells, as can
-be seen Figure~\ref{box-stadium}.  This suggests that it is the irregular,
-assymetric shape of the Mannik cells, not their size or their
-flattened nature, that causes these cells to exhibit irregularity in
-MinD oscillations.
+regular back and forth oscillations in the stadium shaped cells, as
+can be seen Figure~\ref{box-stadium}.  This suggests that it is the
+irregular, assymetric shape of the Mannik cells, not their size or
+their flattened nature, that causes these cells to exhibit
+irregularity in MinD oscillations.
 
 \begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/box-plot_D}
@@ -515,18 +507,6 @@ MinD oscillations.
     in Figure~\ref{randst-plot-ave}}
   \label{arrow-pill-stadium}
 \end{figure}
-
-
-
-Figure~\ref{randst-plot-ave} shows a comparison of irregular shapes
-simulated with the stochastic method and with the deterministic
-method, along with a plot taken from Mannik showing the location of
-sequential MinD maxima in the experimental cells.  Like Mannik's, the
-tips of the arrows in our plots show subsequent maxima, and the data
-overlays a color plot of time averaged MinD concentration.  These
-plots illustrate the adequacy of the stochastic method and inadequacy
-of the deterministic one.  The stochastic plots show similar random
-behavoir to Manniks
 
 \begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/NflD-time-map}
@@ -670,6 +650,7 @@ exact solution method.
 
 \section{Interpretation of Data}
 \section{Conclusion}
+No conclusion :(
 \bibliography{paper}
 
 
@@ -822,149 +803,6 @@ MinD will act in these ``wandering cluster'' formations.  The cell is
 large enough so that there is a loss of MinD correlation between the
 opposite sides (the protein in the right corner at any time is too far
 away from the left to immediately affect the protein there).
-
-
-%% \subsubsection{Randst-97-}
-%% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-800-600-9700-1500}
-%%   %%\includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-600-600-9600-1500}
-%%   \caption{Total protein fluctuation in the sideways flying saucer
-%%     pancake cell shape.  The vertical axis shows stacked the total
-%%     number of proteins that are of four different compound stages and
-%%     in the different sections of the cell.}
-%%   \label{box-97}
-%% \end{figure}
-
-%% Early on in its simulation the sideways flying saucer pancake shape
-%% shows a clear breakdown of an unstable equilibrium oscillation.  We
-%% have set the intial conditions so that MinD density is highly
-%% concentrated to the left of a dividing line that runs parrallel to the
-%% left vertical side.  For the first number of oscillations the maxima
-%% trade off right to left, from a high peak in the rightward middle
-%% compartment to vertically opposed peaks in the poles of the long axis
-%% of the cell.  This is seen in the first part of Figure~\ref{box-97},
-%% where the lower and upper sections peak in unison, and the middle
-%% right section peaks $\pi$ radians removed from these.  After a few
-%% oscillations the back and forth oscillations tip toward the vertical
-%% direction and the system loses its initial oscillation pattern.  It
-%% falls quickly instead into a back and forth pattern between the two
-%% opposing endcaps.  The oscillation at this point is reminiscent of the
-%% pills shape oscillation, once again showing the robust nature of the
-%% back and forth, two pole pattern.
-
-%% During each period, directly after one of the polar maxima has
-%% subsided, there is a small spike with the regular maxima pattern (a
-%% spike in membrane bound MinD:ATP immediately followed by a spike in
-%% membrane bound MinD:MinE:ATP) seen in the small middle right
-%% compartment section.  The animations show that the MinD, oscillating
-%% back and forth between the upper and lower poles, seems to catch and
-%% lag in the indentation for a bit before moving on.  Once again the
-%% positive radius of curvature acts as an attractive place for MinD to
-%% cluster on the walls, and it is not released to move on through the
-%% cytoplasm again until MinE has formed its ring and completely reacted
-%% it away.
-
-
-%% \subsubsection{Randst-96-Star}
-%% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-700-700-9600-1500}
-%%   %%\includegraphics[width=\columnwidth]{../data/shape-randst/plots/box-plot_D--randst-25-600-600-9600-1500}
-%%   \caption{Total protein fluctuation in the star cell shape.  The vertical axis shows stacked the total
-%%     number of proteins that are of four different compound stages and
-%%     in the different sections of the cell.}
-%%   \label{box-96}
-%% \end{figure}
-
-%% This clover shape finds a regular oscillatory behavoir after about
-%% seven periods that consists of two maxima that peak regularly in the
-%% corners accross from each other at the same times (Figure
-%% \ref{box-96}) and then again opposing maxima that peak at the same
-%% time in the other two corners.\fixme{should try some different
-%%   starting conditions with this to see if there's another patter.}
-
-%% Looking at at few periods in detail.  We find that there is a small
-%% increase in cytoplasmic MinE always directly before the beggining
-%% of climb in the membrane bound MinE peak.  Also, there is at any one
-%% time a very large amount more of minE that is membrane bound then
-%% cytoplasmic in any ones section.  A difference of a factor of roughly
-%% 20 when membrane MinE is at its peak, and roughly 12 when membrane
-%% MinE is at it's minimum.  There seem to be two modes of oscillation,
-%% each exhibiting a density peak maxima that moves back and forth
-%% diagonaly from one corner to the opposite, as if there were two
-%% overlapping, criss-crossed cells oscillating.  In the box plot this is
-%% seen as roughly coinciding membrane minD peaks in the lower left and
-%% right corners, followed one pi later in peaks in the upper right and
-%% upper left corners.  Interesting that this did not exhibit
-%% counterclockwise motion that Huangs 2008 paper might suggest.  Should
-%% run sims that start in the wacky way that just started running with
-%% triangles.
-%% \newline
-
-
-%% We haven't simulated long enough yet, so no real pattern has shown
-%% itself.  There's certainly oscillations, and it's almost as if there's
-%% competing modes - top to bottom, left to right, corner to corner, etc.
-%% Interesting.
-
-%% \fixme{maybe?}The animations seem to relax into a pattern in which the oscillations
-%% go from the smallest corner, out to the other three, and then back to
-%% the smallest corner?  \fixme{There isn't enough data to see properly
-%%   though, need to run for longer.}
-
-%% The double pole oscillation pattern, in which one pole is located in a
-%% single corner of the triangle and the other pole is spread out between
-%% the opposite two, can be seen in Figure \ref{box-triangle}.  The
-%% equilateral triangle shows a spike in both the Center and Left
-%% sections at the same time, both showing the familiar sequence of peaks
-%% amoungst the different states of the protein seen in the poles of the
-%% pill shaped bacteria.  A spike in the other corner, showing the common
-%% sequence, occurs during the minima of the former two, wth a higher
-%% concentration at the peak.  A similar pattern is seen in the
-%% iscosolese triangular shape, where interestingly the onset of the
-%% maxima in the single maxima corner (the Left section) builds more
-%% quickly than it fades.  This is presumably becuase as the cytoplasmic
-%% minD:ATP diffuses down a more accute corner, it is sourrounded by
-%% closer cell walls than it would be in a less acute corner, so that the
-%% it is more apt at any diffusive step to make contact and cluster on
-%% the walls.  That particular part of the process is therefore
-%% accelerated, driving the build up of the maxima forward.
-
-%% The right triangle shows a similar pattern except that here there is
-%% an assymetry between the two corners that maximize at roughly the same
-%% time.  One corner is further from the single maximizing corner and it
-%% consisitently peaks later.  The MinD simply have further to travel
-%% before they maximize there.
-
-%% For these three sizess and shapes there is not sign that the
-%% oscillation patterns once they are set will break down.
-
-%% \begin{figure}
-%% %%  \includegraphics[width=\columnwidth]{../data/shape-triangle/plots/box-plot_D--triangle-25-600-600-600-1500}
-%%   \caption{Total protein fluctuation of an equilateral triangle with
-%%     larger dimensions (each side is roughly $6\micron$.  The vertical
-%%     axis shows stacked the total number of proteins that are of four
-%%     different compound stages and in the different sections of the
-%%     cell. The time limits have been set to show the broken down
-%%     section of the simulation.}
-%%   \label{box-triangle}
-%% \end{figure}
-
-%% The larger equilateral shape shows the same pattern as the smaller
-%% version does only until fifteen periods, at which point there is a
-%% breakdown of the oscillation pattern.  During the last three stable
-%% periods, the single maximizing corner, the lower left section in the
-%% figure, has a lower peak each period as the membrane bound MinD:ATP in
-%% the other corners lag more and more before being eaten away by the
-%% MinE.  Finally these maxima lag so much that they break down the
-%% regular pattern.  There then occurs about five periods of semi chaotic
-%% behavoir, until it settles back into another stable oscillation that
-%% is similar to the original one, except that a different corner has
-%% been chosen to be the singlular maxima (the right section in the
-%% figure), while the other two corners maximize at the same time.  This
-%% interesting breakdown and recovery shows both the robustness of the
-%% double pole oscilatory tendency and the importance of required
-%% distance of travel for the different proteins.
-
 
 
 \end{document}
