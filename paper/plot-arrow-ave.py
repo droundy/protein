@@ -34,8 +34,8 @@ arg_set = ["0.25-18.50-18.50-95.00-15.00-full_array",
            "0.25-18.50-18.50-95.00-15.00-exact",
            "0.25-18.60-28.60-94.00-15.00-exact"]
 
-bound_times = ["500","1900","500","980","500","1800","500","1400"]
-arrow_cutoffs = [3.0/5.0,2.5/5.0,2.0/5.0,3.0/5.0]
+bound_times = ["500","1400","500","980","500","1400","500","1400"]
+arrow_cutoffs = [2.4/5.0,2.4/5.0,2.2/5.0,3.0/5.0]
 
 arrow_files = []
 contour_values = []
@@ -86,22 +86,44 @@ for arg_num in range(len(arg_set)+2):
         plt.contourf(x1-xcenter, y1-y1off, m1[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
     else:
         ax = plt.subplot(gs[int(arg_num/2)+1,arg_num%2],aspect='equal')
-        if arg_num == len(arg_set)-1 or arg_num == len(arg_set)-2:
+        if arg_num == len(arg_set)-2:
             ax.add_artist(AnchoredSizeBar(
                     ax.transData,
                     5, # length of the bar in the data reference
                     "5$\mu$", # label of the bar
                     # bbox_to_anchor=(0.,0.,1.,1.),
                     loc=8, # 'best', # location (lower right)
-                    borderpad=-1.8, sep=3, 
+                    borderpad=-1.8, sep=3,
                     frameon=False
                     ))
-
+        elif arg_num == len(arg_set)-1:
+            ax.add_artist(AnchoredSizeBar(
+                    ax.transData,
+                    6, # length of the bar in the data reference
+                    "6$\mu$", # label of the bar
+                    # bbox_to_anchor=(0.,0.,1.,1.),
+                    loc=8, # 'best', # location (lower right)
+                    borderpad=-1.8, sep=3,
+                    frameon=False
+                    ))
         print int(arg_num/2)+1,"",arg_num%2
-        c_data = np.loadtxt(contour_values[arg_num])
+        first_c_data = np.loadtxt(contour_values[arg_num])
         a_data = np.loadtxt(arrow_files[arg_num])
         start_time = float(bound_times[arg_num*2])
         end_time = float(bound_times[arg_num*2+1])
+
+        y_buf = 10
+        x_buf = 10
+        if arg_num == len(arg_set)-1 or arg_num == len(arg_set)-3:
+            y_buf = 8
+            x_buf = 8
+        c_data = np.zeros((first_c_data.shape[0]+x_buf*2,first_c_data.shape[1]+y_buf*2))
+        for i in range(first_c_data.shape[0]):
+            for j in range(first_c_data.shape[1]):
+                c_data[i+x_buf][j+y_buf] = first_c_data[i][j]
+
+        a_data[:,2] += x_buf
+        a_data[:,3] += y_buf
 
         a_data = a_data[int((start_time-float(bound_times[arg_num*2]))/dump_time_step):int((end_time-start_time)/dump_time_step)]
 
@@ -152,16 +174,6 @@ for arg_num in range(len(arg_set)+2):
     plt.axis('off')
     #plt.savefig('./paper/plot-ave-%d.pdf'%arg_num)
 
-
-# add_artist(AnchoredSizeBar(
-#         sectionax.transData,
-#         2.13, # length of the bar in the data reference
-#         "2.13$\mu$", # label of the bar
-#         # bbox_to_anchor=(0.,0.,1.,1.),
-#         loc=8, # 'best', # location (lower right)
-#         pad=-(ymax-ymin)/2.0 -.4, borderpad=0.25, sep=3,
-#         frameon=False
-#         ))
 
 #ax.get_xaxis().set_visible(True)
 #plt.xlim((0,dx*c_data.shape[1]))
