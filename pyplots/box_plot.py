@@ -176,11 +176,11 @@ def main():
 
     #begin messy code (to deal with matplotlib) - don't judge me
 
-    start_time_as_frac_of_ten = float(sys.argv[8])
-    end_time_as_frac_of_ten = float(sys.argv[9])
-    tot_time = float(len(plotCurveList_D[0]))*box_time_step
-    start = int(tot_time*start_time_as_frac_of_ten/10.0/box_time_step)
-    end = int(tot_time*end_time_as_frac_of_ten/10.0/box_time_step)
+    # start_time_as_frac_of_ten = float(sys.argv[8])
+    # end_time_as_frac_of_ten = float(sys.argv[9])
+    # tot_time = float(len(plotCurveList_D[0]))*box_time_step
+    start = int(float(sys.argv[8])/box_time_step)#int(tot_time*start_time_as_frac_of_ten/10.0/box_time_step)
+    end = int(float(sys.argv[9])/box_time_step)#int(tot_time*end_time_as_frac_of_ten/10.0/box_time_step)
     # (start, end) = find_period(plotCurveList_D[len(plotCurveList_D)-2])
     # (start, end) = find_period(np.array(returnData(boxList[len(boxList)-1], 'D_ND')))
     # start = end - 2*(end-start)

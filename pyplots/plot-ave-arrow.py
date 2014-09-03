@@ -87,10 +87,9 @@ for i in range(1,len(a_data[:,0])):
 
 time_max = np.max(c_data)
 
-print a_data
+
 print "hh ",int((8000-start_time)/dump_time_step)
 a_data = a_data[int((900-start_time)/dump_time_step):]
-print a_data
 arrow_cutoff = 3.5*(np.max(a_data[:,1]))/5.0
 
 print arrow_cutoff
@@ -112,20 +111,6 @@ for i in range(len(a_data[:,1])):
             times = np.append(times,a_data[i,0])
             last_x = a_data[i,2]*dx
             last_y = a_data[i,3]*dx
-
-print high_maximas
-print times
-print x_vals
-print y_vals
-print last_x
-print last_y
-print index
-
-
-for i in c_data:
-    for j in i:
-        if (j > 29):
-            print j
 
 Ny = len(c_data[:,0])
 Nz = len(c_data[0,:])

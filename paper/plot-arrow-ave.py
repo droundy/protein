@@ -46,8 +46,8 @@ arg_set = ["randst/0.25-18.50-18.50-95.00-15.00-exact",
            "stad/0.25-2.92-1.18-0.00-15.00-exact"]
 #rot_theta = [math.pi/2.0,math.pi/3.0,math.pi/4.0,math.pi/5.0,7.0*math.pi/6.0,21.0*math.pi/9.0]
 
-bound_times = [500,1000,500,1000,500,1000,500,980,50,290,50,190,50,290,50,190]
-arrow_goals = [20, 16, 16, 14, 5, 5, 5, 5]
+bound_times = [500,1000,500,1000,500,1000,500,980,500,1000,500,780,500,1000,500,780]
+arrow_goals = [20, 16, 16, 14, 19, 18, 18, 16]
 
 x_position_m2 = 7.0
 y_position_m2 = 13.0
@@ -195,24 +195,16 @@ for arg_num in range(len(arg_set)):
             times = np.append(times,clean_data[i,0])
             #print 'finished with arrow_cutoff', arrow_cutoff, 'and num arrows', len(x_vals)
 
-    print x_vals
-    print y_vals
     x_vals += y[0]
     y_vals += x[0]
     x_vals,y_vals = x_vals*math.cos(rot_theta[arg_num]) - y_vals*math.sin(rot_theta[arg_num]), \
         +x_vals*math.sin(rot_theta[arg_num]) + y_vals*math.cos(rot_theta[arg_num])
-    print x_vals
-    print y_vals
-    print '\n\n'
-
-
 
     x_vals += X_position[arg_num]
     y_vals += Y_position[arg_num]
 
     #plt.colorbar()
     #plt.bar(.2,6,.2)
-
 
     for i in range(len(x_vals)-1):
         plt.annotate('',xy=(x_vals[i+1],y_vals[i+1]),xytext=(x_vals[i],y_vals[i]),
