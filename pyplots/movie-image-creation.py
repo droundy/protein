@@ -101,8 +101,9 @@ def timemin(data):
 
 def gaussian_smear(data,wavelength):
     new = np.zeros_like(data)
-    n_sin_theta = 1.5
-    sigma = wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
+    N_A = 1.3
+    sigma = .21*wavelength/N_A #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
+    print "sigma ",sigma
     dis = int(3*sigma/0.05) #for now
     for num in range(new.shape[0]):
         print 'num = '+str(num)
@@ -130,21 +131,23 @@ def contourplt(protein,video_number):
     print "smeared_data.shape[2] ",smeared_data.shape[2]
     print type(smeared_data[0])
 
-    Z, Y = np.meshgrid(np.arange(0,smeared_data.shape[2]*0.05,0.05), np.arange(0,(smeared_data.shape[1]-.9)*0.05,0.05))
-    print "Z ",len(Z)
-    print "Z0 ",len(Z[0])
+    Z, Y = np.meshgrid(np.arange(0,(smeared_data.shape[2]-.9)*0.05,0.05), np.arange(0,(smeared_data.shape[1]-.9)*0.05,0.05))
+
+    print "Z.shape[0] ",Z.shape[0]
+    print "Z.shape[1] ",Z.shape[1]
+
     print len(smeared_data[0])
     print len(smeared_data[0][0])
 #generate a sequence of .png's for each file (printed time step). these will be used to create a gif.
     for k in range(int(starting_video_number/dump_time_step), int(starting_video_number/dump_time_step) + len(protein.dataset), 1):
         #page = protein.dataset[k]
-        print './data/shape-'+f_shape+'/plots/images/'+load.debug_str+load.hires_str+load.slice_str+'tp_'+str(k)+'-'+str(protein.protein)+ \
-                        '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.png'
+        # print './data/shape-'+f_shape+'/plots/images/'+load.debug_str+load.hires_str+load.slice_str+'tp_'+str(k)+'-'+str(protein.protein)+ \
+        #                 '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.png'
         plt.clf()
         plt.axes().set_aspect('equal', 'datalim')
-        print 'k' ,k
+ #       print 'k' ,k
         index = k - int(starting_video_number/dump_time_step)
-        print 'index' ,index
+#        print 'index' ,index
         CS = plt.contourf(Z, Y, smeared_data[index], cmap=plt.cm.jet,origin='lower',levels=np.arange(minval,maxval+10,1))
         cbar = plt.colorbar(CS)
         plt.clim(minval,maxval)
@@ -153,6 +156,7 @@ def contourplt(protein,video_number):
         plt.xlabel("Z position")
         plt.ylabel("Y position")
         dir_name = '.' + job_string + protein_name + '/images'
+        print dir_name
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
         name = '.' + job_string + protein_name + '/images/frame-%05d.png'%(k)

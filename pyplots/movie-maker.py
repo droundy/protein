@@ -60,7 +60,7 @@ if (end_time >= total_number_of_files*dump_time_step):
     print "there are only enough files to support a total time of less than ", total_number_of_files*dump_time_step
     exit(1)
 
-num_in_a_video = 400
+num_in_a_video = 2000
 number_of_videos = 1 + int( (end_time-start_time)/float(dump_time_step)/float(num_in_a_video) )
 
 print num_in_a_video
