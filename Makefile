@@ -62,6 +62,8 @@ paper/plot-ave.pdf: paper/plot-arrow-ave.py \
 	data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/ave-time/contour-values-NflD-500-1000.dat \
 	data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/ave-time/ave-time-arrow-500-NflD.dat \
 	data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/ave-time/contour-values-NflD-500-1000.dat \
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/ave-time/ave-time-arrow-500-NflD.dat \
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/ave-time/contour-values-NflD-500-1000.dat \
 	data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/ave-time/ave-time-arrow-500-NflD.dat \
 	data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/ave-time/contour-values-NflD-500-1800.dat \
 	data/shape-randst/0_25-18_60-28_60-94_00-15_00-exact/ave-time/ave-time-arrow-500-NflD.dat \
@@ -69,7 +71,9 @@ paper/plot-ave.pdf: paper/plot-arrow-ave.py \
 	data/shape-stad/0_25-2_35-1_32-0_00-15_00-exact/ave-time/ave-time-arrow-500-NflD.dat \
 	data/shape-stad/0_25-2_35-1_32-0_00-15_00-exact/ave-time/contour-values-NflD-500-780.dat \
 	data/shape-stad/0_25-2_92-1_18-0_00-15_00-exact/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-stad/0_25-2_92-1_18-0_00-15_00-exact/ave-time/contour-values-NflD-500-780.dat
+	data/shape-stad/0_25-2_92-1_18-0_00-15_00-exact/ave-time/contour-values-NflD-500-780.dat \
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/ave-time/ave-time-arrow-500-NflD.dat \
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/ave-time/contour-values-NflD-500-1000.dat
 	python paper/plot-arrow-ave.py
 
 data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/plot-time-averaged-arrow-NflD-500-2000.pdf: pyplots/plot-ave-arrow.py \
@@ -85,7 +89,7 @@ data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/plot-time-averaged-arrow
 data/shape-randst/0_25-8_00-8_00-95_00-15_00-exact/plots/box-plot_D.pdf: pyplots/box_plot.py \
 	data/shape-randst/0_25-8_00-8_00-95_00-15_00-exact/box-plot.dat \
 	data/shape-randst/0_25-8_00-8_00-95_00-15_00-exact/sections.dat
-	python pyplots/box_plot.py randst 0.25 8.00 8.00 95.00 15.00 exact 0 600
+	python pyplots/box_plot.py randst 0.25 8.00 8.00 95.00 15.00 exact 0 500
 
 data/shape-randst/0_25-10_00-17_00-94_00-15_00-exact/plots/box-plot_D.pdf: pyplots/box_plot.py \
 	data/shape-randst/0_25-10_00-17_00-94_00-15_00-exact/box-plot.dat \

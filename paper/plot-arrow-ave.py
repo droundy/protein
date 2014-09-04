@@ -43,38 +43,46 @@ arg_set = ["randst/0.25-18.50-18.50-95.00-15.00-exact",
            "stad/0.25-2.35-1.32-0.00-15.00-full_array",
            "stad/0.25-2.35-1.32-0.00-15.00-exact",
            "stad/0.25-2.92-1.18-0.00-15.00-full_array",
-           "stad/0.25-2.92-1.18-0.00-15.00-exact"]
+           "stad/0.25-2.92-1.18-0.00-15.00-exact",
+           "p/3.00-0.50-0.00-0.00-15.00-exact",
+           "p/3.00-0.50-0.00-0.00-15.00-full_array"]
+
 #rot_theta = [math.pi/2.0,math.pi/3.0,math.pi/4.0,math.pi/5.0,7.0*math.pi/6.0,21.0*math.pi/9.0]
 
-bound_times = [500,1000,500,1000,500,1000,500,980,500,1000,500,780,500,1000,500,780]
-arrow_goals = [20, 16, 16, 14, 19, 18, 18, 16]
-
-x_position_m2 = 7.0
-y_position_m2 = 13.0
-x_position_m1 = 1.0
-y_position_m1 = 13.0
+bound_times = [500,1000,500,1000,500,1000,500,980,500,1000,500,780,500,1000,500,780,500,1000,500,1000]
+arrow_goals = [20, 16, 16, 14, 19, 18, 18, 16, 24, 24]
 
 col_0x = 1.0
 col_1x = 8.0
 col_2x = 15.0
 col_3x = 21.0
+col_4x = 26.5
 
 row_0y = 1.0
 row_1y = 6.0
 
-X_position = [col_0x,col_0x,col_1x,col_1x,col_2x,col_2x,col_3x,col_3x]
-Y_position = [row_0y,row_1y,row_0y,row_1y,row_0y,row_1y,row_0y,row_1y]
+x_position_m1 = col_0x
+y_position_m1 = 13.0
+x_position_m2 = col_1x
+y_position_m2 = 13.0
+x_position_m3 = col_4x
+y_position_m3 = 13.0
 
-theta_0 = 8.0*math.pi/8.0
-theta_1 = 6.78*math.pi/8.0
-theta_2 = 1.1235813*math.pi/8.0
-theta_3 = 1.1235813*math.pi/8.0
+X_position = [col_0x,col_0x,col_1x,col_1x,col_2x,col_2x,col_3x,col_3x,col_4x,col_4x]
+Y_position = [row_0y,row_1y,row_0y,row_1y,row_0y,row_1y,row_0y,row_1y,row_0y,row_1y]
 
-rot_theta = [theta_0,theta_0,theta_1,theta_1,theta_2,theta_2,theta_3,theta_3]
-mannik_rot_theta = [theta_0,theta_1]
+theta_0 = 0#8.0*math.pi/8.0
+theta_1 = 0#6.78*math.pi/8.0
+theta_2 = 0#1.1235813*math.pi/8.0
+theta_3 = 0#1.1235813*math.pi/8.0
+theta_4 = 0
+
+rot_theta = [theta_0,theta_0,theta_1,theta_1,theta_2,theta_2,theta_3,theta_3,theta_4,theta_4]
+mannik_rot_theta = [theta_0,theta_1,theta_4]
 
 arrow_files = []
 contour_values = []
+
 for i in range(len(arg_set)):
     job_string = "data/shape-%s/" % (arg_set[i])
     p = re.compile('[.]')
@@ -113,6 +121,18 @@ M2yrot = M2x*math.sin(mannik_rot_theta[1]) + M2y*math.cos(mannik_rot_theta[1]) +
 plt.contourf(M2xrot, M2yrot, m2[:,:,0], levels=[0, 0.9], colors=('r', 'w'))
 plt.contourf(M2xrot, M2yrot, m2[:,:,1], levels=[0, 0.9], colors=('k', 'w'))
 
+# mannik_micron3 = 4.0/400
+# m3=mpimg.imread('mannik-3.png')
+# m3x = -np.arange(-m3.shape[0]/2, m3.shape[0]/2)*mannik_micron3
+# m3y = np.arange(-m3.shape[1]/2, m3.shape[1]/2)*mannik_micron3
+# M3x, M3y = np.meshgrid(m3y, m3x)
+# M3xrot = M3x*math.cos(mannik_rot_theta[2]) - M3y*math.sin(mannik_rot_theta[2]) + x_position_m3
+# M3yrot = M3x*math.sin(mannik_rot_theta[2]) + M3y*math.cos(mannik_rot_theta[2]) + y_position_m3
+# plt.contourf(M3xrot, M3yrot, m3[:,:,0], levels=[0, 0.9], colors=('r', 'w'))
+# plt.contourf(M3xrot, M3yrot, m3[:,:,1], levels=[0, 0.9], colors=('k', 'w'))
+
+
+arrow_file = open('arrow_printout.txt', 'w')
 
 #rotate and plot sim data
 for arg_num in range(len(arg_set)):
@@ -187,13 +207,20 @@ for arg_num in range(len(arg_set)):
 
         high_maximas = np.zeros(0)
         times = np.zeros(0)
+        amount = np.zeros(0)
         x_vals = np.zeros(0)
         y_vals = np.zeros(0)
         for i in range(len(clean_data[:,1])-1):
             x_vals = np.append(x_vals,clean_data[i,3]*dx)
             y_vals = np.append(y_vals,clean_data[i,2]*dx)
+            amount = np.append(amount,clean_data[i,1]*dx)
             times = np.append(times,clean_data[i,0])
             #print 'finished with arrow_cutoff', arrow_cutoff, 'and num arrows', len(x_vals)
+
+    arrow_file.write(arg_set[arg_num])
+    for i in range(len(times)):
+        arrow_file.write(' %g %g %g %g\n'%(times[i],amount[i],x_vals[i],y_vals[i]))
+
 
     x_vals += y[0]
     y_vals += x[0]
@@ -211,7 +238,7 @@ for arg_num in range(len(arg_set)):
                      fontsize=11,
                      arrowprops=dict(color='red',shrink=0.01, width=.3, headwidth=5.))
         plt.clim(0,time_max)
-
+arrow_file.close()
 plt.axis('off')
 plt.savefig('./paper/plot-ave.pdf')
 
