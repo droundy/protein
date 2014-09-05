@@ -49,9 +49,7 @@ arg_set = ["randst/0.25-18.50-18.50-95.00-15.00-exact",
 
 #rot_theta = [math.pi/2.0,math.pi/3.0,math.pi/4.0,math.pi/5.0,7.0*math.pi/6.0,21.0*math.pi/9.0]
 
-bound_times = [500,1000,500,1000,500,1000,500,980,500,780,500,1000,500,780,500,1000,500,700,500,700]
 bound_times = [500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,840,500,840]
-arrow_goals = [20, 16, 16, 14, 19, 18, 18, 16, 11, 11]
 arrow_goals = [13, 11, 12, 12, 9, 16, 9, 15, 18, 18]
 
 col_0x = 1.0
@@ -221,7 +219,7 @@ for arg_num in range(len(arg_set)):
 
     arrow_file.write(arg_set[arg_num])
     for i in range(len(times)):
-        arrow_file.write(' %g %g %g %g\n'%(times[i],amount[i],x_vals[i],y_vals[i]))
+        arrow_file.write('\n %g %g %g %g\n'%(times[i],amount[i],x_vals[i],y_vals[i]))
 
 
     x_vals += y[0]
