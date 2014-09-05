@@ -63,29 +63,40 @@ if (input_end_time >= total_number_of_files*dump_time_step):
 
 def gaussian_smear(data,wavelength,protein):
     new = np.zeros_like(data[0])
+    unsmeared = np.zeros_like(data[0])
     N_A = 1.3
+    dx = 0.05 # microns per grid spacing
     sigma = .21*wavelength/N_A #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
     print "sigma ",sigma
-    dis = int(3*sigma/0.05) #for now
+    dis = int(3*sigma/dx) #for now
     arrow_file = job_string +'ave-time/ave-time-arrow-'+str(int(input_start_time))+'-'+str(protein)+'.dat'
     print arrow_file
     p_file = open(arrow_file,'w')
-    p_file.close()
     last_max_x = 0
     last_max_y = 0
     for num in range(data.shape[0]):
-        total_proteins = 0
         max_data = np.zeros_like(data[0])
-        print "num ",num
-        for x in range(new.shape[0]):
-            for y in range(new.shape[1]):
-                total_proteins += data[num,x,y]
-                for i in np.arange(-dis,dis,1):
-                    for j in np.arange(-dis,dis,1):
-                        if (x+i >= 0 and x+i < new.shape[0]-1 and y+j >= 0 and y+j < new.shape[1]-1):
-                            new[x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
-                            max_data[x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
-        print "total proteins = ",total_proteins
+
+        for i in np.arange(-dis,dis,1):
+            xstart = 0
+            xstop = len(new[:,0])
+            if i > 0:
+                xstart += i
+            else:
+                xstop += i
+            for j in np.arange(-dis,dis,1):
+                ystart = 0
+                ystop = len(new[0,:])
+                if j > 0:
+                    ystart += j
+                else:
+                    ystop += j
+                max_data[xstart:xstop,ystart:ystop] += data[num,xstart-i:xstop-i,ystart-j:ystop-j] \
+                                    * math.exp(-(i*i+j*j)*dx*dx/2.0/sigma/sigma )
+        max_data /= np.pi*2*sigma**2 # normalize!
+        new += max_data
+        unsmeared += data[num,:,:]
+
         maxima = 0
         max_x = 0
         max_y = 0
@@ -95,19 +106,24 @@ def gaussian_smear(data,wavelength,protein):
                     maxima = max_data[x,y]
                     max_x = x
                     max_y = y
-        p_file = open(arrow_file,'a')
         p_file.write('%g %g %g %g\n'%(input_start_time+num*dump_time_step,maxima,max_x,max_y))
-        p_file.close()
         if (num%20 == 0 and num > 1):
             contour_values = job_string +'ave-time/contour-values-' + str(protein) +'-'+ str(int(input_start_time))+'-' \
                 +str(int(input_start_time+num*dump_time_step))+'.dat'
+            unsmeared_values = job_string +'ave-time/unsmeared-values-' + str(protein) +'-'+ str(int(input_start_time))+'-' \
+                +str(int(input_start_time+num*dump_time_step))+'.dat'
             print contour_values
             c_file = open(contour_values,'w')
+            unsmeared_file = open(unsmeared_values,'w')
             for x in range(new.shape[0]):
                 for y in range(new.shape[1]):
-                    c_file.write("%g "%(new[x,y]/num))
+                    c_file.write("%g "%(new[x,y]/num/dx**2))
+                    unsmeared_file.write("%g "%(unsmeared[x,y]/num/dx**2))
                 c_file.write('\n')
+                unsmeared_file.write('\n')
             c_file.close()
+            unsmeared_file.close()
+    p_file.close()
     return new/data.shape[0]
 
 
