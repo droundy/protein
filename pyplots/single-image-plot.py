@@ -57,6 +57,7 @@ for i in range(len(proteinList)):
     smeared_data = [0]*len(times)
     for j in range(len(times)):
         image_data_file = job_string +str(proteinList[i])+'/images/single-'+str(times[j])+'.dat'
+        #image_data_file = job_string +str(proteinList[i])+'/images/real-gauss-single-'+str(times[j])+'.dat'
         smeared_data[j] = np.loadtxt(image_data_file) #this is in microns green light at 500nm,
     dZ = smeared_data[0].shape[1]*1.05
     dY = smeared_data[0].shape[0]*2.00/skip_times
@@ -65,9 +66,25 @@ for i in range(len(proteinList)):
     maxval = timemax(smeared_data)
     mylevels = np.linspace(0,(1+1.0/nlevels)*maxval,nlevels)
     for k in range(len(smeared_data)):
+        #print i, ' ',k
         page = smeared_data[k]
         page[page>maxval] = maxval
-        plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=plt.cm.hot_r, levels=mylevels)
+        cdata = np.array([[0  ,1,1,1],
+                          [.01 ,1,1,1],
+                          [.25,0.8,.8,1],
+                          [.5 ,0,.8,.8],
+                          [.7 ,1,1,0],
+                          [.85 ,1,0,0],
+                          [1  ,0,0,0]])
+        cdict = {'red':   [], 'green': [], 'blue':  []}
+        for xi in range(cdata.shape[0]):
+            cdict['red']   += [(cdata[xi, 0], cdata[xi, 1], cdata[xi, 1])]
+            cdict['green'] += [(cdata[xi, 0], cdata[xi, 2], cdata[xi, 2])]
+            cdict['blue']  += [(cdata[xi, 0], cdata[xi, 3], cdata[xi, 3])]
+        cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
+        plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=cmap, levels=mylevels)
+        #plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=plt.cm.hot_r, levels=mylevels)
+
 plt.axes().get_yaxis().set_ticks([(i+0.5)*dZ for i in range(len(proteinList))])
 plt.axes().get_yaxis().set_ticklabels(proteinLabels)
 plt.axes().get_xaxis().set_ticks([(0.5+k)*dY for k in range(len(smeared_data))[::int(2.5*skip_times)]])
@@ -90,3 +107,4 @@ cbar.ax.set_yticklabels(['0', 'max'])
 #plt.colorbar(ticks=[])
 plt.tight_layout()
 plt.savefig(load.print_string("single-image-plot",""))
+#plt.savefig(load.print_string("real-gauss-single-image-plot",""))

@@ -85,9 +85,10 @@ times  = np.arange(float(start_time),float(end_time),dump_time_step)
 
 for i in range(len(proteins)):
     print proteinList[i]
-    smeared_data = gaussian_smear(proteins[i].dataset,.509) #this is in microns green light at 500nm,
+    smeared_data = gaussian_smear(proteins[i].dataset,.650) #this is in microns green light at 500nm,
     for j in range(len(times)):
         image_data_file = '.' + job_string +str(proteinList[i])+'/images/single-'+str(times[j])+'.dat'
+        #image_data_file = '.' + job_string +str(proteinList[i])+'/images/real-gauss-single-'+str(times[j])+'.dat'
         p_file = open(image_data_file,'w')
         p_file.close()
         p_file = open(image_data_file,'a')

@@ -98,7 +98,7 @@ def gaussian_smear(data,wavelength,protein):
         p_file = open(arrow_file,'a')
         p_file.write('%g %g %g %g\n'%(input_start_time+num*dump_time_step,maxima,max_x,max_y))
         p_file.close()
-        if (num%40 == 0 and num > 1):
+        if (num%20 == 0 and num > 1):
             contour_values = job_string +'ave-time/contour-values-' + str(protein) +'-'+ str(int(input_start_time))+'-' \
                 +str(int(input_start_time+num*dump_time_step))+'.dat'
             print contour_values
