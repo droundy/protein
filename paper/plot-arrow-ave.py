@@ -56,19 +56,23 @@ arrow_goals = [13, 11, 12, 12, 9, 16, 9, 15, 18, 18]
 
 col_0x = 1.0
 col_1x = 8.0
-col_2x = 15.0
-col_3x = 21.0
-col_4x = 26.5
+col_2x = -5.5
+col_3x = 14.5
+col_4x = col_3x + 5.5
+
+left_annotate_x = -8.5
+bottom_annotate_y = -1.7
 
 row_0y = 1.0
 row_1y = 6.0
+row_my = 10.5
 
 x_position_m1 = col_0x
-y_position_m1 = 13.0
+y_position_m1 = row_my
 x_position_m2 = col_1x
-y_position_m2 = 13.0
+y_position_m2 = row_my
 x_position_m3 = col_4x
-y_position_m3 = 13.0
+y_position_m3 = row_my
 
 X_position = [col_0x,col_0x,col_1x,col_1x,col_2x,col_2x,col_3x,col_3x,col_4x,col_4x]
 Y_position = [row_0y,row_1y,row_0y,row_1y,row_0y,row_1y,row_0y,row_1y,row_0y,row_1y]
@@ -94,44 +98,15 @@ for i in range(len(arg_set)):
                             +str(bound_times[i*2+1])+'.dat']
 
 
-plt.figure(1, figsize=(8,5))
-plt.axes().set_aspect('equal', 'datalim')
+plt.figure(1, figsize=(8,3.4))
+#plt.axes().set_aspect('equal', 'datalim')
+plt.axes().set_aspect('equal')
+plt.axis('off')
 
 data = [0]*(len(arg_set)+2)
 print len(data)
 for arg_num in range(len(arg_set)):
     data[arg_num] = np.loadtxt(contour_values[arg_num])
-
-
-mannik_micron = 5.0/1012
-m1=mpimg.imread('mannik-1.png')
-m1x = -np.arange(-m1.shape[0]/2, m1.shape[0]/2)*mannik_micron
-m1y = np.arange(-m1.shape[1]/2, m1.shape[1]/2)*mannik_micron
-M1x, M1y = np.meshgrid(m1y, m1x)
-M1xrot = M1x*math.cos(mannik_rot_theta[0]) - M1y*math.sin(mannik_rot_theta[0]) + x_position_m1
-M1yrot = M1x*math.sin(mannik_rot_theta[0]) + M1y*math.cos(mannik_rot_theta[0]) + y_position_m1
-plt.contourf(M1xrot, M1yrot, m1[:,:,0], levels=[0, 0.9], colors=('r', 'w'))
-plt.contourf(M1xrot, M1yrot, m1[:,:,1], levels=[0, 0.9], colors=('k', 'w'))
-
-
-m2=mpimg.imread('mannik-2.png')
-m2x = -np.arange(-m2.shape[0]/2, m2.shape[0]/2)*mannik_micron
-m2y = np.arange(-m2.shape[1]/2, m2.shape[1]/2)*mannik_micron
-M2x, M2y = np.meshgrid(m2y, m2x)
-M2xrot = M2x*math.cos(mannik_rot_theta[1]) - M2y*math.sin(mannik_rot_theta[1]) + x_position_m2
-M2yrot = M2x*math.sin(mannik_rot_theta[1]) + M2y*math.cos(mannik_rot_theta[1]) + y_position_m2
-plt.contourf(M2xrot, M2yrot, m2[:,:,0], levels=[0, 0.9], colors=('r', 'w'))
-plt.contourf(M2xrot, M2yrot, m2[:,:,1], levels=[0, 0.9], colors=('k', 'w'))
-
-# mannik_micron3 = 4.0/400
-# m3=mpimg.imread('mannik-3.png')
-# m3x = -np.arange(-m3.shape[0]/2, m3.shape[0]/2)*mannik_micron3
-# m3y = np.arange(-m3.shape[1]/2, m3.shape[1]/2)*mannik_micron3
-# M3x, M3y = np.meshgrid(m3y, m3x)
-# M3xrot = M3x*math.cos(mannik_rot_theta[2]) - M3y*math.sin(mannik_rot_theta[2]) + x_position_m3
-# M3yrot = M3x*math.sin(mannik_rot_theta[2]) + M3y*math.cos(mannik_rot_theta[2]) + y_position_m3
-# plt.contourf(M3xrot, M3yrot, m3[:,:,0], levels=[0, 0.9], colors=('r', 'w'))
-# plt.contourf(M3xrot, M3yrot, m3[:,:,1], levels=[0, 0.9], colors=('k', 'w'))
 
 
 arrow_file = open('arrow_printout.txt', 'w')
@@ -141,8 +116,6 @@ for arg_num in range(len(arg_set)):
     x = np.arange(-data[arg_num].shape[0]/2, data[arg_num].shape[0]/2)*dx
     y = np.arange(-data[arg_num].shape[1]/2, data[arg_num].shape[1]/2)*dx
     X,Y = np.meshgrid(y,x)
-    Xrot = X*math.cos(rot_theta[arg_num]) - Y*math.sin(rot_theta[arg_num]) + X_position[arg_num]
-    Yrot = X*math.sin(rot_theta[arg_num]) + Y*math.cos(rot_theta[arg_num]) + Y_position[arg_num]
     cdata = np.array([[0  ,1,1,1],
                       [.01 ,1,1,1],
                       [.25,0.8,.8,1],
@@ -157,6 +130,33 @@ for arg_num in range(len(arg_set)):
         cdict['blue']  += [(cdata[i, 0], cdata[i, 3], cdata[i, 3])]
     cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
     time_max = np.max(data[arg_num])
+
+    # Find the quadrupole moment and diagonlize to get a rotation matrix
+    cellshape = np.zeros_like(X)
+    cellshape[:,:] = data[arg_num]>0
+    meanX = np.sum(X*cellshape)/np.sum(cellshape)
+    meanY = np.sum(Y*cellshape)/np.sum(cellshape)
+    X -= meanX
+    Y -= meanY
+    Qxx = np.sum(X*X*cellshape)/np.sum(cellshape)
+    Qyy = np.sum(Y*Y*cellshape)/np.sum(cellshape)
+    Qxy = np.sum(X*Y*cellshape)/np.sum(cellshape)
+    D = np.sqrt((Qxx-Qyy)**2 + 4*Qxy**2)
+    eigvec1 = np.matrix([[2*Qxy],[Qyy-Qxx+D]])
+    eigvec1 /= np.sqrt(np.transpose(eigvec1)*eigvec1)
+    eigvec2 = -np.matrix([[2*Qxy],[Qyy-Qxx-D]])
+    eigvec2 /= np.sqrt(np.transpose(eigvec2)*eigvec2)
+    R = np.matrix([[eigvec1[0,0], eigvec2[0,0]],
+                   [eigvec1[1,0], eigvec2[1,0]]])
+    print 'R', arg_set[arg_num], '\n', R
+    Q = np.matrix([[Qxx, Qxy],
+                   [Qxy, Qyy]])
+    print 'Q\n', Q
+    print 'diagonalized Q\n', np.transpose(R)*Q*R
+
+    # Now let's rotate our coordinate system.
+    Xrot = R[0,0]*X + R[1,0]*Y + X_position[arg_num]
+    Yrot = R[0,1]*X + R[1,1]*Y + Y_position[arg_num]
 
     plt.contourf(Xrot, Yrot, data[arg_num], cmap=cmap, origin='lower',levels=np.arange(0,time_max+1.0,1))
 
@@ -226,8 +226,7 @@ for arg_num in range(len(arg_set)):
 
     x_vals += y[0]
     y_vals += x[0]
-    x_vals,y_vals = x_vals*math.cos(rot_theta[arg_num]) - y_vals*math.sin(rot_theta[arg_num]), \
-        +x_vals*math.sin(rot_theta[arg_num]) + y_vals*math.cos(rot_theta[arg_num])
+    x_vals,y_vals = R[0,0]*x_vals + R[1,0]*y_vals, R[0,1]*x_vals + R[1,1]*y_vals
 
     x_vals += X_position[arg_num]
     y_vals += Y_position[arg_num]
@@ -241,8 +240,73 @@ for arg_num in range(len(arg_set)):
                      arrowprops=dict(color='red',shrink=0.01, width=.3, headwidth=5.))
         plt.clim(0,time_max)
 arrow_file.close()
-plt.axis('off')
-plt.savefig('./paper/plot-ave.pdf')
+
+
+mannik_micron = 5.0/1012
+m1=mpimg.imread('mannik-1.png')
+m1x = -np.arange(-m1.shape[0]/2, m1.shape[0]/2)*mannik_micron
+m1y = np.arange(-m1.shape[1]/2, m1.shape[1]/2)*mannik_micron
+M1x, M1y = np.meshgrid(m1y, m1x)
+M1xrot = M1x*math.cos(mannik_rot_theta[0]) - M1y*math.sin(mannik_rot_theta[0]) + x_position_m1
+M1yrot = M1x*math.sin(mannik_rot_theta[0]) + M1y*math.cos(mannik_rot_theta[0]) + y_position_m1
+R1 = np.matrix([[ 0.74914988, -0.66240052],
+                [ 0.66240052,  0.74914988]])
+M1xrot = R1[0,0]*M1x + R1[1,0]*M1y + x_position_m1
+M1yrot = R1[0,1]*M1x + R1[1,1]*M1y + y_position_m1
+
+plt.contourf(M1xrot, M1yrot, m1[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
+plt.contourf(M1xrot, M1yrot, m1[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
+
+
+m2=mpimg.imread('mannik-2.png')
+m2x = -np.arange(-m2.shape[0]/2, m2.shape[0]/2)*mannik_micron
+m2y = np.arange(-m2.shape[1]/2, m2.shape[1]/2)*mannik_micron
+M2x, M2y = np.meshgrid(m2y, m2x)
+M2xrot = M2x*math.cos(mannik_rot_theta[1]) - M2y*math.sin(mannik_rot_theta[1]) + x_position_m2
+M2yrot = M2x*math.sin(mannik_rot_theta[1]) + M2y*math.cos(mannik_rot_theta[1]) + y_position_m2
+R2 = np.matrix([[ 0.99256182, -0.12174166],
+                [ 0.12174166,  0.99256182]])
+
+M2xrot = R2[0,0]*M2x + R2[1,0]*M2y + x_position_m2
+M2yrot = R2[0,1]*M2x + R2[1,1]*M2y + y_position_m2
+
+plt.contourf(M2xrot, M2yrot, m2[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
+plt.contourf(M2xrot, M2yrot, m2[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
+
+# mannik_micron3 = 4.0/400
+# m3=mpimg.imread('mannik-3.png')
+# m3x = -np.arange(-m3.shape[0]/2, m3.shape[0]/2)*mannik_micron3
+# m3y = np.arange(-m3.shape[1]/2, m3.shape[1]/2)*mannik_micron3
+# M3x, M3y = np.meshgrid(m3y, m3x)
+# M3xrot = M3x*math.cos(mannik_rot_theta[2]) - M3y*math.sin(mannik_rot_theta[2]) + x_position_m3
+# M3yrot = M3x*math.sin(mannik_rot_theta[2]) + M3y*math.cos(mannik_rot_theta[2]) + y_position_m3
+# plt.contourf(M3xrot, M3yrot, m3[:,:,0], levels=[0, 0.9], colors=('r', 'w'))
+# plt.contourf(M3xrot, M3yrot, m3[:,:,1], levels=[0, 0.9], colors=('k', 'w'))
+
+
+plt.text(left_annotate_x, row_0y, 'deterministic',
+         verticalalignment='center', horizontalalignment='right')
+plt.text(left_annotate_x, row_1y, 'stochastic',
+         verticalalignment='center', horizontalalignment='right')
+plt.text(left_annotate_x, row_my, 'experiment',
+         verticalalignment='center', horizontalalignment='right')
+
+plt.text(col_2x, bottom_annotate_y, 'stadium',
+         verticalalignment='center', horizontalalignment='center')
+plt.text(col_0x, bottom_annotate_y, 'mannik',
+         verticalalignment='center', horizontalalignment='center')
+plt.text(col_1x, bottom_annotate_y, 'mannik',
+         verticalalignment='center', horizontalalignment='center')
+plt.text(col_3x, bottom_annotate_y, 'stadium',
+         verticalalignment='center', horizontalalignment='center')
+plt.text(col_4x, bottom_annotate_y, 'natural pill',
+         verticalalignment='center', horizontalalignment='center')
+
+plt.xlim(-12,22.5)
+plt.ylim(-1,12.5)
+plt.tight_layout()
+
+plt.savefig('./paper/plot-ave.pdf', facecolor='white')
 
 #plt.show()
 
