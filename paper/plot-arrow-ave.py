@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 import numpy as np
 import matplotlib
@@ -15,9 +17,6 @@ import imp
 import math
 import matplotlib.gridspec as gridspec
 import re
-
-#create data objects (see file_loader.py)
-
 
 dx =0.05
 dump_time_step = 0.5
@@ -47,20 +46,18 @@ arg_set = ["randst/0.25-18.50-18.50-95.00-15.00-exact",
            "p/3.00-0.50-0.00-0.00-15.00-exact",
            "p/3.00-0.50-0.00-0.00-15.00-full_array"]
 
-#rot_theta = [math.pi/2.0,math.pi/3.0,math.pi/4.0,math.pi/5.0,7.0*math.pi/6.0,21.0*math.pi/9.0]
-
 bound_times = [500,1000,500,1000,500,1000,500,980,500,780,500,1000,500,780,500,1000,500,700,500,700]
 bound_times = [500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,840,500,840]
 arrow_goals = [20, 16, 16, 14, 19, 18, 18, 16, 11, 11]
 arrow_goals = [13, 11, 12, 12, 9, 16, 9, 15, 18, 18]
 
-col_0x = 1.0
-col_1x = 8.0
-col_2x = -5.5
+col_0x = -5.0
+col_1x = 1.0
+col_2x = 8.0
 col_3x = 14.5
 col_4x = col_3x + 5.5
 
-left_annotate_x = -8.5
+left_annotate_x = -9.0
 bottom_annotate_y = -1.7
 
 row_0y = 1.0
@@ -69,12 +66,10 @@ row_my = 10.5
 
 x_position_m1 = col_0x
 y_position_m1 = row_my
-x_position_m2 = col_1x
+x_position_m2 = col_2x
 y_position_m2 = row_my
-x_position_m3 = col_4x
-y_position_m3 = row_my
 
-X_position = [col_0x,col_0x,col_1x,col_1x,col_2x,col_2x,col_3x,col_3x,col_4x,col_4x]
+X_position = [col_0x,col_0x,col_2x,col_2x,col_1x,col_1x,col_3x,col_3x,col_4x,col_4x]
 Y_position = [row_0y,row_1y,row_0y,row_1y,row_0y,row_1y,row_0y,row_1y,row_0y,row_1y]
 
 theta_0 = 0#8.0*math.pi/8.0
@@ -82,9 +77,6 @@ theta_1 = 0#6.78*math.pi/8.0
 theta_2 = 0#1.1235813*math.pi/8.0
 theta_3 = 0#1.1235813*math.pi/8.0
 theta_4 = 0
-
-rot_theta = [theta_0,theta_0,theta_1,theta_1,theta_2,theta_2,theta_3,theta_3,theta_4,theta_4]
-mannik_rot_theta = [theta_0,theta_1,theta_4]
 
 arrow_files = []
 contour_values = []
@@ -247,8 +239,6 @@ m1=mpimg.imread('mannik-1.png')
 m1x = -np.arange(-m1.shape[0]/2, m1.shape[0]/2)*mannik_micron
 m1y = np.arange(-m1.shape[1]/2, m1.shape[1]/2)*mannik_micron
 M1x, M1y = np.meshgrid(m1y, m1x)
-M1xrot = M1x*math.cos(mannik_rot_theta[0]) - M1y*math.sin(mannik_rot_theta[0]) + x_position_m1
-M1yrot = M1x*math.sin(mannik_rot_theta[0]) + M1y*math.cos(mannik_rot_theta[0]) + y_position_m1
 R1 = np.matrix([[ 0.74914988, -0.66240052],
                 [ 0.66240052,  0.74914988]])
 M1xrot = R1[0,0]*M1x + R1[1,0]*M1y + x_position_m1
@@ -262,8 +252,6 @@ m2=mpimg.imread('mannik-2.png')
 m2x = -np.arange(-m2.shape[0]/2, m2.shape[0]/2)*mannik_micron
 m2y = np.arange(-m2.shape[1]/2, m2.shape[1]/2)*mannik_micron
 M2x, M2y = np.meshgrid(m2y, m2x)
-M2xrot = M2x*math.cos(mannik_rot_theta[1]) - M2y*math.sin(mannik_rot_theta[1]) + x_position_m2
-M2yrot = M2x*math.sin(mannik_rot_theta[1]) + M2y*math.cos(mannik_rot_theta[1]) + y_position_m2
 R2 = np.matrix([[ 0.99256182, -0.12174166],
                 [ 0.12174166,  0.99256182]])
 
@@ -273,16 +261,6 @@ M2yrot = R2[0,1]*M2x + R2[1,1]*M2y + y_position_m2
 plt.contourf(M2xrot, M2yrot, m2[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
 plt.contourf(M2xrot, M2yrot, m2[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
 
-# mannik_micron3 = 4.0/400
-# m3=mpimg.imread('mannik-3.png')
-# m3x = -np.arange(-m3.shape[0]/2, m3.shape[0]/2)*mannik_micron3
-# m3y = np.arange(-m3.shape[1]/2, m3.shape[1]/2)*mannik_micron3
-# M3x, M3y = np.meshgrid(m3y, m3x)
-# M3xrot = M3x*math.cos(mannik_rot_theta[2]) - M3y*math.sin(mannik_rot_theta[2]) + x_position_m3
-# M3yrot = M3x*math.sin(mannik_rot_theta[2]) + M3y*math.cos(mannik_rot_theta[2]) + y_position_m3
-# plt.contourf(M3xrot, M3yrot, m3[:,:,0], levels=[0, 0.9], colors=('r', 'w'))
-# plt.contourf(M3xrot, M3yrot, m3[:,:,1], levels=[0, 0.9], colors=('k', 'w'))
-
 
 plt.text(left_annotate_x, row_0y, 'deterministic',
          verticalalignment='center', horizontalalignment='right')
@@ -291,13 +269,13 @@ plt.text(left_annotate_x, row_1y, 'stochastic',
 plt.text(left_annotate_x, row_my, 'experiment',
          verticalalignment='center', horizontalalignment='right')
 
-plt.text(col_2x, bottom_annotate_y, 'stadium',
+plt.text(col_0x, bottom_annotate_y, u'shape A',
          verticalalignment='center', horizontalalignment='center')
-plt.text(col_0x, bottom_annotate_y, 'mannik',
+plt.text(col_1x, bottom_annotate_y, 'stadium A',
          verticalalignment='center', horizontalalignment='center')
-plt.text(col_1x, bottom_annotate_y, 'mannik',
+plt.text(col_2x, bottom_annotate_y, u'shape B',
          verticalalignment='center', horizontalalignment='center')
-plt.text(col_3x, bottom_annotate_y, 'stadium',
+plt.text(col_3x, bottom_annotate_y, 'stadium B',
          verticalalignment='center', horizontalalignment='center')
 plt.text(col_4x, bottom_annotate_y, 'natural pill',
          verticalalignment='center', horizontalalignment='center')
