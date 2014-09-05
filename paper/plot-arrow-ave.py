@@ -43,8 +43,8 @@ arg_set = ["randst/0.25-18.50-18.50-95.00-15.00-exact",
            "p/3.00-0.50-0.00-0.00-15.00-exact",
            "p/3.00-0.50-0.00-0.00-15.00-full_array"]
 
-bound_times = [500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,840,500,840]
-arrow_goals = [13, 11, 12, 12, 9, 16, 9, 15, 18, 18]
+bound_times = [500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,740,500,740]
+arrow_goals = [13, 12, 10, 11, 13, 12, 13, 15, 12, 10]
 
 left_annotate_x = -9.0
 bottom_annotate_y = -1.7
@@ -235,7 +235,7 @@ for arg_num in range(len(arg_set)):
         amount = np.zeros(0)
         x_vals = np.zeros(0)
         y_vals = np.zeros(0)
-        for i in range(len(clean_data[:,1])-1):
+        for i in range(len(clean_data[:,1])):
             x_vals = np.append(x_vals,clean_data[i,3]*dx)
             y_vals = np.append(y_vals,clean_data[i,2]*dx)
             amount = np.append(amount,clean_data[i,1]*dx)
