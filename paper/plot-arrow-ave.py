@@ -1,11 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 import numpy as np
 import matplotlib
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.font_manager import FontProperties
-import matplotlib.patheffects
-from mpl_toolkits.axes_grid.anchored_artists import AnchoredSizeBar
 import matplotlib.image as mpimg
 import os
 import sys
@@ -15,9 +14,6 @@ import imp
 import math
 import matplotlib.gridspec as gridspec
 import re
-
-#create data objects (see file_loader.py)
-
 
 dx =0.05
 dump_time_step = 0.5
@@ -47,32 +43,41 @@ arg_set = ["randst/0.25-18.50-18.50-95.00-15.00-exact",
            "p/3.00-0.50-0.00-0.00-15.00-exact",
            "p/3.00-0.50-0.00-0.00-15.00-full_array"]
 
-#rot_theta = [math.pi/2.0,math.pi/3.0,math.pi/4.0,math.pi/5.0,7.0*math.pi/6.0,21.0*math.pi/9.0]
-
 bound_times = [500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,840,500,840]
 arrow_goals = [13, 11, 12, 12, 9, 16, 9, 15, 18, 18]
 
-col_0x = 1.0
-col_1x = 8.0
-col_2x = -5.5
-col_3x = 14.5
-col_4x = col_3x + 5.5
-
-left_annotate_x = -8.5
+left_annotate_x = -9.0
 bottom_annotate_y = -1.7
 
 row_0y = 1.0
 row_1y = 6.0
 row_my = 10.5
 
+col_0x = -5.0
+col_1x = 1.0
+col_2x = 8.0
+col_3x = 14.5
+col_4x = col_3x + 8.5
+
+pill_bar_x = col_4x + 3
+color_bar_x = col_4x - 5
+
 x_position_m1 = col_0x
 y_position_m1 = row_my
-x_position_m2 = col_1x
+x_position_m2 = col_2x
 y_position_m2 = row_my
-x_position_m3 = col_4x
-y_position_m3 = row_my
 
-X_position = [col_0x,col_0x,col_1x,col_1x,col_2x,col_2x,col_3x,col_3x,col_4x,col_4x]
+viewport_xmin = left_annotate_x - 6
+viewport_xmax = pill_bar_x + 2
+viewport_ymin = bottom_annotate_y
+viewport_ymax = row_my + 2
+
+def in_viewport_x(x):
+    return (x - viewport_xmin)/(viewport_xmax - viewport_xmin)
+def in_viewport_y(y):
+    return (y - viewport_ymin)/(viewport_ymax - viewport_ymin)
+
+X_position = [col_0x,col_0x,col_2x,col_2x,col_1x,col_1x,col_3x,col_3x,col_4x,col_4x]
 Y_position = [row_0y,row_1y,row_0y,row_1y,row_0y,row_1y,row_0y,row_1y,row_0y,row_1y]
 
 theta_0 = 0#8.0*math.pi/8.0
@@ -80,9 +85,6 @@ theta_1 = 0#6.78*math.pi/8.0
 theta_2 = 0#1.1235813*math.pi/8.0
 theta_3 = 0#1.1235813*math.pi/8.0
 theta_4 = 0
-
-rot_theta = [theta_0,theta_0,theta_1,theta_1,theta_2,theta_2,theta_3,theta_3,theta_4,theta_4]
-mannik_rot_theta = [theta_0,theta_1,theta_4]
 
 arrow_files = []
 contour_values = []
@@ -97,9 +99,11 @@ for i in range(len(arg_set)):
 
 
 plt.figure(1, figsize=(8,3.4))
-#plt.axes().set_aspect('equal', 'datalim')
-plt.axes().set_aspect('equal')
-plt.axis('off')
+
+ax = plt.axes([0,0,1,1]) # for nice figure
+#ax = plt.axes([0.1,0.1,.9,.9]) # for debugging positions
+ax.set_aspect('equal')
+ax.set_axis_off()
 
 data = [0]*(len(arg_set)+2)
 print len(data)
@@ -111,23 +115,9 @@ arrow_file = open('arrow_printout.txt', 'w')
 
 #rotate and plot sim data
 for arg_num in range(len(arg_set)):
-    x = np.arange(-data[arg_num].shape[0]/2, data[arg_num].shape[0]/2)*dx
-    y = np.arange(-data[arg_num].shape[1]/2, data[arg_num].shape[1]/2)*dx
+    x = np.arange(0., data[arg_num].shape[0])*dx
+    y = np.arange(0., data[arg_num].shape[1])*dx
     X,Y = np.meshgrid(y,x)
-    cdata = np.array([[0  ,1,1,1],
-                      [.01 ,1,1,1],
-                      [.25,0.8,.8,1],
-                      [.5 ,0,.8,.8],
-                      [.7 ,1,1,0],
-                      [.85 ,1,0,0],
-                      [1  ,0,0,0]])
-    cdict = {'red':   [], 'green': [], 'blue':  []}
-    for i in range(cdata.shape[0]):
-        cdict['red']   += [(cdata[i, 0], cdata[i, 1], cdata[i, 1])]
-        cdict['green'] += [(cdata[i, 0], cdata[i, 2], cdata[i, 2])]
-        cdict['blue']  += [(cdata[i, 0], cdata[i, 3], cdata[i, 3])]
-    cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
-    time_max = np.max(data[arg_num])
 
     # Find the quadrupole moment and diagonlize to get a rotation matrix
     cellshape = np.zeros_like(X)
@@ -146,6 +136,8 @@ for arg_num in range(len(arg_set)):
     eigvec2 /= np.sqrt(np.transpose(eigvec2)*eigvec2)
     R = np.matrix([[eigvec1[0,0], eigvec2[0,0]],
                    [eigvec1[1,0], eigvec2[1,0]]])
+    R = np.matrix([[ 0, 1],
+                   [-1, 0]])*R
     print 'R', arg_set[arg_num], '\n', R
     Q = np.matrix([[Qxx, Qxy],
                    [Qxy, Qyy]])
@@ -156,7 +148,40 @@ for arg_num in range(len(arg_set)):
     Xrot = R[0,0]*X + R[1,0]*Y + X_position[arg_num]
     Yrot = R[0,1]*X + R[1,1]*Y + Y_position[arg_num]
 
-    plt.contourf(Xrot, Yrot, data[arg_num], cmap=cmap, origin='lower',levels=np.arange(0,time_max+1.0,1))
+    cdata = np.array([[0  ,1,1,1],
+                      [.02 ,1,1,1],
+                      [.25,0.2,.2,1],
+                      [.35 ,0,.8,0],
+                      [.5 ,1,1,0],
+                      [.7 ,1,0,0],
+                      [1  ,0,0,0]])
+    cdict = {'red':   [], 'green': [], 'blue':  []}
+    for i in range(cdata.shape[0]):
+        cdict['red']   += [(cdata[i, 0], cdata[i, 1], cdata[i, 1])]
+        cdict['green'] += [(cdata[i, 0], cdata[i, 2], cdata[i, 2])]
+        cdict['blue']  += [(cdata[i, 0], cdata[i, 3], cdata[i, 3])]
+    cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
+    time_max = np.max(data[arg_num])
+
+    levels = np.arange(0,time_max+1.0,1)
+    levels = np.arange(0, 41.0, 1)
+    if 'p/' in arg_set[arg_num]:
+        levels = np.arange(0, 81.0, 1)
+    cs = ax.contourf(Xrot, Yrot, data[arg_num], cmap=cmap, origin='lower',levels=levels)
+
+    if arg_num in [1,8]:
+        if arg_num == 1:
+            axColor = plt.axes([in_viewport_x(color_bar_x), in_viewport_y(row_0y),
+                                0.01, in_viewport_y(row_1y-row_0y)])
+        else:
+            axColor = plt.axes([in_viewport_x(pill_bar_x), in_viewport_y(row_0y),
+                                0.01, in_viewport_y(row_1y-row_0y)])
+        plt.colorbar(cs, cax=axColor)
+    ax.bar(.2,6,.2, .2)
+
+    ax.add_artist(matplotlib.patches.Rectangle((col_1x-2.5,row_my), 5, 0.1, facecolor='b'))
+    ax.text(col_1x, row_my - 0.3, r'$5\mu$',
+            verticalalignment='top', horizontalalignment='center')
 
     start_time = float(bound_times[arg_num*2])
     end_time = float(bound_times[arg_num*2+1])
@@ -222,21 +247,14 @@ for arg_num in range(len(arg_set)):
         arrow_file.write('\n %g %g %g %g\n'%(times[i],amount[i],x_vals[i],y_vals[i]))
 
 
-    x_vals += y[0]
-    y_vals += x[0]
-    x_vals,y_vals = R[0,0]*x_vals + R[1,0]*y_vals, R[0,1]*x_vals + R[1,1]*y_vals
-
-    x_vals += X_position[arg_num]
-    y_vals += Y_position[arg_num]
-
-    #plt.colorbar()
-    #plt.bar(.2,6,.2)
+    x_vals -= meanX
+    y_vals -= meanY
+    x_vals,y_vals = R[0,0]*x_vals + R[1,0]*y_vals + X_position[arg_num], R[0,1]*x_vals + R[1,1]*y_vals + Y_position[arg_num]
 
     for i in range(len(x_vals)-1):
-        plt.annotate('',xy=(x_vals[i+1],y_vals[i+1]),xytext=(x_vals[i],y_vals[i]),
+        ax.annotate('',xy=(x_vals[i+1],y_vals[i+1]),xytext=(x_vals[i],y_vals[i]),
                      fontsize=11,
-                     arrowprops=dict(color='red',shrink=0.01, width=.3, headwidth=5.))
-        plt.clim(0,time_max)
+                     arrowprops=dict(arrowstyle='->', shrinkA=0, shrinkB=0, linewidth=.5)) # ,color='black',shrink=0.01, width=.3, headwidth=5.
 arrow_file.close()
 
 
@@ -245,64 +263,49 @@ m1=mpimg.imread('mannik-1.png')
 m1x = -np.arange(-m1.shape[0]/2, m1.shape[0]/2)*mannik_micron
 m1y = np.arange(-m1.shape[1]/2, m1.shape[1]/2)*mannik_micron
 M1x, M1y = np.meshgrid(m1y, m1x)
-M1xrot = M1x*math.cos(mannik_rot_theta[0]) - M1y*math.sin(mannik_rot_theta[0]) + x_position_m1
-M1yrot = M1x*math.sin(mannik_rot_theta[0]) + M1y*math.cos(mannik_rot_theta[0]) + y_position_m1
 R1 = np.matrix([[ 0.74914988, -0.66240052],
                 [ 0.66240052,  0.74914988]])
 M1xrot = R1[0,0]*M1x + R1[1,0]*M1y + x_position_m1
 M1yrot = R1[0,1]*M1x + R1[1,1]*M1y + y_position_m1
 
-plt.contourf(M1xrot, M1yrot, m1[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
-plt.contourf(M1xrot, M1yrot, m1[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
+ax.contourf(M1xrot, M1yrot, m1[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
+ax.contourf(M1xrot, M1yrot, m1[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
 
 
 m2=mpimg.imread('mannik-2.png')
 m2x = -np.arange(-m2.shape[0]/2, m2.shape[0]/2)*mannik_micron
 m2y = np.arange(-m2.shape[1]/2, m2.shape[1]/2)*mannik_micron
 M2x, M2y = np.meshgrid(m2y, m2x)
-M2xrot = M2x*math.cos(mannik_rot_theta[1]) - M2y*math.sin(mannik_rot_theta[1]) + x_position_m2
-M2yrot = M2x*math.sin(mannik_rot_theta[1]) + M2y*math.cos(mannik_rot_theta[1]) + y_position_m2
 R2 = np.matrix([[ 0.99256182, -0.12174166],
                 [ 0.12174166,  0.99256182]])
 
 M2xrot = R2[0,0]*M2x + R2[1,0]*M2y + x_position_m2
 M2yrot = R2[0,1]*M2x + R2[1,1]*M2y + y_position_m2
 
-plt.contourf(M2xrot, M2yrot, m2[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
-plt.contourf(M2xrot, M2yrot, m2[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
-
-# mannik_micron3 = 4.0/400
-# m3=mpimg.imread('mannik-3.png')
-# m3x = -np.arange(-m3.shape[0]/2, m3.shape[0]/2)*mannik_micron3
-# m3y = np.arange(-m3.shape[1]/2, m3.shape[1]/2)*mannik_micron3
-# M3x, M3y = np.meshgrid(m3y, m3x)
-# M3xrot = M3x*math.cos(mannik_rot_theta[2]) - M3y*math.sin(mannik_rot_theta[2]) + x_position_m3
-# M3yrot = M3x*math.sin(mannik_rot_theta[2]) + M3y*math.cos(mannik_rot_theta[2]) + y_position_m3
-# plt.contourf(M3xrot, M3yrot, m3[:,:,0], levels=[0, 0.9], colors=('r', 'w'))
-# plt.contourf(M3xrot, M3yrot, m3[:,:,1], levels=[0, 0.9], colors=('k', 'w'))
+ax.contourf(M2xrot, M2yrot, m2[:,:,1], levels=[0, 0.9], colors=('r', 'w'))
+ax.contourf(M2xrot, M2yrot, m2[:,:,0], levels=[0, 0.9], colors=('k', 'w'))
 
 
-plt.text(left_annotate_x, row_0y, 'deterministic',
-         verticalalignment='center', horizontalalignment='right')
-plt.text(left_annotate_x, row_1y, 'stochastic',
-         verticalalignment='center', horizontalalignment='right')
-plt.text(left_annotate_x, row_my, 'experiment',
-         verticalalignment='center', horizontalalignment='right')
+ax.text(left_annotate_x, row_0y, 'deterministic',
+        verticalalignment='center', horizontalalignment='right')
+ax.text(left_annotate_x, row_1y, 'stochastic',
+        verticalalignment='center', horizontalalignment='right')
+ax.text(left_annotate_x, row_my, 'experiment',
+        verticalalignment='center', horizontalalignment='right')
 
-plt.text(col_2x, bottom_annotate_y, 'stadium',
-         verticalalignment='center', horizontalalignment='center')
-plt.text(col_0x, bottom_annotate_y, 'mannik',
-         verticalalignment='center', horizontalalignment='center')
-plt.text(col_1x, bottom_annotate_y, 'mannik',
-         verticalalignment='center', horizontalalignment='center')
-plt.text(col_3x, bottom_annotate_y, 'stadium',
-         verticalalignment='center', horizontalalignment='center')
-plt.text(col_4x, bottom_annotate_y, 'natural pill',
-         verticalalignment='center', horizontalalignment='center')
+ax.text(col_0x, bottom_annotate_y, u'shape A',
+        verticalalignment='center', horizontalalignment='center')
+ax.text(col_1x, bottom_annotate_y, 'stadium A',
+        verticalalignment='center', horizontalalignment='center')
+ax.text(col_2x, bottom_annotate_y, u'shape B',
+        verticalalignment='center', horizontalalignment='center')
+ax.text(col_3x, bottom_annotate_y, 'stadium B',
+        verticalalignment='center', horizontalalignment='center')
+ax.text(col_4x, bottom_annotate_y, 'natural pill',
+        verticalalignment='center', horizontalalignment='center')
 
-plt.xlim(-12,22.5)
-plt.ylim(-1,12.5)
-plt.tight_layout()
+ax.set_xlim(viewport_xmin,viewport_xmax)
+ax.set_ylim(viewport_ymin,viewport_ymax)
 
 plt.savefig('./paper/plot-ave.pdf', facecolor='white')
 
