@@ -43,10 +43,8 @@ arg_set = ["randst/0.25-18.50-18.50-95.00-15.00-exact",
            "p/3.00-0.50-0.00-0.00-15.00-exact",
            "p/3.00-0.50-0.00-0.00-15.00-full_array"]
 
-bound_times = [500,1000,500,1000,500,1000,500,980,500,780,500,1000,500,780,500,1000,500,700,500,700]
-bound_times = [500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,840,500,840]
-arrow_goals = [20, 16, 16, 14, 19, 18, 18, 16, 11, 11]
-arrow_goals = [13, 11, 12, 12, 9, 16, 9, 15, 18, 18]
+bound_times = [500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,740,500,740]
+arrow_goals = [13, 12, 10, 11, 13, 12, 13, 15, 12, 10]
 
 row_0y = 0.0          # 1.0
 row_1y = row_0y + 7.0 # 6.0
@@ -238,7 +236,7 @@ for arg_num in range(len(arg_set)):
         amount = np.zeros(0)
         x_vals = np.zeros(0)
         y_vals = np.zeros(0)
-        for i in range(len(clean_data[:,1])-1):
+        for i in range(len(clean_data[:,1])):
             x_vals = np.append(x_vals,clean_data[i,3]*dx)
             y_vals = np.append(y_vals,clean_data[i,2]*dx)
             amount = np.append(amount,clean_data[i,1]*dx)
@@ -247,7 +245,7 @@ for arg_num in range(len(arg_set)):
 
     arrow_file.write(arg_set[arg_num])
     for i in range(len(times)):
-        arrow_file.write(' %g %g %g %g\n'%(times[i],amount[i],x_vals[i],y_vals[i]))
+        arrow_file.write('\n %g %g %g %g\n'%(times[i],amount[i],x_vals[i],y_vals[i]))
 
 
     x_vals -= meanX
