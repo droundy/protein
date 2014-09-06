@@ -1,0 +1,1 @@
+../paper/mycolormap.py

@@ -8,6 +8,7 @@ import sys
 import time
 import file_loader as load
 import Image
+import mycolormap
 
 f_shape = sys.argv[1]
 f_param1 = sys.argv[2]
@@ -66,7 +67,7 @@ for i in range(len(proteins)):
     for k in kvals:
         page = proteins[i].dataset[k]
         page[page>maxval] = maxval
-        plt.contourf(Y+k*dY, proteins[0].datashape[1]-Z+i*dZ, page, cmap=plt.cm.hot_r, levels=mylevels)
+        plt.contourf(Y+k*dY, proteins[0].datashape[1]-Z+i*dZ, page, cmap=mycolormap.cmap, levels=mylevels)
 plt.axes().get_yaxis().set_ticks([(i+0.5)*dZ for i in range(len(proteinList))])
 plt.axes().get_yaxis().set_ticklabels(proteinLabels)
 plt.axes().get_xaxis().set_ticks([(0.5+k)*dY for k in kvals[::int(2.5*skip_times)]])

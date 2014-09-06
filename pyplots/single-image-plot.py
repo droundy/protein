@@ -10,6 +10,7 @@ import file_loader as load
 import Image
 import math
 import re
+import mycolormap
 
 f_shape = sys.argv[1]
 f_param1 = sys.argv[2]
@@ -69,20 +70,8 @@ for i in range(len(proteinList)):
         #print i, ' ',k
         page = smeared_data[k]
         page[page>maxval] = maxval
-        cdata = np.array([[0  ,1,1,1],
-                          [.01 ,1,1,1],
-                          [.25,0.8,.8,1],
-                          [.5 ,0,.8,.8],
-                          [.7 ,1,1,0],
-                          [.85 ,1,0,0],
-                          [1  ,0,0,0]])
-        cdict = {'red':   [], 'green': [], 'blue':  []}
-        for xi in range(cdata.shape[0]):
-            cdict['red']   += [(cdata[xi, 0], cdata[xi, 1], cdata[xi, 1])]
-            cdict['green'] += [(cdata[xi, 0], cdata[xi, 2], cdata[xi, 2])]
-            cdict['blue']  += [(cdata[xi, 0], cdata[xi, 3], cdata[xi, 3])]
-        cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
-        plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=cmap, levels=mylevels)
+
+        plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=mycolormap.cmap, levels=mylevels)
         #plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=plt.cm.hot_r, levels=mylevels)
 
 plt.axes().get_yaxis().set_ticks([(i+0.5)*dZ for i in range(len(proteinList))])

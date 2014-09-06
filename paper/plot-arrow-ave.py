@@ -14,6 +14,7 @@ import imp
 import math
 import matplotlib.gridspec as gridspec
 import re
+import mycolormap
 
 dx =0.05
 dump_time_step = 0.5
@@ -162,14 +163,13 @@ for arg_num in range(len(arg_set)):
         cdict['red']   += [(cdata[i, 0], cdata[i, 1], cdata[i, 1])]
         cdict['green'] += [(cdata[i, 0], cdata[i, 2], cdata[i, 2])]
         cdict['blue']  += [(cdata[i, 0], cdata[i, 3], cdata[i, 3])]
-    cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
     time_max = np.max(data[arg_num])
 
-    levels = np.arange(0,time_max+1.0,1)
+    levels = mycolormap.pancake_levels
     levels = np.arange(0, 41.0, 1)
     if 'p/' in arg_set[arg_num]:
-        levels = np.arange(0, 81.0, 1)
-    cs = ax.contourf(Xrot, Yrot, data[arg_num], cmap=cmap, origin='lower',levels=levels)
+        levels = mycolormap.pill_levels
+    cs = ax.contourf(Xrot, Yrot, data[arg_num], cmap=mycolormap.cmap, origin='lower',levels=levels)
 
     if arg_num in [1,8]:
         if arg_num == 1:
