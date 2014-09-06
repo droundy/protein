@@ -48,31 +48,33 @@ bound_times = [500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,850,5
 arrow_goals = [20, 16, 16, 14, 19, 18, 18, 16, 11, 11]
 arrow_goals = [13, 11, 12, 12, 9, 16, 9, 15, 18, 18]
 
-left_annotate_x = -9.0
-bottom_annotate_y = -1.7
+row_0y = 0.0          # 1.0
+row_1y = row_0y + 7.0 # 6.0
+row_my = row_1y + 7.0 # 10.5
 
-row_0y = 1.0
-row_1y = 6.0
-row_my = 10.5
+color_bar_y = row_0y - 2
+color_bar_height = 7
 
-col_0x = -5.0
-col_1x = 1.0
-col_2x = 8.0
-col_3x = 14.5
-col_4x = col_3x + 8.5
+col_0x = 0.0          # -5.0
+col_1x = col_0x + 4.5 # 1.0
+col_2x = col_1x + 4.0 # 8.0
+col_3x = col_2x + 4.0 # 14.5
+color_bar_x = col_3x + 2.5
+col_4x = color_bar_x + 3
+pill_bar_x = col_4x + 2
 
-pill_bar_x = col_4x + 3
-color_bar_x = col_4x - 5
+left_annotate_x = col_0x - 3
+bottom_annotate_y = row_0y - 4
 
 x_position_m1 = col_0x
 y_position_m1 = row_my
 x_position_m2 = col_2x
 y_position_m2 = row_my
 
-viewport_xmin = left_annotate_x - 6
+viewport_xmin = left_annotate_x - 4
 viewport_xmax = pill_bar_x + 2
 viewport_ymin = bottom_annotate_y
-viewport_ymax = row_my + 2
+viewport_ymax = row_my + 4
 
 def in_viewport_x(x):
     return (x - viewport_xmin)/(viewport_xmax - viewport_xmin)
@@ -99,8 +101,8 @@ for i in range(len(arg_set)):
     contour_values += [ job_string +'ave-time/contour-values-' + protein_name +'-'+ str(int(bound_times[i*2]))+'-' \
                             +str(bound_times[i*2+1])+'.dat']
 
-
-plt.figure(1, figsize=(8,3.4))
+figscale = 0.3
+plt.figure(1, figsize=(figscale*(viewport_xmax - viewport_xmin),figscale*(viewport_ymax-viewport_ymin)))
 
 ax = plt.axes([0,0,1,1]) # for nice figure
 #ax = plt.axes([0.1,0.1,.9,.9]) # for debugging positions
@@ -138,8 +140,8 @@ for arg_num in range(len(arg_set)):
     eigvec2 /= np.sqrt(np.transpose(eigvec2)*eigvec2)
     R = np.matrix([[eigvec1[0,0], eigvec2[0,0]],
                    [eigvec1[1,0], eigvec2[1,0]]])
-    R = np.matrix([[ 0, 1],
-                   [-1, 0]])*R
+    R = np.matrix([[0,-1],
+                   [1, 0]])*R
     print 'R', arg_set[arg_num], '\n', R
     Q = np.matrix([[Qxx, Qxy],
                    [Qxy, Qyy]])
@@ -173,16 +175,15 @@ for arg_num in range(len(arg_set)):
 
     if arg_num in [1,8]:
         if arg_num == 1:
-            axColor = plt.axes([in_viewport_x(color_bar_x), in_viewport_y(row_0y),
-                                0.01, in_viewport_y(row_1y-row_0y)])
+            axColor = plt.axes([in_viewport_x(color_bar_x), in_viewport_y(color_bar_y),
+                                0.02, in_viewport_y(color_bar_height)])
         else:
-            axColor = plt.axes([in_viewport_x(pill_bar_x), in_viewport_y(row_0y),
-                                0.01, in_viewport_y(row_1y-row_0y)])
+            axColor = plt.axes([in_viewport_x(pill_bar_x), in_viewport_y(color_bar_y),
+                                0.02, in_viewport_y(color_bar_height)])
         plt.colorbar(cs, cax=axColor)
-    ax.bar(.2,6,.2, .2)
 
-    ax.add_artist(matplotlib.patches.Rectangle((col_1x-2.5,row_my), 5, 0.1, facecolor='b'))
-    ax.text(col_1x, row_my - 0.3, r'$5\mu$',
+    ax.add_artist(matplotlib.patches.Rectangle((col_1x-1.5,row_my), 3, 0.1, facecolor='b'))
+    ax.text(col_1x, row_my - 0.3, r'$3\mu$',
             verticalalignment='top', horizontalalignment='center')
 
     start_time = float(bound_times[arg_num*2])
@@ -256,7 +257,7 @@ for arg_num in range(len(arg_set)):
     for i in range(len(x_vals)-1):
         ax.annotate('',xy=(x_vals[i+1],y_vals[i+1]),xytext=(x_vals[i],y_vals[i]),
                      fontsize=11,
-                     arrowprops=dict(arrowstyle='->', shrinkA=0, shrinkB=0, linewidth=.5)) # ,color='black',shrink=0.01, width=.3, headwidth=5.
+                     arrowprops=dict(arrowstyle='->', shrinkA=0, shrinkB=0, linewidth=.8)) # ,color='black',shrink=0.01, width=.3, headwidth=5.
 arrow_file.close()
 
 
@@ -267,6 +268,8 @@ m1y = np.arange(-m1.shape[1]/2, m1.shape[1]/2)*mannik_micron
 M1x, M1y = np.meshgrid(m1y, m1x)
 R1 = np.matrix([[ 0.74914988, -0.66240052],
                 [ 0.66240052,  0.74914988]])
+R1 = np.matrix([[0,-1],
+                [1, 0]])*R1
 M1xrot = R1[0,0]*M1x + R1[1,0]*M1y + x_position_m1
 M1yrot = R1[0,1]*M1x + R1[1,1]*M1y + y_position_m1
 
@@ -280,6 +283,8 @@ m2y = np.arange(-m2.shape[1]/2, m2.shape[1]/2)*mannik_micron
 M2x, M2y = np.meshgrid(m2y, m2x)
 R2 = np.matrix([[ 0.99256182, -0.12174166],
                 [ 0.12174166,  0.99256182]])
+R2 = np.matrix([[0,-1],
+                [1, 0]])*R2
 
 M2xrot = R2[0,0]*M2x + R2[1,0]*M2y + x_position_m2
 M2yrot = R2[0,1]*M2x + R2[1,1]*M2y + y_position_m2
@@ -296,15 +301,15 @@ ax.text(left_annotate_x, row_my, 'experiment',
         verticalalignment='center', horizontalalignment='right')
 
 ax.text(col_0x, bottom_annotate_y, u'shape A',
-        verticalalignment='center', horizontalalignment='center')
+        verticalalignment='bottom', horizontalalignment='center')
 ax.text(col_1x, bottom_annotate_y, 'stadium A',
-        verticalalignment='center', horizontalalignment='center')
+        verticalalignment='bottom', horizontalalignment='center')
 ax.text(col_2x, bottom_annotate_y, u'shape B',
-        verticalalignment='center', horizontalalignment='center')
+        verticalalignment='bottom', horizontalalignment='center')
 ax.text(col_3x, bottom_annotate_y, 'stadium B',
-        verticalalignment='center', horizontalalignment='center')
+        verticalalignment='bottom', horizontalalignment='center')
 ax.text(col_4x, bottom_annotate_y, 'natural pill',
-        verticalalignment='center', horizontalalignment='center')
+        verticalalignment='bottom', horizontalalignment='center')
 
 ax.set_xlim(viewport_xmin,viewport_xmax)
 ax.set_ylim(viewport_ymin,viewport_ymax)
