@@ -66,7 +66,20 @@ for i in range(len(proteins)):
     for k in kvals:
         page = proteins[i].dataset[k]
         page[page>maxval] = maxval
-        plt.contourf(Y+k*dY, proteins[0].datashape[1]-Z+i*dZ, page, cmap=plt.cm.hot_r, levels=mylevels)
+        cdata = np.array([[0  ,1,1,1],
+                          [.01 ,1,1,1],
+                          [.25,0.8,.8,1],
+                          [.5 ,0,.8,.8],
+                          [.7 ,1,1,0],
+                          [.85 ,1,0,0],
+                          [1  ,0,0,0]])
+        cdict = {'red':   [], 'green': [], 'blue':  []}
+        for xi in range(cdata.shape[0]):
+            cdict['red']   += [(cdata[xi, 0], cdata[xi, 1], cdata[xi, 1])]
+            cdict['green'] += [(cdata[xi, 0], cdata[xi, 2], cdata[xi, 2])]
+            cdict['blue']  += [(cdata[xi, 0], cdata[xi, 3], cdata[xi, 3])]
+        cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
+        plt.contourf(Y+k*dY, proteins[0].datashape[1]-Z+i*dZ, page, cmap=cmap, levels=mylevels)
 plt.axes().get_yaxis().set_ticks([(i+0.5)*dZ for i in range(len(proteinList))])
 plt.axes().get_yaxis().set_ticklabels(proteinLabels)
 plt.axes().get_xaxis().set_ticks([(0.5+k)*dY for k in kvals[::int(2.5*skip_times)]])
