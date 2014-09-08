@@ -59,19 +59,22 @@ for i in range(len(proteinList)):
     for j in range(len(times)):
         image_data_file = job_string +str(proteinList[i])+'/images/single-'+str(times[j])+'.dat'
         #image_data_file = job_string +str(proteinList[i])+'/images/real-gauss-single-'+str(times[j])+'.dat'
-        smeared_data[j] = np.loadtxt(image_data_file) #this is in microns green light at 500nm,
+        temp =  = np.loadtxt(image_data_file) #this is in microns green light at 500nm,
+        smeared_data[j] = np.zeros((temp.shape[0], temp.shape[1]))
+        smeared_data[j][:,:] = smeared_data[j][::4,::4] # keep every fourth data point
     dZ = smeared_data[0].shape[1]*1.05
     dY = smeared_data[0].shape[0]*2.00/skip_times
     Z, Y = np.meshgrid(np.arange(0,smeared_data[0].shape[1],1),
                        np.arange(0,smeared_data[0].shape[0],1))
     maxval = timemax(smeared_data)
     mylevels = np.linspace(0,(1+1.0/nlevels)*maxval,nlevels)
+    mylevels = mycolormap.pill_levels
     for k in range(len(smeared_data)):
         #print i, ' ',k
         page = smeared_data[k]
         page[page>maxval] = maxval
 
-        plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=mycolormap.cmap, levels=mylevels)
+        plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page/1e3, cmap=mycolormap.cmap, levels=mylevels)
         #plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=plt.cm.hot_r, levels=mylevels)
 
 plt.axes().get_yaxis().set_ticks([(i+0.5)*dZ for i in range(len(proteinList))])
@@ -90,8 +93,10 @@ plt.xlabel('time (s)')
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 divider = make_axes_locatable(plt.gca())
 cax = divider.append_axes("right", "3%", pad="1%")
-cbar = plt.colorbar(cax=cax,ticks=[0,maxval])
-cbar.ax.set_yticklabels(['0', 'max'])
+# cbar = plt.colorbar(cax=cax,ticks=[0,maxval])
+# cbar.ax.set_yticklabels(['0', 'max'])
+cbar = plt.colorbar(cax=cax)
+cbar.ax.set_label('thousand molecules per square micron')
 
 #plt.colorbar(ticks=[])
 plt.tight_layout()
