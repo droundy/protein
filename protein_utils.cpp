@@ -2,6 +2,7 @@
 
 
 void trim_grid(double **pointer_to_mem_A,  double *first_mem_A, bool **pointer_to_insideArr, bool *first_insideArr){
+  printf("\nHello!!!!\n\n");
   int max_xi = 0;
   min_xi = Nx;
   int max_yi = 0;
@@ -38,6 +39,7 @@ void trim_grid(double **pointer_to_mem_A,  double *first_mem_A, bool **pointer_t
     printf("\nYour grid needs to be bigger for this simulation!\n\n");
     //exit(1);
   }
+  printf("\nHello!!!!\n\n");
   int new_Nx = max_xi-min_xi+7;
   int new_Ny = max_yi-min_yi+7;
   int new_Nz = max_zi-min_zi+7;
