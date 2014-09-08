@@ -28,13 +28,13 @@ job_string_exact = "/data/shape-%s/%s-%s-%s-%s-%s-exact/" % (sys.argv[1],sys.arg
 p = re.compile('[.]')
 job_string_exact = p.sub('_',job_string_exact)
 
-print job_string_full
-print job_string_exact
-
 data_file_full = '.' + job_string_full + 'correlation.dat'
 data_file_exact = '.' + job_string_exact + 'correlation.dat'
 data_full = np.loadtxt(data_file_full)
 data_exact = np.loadtxt(data_file_exact)
+print 'loading data from ',data_file_full
+print 'loading data from ',data_file_exact
+
 
 print 'start time = ',start,', end_time = ',end
 if (len(data_full[0,:])*dt < end or len(data_exact[0,:])*dt < end):

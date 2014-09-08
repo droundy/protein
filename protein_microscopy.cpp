@@ -381,7 +381,6 @@ int main (int argc, char *argv[]) {
   // }
   // fflush(stdout);
 
-
   //Trimming the grid
   double *mem_A;
   double **pointer_to_mem_A;
@@ -400,6 +399,44 @@ int main (int argc, char *argv[]) {
   }
   printf("\nTotal cell volume is = %f\n",volume);
   fflush(stdout);
+
+  char* quadrupole_file_name = print_filename("quadrupole");
+  FILE *outfile_quad = fopen((const char*)quadrupole_file_name,"w");
+  fprintf(outfile_quad,"hello cruel world\n");
+
+  double cm_z=0;
+  double cm_y=0;
+  int num_in=0;
+  for (int yi=0;yi<Ny;yi++) {
+    for (int zi=0;zi<Nz;zi++) {
+      if (insideArr[int(Nx/2)*Ny*Nz+yi*Nz+zi]) {
+        cm_z += (double(zi)+.5)*dx;
+        cm_y += (double(yi)+.5)*dx;
+        num_in++;
+      }
+    }
+  }
+  cm_z = cm_z/double(num_in);
+  cm_y = cm_y/double(num_in);
+  fprintf(outfile_quad,"Simulation arguments: %s %g %g %g %g %g\n",mem_f_shape.c_str(),A,B,C,D,density_factor);
+  fprintf(outfile_quad,"\nsize_modifier for randst %d is = %g\n",rand_seed,size_modifier);
+  fprintf(outfile_quad,"\nTotal cell volume is = %f\n",volume);
+  fprintf(outfile_quad,"cm_z = %g\ncm_y = %g\n",cm_z,cm_y);
+  double Qyy = 0;
+  double Qzz = 0;
+  double Qzy = 0;
+  for (int yi=0;yi<Ny;yi++) {
+    for (int zi=0;zi<Nz;zi++) {
+      if (insideArr[int(Nx/2)*Ny*Nz+yi*Nz+zi]) {
+        //fprintf(outfile_quad,"yi*dx = %g\nzi*dx = %g\n",yi*dx,zi*dx);
+        Qyy += ((double(yi)+.5)*dx-cm_y)*((double(yi)+.5)*dx-cm_y)*(dx*dx);
+        Qzz += ((double(zi)+.5)*dx-cm_z)*((double(zi)+.5)*dx-cm_z)*(dx*dx);
+        Qzy += ((double(yi)+.5)*dx-cm_y)*((double(zi)+.5)*dx-cm_z)*(dx*dx);
+      }
+    }
+  }
+  fprintf(outfile_quad,"Qyy = %f\nQzz = %f\nQzy = %f\n",Qyy,Qzz,Qzy);
+  fclose(outfile_quad);
 
   ///////////////////////////////////////////////
   //Print outs comparing mem_A and insideArr:
