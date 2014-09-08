@@ -61,13 +61,14 @@ for i in range(len(proteins)):
     #minval = timemin(proteins[i].dataset[int(start_time/dump_time_step):])
     nlevels = 20
     mylevels = np.linspace(0,(1+1.0/nlevels)*maxval,nlevels)
+    mylevels = mycolormap.pill_levels
     Z, Y = np.meshgrid(np.arange(0,proteins[i].dataset[0].shape[1],1),
                        np.arange(0,proteins[i].dataset[0].shape[0],1))
 #generate a sequence of .png's for each file (printed time step). these will be used to create a gif.
     for k in kvals:
         page = proteins[i].dataset[k]
         page[page>maxval] = maxval
-        plt.contourf(Y+k*dY, proteins[0].datashape[1]-Z+i*dZ, page, cmap=mycolormap.cmap, levels=mylevels)
+        plt.contourf(Y+k*dY, proteins[0].datashape[1]-Z+i*dZ, page/1e3, cmap=mycolormap.cmap, levels=mylevels)
 plt.axes().get_yaxis().set_ticks([(i+0.5)*dZ for i in range(len(proteinList))])
 plt.axes().get_yaxis().set_ticklabels(proteinLabels)
 plt.axes().get_xaxis().set_ticks([(0.5+k)*dY for k in kvals[::int(2.5*skip_times)]])
@@ -83,8 +84,10 @@ plt.xlabel('time (s)')
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 divider = make_axes_locatable(plt.gca())
 cax = divider.append_axes("right", "3%", pad="1%")
-cbar = plt.colorbar(cax=cax,ticks=[0,maxval])
-cbar.ax.set_yticklabels(['0', 'max'])
+# cbar = plt.colorbar(cax=cax,ticks=[0,maxval])
+# cbar.ax.set_yticklabels(['0', 'max'])
+cbar = plt.colorbar(cax=cax)
+cbar.ax.set_label('thousand molecules per square micron')
 
 
 #plt.colorbar(ticks=[])

@@ -58,9 +58,9 @@ col_0x = 0.0          # -5.0
 col_1x = col_0x + 4.5 # 1.0
 col_2x = col_1x + 4.0 # 8.0
 col_3x = col_2x + 4.0 # 14.5
-color_bar_x = col_3x + 2.5
-col_4x = color_bar_x + 3
-pill_bar_x = col_4x + 2
+color_bar_x = col_3x + 1.5
+col_4x = color_bar_x + 4.0
+pill_bar_x = col_4x + 1.0
 
 left_annotate_x = col_0x - 3
 bottom_annotate_y = row_0y - 4
@@ -71,7 +71,7 @@ x_position_m2 = col_2x
 y_position_m2 = row_my
 
 viewport_xmin = left_annotate_x - 4
-viewport_xmax = pill_bar_x + 2
+viewport_xmax = pill_bar_x + 4.0
 viewport_ymin = bottom_annotate_y
 viewport_ymax = row_my + 4
 
@@ -166,10 +166,13 @@ for arg_num in range(len(arg_set)):
     time_max = np.max(data[arg_num])
 
     levels = mycolormap.pancake_levels
-    levels = np.arange(0, 41.0, 1)
+    scaling = 1
+    barlabel = 'molecules/square micron'
     if 'p/' in arg_set[arg_num]:
         levels = mycolormap.pill_levels
-    cs = ax.contourf(Xrot, Yrot, data[arg_num], cmap=mycolormap.cmap, origin='lower',levels=levels)
+        scaling = 1e-3
+        barlabel = 'thousand molecules/square micron'
+    cs = ax.contourf(Xrot, Yrot, data[arg_num]*scaling, cmap=mycolormap.cmap, origin='lower', levels=levels)
 
     if arg_num in [1,8]:
         if arg_num == 1:
@@ -178,7 +181,8 @@ for arg_num in range(len(arg_set)):
         else:
             axColor = plt.axes([in_viewport_x(pill_bar_x), in_viewport_y(color_bar_y),
                                 0.02, in_viewport_y(color_bar_height)])
-        plt.colorbar(cs, cax=axColor)
+        cb = plt.colorbar(cs, cax=axColor)
+        cb.set_label(barlabel)
 
     ax.add_artist(matplotlib.patches.Rectangle((col_1x-1.5,row_my), 3, 0.1, facecolor='b'))
     ax.text(col_1x, row_my - 0.3, r'$3\mu$',

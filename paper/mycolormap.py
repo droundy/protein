@@ -15,5 +15,5 @@ for i in range(cdata.shape[0]):
     cdict['blue']  += [(cdata[i, 0], cdata[i, 3], cdata[i, 3])]
 cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
 
-pancake_levels = np.arange(0, 41.0, 1)
-pill_levels = np.arange(0, 81.0, 1)
+pancake_levels = np.arange(0, 961, 20)
+pill_levels = np.arange(0, 701, 20)
