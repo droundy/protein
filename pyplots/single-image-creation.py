@@ -56,25 +56,54 @@ for i in range(len(proteins)):
 # print "dis",dis
 # exit(0)
 
+# def gaussian_smear(data,wavelength):
+#     new = np.zeros_like(data)
+#     print "here ",new.shape[0]
+#     N_A = 1.3
+#     sigma = .21*wavelength/N_A #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
+#     print "new way sigma ",sigma
+#     dis = int(3*sigma/0.05) #for now
+#     for num in range(new.shape[0]):
+#         print "num ",num," of ",new.shape[0]-1
+#         for x in range(new.shape[1]):
+#             #print x," of ",new.shape[1]-1
+#             for y in range(new.shape[2]):
+#                 for i in np.arange(-dis,dis,1):
+#                     for j in np.arange(-dis,dis,1):
+#                         if (x+i >= 0 and x+i < new.shape[1]-1 and y+j >= 0 and y+j < new.shape[2]-1
+#                             and math.sqrt(i*i+j*j) <= dis ):
+#                             new[num,x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
+#     return new
+
+
+
+
 def gaussian_smear(data,wavelength):
     new = np.zeros_like(data)
-    print "here ",new.shape[0]
     N_A = 1.3
+    dx = 0.05 # microns per grid spacing
     sigma = .21*wavelength/N_A #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
-    print "new way sigma ",sigma
-    dis = int(3*sigma/0.05) #for now
+    dis = int(3*sigma/dx) #for now
     for num in range(new.shape[0]):
-        print "num ",num," of ",new.shape[0]-1
-        for x in range(new.shape[1]):
-            #print x," of ",new.shape[1]-1
-            for y in range(new.shape[2]):
-                for i in np.arange(-dis,dis,1):
-                    for j in np.arange(-dis,dis,1):
-                        if (x+i >= 0 and x+i < new.shape[1]-1 and y+j >= 0 and y+j < new.shape[2]-1
-                            and math.sqrt(i*i+j*j) <= dis ):
-                            new[num,x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
+        print 'num ',num
+        for i in np.arange(-dis,dis,1):
+            xstart = 0
+            xstop = len(new[num,:,0])
+            if i > 0:
+                xstart += i
+            else:
+                xstop += i
+            for j in np.arange(-dis,dis,1):
+                ystart = 0
+                ystop = len(new[num,0,:])
+                if j > 0:
+                    ystart += j
+                else:
+                    ystop += j
+                new[num,xstart:xstop,ystart:ystop] += data[num,xstart-i:xstop-i,ystart-j:ystop-j] \
+                                    * math.exp(-(i*i+j*j)*dx*dx/2.0/sigma/sigma )
+        new[num,:,:] /= np.pi*2*sigma**2 # normalize!
     return new
-
 
 #computes the global maximum over a set of two dimensional arrays (stored as files)
 
@@ -85,7 +114,7 @@ times  = np.arange(float(start_time),float(end_time),dump_time_step)
 
 for i in range(len(proteins)):
     print proteinList[i]
-    smeared_data = gaussian_smear(proteins[i].dataset,.650) #this is in microns green light at 500nm,
+    smeared_data = gaussian_smear(proteins[i].dataset,.650) #this is in microns. green light at 509nm,red at 650nm
     for j in range(len(times)):
         image_data_file = '.' + job_string +str(proteinList[i])+'/images/single-'+str(times[j])+'.dat'
         #image_data_file = '.' + job_string +str(proteinList[i])+'/images/real-gauss-single-'+str(times[j])+'.dat'
