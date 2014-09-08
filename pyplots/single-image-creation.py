@@ -41,41 +41,6 @@ for i in range(len(proteins)):
     if (not os.path.isdir(directory)):
         os.makedirs(directory)
 
-# n_sin_theta = 1.5
-# wavelength = .6
-# sigma = wavelength/2.0/n_sin_theta #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
-# dis = int(3.5*sigma/0.05) #for now
-# print "wavelength",wavelength
-# print "sigma",sigma
-# print "dis",dis
-
-# for i in np.arange(-dis,dis,1):
-#     for j in np.arange(-dis,dis,1):
-#      #   if 10.0*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma ) > 7.0:
-#         print "dis ",math.sqrt((i*i+j*j)),"val ",10.0*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
-# print "dis",dis
-# exit(0)
-
-# def gaussian_smear(data,wavelength):
-#     new = np.zeros_like(data)
-#     print "here ",new.shape[0]
-#     N_A = 1.3
-#     sigma = .21*wavelength/N_A #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
-#     print "new way sigma ",sigma
-#     dis = int(3*sigma/0.05) #for now
-#     for num in range(new.shape[0]):
-#         print "num ",num," of ",new.shape[0]-1
-#         for x in range(new.shape[1]):
-#             #print x," of ",new.shape[1]-1
-#             for y in range(new.shape[2]):
-#                 for i in np.arange(-dis,dis,1):
-#                     for j in np.arange(-dis,dis,1):
-#                         if (x+i >= 0 and x+i < new.shape[1]-1 and y+j >= 0 and y+j < new.shape[2]-1
-#                             and math.sqrt(i*i+j*j) <= dis ):
-#                             new[num,x+i,y+j] += data[num,x,y]*math.exp( -(i*i+j*j)*.05*.05/2.0/sigma/sigma )
-#     return new
-
-
 
 
 def gaussian_smear(data,wavelength):
@@ -86,6 +51,7 @@ def gaussian_smear(data,wavelength):
     dis = int(3*sigma/dx) #for now
     for num in range(new.shape[0]):
         print 'num ',num
+        norm = 0
         for i in np.arange(-dis,dis,1):
             xstart = 0
             xstop = len(new[num,:,0])
@@ -100,9 +66,10 @@ def gaussian_smear(data,wavelength):
                     ystart += j
                 else:
                     ystop += j
-                new[num,xstart:xstop,ystart:ystop] += data[num,xstart-i:xstop-i,ystart-j:ystop-j] \
-                                    * math.exp(-(i*i+j*j)*dx*dx/2.0/sigma/sigma )
-        new[num,:,:] /= np.pi*2*sigma**2 # normalize!
+                weight = math.exp(-(i*i+j*j)*dx*dx/2.0/sigma/sigma )
+                new[num,xstart:xstop,ystart:ystop] += data[num,xstart-i:xstop-i,ystart-j:ystop-j] * weight
+                norm += weight
+        new[num,:,:] /= norm # normalize!
     return new
 
 #computes the global maximum over a set of two dimensional arrays (stored as files)
@@ -111,6 +78,10 @@ for i in range(len(proteinList)):
     proteins[i] = load.data(proteinList[i],sim_type,start_time,end_time)
 
 times  = np.arange(float(start_time),float(end_time),dump_time_step)
+
+# proteinList = ["nADP","nATP","ND","NDE","nE",]
+dx = 0.05
+unit_conversions = [dx,dx,1.0/dx**2,1.0/dx**2,dx]
 
 for i in range(len(proteins)):
     print proteinList[i]
@@ -123,7 +94,7 @@ for i in range(len(proteins)):
         p_file = open(image_data_file,'a')
         for y in range(smeared_data.shape[1]):
             for x in range(smeared_data.shape[2]):
-                p_file.write('%g '%smeared_data[j,y,x])
+                p_file.write('%g '%(smeared_data[j,y,x]*unit_conversions[i]))
             p_file.write('\n')
         p_file.close()
 

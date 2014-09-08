@@ -76,7 +76,7 @@ def gaussian_smear(data,wavelength,protein):
     last_max_y = 0
     for num in range(data.shape[0]):
         max_data = np.zeros_like(data[0])
-
+        norm = 0
         for i in np.arange(-dis,dis,1):
             xstart = 0
             xstop = len(new[:,0])
@@ -91,9 +91,10 @@ def gaussian_smear(data,wavelength,protein):
                     ystart += j
                 else:
                     ystop += j
-                max_data[xstart:xstop,ystart:ystop] += data[num,xstart-i:xstop-i,ystart-j:ystop-j] \
-                                    * math.exp(-(i*i+j*j)*dx*dx/2.0/sigma/sigma )
-        max_data /= np.pi*2*sigma**2 # normalize!
+                weight = math.exp(-(i*i+j*j)*dx*dx/2.0/sigma/sigma )
+                max_data[xstart:xstop,ystart:ystop] += data[num,xstart-i:xstop-i,ystart-j:ystop-j] * weight
+                norm += weight
+        max_data /= norm # normalize!
         new += max_data
         unsmeared += data[num,:,:]
 

@@ -57,7 +57,7 @@ for i in range(len(proteinList)):
     smeared_data = [0]*len(times)
     for j in range(len(times)):
         image_data_file = job_string +str(proteinList[i])+'/images/single-'+str(times[j])+'.dat'
-        #image_data_file = job_string +str(proteinList[i])+'/images/real-gauss-single-'+str(times[j])+'.dat'
+        print image_data_file
         smeared_data[j] = np.loadtxt(image_data_file) #this is in microns green light at 500nm,
     dZ = smeared_data[0].shape[1]*1.05
     dY = smeared_data[0].shape[0]*2.00/skip_times
