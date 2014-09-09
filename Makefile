@@ -24,7 +24,6 @@ ALL_FIGURES = \
 	data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/box-plot_D.pdf \
 	data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/box-plot_D.pdf \
 	data/shape-stad/0_25-5_50-1_00-0_00-15_00-exact/plots/box-plot_D.pdf \
-	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot.pdf \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf
 
@@ -40,9 +39,6 @@ paper/reactions.pdf: paper/reactions.svg
 	inkscape --export-pdf $@ $<
 
 # start time 29.501, period 45.002
-data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot.pdf: pyplots/image_plot.py
-	python $< p 3.00 0.50 0.00 0.00 15.00 exact 266.00 304.00 pyplots/mycolormap.py
-
 data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf: \
 		pyplots/single-image-plot.py pyplots/mycolormap.py
 	python $< p 3.00 0.50 0.00 0.00 15.00 full_array 312.00 350.00
@@ -57,25 +53,25 @@ data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/nE/movie-frame-00600.dat: pyplots/s
 
 paper/plot-ave.pdf: paper/plot-arrow-ave.py paper/mycolormap.py \
 	data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/ave-time/contour-values-NflD-500-1900.dat \
+	data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/ave-time/contour-values-NflD-500-850.dat \
 	data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/ave-time/contour-values-NflD-500-980.dat \
+	data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/ave-time/contour-values-NflD-500-850.dat \
 	data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/ave-time/contour-values-NflD-500-1000.dat \
+	data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/ave-time/contour-values-NflD-500-850.dat \
 	data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/ave-time/contour-values-NflD-500-1000.dat \
+	data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/ave-time/contour-values-NflD-500-850.dat \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/ave-time/contour-values-NflD-500-1000.dat \
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/ave-time/contour-values-NflD-500-750.dat \
 	data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/ave-time/contour-values-NflD-500-1800.dat \
+	data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/ave-time/contour-values-NflD-500-850.dat \
 	data/shape-randst/0_25-18_60-28_60-94_00-15_00-exact/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-randst/0_25-18_60-28_60-94_00-15_00-exact/ave-time/contour-values-NflD-500-1400.dat \
+	data/shape-randst/0_25-18_60-28_60-94_00-15_00-exact/ave-time/contour-values-NflD-500-850.dat \
 	data/shape-stad/0_25-2_35-1_32-0_00-15_00-exact/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-stad/0_25-2_35-1_32-0_00-15_00-exact/ave-time/contour-values-NflD-500-780.dat \
+	data/shape-stad/0_25-2_35-1_32-0_00-15_00-exact/ave-time/contour-values-NflD-500-850.dat \
 	data/shape-stad/0_25-2_92-1_18-0_00-15_00-exact/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-stad/0_25-2_92-1_18-0_00-15_00-exact/ave-time/contour-values-NflD-500-780.dat \
+	data/shape-stad/0_25-2_92-1_18-0_00-15_00-exact/ave-time/contour-values-NflD-500-850.dat \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/ave-time/ave-time-arrow-500-NflD.dat \
-	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/ave-time/contour-values-NflD-500-1000.dat
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/ave-time/contour-values-NflD-500-750.dat
 	python paper/plot-arrow-ave.py
 
 data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/plots/box-plot_D.pdf: pyplots/box_plot.py \

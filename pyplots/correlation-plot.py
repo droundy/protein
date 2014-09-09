@@ -12,6 +12,12 @@ import re
 start = float(sys.argv[8])
 end  = float(sys.argv[9])
 
+if (sys.argv[10] != "auto") and (sys.argv[10] != "rl"):
+    print 'The last command line argument, after the time, should be either \"auto\" or \"rl\"'
+    print 'for auto-correlation or right-left correlation'
+    exit(1)
+corr_type = sys.argv[10]
+
 difD = 2.5
 dx = .05
 time_step = .1*dx*dx/difD;#sec
@@ -28,13 +34,22 @@ job_string_exact = "/data/shape-%s/%s-%s-%s-%s-%s-exact/" % (sys.argv[1],sys.arg
 p = re.compile('[.]')
 job_string_exact = p.sub('_',job_string_exact)
 
-data_file_full = '.' + job_string_full + 'correlation.dat'
-data_file_exact = '.' + job_string_exact + 'correlation.dat'
+data_file_full = ''
+data_file_exact = ''
+if corr_type == "auto":
+    data_file_full = '.' + job_string_full + 'auto-correlation.dat'
+    data_file_exact = '.' + job_string_exact + 'auto-correlation.dat'
+elif corr_type == "rl":
+    data_file_full = '.' + job_string_full + 'correlation-right-left.dat'
+    data_file_exact = '.' + job_string_exact + 'correlation-right-left.dat'
+
+
 data_full = np.loadtxt(data_file_full)
 data_exact = np.loadtxt(data_file_exact)
 print 'loading data from ',data_file_full
 print 'loading data from ',data_file_exact
 
+print data_exact
 
 print 'start time = ',start,', end_time = ',end
 if (len(data_full[0,:])*dt < end or len(data_exact[0,:])*dt < end):
@@ -44,7 +59,6 @@ if (len(data_full[0,:])*dt < end or len(data_exact[0,:])*dt < end):
 data_start_index = int(start/dt)
 data_stop_index = int(end/dt)
 
-print 'this is the time covered by the entire data set that youre using'
 data_full = data_full[:,data_start_index:data_stop_index]
 data_exact = data_exact[:,data_start_index:data_stop_index]
 
@@ -54,11 +68,12 @@ correlation_arrays = [0]*(len(data_full)-1)
 for i in range(len(correlation_arrays)):
     correlation_arrays[i] = data_full[i+1]
 
+correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
 colors = ['m','g','r','y','b','c']
 labels = ['Long Array Left','Long Array Mid','Long Array Right','Short Array Left','Short Array Mid','Short Array Right']
 pylab.figure()
 for i in range(len(correlation_arrays)):
-    if (i != 0) and (i != 3):
+    if (i == 2) or (i == 5):
         pylab.subplot(211)
         pylab.title('Stochastic Data')
         pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
@@ -70,10 +85,11 @@ correlation_arrays = [0]*(len(data_exact)-1)
 for i in range(len(correlation_arrays)):
     correlation_arrays[i] = data_exact[i+1]
 
+correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
 colors = ['m','g','r','y','b','c']
 labels = ['Long Array Left','Long Array Mid','Long Array Right','Short Array Left','Short Array Mid','Short Array Right']
 for i in range(len(correlation_arrays)):
-    if (i != 0) and (i != 3):
+    if (i == 2) or (i == 5):
         pylab.subplot(212)
         pylab.title('Determinisitc Data')
         pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
@@ -84,11 +100,11 @@ for i in range(len(correlation_arrays)):
 plt.xlabel('time (sec)')
 plt.legend()
 
-printout_file = '.' + job_string_full + 'plots/correlation.pdf'
+printout_file = '.' + job_string_full + 'plots/correlation-' + corr_type + '.pdf'
 print 'printing to ',printout_file
 pylab.savefig(printout_file)
 
-printout_file = '.' + job_string_exact + 'plots/correlation.pdf'
+printout_file = '.' + job_string_exact + 'plots/correlation-' + corr_type + '.pdf'
 print 'printing to ',printout_file
 pylab.savefig(printout_file)
 
