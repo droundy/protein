@@ -50,7 +50,6 @@ def gaussian_smear(data,wavelength):
     sigma = .21*wavelength/N_A #n_sin_theta can reach 1.4 to 1.6 in modern optics according to wikipedia
     dis = int(3*sigma/dx) #for now
     for num in range(new.shape[0]):
-        print 'num ',num
         norm = 0
         for i in np.arange(-dis,dis,1):
             xstart = 0

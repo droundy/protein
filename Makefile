@@ -25,8 +25,8 @@ ALL_FIGURES = \
 	data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/box-plot_D.pdf \
 	data/shape-stad/0_25-5_50-1_00-0_00-15_00-exact/plots/box-plot_D.pdf \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot.pdf \
-	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf
-#data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf \
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf
 
 paper/paper.pdf: paper/paper.tex ${ALL_FIGURES}
 	echo ${ALL_FIGURES}
@@ -47,7 +47,8 @@ data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf: \
 		pyplots/single-image-plot.py pyplots/mycolormap.py
 	python $< p 3.00 0.50 0.00 0.00 15.00 full_array 312.00 350.00
 data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf: \
-		pyplots/single-image-plot.py pyplots/mycolormap.py
+		pyplots/single-image-plot.py pyplots/mycolormap.py pyplots/single-image-creation.py
+	python pyplots/single-image-creation.py p 3.00 0.50 0.00 0.00 15.00 exact 312.00 350.00
 	python $< p 3.00 0.50 0.00 0.00 15.00 exact 312.00 350.00
 
 paper/plot-ave.pdf: paper/plot-arrow-ave.py paper/mycolormap.py \
