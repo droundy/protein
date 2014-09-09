@@ -167,12 +167,9 @@ for arg_num in range(len(arg_set)):
 
     levels = mycolormap.pancake_levels
     scaling = 1
-    barlabel = 'molecules/square micron'
     if 'p/' in arg_set[arg_num]:
         levels = mycolormap.pill_levels
-        scaling = 1e-3
-        barlabel = 'thousand molecules/square micron'
-    cs = ax.contourf(Xrot, Yrot, data[arg_num]*scaling, cmap=mycolormap.cmap, origin='lower', levels=levels)
+    cs = ax.contourf(Xrot, Yrot, data[arg_num], cmap=mycolormap.cmap, origin='lower', levels=levels)
 
     if arg_num in [1,8]:
         if arg_num == 1:
@@ -182,7 +179,7 @@ for arg_num in range(len(arg_set)):
             axColor = plt.axes([in_viewport_x(pill_bar_x), in_viewport_y(color_bar_y),
                                 0.02, in_viewport_y(color_bar_height)])
         cb = plt.colorbar(cs, cax=axColor)
-        cb.set_label(barlabel)
+        cb.set_label('molecules$/\mu m^2$')
 
     ax.add_artist(matplotlib.patches.Rectangle((col_1x-1.5,row_my), 3, 0.1, facecolor='b'))
     ax.text(col_1x, row_my - 0.3, r'$3\mu$',

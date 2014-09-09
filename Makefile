@@ -45,10 +45,11 @@ data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf: \
 
 data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf: \
 		pyplots/single-image-plot.py pyplots/mycolormap.py pyplots/single-image-creation.py \
-		data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/nE/movie-frame-00600.dat
+		data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/nE/images/single-300.0.dat
 	python $< p 3.00 0.50 0.00 0.00 15.00 exact 266.00 304.00
 
-data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/nE/movie-frame-00600.dat: pyplots/single-image-creation.py
+data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/nE/images/single-300.0.dat: pyplots/single-image-creation.py \
+		data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/nE/movie-frame-00600.dat
 	python pyplots/single-image-creation.py p 3.00 0.50 0.00 0.00 15.00 exact 266.00 304.00
 
 paper/plot-ave.pdf: paper/plot-arrow-ave.py paper/mycolormap.py \

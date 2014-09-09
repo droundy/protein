@@ -16,4 +16,4 @@ for i in range(cdata.shape[0]):
 cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
 
 pancake_levels = np.arange(0, 961, 20)
-pill_levels = np.arange(0, 701, 20)
+pill_levels = np.arange(0, 701000, 20000)
