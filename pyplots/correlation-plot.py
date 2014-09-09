@@ -59,7 +59,6 @@ if (len(data_full[0,:])*dt < end or len(data_exact[0,:])*dt < end):
 data_start_index = int(start/dt)
 data_stop_index = int(end/dt)
 
-print 'this is the time covered by the entire data set that youre using'
 data_full = data_full[:,data_start_index:data_stop_index]
 data_exact = data_exact[:,data_start_index:data_stop_index]
 
@@ -69,6 +68,7 @@ correlation_arrays = [0]*(len(data_full)-1)
 for i in range(len(correlation_arrays)):
     correlation_arrays[i] = data_full[i+1]
 
+correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
 colors = ['m','g','r','y','b','c']
 labels = ['Long Array Left','Long Array Mid','Long Array Right','Short Array Left','Short Array Mid','Short Array Right']
 pylab.figure()
@@ -85,6 +85,7 @@ correlation_arrays = [0]*(len(data_exact)-1)
 for i in range(len(correlation_arrays)):
     correlation_arrays[i] = data_exact[i+1]
 
+correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
 colors = ['m','g','r','y','b','c']
 labels = ['Long Array Left','Long Array Mid','Long Array Right','Short Array Left','Short Array Mid','Short Array Right']
 for i in range(len(correlation_arrays)):
