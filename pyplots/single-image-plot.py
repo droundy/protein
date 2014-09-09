@@ -10,6 +10,7 @@ import file_loader as load
 import Image
 import math
 import re
+import mycolormap
 
 f_shape = sys.argv[1]
 f_param1 = sys.argv[2]
@@ -57,32 +58,25 @@ for i in range(len(proteinList)):
     smeared_data = [0]*len(times)
     for j in range(len(times)):
         image_data_file = job_string +str(proteinList[i])+'/images/single-'+str(times[j])+'.dat'
-        print image_data_file
-        smeared_data[j] = np.loadtxt(image_data_file) #this is in microns green light at 500nm,
+        #image_data_file = job_string +str(proteinList[i])+'/images/real-gauss-single-'+str(times[j])+'.dat'
+        temp = np.loadtxt(image_data_file) #this is in microns green light at 500nm,
+        smeared_data[j] = np.zeros_like(temp[::4,::4])
+        smeared_data[j][:,:] = temp[::4,::4] # keep every fourth data point
     dZ = smeared_data[0].shape[1]*1.05
     dY = smeared_data[0].shape[0]*2.00/skip_times
     Z, Y = np.meshgrid(np.arange(0,smeared_data[0].shape[1],1),
                        np.arange(0,smeared_data[0].shape[0],1))
     maxval = timemax(smeared_data)
+    print 'maxval for', proteinList[i], 'is', maxval
     mylevels = np.linspace(0,(1+1.0/nlevels)*maxval,nlevels)
+    #mylevels = mycolormap.pill_levels
+    mylevels = np.arange(0, 1401, 10)
     for k in range(len(smeared_data)):
         #print i, ' ',k
         page = smeared_data[k]
         page[page>maxval] = maxval
-        cdata = np.array([[0  ,1,1,1],
-                          [.01 ,1,1,1],
-                          [.25,0.8,.8,1],
-                          [.5 ,0,.8,.8],
-                          [.7 ,1,1,0],
-                          [.85 ,1,0,0],
-                          [1  ,0,0,0]])
-        cdict = {'red':   [], 'green': [], 'blue':  []}
-        for xi in range(cdata.shape[0]):
-            cdict['red']   += [(cdata[xi, 0], cdata[xi, 1], cdata[xi, 1])]
-            cdict['green'] += [(cdata[xi, 0], cdata[xi, 2], cdata[xi, 2])]
-            cdict['blue']  += [(cdata[xi, 0], cdata[xi, 3], cdata[xi, 3])]
-        cmap = matplotlib.colors.LinearSegmentedColormap('mine', cdict)
-        plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=cmap, levels=mylevels)
+
+        plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=mycolormap.cmap, levels=mylevels) # FIXME levels=mylevels
         #plt.contourf(Y+k*dY, smeared_data[0].shape[1]-Z+i*dZ, page, cmap=plt.cm.hot_r, levels=mylevels)
 
 plt.axes().get_yaxis().set_ticks([(i+0.5)*dZ for i in range(len(proteinList))])
@@ -101,10 +95,13 @@ plt.xlabel('time (s)')
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 divider = make_axes_locatable(plt.gca())
 cax = divider.append_axes("right", "3%", pad="1%")
-cbar = plt.colorbar(cax=cax,ticks=[0,maxval])
-cbar.ax.set_yticklabels(['0', 'max'])
+# cbar = plt.colorbar(cax=cax,ticks=[0,maxval])
+# cbar.ax.set_yticklabels(['0', 'max'])
+cbar = plt.colorbar(cax=cax)
+cbar.set_label('molecules per square micron')
 
 #plt.colorbar(ticks=[])
 plt.tight_layout()
+print 'saving as', load.print_string("single-image-plot","")
 plt.savefig(load.print_string("single-image-plot",""))
 #plt.savefig(load.print_string("real-gauss-single-image-plot",""))

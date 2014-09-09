@@ -25,7 +25,8 @@ ALL_FIGURES = \
 	data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/box-plot_D.pdf \
 	data/shape-stad/0_25-5_50-1_00-0_00-15_00-exact/plots/box-plot_D.pdf \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot.pdf \
-	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf \
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf
 
 paper/paper.pdf: paper/paper.tex ${ALL_FIGURES}
 	echo ${ALL_FIGURES}
@@ -40,12 +41,20 @@ paper/reactions.pdf: paper/reactions.svg
 
 # start time 29.501, period 45.002
 data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot.pdf: pyplots/image_plot.py
-	python $< p 3.00 0.50 0.00 0.00 15.00 exact 266.00 304.00
+	python $< p 3.00 0.50 0.00 0.00 15.00 exact 266.00 304.00 pyplots/mycolormap.py
 
-data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf: pyplots/single-image-plot.py
+data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf: \
+		pyplots/single-image-plot.py pyplots/mycolormap.py
 	python $< p 3.00 0.50 0.00 0.00 15.00 full_array 312.00 350.00
+data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf: \
+		pyplots/single-image-plot.py pyplots/mycolormap.py pyplots/single-image-creation.py \
+		data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/nE/movie-frame-00699.dat
+	python $< p 3.00 0.50 0.00 0.00 15.00 exact 312.00 350.00
 
-paper/plot-ave.pdf: paper/plot-arrow-ave.py \
+data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/nE/movie-frame-00699.dat: pyplots/single-image-creation.py
+	python pyplots/single-image-creation.py p 3.00 0.50 0.00 0.00 15.00 exact 312.00 350.00
+
+paper/plot-ave.pdf: paper/plot-arrow-ave.py paper/mycolormap.py \
 	data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/ave-time/ave-time-arrow-500-NflD.dat \
 	data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/ave-time/contour-values-NflD-500-1900.dat \
 	data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/ave-time/ave-time-arrow-500-NflD.dat \
