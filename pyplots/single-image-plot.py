@@ -69,8 +69,7 @@ for i in range(len(proteinList)):
     maxval = timemax(smeared_data)
     print 'maxval for', proteinList[i], 'is', maxval
     mylevels = np.linspace(0,(1+1.0/nlevels)*maxval,nlevels)
-    mylevels = mycolormap.pill_levels
-    mylevels = np.arange(0, 1801, 10)
+    mylevels = mycolormap.movie_levels
     for k in range(len(smeared_data)):
         #print i, ' ',k
         page = smeared_data[k]

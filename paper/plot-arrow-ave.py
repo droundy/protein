@@ -58,9 +58,9 @@ col_0x = 0.0          # -5.0
 col_1x = col_0x + 4.5 # 1.0
 col_2x = col_1x + 4.0 # 8.0
 col_3x = col_2x + 4.0 # 14.5
-color_bar_x = col_3x + 1.5
+color_bar_x = col_3x + 2.5
 col_4x = color_bar_x + 4.0
-pill_bar_x = col_4x + 1.0
+pill_bar_x = col_4x + 1.5
 
 left_annotate_x = col_0x - 3
 bottom_annotate_y = row_0y - 4
@@ -179,7 +179,7 @@ for arg_num in range(len(arg_set)):
             axColor = plt.axes([in_viewport_x(pill_bar_x), in_viewport_y(color_bar_y),
                                 0.02, in_viewport_y(color_bar_height)])
         cb = plt.colorbar(cs, cax=axColor)
-        cb.set_label('molecules$/\mu m^2$')
+        cb.set_label('molecules$/\mu^2$')
 
     ax.add_artist(matplotlib.patches.Rectangle((col_1x-1.5,row_my), 3, 0.1, facecolor='b'))
     ax.text(col_1x, row_my - 0.3, r'$3\mu$',
