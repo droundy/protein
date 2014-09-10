@@ -109,7 +109,6 @@ ax.set_aspect('equal')
 ax.set_axis_off()
 
 data = [0]*(len(arg_set)+2)
-print len(data)
 for arg_num in range(len(arg_set)):
     data[arg_num] = np.loadtxt(contour_values[arg_num])
 
@@ -141,11 +140,11 @@ for arg_num in range(len(arg_set)):
                    [eigvec1[1,0], eigvec2[1,0]]])
     R = np.matrix([[0,-1],
                    [1, 0]])*R
-    print 'R', arg_set[arg_num], '\n', R
+    #print 'R', arg_set[arg_num], '\n', R
     Q = np.matrix([[Qxx, Qxy],
                    [Qxy, Qyy]])
-    print 'Q\n', Q
-    print 'diagonalized Q\n', np.transpose(R)*Q*R
+    #print 'Q\n', Q
+    #print 'diagonalized Q\n', np.transpose(R)*Q*R
 
     # Now let's rotate our coordinate system.
     Xrot = R[0,0]*X + R[1,0]*Y + X_position[arg_num]
@@ -164,6 +163,7 @@ for arg_num in range(len(arg_set)):
         cdict['green'] += [(cdata[i, 0], cdata[i, 2], cdata[i, 2])]
         cdict['blue']  += [(cdata[i, 0], cdata[i, 3], cdata[i, 3])]
     time_max = np.max(data[arg_num])
+    print 'time_max is', time_max
 
     levels = mycolormap.pancake_levels
     scaling = 1

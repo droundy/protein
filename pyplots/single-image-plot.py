@@ -69,8 +69,8 @@ for i in range(len(proteinList)):
     maxval = timemax(smeared_data)
     print 'maxval for', proteinList[i], 'is', maxval
     mylevels = np.linspace(0,(1+1.0/nlevels)*maxval,nlevels)
-    #mylevels = mycolormap.pill_levels
-    mylevels = np.arange(0, 1401, 10)
+    mylevels = mycolormap.pill_levels
+    mylevels = np.arange(0, 1801, 10)
     for k in range(len(smeared_data)):
         #print i, ' ',k
         page = smeared_data[k]
@@ -98,7 +98,7 @@ cax = divider.append_axes("right", "3%", pad="1%")
 # cbar = plt.colorbar(cax=cax,ticks=[0,maxval])
 # cbar.ax.set_yticklabels(['0', 'max'])
 cbar = plt.colorbar(cax=cax)
-cbar.set_label('molecules per square micron')
+cbar.set_label('molecules/$\mu^2$')
 
 #plt.colorbar(ticks=[])
 plt.tight_layout()
