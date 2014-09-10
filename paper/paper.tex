@@ -255,7 +255,6 @@ $1\micron^3$ to $2\micron^3$~\cite{kubitschek1990cell,
 simulations\cite{huang2003dynamic} and Mannik's experiments and model
 cells that are slightly larger than this range.
 
-\section{Naturally Occuring Pill Shaped Cells}
 \begin{figure*}
   %\includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot}
   \includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot}
@@ -282,6 +281,7 @@ cells that are slightly larger than this range.
     approximation developed by Zhang et all~\cite{zhang2007gaussian}}.
   \label{image-p}
 \end{figure*}
+\section{Naturally Occuring Pill Shaped Cells}
 
 We begin with the naturally occuring pill cell shape.  We peice this
 shape together as two hemispherical endcaps attached on either end of
@@ -345,14 +345,20 @@ figure.  \fixme{There is another paragraph after this in the latex
 %% MinE ring pushing downward on the membrane-bound MinD:ATP.
 
 We test cells of radius $.5\micron$ and of lengths $2\micron$,
-$3\micron$, and $5\micron$ measured from the tip of one end cap to the
-tip of the other. In each case, we observe in the deterministic
-simulations a quick establishement (within a few periods) of extremely
-regular oscillatory behavoir that lasts indefinitely.  The stochastic
-results show oscillitions that are similarly regular in time, with
-periods that nearly match those of the deterministic (they differ
-roughly by a factor of .05)\fixme{does this square with the
-  correlation data periods?}.
+$3\micron$, $4\micron$, and $5\micron$ measured from the tip of one
+end cap to the tip of the other \fixme{I'm running the 2,3,5 pills
+  again to make sure that everything in this paragraph is true}. In
+each case, we observe in the deterministic simulations a quick
+establishement (within a few periods) of extremely regular oscillatory
+behavoir that lasts indefinitely.  The stochastic results show
+oscillitions that are similarly regular in time, with periods that
+nearly match those of the deterministic (they differ roughly by a
+factor of .05) \fixme{does this square with the correlation data
+  periods?}. The regularity of the pill shape cell periods is
+discussed below, in our analysis of time correlation data \fixme{not
+  written yet}.  These periods increase with cell length, as shown in
+Table~\ref{tab:pill-periods}, in agreement with the results of Huang
+\emph{et al.}.
 
 While the stochastic results show periods that seem to have a high
 degree of regularity as well as similarity to the deterministic
@@ -367,72 +373,39 @@ periods that are the same and qualitative behavoir that is
 approximately the same, but also that there is variation in the
 details of the stochastic simulation maxima location.
 
-The period increases with cell length, as shown in
-Table~\ref{tab:pill-periods}, in agreement with the results of Huang
-\emph{et al.}.  The stochastic simulations show a similar pattern.
-The MinD maxima occur at the ends of the cell in a back and forth
-manner, and with the same approximate period.
-
 \begin{table}
   \begin{tabular}{|r|c|c|c|l|}
-    \hline
-    Length($\mu$) & 2.50 & 3.00 & 4.00 & 5.00\\
-    \hline
-    Period(sec) & sim & 33 & 38 & 48 \\ \cline{2-2}
-    \hline
+    \hline Length($\mu$) & 2.50 & 3.00 & 4.00 & 5.00\\ \hline
+    Period(sec) & sim & 33 & 38 & 48 \\ \cline{2-2} \hline
   \end{tabular}
   \caption{Period of oscillation according to length of cell for
     pill-shaped cells.}\label{tab:pill-periods}
 \end{table}
 
-\section{Stability Analysis}
-\label{sec:stability-analysis}
-We have found that in both methods of simulation there is a lower
-length scale that characterizes much of the behavoir.  Regular
-oscillatory behavoir between two poles at opposite ends of the longer
-cellular direction is found in cells which are long enough in one
-dimension for the reaction chain to be unstable but short enough in
-the perpendicular dimension to be stable.  The limits are seen when
-both dimensions are too short to be unstable, so that initial
-assymetry in protein concentration relaxes into a state of no
-oscillation.  In these cell sizes, the deterministic simulations show
-a motionless steady state and the stochastic simulations show random
-fluctuations without any bulk behavoir (see Figure~\ref{box-mannik}).
-
-In order to explain this theoretically, we have performed stability
-analysis of the five differential equations in an infinite slab that
-show a characteristic half wavelength in perturbative spatial
-oscillations at which the system becomes unstable.  This length is
-dependent upon slab thickness as shown in
-Figure~\ref{fig:stability-analysis}.  When increasing the lengths and
-widths of our simulated flattened cells, the cells stop exhibiting two
-pole oscillalitory behavior and instead exhibit multiple positions of
-maximization when the shortest distance across the cell is
-approximately equal to the characteristic half wavelength at the
-particular thickness at which we simulate (our simulations of cells
-with thickness $0.25\mu m$ corresponds to half wavelengths of $2.13\mu
-m$).  Huang~\cite{huang2003dynamic} performs a similar analysis for a
-cylindrical shape \fixme{is it cylindrical or 1d?} and finds
-characteristic half wavelengths of $2\mu m$.
-
-
-Decreasing the cell size in succesive steps, we can see the critical
-size at which the cell oscillations are quickly damped out.
-Figure~\ref{box-mannik} shows box plots of the largest cells simulated
-whose oscillations relax into the steady state solution.  Both have a
-long axis of roughly 2.2$\mu m$, in agreement with theory.
+\fixme{Originally the 'Stability Analysis' section came next.  I would
+  like to still mention the results of this, since Huang only did the
+  analysis on the cylinders, and we've done it on the flattened shapes
+  and shown that it works with those too.  But I don't know where to
+  fit in the paragraph or so that it would take.  For now I've just
+  put the whole section at the end of the paper.}
 
 \section{Comparison of Mannik's Experimental and Our Stadium Shapes}
-\fixme{should I say anything about different/large sizes?}  We have
-made movies out of color plots of MinD concentration, integrated along
-the flattened axis, in which each frame is seperated in simulation
-time by a half second. Our simulations include the two flattened cell
-shapes that are reported in Manniks paper, a few other 'irregular'
-shapes of our own creation, triangle shaped flattened cells, and a
-symetric 'stadium' shaped cell. For each of these shapes we have
-varied the size, from roughly twice the dimensions of Mannik's
-reported cells down to the smaller sizes refered to in
-section~\ref{sec:stability-analysis}.
+
+We have made and analyzed movies out of color plots of MinD
+concentration that are constructed as those in Figure~\ref{image-p},
+integrated along the flattened axis, in which each frame is seperated
+in simulation time by a half second. Figure~\ref{randst-plot-ave}
+illustrates what is seen in these movies. In his work Mannik presents
+arrow plots in which the arrow heads show the location of sequential
+MinD maxima within the cell. His plots for his two abnormal cell
+shapes are shown in the upper 'experiment' section of
+Figure~\ref{randst-plot-ave}.  Following this, we have created plots
+that show maxima that are global in space and local in time.  Of these
+maxima we only show those which have greater concentration than a
+chosen cutoff concentration, and also ignore maxima that appear
+temporalily and spatially adjacent to preceding maxima, in order to
+stop single spikes from appearing as many adjecent ones.  The overal
+effect is to accurately describe what is seen in our movies.
 
 We have found that the deterministic simulations of the protein
 reaction sequence discussed above results in robust oscillatory
@@ -440,16 +413,17 @@ behavoir of polar selection and oscillation in not only symmetrical
 shapes, such as the wildtype pill shape, but also in very
 assymetrical, flatttened cells, such as those studied by Mannik.
 After the lower stability limit of
-section~\ref{sec:stability-analysis} has been surpassed, this
-qualitative behavoir doesn't seem to have size dependence until cells
-reach sizes that have more than twice the dimensions of the Mannik
-cells.  At this point the robust oscillations, while still evident,
-begin to lose their consistanty.  The Mannik reported cells already
-seem to be rather large (wild type cells are typically smaller than
-those observed my Mannik
+section~\ref{sec:stability-analysis} \fixme{this needs to be covered}
+has been surpassed, this qualitative behavoir doesn't seem to have
+size dependence until cells reach sizes that have more than twice the
+dimensions of the Mannik cells.  At this point the robust
+oscillations, while still evident, begin to lose their consistanty.
+The Mannik reported cells already seem to be rather large (wild type
+cells are typically smaller than those observed my Mannik
 \cite{kubitschek1990cell,kubitschek1968linear,mannik2012robustness}),
-so we left off simulating cells any larger than twice this size. The
-movies show sharp peaks of MinD in specific locatations, typically at
+so we left off simulating cells any larger than twice this size.
+
+The movies show sharp peaks of MinD in specific locatations, typically at
 the edges of the cell and in regions of high radius of curvature,
 followed by a spreading out of the MinD out into the cell, with no
 real bias towards any location, until it aggregates again in a
@@ -580,9 +554,45 @@ simulations.  Stochastic methods would perhaps show more random
 behavoir at these sizes.  We consider this to be a limitation of the
 exact solution method.
 
+\fixme{should I say anything about different/large sizes?}
+
+\section{Stability Analysis}
+\label{sec:stability-analysis}
+We have found that in both methods of simulation there is a lower
+length scale that characterizes much of the behavoir.  Regular
+oscillatory behavoir between two poles at opposite ends of the longer
+cellular direction is found in cells which are long enough in one
+dimension for the reaction chain to be unstable but short enough in
+the perpendicular dimension to be stable.  The limits are seen when
+both dimensions are too short to be unstable, so that initial
+assymetry in protein concentration relaxes into a state of no
+oscillation.  In these cell sizes, the deterministic simulations show
+a motionless steady state and the stochastic simulations show random
+fluctuations without any bulk behavoir (see Figure~\ref{box-mannik}).
+
+In order to explain this theoretically, we have performed stability
+analysis of the five differential equations in an infinite slab that
+show a characteristic half wavelength in perturbative spatial
+oscillations at which the system becomes unstable.  This length is
+dependent upon slab thickness as shown in
+Figure~\ref{fig:stability-analysis}.  When increasing the lengths and
+widths of our simulated flattened cells, the cells stop exhibiting two
+pole oscillalitory behavior and instead exhibit multiple positions of
+maximization when the shortest distance across the cell is
+approximately equal to the characteristic half wavelength at the
+particular thickness at which we simulate (our simulations of cells
+with thickness $0.25\mu m$ corresponds to half wavelengths of $2.13\mu
+m$).  Huang~\cite{huang2003dynamic} performs a similar analysis for a
+cylindrical shape \fixme{is it cylindrical or 1d?} and finds
+characteristic half wavelengths of $2\mu m$.
 
 
-\section{Interpretation of Data}
+Decreasing the cell size in succesive steps, we can see the critical
+size at which the cell oscillations are quickly damped out.
+Figure~\ref{box-mannik} shows box plots of the largest cells simulated
+whose oscillations relax into the steady state solution.  Both have a
+long axis of roughly 2.2$\mu m$, in agreement with theory.
+
 \section{Conclusion}
 No conclusion :(
 \bibliography{paper}
