@@ -23,6 +23,14 @@ print_denominator = 1000;
 dt = time_step*print_denominator
 
 
+
+# jeff = np.array([3,1,2])
+# krebs = np.array([1,2,3])
+# result = np.dot(jeff,krebs)
+# real = 3*1 + 1*2 + 2*3
+# print 'result ',result, 'should be ',real
+# exit(0)
+
 #following version of readbox selects out NflD
 def readbox(name):
     data = np.loadtxt(name, converters = {0: ignoreme, 1: ignoreme})
@@ -59,20 +67,22 @@ def correlation(data,sec,time):
     integral = 0
     total_time = dt*float(len(data[sec,:])-int(time/dt))
     mean = mean_density(data,sec)
-    for i in range(len(data[sec,:])-int(time/dt)):
-        integral += (data[sec,i] - mean) \
-            * (data[sec,i+int(time/dt)] - mean) * dt
-    return integral/total_time
+    # for i in range(len(data[sec,:])-int(time/dt)):
+    #     integral += (data[sec,i] - mean) \
+    #         * (data[sec,i+int(time/dt)] - mean) * dt
+    integral = np.dot( data[sec,:(len(data[0,:])-int(time/dt))], data[sec,int(time/dt):])
+    return integral*dt/total_time
 
 def correlation_right_left(data,time):
     integral = 0
     total_time = dt*float(len(data[0,:])-int(time/dt))
     mean_left = mean_density(data,0)
     mean_right = mean_density(data,2)
-    for i in range(len(data[0,:])-int(time/dt)):
-        integral += (data[0,i] - mean_left) \
-            * (data[2,i+int(time/dt)] - mean_right) * dt
-    return integral/total_time
+    # for i in range(len(data[0,:])-int(time/dt)):
+    #     integral += (data[0,i] - mean_left) \
+    #         * (data[2,i+int(time/dt)] - mean_right) * dt
+    integral = np.dot( data[0,:(len(data[0,:])-int(time/dt))], data[2,int(time/dt):])
+    return integral*dt/total_time
 
 
 
@@ -98,12 +108,12 @@ correlation_array_short_rl =  np.zeros(len(time_array_short))
 for i in range(len(time_array_short)):
     if i%50 == 0:
         print 'time = ',i*dt,' we are ',int(100.0*4.0*float(i)/float(len(boxfull[0,:]))),' percent done with short array'
-    correlation_array_short_rl[i] = correlation_right_left(boxfull,time_array_short[i])
+    correlation_array_short_rl[i] = correlation_right_left(boxfull_short,time_array_short[i])
     for sec in range(len(correlation_array_short[:,0])):
             correlation_array_short[sec,i] = correlation(boxfull_short,sec,time_array_short[i])
 
-printout_file_auto = '.' + job_string + 'auto-correlation.dat'
-printout_file_rl = '.' + job_string + 'correlation-right-left.dat'
+printout_file_auto = '.' + job_string + 'fast-auto-correlation.dat'
+printout_file_rl = '.' + job_string + 'fast-correlation-right-left.dat'
 
 auto_p_file = open(printout_file_auto,'w')
 rl_p_file = open(printout_file_rl,'w')
@@ -127,18 +137,14 @@ for i in range(len(correlation_array[:,0])):
         auto_p_file.write('%g '%c)
     auto_p_file.write('\n')
 
+auto_p_file.close()
 
 correlation_array_rl = correlation_array_rl[:len(correlation_array_short_rl)]
-for i in range(len(correlation_array_rl)):
-    for c in correlation_array_rl:
-        rl_p_file.write('%g '%c)
-    rl_p_file.write('\n')
+for c in correlation_array_rl:
+    rl_p_file.write('%g '%c)
+rl_p_file.write('\n')
 
-for i in range(len(correlation_array)):
-    for c in correlation_array_short_rl:
-        rl_p_file.write('%g '%c)
-    rl_p_file.write('\n')
+for c in correlation_array_short_rl:
+    rl_p_file.write('%g '%c)
 
-
-auto_p_file.close()
 rl_p_file.close()
