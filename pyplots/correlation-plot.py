@@ -43,13 +43,17 @@ elif corr_type == "rl":
     data_file_full = '.' + job_string_full + 'correlation-right-left.dat'
     data_file_exact = '.' + job_string_exact + 'correlation-right-left.dat'
 
-
 data_full = np.loadtxt(data_file_full)
 data_exact = np.loadtxt(data_file_exact)
+
 print 'loading data from ',data_file_full
 print 'loading data from ',data_file_exact
 
+print data_exact.shape
+print data_full.shape
 print data_exact
+print data_full
+
 
 print 'start time = ',start,', end_time = ',end
 if (len(data_full[0,:])*dt < end or len(data_exact[0,:])*dt < end):
@@ -69,36 +73,67 @@ for i in range(len(correlation_arrays)):
     correlation_arrays[i] = data_full[i+1]
 
 correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
+
 colors = ['m','g','r','y','b','c']
 labels = ['Long Array Left','Long Array Mid','Long Array Right','Short Array Left','Short Array Mid','Short Array Right']
-pylab.figure()
-for i in range(len(correlation_arrays)):
-    if (i == 2) or (i == 5):
+
+if (corr_type == "auto"):
+    pylab.figure()
+    for i in range(len(correlation_arrays)):
+        if (i == 2) or (i == 5):
+            pylab.subplot(211)
+            pylab.title('Stochastic Data, Auto-correlation, '+sys.argv[1]+' '+sys.argv[5])
+            pylab.title(sys.argv[1])
+            pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
+            pylab.xlim(0,time_array[-1])
+            pylab.ylim(np.amin(correlation_arrays),np.amax(correlation_arrays))
+            pylab.ylabel('Auto Correlation')
+
+    correlation_arrays = [0]*(len(data_exact)-1)
+    for i in range(len(correlation_arrays)):
+        correlation_arrays[i] = data_exact[i+1]
+
+    correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
+    for i in range(len(correlation_arrays)):
+        if (i == 2) or (i == 5):
+            pylab.subplot(212)
+            pylab.title('Determinisitc Data')
+            pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
+            pylab.xlim(0,time_array[-1])
+            pylab.ylim(np.amin(correlation_arrays),np.amax(correlation_arrays))
+            pylab.ylabel('Auto Correlation')
+
+    plt.xlabel('time (sec)')
+    plt.legend()
+
+colors = ['b','g']
+labels = ['Long Array','Short Array']
+if (corr_type == "rl"):
+    pylab.figure()
+    for i in range(len(correlation_arrays)):
         pylab.subplot(211)
-        pylab.title('Stochastic Data')
+        pylab.title('Stochastic Data, Right-left-correlation, '+sys.argv[1]+' '+sys.argv[5])
         pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
         pylab.xlim(0,time_array[-1])
         pylab.ylim(np.amin(correlation_arrays),np.amax(correlation_arrays))
-        pylab.ylabel('Auto Correlation')
+        pylab.ylabel('Left-Right Correlation')
 
-correlation_arrays = [0]*(len(data_exact)-1)
-for i in range(len(correlation_arrays)):
-    correlation_arrays[i] = data_exact[i+1]
+    correlation_arrays = [0]*(len(data_exact)-1)
+    for i in range(len(correlation_arrays)):
+        correlation_arrays[i] = data_exact[i+1]
 
-correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
-colors = ['m','g','r','y','b','c']
-labels = ['Long Array Left','Long Array Mid','Long Array Right','Short Array Left','Short Array Mid','Short Array Right']
-for i in range(len(correlation_arrays)):
-    if (i == 2) or (i == 5):
+    correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
+    for i in range(len(correlation_arrays)):
         pylab.subplot(212)
-        pylab.title('Determinisitc Data')
+        pylab.title('Deterministic Data')
         pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
         pylab.xlim(0,time_array[-1])
         pylab.ylim(np.amin(correlation_arrays),np.amax(correlation_arrays))
-        pylab.ylabel('Auto Correlation')
+        pylab.ylabel('Left-Right Correlation')
 
-plt.xlabel('time (sec)')
-plt.legend()
+    plt.xlabel('time (sec)')
+    plt.legend()
+
 
 printout_file = '.' + job_string_full + 'plots/correlation-' + corr_type + '.pdf'
 print 'printing to ',printout_file

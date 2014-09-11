@@ -74,48 +74,59 @@ limitations to this mechanism\cite{mannik2010bacteria}
 observable when the cell has been forced into a flattened, irregular
 shape. Oscillations in this sort of cell shape are far from the
 regular sorts of oscillations seen in the computational work done by
-Huang et al\cite{huang2003dynamic}. We seek to apply a computational
-model to explore the more extreme or irregular cell shapes, in order
-to determine the limits of the steady cell oscillations seen by both
-theory and experiment.
+Huang et al\cite{huang2003dynamic}, who simulate more regular
+shapes. Thus there is an opportunity here to test previously used
+simulation models against more extreme experimental cases than have
+been seen thus far.  In this paper we apply a deterministic method and
+a stochastic method of simulation and compare them against Mannik's
+experimental findings.
 
 A significant amount of work has been done to develop protein reaction
 and diffusion models that exhibit accurate macroscopic dynamics of the
 MinD protein system. Early models involve free proteins that affect
 each others' rates of diffusion and membrane attachment, but do not
 combine into compound states~\cite{meinhardt2001pattern}.  In 2003
-Huang improved upon this work with a simple simulation model based on
-MinD-MinE combination, ATPase hydrolysis, and MinD membrane attachment
-that exhibits accurate MinD oscillations in
-cylindrical cells~\cite{huang2003dynamic}. In this model cytoplasmic
-MinD is more likely to attach to the membrane when MinD is already
-clustered there (following observed non-linear attachement of minD on
-the cell membrane), and is stationary once attached.  A number of
-studies have used an approach similar in that they do not rely on the
-ability of MinD to move along the walls and
+Huang improved upon this work with a simple and very successful
+simulation model based on MinD-MinE combination, ATPase hydrolysis,
+and MinD membrane attachment that exhibits accurate MinD oscillations
+in cylindrical cells~\cite{huang2003dynamic}. In this model
+cytoplasmic MinD is more likely to attach to the membrane when MinD is
+already clustered there (following observed non-linear attachement of
+minD on the cell membrane), and is stationary once attached.  A number
+of studies have used an approach similar in that they do not rely on
+the ability of MinD to move along the walls and
 cluster~\cite{kruse2007experimentalist, meinhardt2001pattern,
   drew2005polymerization, fange2006noise, kerr2006division}, while
 studies have been made as well of models which rely on MinD mobility
 and attraction on the cell membrane~\cite{kruse2002dynamic,
-  howard2005cellular}.  Variations of the Huang 2003 model that
-stochasticly account for variations of molecular interaction
-\cite{fange2006noise} and monte-carlo simulations that implement this
-stochastic version of Huang's mean field reaction rates confirm the
-major results obtained by Huang's model, and more successfully predict
-experimentally observed oscillations in round cell
+  howard2005cellular}.  Experimental studies of the Min system's
+association with the cell membrane have also been
+made~\cite{hsieh2010direct}\cite{mileykovskaya2003effects}.
+
+Variations of the Huang 2003 model that stochasticly account for
+variations of molecular interaction \cite{fange2006noise} and
+monte-carlo simulations that implement this stochastic version of
+Huang's mean field reaction rates confirm the major results obtained
+by Huang's model, and more successfully predict experimentally
+observed oscillations in round cell
 phenotypes~\cite{drew2005polymerization, fange2006noise,
   huang2004min}. Biochemical models of broader scope have also been
 used to study the MinD system and show consistent
 results.\cite{arjunan2010new}.  However, in general, the results of
-the stochastic and monte-carlo simulations are similar to those given
-by Huang's mean field results.
+the stochastic and monte-carlo simulations have so far yeilded similar
+results to those given by Huang's original, deterministic method of
+simulation.\fixme{Look at the papers again to verify and this and also
+  figure out and cite who says that the stochastic and the
+  deterministic methods of simulation have given similar results.
+  Saying more about these discussions is needed here, I think.
+  Something to the effect that until now there's no compelling reason
+  to avoid the deterministic simulations.}
 
-Previous studies have been made of the Min system's associtation with
-the cell membrane
-\cite{hsieh2010direct}\cite{mileykovskaya2003effects}.  Studies have
-shown as well that MinD binds preferentially to regions enriched with
-cadiolipin, an anionic phospholipid that collects on regions of high
-negative curvature. This mechanism has been incorporated into other
+\fixme{Following paragraph is awkward, and I don't think it's needed.}
+Studies have shown as well that MinD binds preferentially to regions
+enriched with cadiolipin, an anionic phospholipid that collects on
+regions of high negative curvature. This mechanism has been
+incorporated into other
 models.\cite{drew2005polymerization,cytrynbaum2007multistranded,renner2012mind,renner2012mind}
 However, this mechanism of combined clustering, phospholipids and MinD
 has not been observed in real cells. \cite{halatek2012highly}
@@ -128,18 +139,17 @@ has not been observed in real cells. \cite{halatek2012highly}
 \end{figure}
 
 
-\section{Model, Methods, and Pill Shaped Cell}
-We implement the model of Huang \emph{et al.}  for the behavior of the
-MinD and MinE proteins inside the cell~\cite{huang2003dynamic}.
-Figure~\ref{fig:reactions} shows the reaction process.  The
-cytoplasmic MinD:ADP complex undergoes nucleotide exchange and is
-changed into the MinD:ATP complex.  This will naturally diffuse
-towards and attach to the cell membrane.  A cytoplasmic MinE will
-attach to the wall bound MinD:ATP complex and after a time will
-activate ATP hydrolosis.  This breaks up the complex, releasing MinE,
-phosphate, and MinD:ADP back into the cytoplasm.  The MinD:ADP will undergo
-nucleotide exchange and begin again the cyclic process.  This model is
-defined by a set of five reaction-diffusion equations:
+\section{Model, Methods, and Cell Shapes}
+We implement the reaction-diffusion model of Huang \emph{et
+  al.}~\cite{huang2003dynamic}.  Figure~\ref{fig:reactions} shows the
+reaction process.  The cytoplasmic MinD:ADP complex undergoes
+nucleotide exchange and is changed into the MinD:ATP complex.  This
+will naturally diffuse and attach to the cell membrane.  A cytoplasmic
+MinE will attach to the wall bound MinD:ATP complex and after a time
+will activate ATP hydrolosis.  This breaks up the complex, releasing
+MinE, phosphate, and MinD:ADP back into the cytoplasm.  The MinD:ADP
+will undergo nucleotide exchange and begin again the cyclic process.
+The model is defined by a set of five reaction-diffusion equations:
 
 \begin{multline}
   \frac{\partial \rho_{D:ADP}}{\partial t} = \mathcal{D}_D\nabla^2\rho_{D:ADP}-k_D^{ADP\rightarrow ATP}\rho_{D:ADP}\\
@@ -188,7 +198,8 @@ below).  Huang's simulations use total MinD and MinE concentrations of
 $1,000/\mu m$ and $350/\mu m$, respectively, in a cylindrical cell of
 radius $0.5\mu m$, and in our (non-cylindrical) cells we use the same
 number of proteins per unit volume.  These concentration values are
-1273 $\mu m^{-3}$ and 446 $\mu m^{-3}$, respectively.
+1273 $\mu m^{-3}$ and 446 $\mu m^{-3}$, respectively. \fixme{It's been
+  a while so might want to check this to make sure it's true.}
 \begin{gather*}
   \mathcal{D}_D = \mathcal{D}_{E} = 2.5\micron^2/\text{sec}\\
   k_D^{\textrm{ADP $\rightarrow$ ATP}} = 1/\textrm{sec,  }
@@ -200,31 +211,35 @@ number of proteins per unit volume.  These concentration values are
 A 3D grid is then constructed in cartesian coordinates, with a grid
 spacing of .05\micron.
 
-In order to further our understanding of the results of various
-simulation approaches to this system, we have performed both a basic
-finite analysis, deterministic simulation that is spatially and
-temporally discrete, and a stochastic analysis that is spatially
-discrete but continuous in time.  Our stochastic simulation method
-follows the work of Kraus~\cite{kraus1996crosstalk} which in turn
-follows a method introduced by Gillespie~\cite{gillespie1977exact}.
+We have performed both a basic finite analysis, deterministic
+simulation that is spatially and temporally discrete, and a stochastic
+analysis that is spatially discrete but continuous in time.  Our
+stochastic simulation method follows the work of
+Kraus~\cite{kraus1996crosstalk} which in turn follows a method
+introduced by Gillespie~\cite{gillespie1977exact}.
 
 We mean to investigate the geometric limits of the Min system
 oscillations as observed by Mannik \emph{et
   al.}~\cite{mannik2012robustness}, so we model the Min system in a
 variety of cell shapes and sizes.  Here we present a selection of
-those, first naturally occuring pill-shaped cells and then a
-number of flattened out shapes which reflect the experiments of Mannik
-\emph{et al.}, in which bacteria are confined within a thin slit of
-height $0.25\micron$ ~\cite{mannik2012robustness}. Viewed from the top
-down the cells will have the shapes described below and viewed from
-the side they have at their edges a semicircular protrusion (one may
-imagine the edges of a pancake). Central to our observations are the
-effects of cell size and so we show expanded cells that have the same
-thickness but increased dimensions in the two planar directions.  We
-present two shapes that are designed to replicate those published by
-Mannik, equilateral and iscosolese triangle shapes, and a 'V' shape of
-our own creation in order to best illustrate the effect of cell size
-on oscillation stability.
+these, first naturally occuring pill-shaped cells and then a number of
+flattened out shapes which reflect the experiments of Mannik \emph{et
+  al.}, in which bacteria are confined within a thin slit of height
+$0.25\micron$ ~\cite{mannik2012robustness}. Viewed from the top down
+the cells will show the shapes described below and viewed from the
+side they show at their edges a semicircular protrusion (one may
+imagine the shape of a pancake). We have simulated and analyzed a
+number of these flattened shapes in addition to those shown below,
+including equilateral and iscosolese triangle shapes, shapes shaped
+like greater than signs, '$>$', and four-pronged 'starfish' shapes.
+For all of these we have varied the cell size, expanding the two
+dimensions that are tangent to the flattened surface from very small,
+'steady state' scales (which we discuss below) to scales twice that of
+the published Mannik shapes.  Our conclusions are based on all of this
+data, but we present here specific, illustrative examples: two
+flattened shapes that are designed to replicate those published by
+Mannik and two 'stadium' shapes that respectively have the same
+quadrupole moments of the two Mannik shapes.
 
 %% Our pill shapes differ from those of Huang \emph{et al.} in that they
 %% are cylinders with hemisphere endcaps instead of pure cylindrical
@@ -232,6 +247,7 @@ on oscillation stability.
 %% of our cells (measured between the tips of the endcaps) are
 %% $5\micron$, $4\micron$, $3\micron$, and $2.5\micron$.
 
+\fixme{Is the following Kubitscheck paragraph needed?}
 Kubitschek has shown in multiple experiments that at the time of cell
 division cells have a volume that is within a range of roughly
 $1\micron^3$ to $2\micron^3$~\cite{kubitschek1990cell,
@@ -262,38 +278,13 @@ cells that are slightly larger than this range.
     approximation developed by Zhang et all~\cite{zhang2007gaussian}}.
   \label{image-p}
 \end{figure*}
+\section{Naturally Occuring Pill Shaped Cells}
 
 We begin with the naturally occuring pill cell shape.  We peice this
 shape together as two hemispherical endcaps attached on either end of
 a cylinder.  This shape follows the early simulations of Huang
 \emph{et al.} but differs in that we have added the end caps for a
-more natural shape, expecting similar results.  We test cells of
-radius $.5\micron$ and of lengths $2\micron$, $3\micron$, and
-$5\micron$ measured from the tip of one end cap to the tip of the
-other. In each case, we observe in the deterministic simulations a
-quick establishement (within a few periods) of extremely regular
-oscillatory behavoir that lasts indefinitely.  The stochastic results
-show oscillitions that are similarly regular in time, with periods
-that nearly match those of the deterministic (they differ roughly by a
-factor of .05). The stochastic results also show a slight variation in
-the height of the density maxima, but the peaks are still very well
-defined. The period increases with cell length, as shown in
-Table~\ref{tab:pill-periods}, in agreement with the results of Huang
-\emph{et al.}.  The stochastic simulations show a similar pattern.
-The MinD maxima occur at the ends of the cell in a back and forth
-manner, and with the same approximate period.
-
-\begin{table}
-  \begin{tabular}{|r|c|c|c|l|}
-    \hline
-    Length($\mu$) & 2.50 & 3.00 & 4.00 & 5.00\\
-    \hline
-    Period(sec) & sim & 33 & 38 & 48 \\ \cline{2-2}
-    \hline
-  \end{tabular}
-  \caption{Period of oscillation according to length of cell for
-    pill-shaped cells.}\label{tab:pill-periods}
-\end{table}
+more natural shape, expecting similar results.
 
 This simple cell shape is a good starting point for observing in
 detail the dynamic interaction between the different stages of protein
@@ -306,92 +297,112 @@ flourescence microscopy.  We do so using the two dimensional gaussian
 approximation developed by Zhang et all~\cite{zhang2007gaussian}.  In
 this approximation we use a numerical aperture value of 1.3, which is
 the same as used by mannik experimentally, and a wavelength of
-$509nm$, typical of green flourescent microscopy.  Each frame is 2.5
-seconds ahead of the last, and each image shows a the concentration of
-a given state of protein summed over the coordinate orthogonal to the
-page.  The color scale for each protein state is set according to the
-maximum values observed.
+$650nm$.  Each frame is 2.5 seconds ahead of the last, and each image
+shows the concentration of a given state of protein (of the five
+described in the reaction model) summed over the coordinate orthogonal
+to the page.  The color scale for each protein state is set according
+to the maximum values observed.
 
-At $t=0$ in Figs.~\ref{image-p}, the cytoplasmic MinE is concentrated
-in the lower portion of the cell and is diffusing upward, since it
-will react with and stick to wall-bound MinD that is concentrated on
-the membrane in the upper portion of the cell.  At the boundary
-between the cytoplasmic MinE and the membrane-bound MinD, there is a
-ring of the membrane-bound MinE:MinD complex, which is moving towards
-the upper end of the cell, removing the MinD from the membrane as it
-goes.  The MinD is removed from the membrane in its MinD:ADP form and
-diffuses freely for a time before spontenously undergowing nucleotide
-exchange and shifting back into the MinD:ATP that is able to attach to
-the membrane.  Diffusion away from the end of the cell will bring the
-protein into the MinE ring, where reactions will prevent it from
-collecting for any significant time on the membrane.  Diffusion
+Figure~\ref{image-p} begins about 300 seconds into the simulation and
+shows a typical period of oscillation that in the pill shape repeates
+itself with a high degree of regularity, for both the deterministic
+and stochastic simulations.  At $t=0$ the cytoplasmic MinE is
+concentrated in the upper portion of the cell and is diffusing
+downward, where it will react with and stick to wall-bound MinD that
+is concentrated on the membrane in the lower portion of the cell.
+This process is in fact already well on its way, as seen by the
+significant concentration of wall bound MinD:MinE which is creeping
+down to the lower corner, removing the MinD from the membrane as it
+goes.  The removed MinD (cytoplasmic MinD:ADP) diffuses freely for a
+time before spontenously undergowing nucleotide exchange and shifting
+back into the MinD:ATP that is able to attach to the membrane.
+Diffusing a small distance away from the bottom of the cell will bring
+the protein into the MinE collection, where reactions will prevent it
+from collecting for any significant time on the membrane.  Diffusing
 further towards the upper end, however, while the MinE has not yet
 collected there, will allow MinD:ATP to accumulate with the other
-MinD:ATP, peaking at around 10 seconds in Figure~\ref{image-p}.  As
-the MinE ring approaches the end of the cell, seen in the seconds
-following 10, the only freely diffusing MinD:ADP that 'escapes' the
-MinE will be that which has diffused away from the the end of the cell
-and past the MinE ring towards the center.
+MinD:ATP, which is seen at seconds 10 through 15 in
+Figure~\ref{image-p}.  Eventually the MinE creeps all the way down to
+the bottom of the cell where it slowly runs out of wall bound MinD to
+react with, before diffusing back up and starting again on the upper
+portion of the cell. This is seen in seconds 15 through 20 in the
+figure.  \fixme{There is another paragraph after this in the latex
+  that I commented out because I thought we might be spending too much
+  time on the description}
 
-At 15 seconds, the membrane-bound MinD:ATP has been essentially
-removed from the top end of the cell, and MinD:ATP has begun to bind
-to the membrane in the the lower half of the cell.  At this stage,
-there is a high concentration of cytoplasmic MinE at the top of the
-cell, and by 16 seconds we begin to see the formation of a MinE ring
-just below the center of the cell.  At 18 seconds, the cell has
-reached its original state (reversed directionally), with MinD:ATP
-bound to the membrane on the lower third of the cell, a high
-concentration of cytoplasmic MinE in the upper half of the cell, and a
-MinE ring pushing downward on the membrane-bound MinD:ATP.
+%%  At 15 seconds, the membrane-bound MinD:ATP has
+%% been essentially removed from the top end of the cell, and MinD:ATP
+%% has begun to bind to the membrane in the the lower half of the cell.
+%% At this stage, there is a high concentration of cytoplasmic MinE at
+%% the top of the cell, and by 16 seconds we begin to see the formation
+%% of a MinE ring just below the center of the cell.  At 18 seconds, the
+%% cell has reached its original state (reversed directionally), with
+%% MinD:ATP bound to the membrane on the lower third of the cell, a high
+%% concentration of cytoplasmic MinE in the upper half of the cell, and a
+%% MinE ring pushing downward on the membrane-bound MinD:ATP.
 
-\section{Stability Analysis}
-\label{sec:stability-analysis}
-We have found that in both methods of simulation there is a lower
-length scale that characterizes much of the behavoir.  Regular
-oscillatory behavoir between two poles at opposite ends of the longer
-cellular direction is found in cells which are long enough in one
-dimension for the reaction chain to be unstable but short enough in
-the perpendicular dimension to be stable.  The limits are seen when
-both dimensions are too short to be unstable, so that initial
-assymetry in protein concentration relaxes into a state of no
-oscillation.  In these cell sizes, the deterministic simulations show
-a motionless steady state and the stochastic simulations show random
-fluctuations without any bulk behavoir (see Figure~\ref{box-mannik}).
+We test cells of radius $.5\micron$ and of lengths $2\micron$,
+$3\micron$, $4\micron$, and $5\micron$ measured from the tip of one
+end cap to the tip of the other \fixme{I'm running the 2,3,5 pills
+  again to make sure that everything in this paragraph is true}. In
+each case, we observe in the deterministic simulations a quick
+establishement (within a few periods) of extremely regular oscillatory
+behavoir that lasts indefinitely.  The stochastic results show
+oscillitions that are similarly regular in time, with periods that
+nearly match those of the deterministic (they differ roughly by a
+factor of .05) \fixme{does this square with the correlation data
+  periods?}. The regularity of the pill shape cell periods is
+discussed below, in our analysis of time correlation data \fixme{not
+  written yet}.  These periods increase with cell length, as shown in
+Table~\ref{tab:pill-periods}, in agreement with the results of Huang
+\emph{et al.}.
 
-In order to explain this theoretically, we have performed stability
-analysis of the five differential equations in an infinite slab that
-show a characteristic half wavelength in perturbative spatial
-oscillations at which the system becomes unstable.  This length is
-dependent upon slab thickness as shown in
-Figure~\ref{fig:stability-analysis}.  When increasing the lengths and
-widths of our simulated flattened cells, the cells stop exhibiting two
-pole oscillalitory behavior and instead exhibit multiple positions of
-maximization when the shortest distance across the cell is
-approximately equal to the characteristic half wavelength at the
-particular thickness at which we simulate (our simulations of cells
-with thickness $0.25\mu m$ corresponds to half wavelengths of $2.13\mu
-m$).  Huang~\cite{huang2003dynamic} performs a similar analysis for a
-cylindrical shape \fixme{is it cylindrical or 1d?} and finds
-characteristic half wavelengths of $2\mu m$.
+While the stochastic results show periods that seem to have a high
+degree of regularity as well as similarity to the deterministic
+results, they do differ in the precise locations of the maxima.  While
+the deterministic simulations show maxima that are every time
+concentrated in the center of one of the cell ends, with a symmetric
+smear of protein going out laterally to either side, the stochastic
+simulations show maxima that, while always located somehwere in the
+end region of the cell, occur at different positions within this
+region.  This is reflected in Figure~\ref{image-p}, which shows
+periods that are the same and qualitative behavoir that is
+approximately the same, but also that there is variation in the
+details of the stochastic simulation maxima location.
 
+\begin{table}
+  \begin{tabular}{|r|c|c|c|l|}
+    \hline Length($\mu$) & 2.50 & 3.00 & 4.00 & 5.00\\ \hline
+    Period(sec) & sim & 33 & 38 & 48 \\ \cline{2-2} \hline
+  \end{tabular}
+  \caption{Period of oscillation according to length of cell for
+    pill-shaped cells.}\label{tab:pill-periods}
+\end{table}
 
-Decreasing the cell size in succesive steps, we can see the critical
-size at which the cell oscillations are quickly damped out.
-Figure~\ref{box-mannik} shows box plots of the largest cells simulated
-whose oscillations relax into the steady state solution.  Both have a
-long axis of roughly 2.2$\mu m$, in agreement with theory.
+\fixme{Originally the 'Stability Analysis' section came next.  I would
+  like to still mention the results of this, since Huang only did the
+  analysis on the cylinders, and we've done it on the flattened shapes
+  and shown that it works with those too.  But I don't know where to
+  fit in the paragraph or so that it would take.  For now I've just
+  put the whole section at the end of the paper.}
 
 \section{Comparison of Mannik's Experimental and Our Stadium Shapes}
-\fixme{should I say anything about different/large sizes?}  We have
-made movies out of color plots of MinD concentration, integrated along
-the flattened axis, in which each frame is seperated in simulation
-time by a half second. Our simulations include the two flattened cell
-shapes that are reported in Manniks paper, a few other 'irregular'
-shapes of our own creation, triangle shaped flattened cells, and a
-symetric 'stadium' shaped cell. For each of these shapes we have
-varied the size, from roughly twice the dimensions of Mannik's
-reported cells down to the smaller sizes refered to in
-section~\ref{sec:stability-analysis}.
+
+We have made and analyzed movies out of color plots of MinD
+concentration that are constructed as those in Figure~\ref{image-p},
+integrated along the flattened axis, in which each frame is seperated
+in simulation time by a half second. Figure~\ref{randst-plot-ave}
+illustrates what is seen in these movies. In his work Mannik presents
+arrow plots in which the arrow heads show the location of sequential
+MinD maxima within the cell. His plots for his two abnormal cell
+shapes are shown in the upper 'experiment' section of
+Figure~\ref{randst-plot-ave}.  Following this, we have created plots
+that show maxima that are global in space and local in time.  Of these
+maxima we only show those which have greater concentration than a
+chosen cutoff concentration, and also ignore maxima that appear
+temporalily and spatially adjacent to preceding maxima, in order to
+stop single spikes from appearing as many adjecent ones.  The overal
+effect is to accurately describe what is seen in our movies.
 
 We have found that the deterministic simulations of the protein
 reaction sequence discussed above results in robust oscillatory
@@ -399,16 +410,17 @@ behavoir of polar selection and oscillation in not only symmetrical
 shapes, such as the wildtype pill shape, but also in very
 assymetrical, flatttened cells, such as those studied by Mannik.
 After the lower stability limit of
-section~\ref{sec:stability-analysis} has been surpassed, this
-qualitative behavoir doesn't seem to have size dependence until cells
-reach sizes that have more than twice the dimensions of the Mannik
-cells.  At this point the robust oscillations, while still evident,
-begin to lose their consistanty.  The Mannik reported cells already
-seem to be rather large (wild type cells are typically smaller than
-those observed my Mannik
+section~\ref{sec:stability-analysis} \fixme{this needs to be covered}
+has been surpassed, this qualitative behavoir doesn't seem to have
+size dependence until cells reach sizes that have more than twice the
+dimensions of the Mannik cells.  At this point the robust
+oscillations, while still evident, begin to lose their consistanty.
+The Mannik reported cells already seem to be rather large (wild type
+cells are typically smaller than those observed my Mannik
 \cite{kubitschek1990cell,kubitschek1968linear,mannik2012robustness}),
-so we left off simulating cells any larger than twice this size. The
-movies show sharp peaks of MinD in specific locatations, typically at
+so we left off simulating cells any larger than twice this size.
+
+The movies show sharp peaks of MinD in specific locatations, typically at
 the edges of the cell and in regions of high radius of curvature,
 followed by a spreading out of the MinD out into the cell, with no
 real bias towards any location, until it aggregates again in a
@@ -539,9 +551,45 @@ simulations.  Stochastic methods would perhaps show more random
 behavoir at these sizes.  We consider this to be a limitation of the
 exact solution method.
 
+\fixme{should I say anything about different/large sizes?}
+
+\section{Stability Analysis}
+\label{sec:stability-analysis}
+We have found that in both methods of simulation there is a lower
+length scale that characterizes much of the behavoir.  Regular
+oscillatory behavoir between two poles at opposite ends of the longer
+cellular direction is found in cells which are long enough in one
+dimension for the reaction chain to be unstable but short enough in
+the perpendicular dimension to be stable.  The limits are seen when
+both dimensions are too short to be unstable, so that initial
+assymetry in protein concentration relaxes into a state of no
+oscillation.  In these cell sizes, the deterministic simulations show
+a motionless steady state and the stochastic simulations show random
+fluctuations without any bulk behavoir (see Figure~\ref{box-mannik}).
+
+In order to explain this theoretically, we have performed stability
+analysis of the five differential equations in an infinite slab that
+show a characteristic half wavelength in perturbative spatial
+oscillations at which the system becomes unstable.  This length is
+dependent upon slab thickness as shown in
+Figure~\ref{fig:stability-analysis}.  When increasing the lengths and
+widths of our simulated flattened cells, the cells stop exhibiting two
+pole oscillalitory behavior and instead exhibit multiple positions of
+maximization when the shortest distance across the cell is
+approximately equal to the characteristic half wavelength at the
+particular thickness at which we simulate (our simulations of cells
+with thickness $0.25\mu m$ corresponds to half wavelengths of $2.13\mu
+m$).  Huang~\cite{huang2003dynamic} performs a similar analysis for a
+cylindrical shape \fixme{is it cylindrical or 1d?} and finds
+characteristic half wavelengths of $2\mu m$.
 
 
-\section{Interpretation of Data}
+Decreasing the cell size in succesive steps, we can see the critical
+size at which the cell oscillations are quickly damped out.
+Figure~\ref{box-mannik} shows box plots of the largest cells simulated
+whose oscillations relax into the steady state solution.  Both have a
+long axis of roughly 2.2$\mu m$, in agreement with theory.
+
 \section{Conclusion}
 No conclusion :(
 \bibliography{paper}

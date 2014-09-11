@@ -167,8 +167,7 @@ for arg_num in range(len(arg_set)):
 
     levels = mycolormap.pancake_levels
     scaling = 1
-    if 'p/' in arg_set[arg_num]:
-        levels = mycolormap.pill_levels
+
     cs = ax.contourf(Xrot, Yrot, data[arg_num], cmap=mycolormap.cmap, origin='lower', levels=levels)
 
     if arg_num in [1,8]:
@@ -240,7 +239,7 @@ for arg_num in range(len(arg_set)):
         for i in range(len(clean_data[:,1])):
             x_vals = np.append(x_vals,clean_data[i,3]*dx)
             y_vals = np.append(y_vals,clean_data[i,2]*dx)
-            amount = np.append(amount,clean_data[i,1]*dx)
+            amount = np.append(amount,clean_data[i,1])
             times = np.append(times,clean_data[i,0])
             #print 'finished with arrow_cutoff', arrow_cutoff, 'and num arrows', len(x_vals)
 
