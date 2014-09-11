@@ -388,97 +388,6 @@ details of the stochastic simulation maxima location.
 
 \section{Comparison of Mannik's Experimental and Our Stadium Shapes}
 
-We have made and analyzed movies out of color plots of MinD
-concentration that are constructed as those in Figure~\ref{image-p},
-integrated along the flattened axis, in which each frame is seperated
-in simulation time by a half second. Figure~\ref{randst-plot-ave}
-illustrates what is seen in these movies. In his work Mannik presents
-arrow plots in which the arrow heads show the location of sequential
-MinD maxima within the cell. His plots for his two abnormal cell
-shapes are shown in the upper 'experiment' section of
-Figure~\ref{randst-plot-ave}.  Following this, we have created plots
-that show maxima that are global in space and local in time.  Of these
-maxima we only show those which have greater concentration than a
-chosen cutoff concentration, and also ignore maxima that appear
-temporalily and spatially adjacent to preceding maxima, in order to
-stop single spikes from appearing as many adjecent ones.  The overal
-effect is to accurately describe what is seen in our movies.
-
-We have found that the deterministic simulations of the protein
-reaction sequence discussed above results in robust oscillatory
-behavoir of polar selection and oscillation in not only symmetrical
-shapes, such as the wildtype pill shape, but also in very
-assymetrical, flatttened cells, such as those studied by Mannik.
-After the lower stability limit of
-section~\ref{sec:stability-analysis} \fixme{this needs to be covered}
-has been surpassed, this qualitative behavoir doesn't seem to have
-size dependence until cells reach sizes that have more than twice the
-dimensions of the Mannik cells.  At this point the robust
-oscillations, while still evident, begin to lose their consistanty.
-The Mannik reported cells already seem to be rather large (wild type
-cells are typically smaller than those observed my Mannik
-\cite{kubitschek1990cell,kubitschek1968linear,mannik2012robustness}),
-so we left off simulating cells any larger than twice this size.
-
-The movies show sharp peaks of MinD in specific locatations, typically at
-the edges of the cell and in regions of high radius of curvature,
-followed by a spreading out of the MinD out into the cell, with no
-real bias towards any location, until it aggregates again in a
-specific location at the opposite edge of the cell, maximizing there.
-The pattern is repeated again and again with surprising consistency,
-which can be seen on the right of Figure~\ref{box-mannik}.  This is
-the same plotting method as our box plots above, here showing
-stochastic and deterministic simulations of cells that are the same
-shape and size of one of Mannik's reported cells.
-
-\begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/box-plot_D}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/plots/box-plot_D}
-  \caption{A comparison of our box plots that show a disparity between
-    the behavoir of the stochastic and deterministic simulations in
-    our Mannik cells.  The deterministic show a regular, robust
-    oscillatory behavoir between the two ends of the cell. The
-    stochastic simulation do show a general back and forth tendency
-    between two ends of the cell, but it is not robust and tends to
-    break down.}
-  \label{box-mannik}
-\end{figure}
-\begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/box-plot_D}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-exact/plots/box-plot_D}
-  \caption{A comparison of our box plots that show a disparity between
-    the behavoir of the stochastic and deterministic simulations in
-    our Mannik cells.  The deterministic show a regular, robust
-    oscillatory behavoir between the two ends of the cell. The
-    stochastic simulation do show a general back and forth tendency
-    between two ends of the cell, but it is not robust and tends to
-    break down.}
-  \label{box-mannik}
-\end{figure}
-
-The results of these simulations differ significantly with Mannik's
-experimental results that show much less regular behavoir, with a
-large variation in the location of maxima.
-
-On the other hand, our stochastic simulations show both robust pole to
-pole oscillations in the symmetric cells and irregular behavoir in the
-assymetrical shapes, agreeing well with Mannik's experimental
-findings.
-
-Figure~\ref{arrow-pill-stadium} and Figure~\ref{randst-plot-ave} show
-color plots of time-averaged MinD overlayed by arrows depicting
-sequential maxima that are global in space and local in time.  Our
-stochastic method movies (and arrow plots of
-Figure~\ref{randst-plot-ave}) show irregular location of maxima that
-is similar to what is observed experimentally by Mannik. There is a
-general bias towards back and forth behavoir, which can be seen in the
-box plots of Figure~\ref{box-mannik}, but the behavoir is irregular
-and the location of the maxima vary a significant amount.  On the
-other hand, the deterministic simulations show behavoir that is much
-too regular when compared with experiment, exhibiting locations of
-maxima that do not vary.  The deterministic method is seen to be
-inadequate.
-
 \begin{figure*}
   \centering
   \includegraphics[width=\textwidth]{../paper/plot-ave}
@@ -499,6 +408,87 @@ inadequate.
     method shows maximization that is too regular and robust.}
   \label{randst-plot-ave}
 \end{figure*}
+
+We have made and analyzed movies out of color plots of MinD
+concentration that are constructed as those in Figure~\ref{image-p},
+integrated along the flattened axis, in which each frame is seperated
+in simulation time by a half second. Figure~\ref{randst-plot-ave}
+illustrates what is seen in these movies. In his work Mannik presents
+arrow plots in which the arrow heads show the location of sequential
+MinD maxima within the cell. His plots for his two abnormal cell
+shapes are shown in the upper 'experiment' section of
+Figure~\ref{randst-plot-ave}.  Following this, we have created plots
+that show maxima that are global in space and local in time.  Of these
+maxima we only show those which have greater concentration than a
+chosen cutoff concentration, and also ignore maxima that appear
+temporaly and spatially adjacent to preceding maxima, in order to
+stop single spikes from appearing as many adjecent ones.  The overall
+effect is to accurately describe what is seen in our movies.
+
+We have found that the deterministic simulations of the protein
+reaction sequence discussed above results in robust oscillatory
+behavoir of polar selection and oscillation in not only symmetrical
+shapes, such as the wildtype pill shape, but also in very
+assymetrical, flatttened cells, such as those studied by Mannik.
+After the lower size stability limit of
+section~\ref{sec:stability-analysis} \fixme{this needs to be covered}
+has been surpassed, this qualitative behavoir doesn't seem to have
+size dependence until cells reach sizes that have more than twice the
+dimensions of the Mannik cells.  At this point the robust
+oscillations, while still evident, begin to lose their consistency.
+The Mannik reported cells already seem to be rather large (wild type
+cells are typically smaller than those observed my Mannik
+\cite{kubitschek1990cell,kubitschek1968linear,mannik2012robustness}),
+so we left off simulating cells any larger than twice this size.
+
+Looking at Mannik's shape A in Figure~\ref{randst-plot-ave}, we can
+see that the deterministic simulation selects out two poles, one at
+either end of the cell, and that the MinD does not ever maximize in
+any other location.  All of the flattened cells shown in the figure
+span a time of 350s (as do Mannik's plots), which corresponds to
+\fixme{number of periods} periods for shape A.  The movies show sharp
+peaks at these poles, followed by a spreading out of the MinD out into
+the cell, with no real bias towards any location, until it aggregates
+again at the opposite pole, maximizing there.  The pattern is repeated
+again and again with surprising consistency, \fixme{talk about the
+  time correlation for the deterministic, once the plots are added.}
+
+The results of these deterministic simulations for shape A differ
+significantly with Mannik's experimental results that show much less
+regular behavoir, with a large variation in the location of maxima,
+shown in the experiment section of Figure~\ref{randst-plot-ave}.
+
+The deterministic results of shape B are slightly different, as can be
+seen in the figure.  Here we can see that the proteins maximize on the
+rightward cell wall while on the way to their corner maxima locations.
+Watching the movies, the proteins seem to travel along the wall, from
+corner to corner and back.  This behavoir is still more irregular than
+that of the Mannik experiments, which seem to show some right-left
+back and forth behavoir in a few areas, as opposed to the straight
+pole to pole (traveling along the wall).
+
+These comparisons illustrate our first finding, which is that in
+irregular cell shapes, the deterministic method of simulation is indeed
+inadequate in representing and predicting experimental behavoir.
+
+On the other hand, our stochastic simulations show both robust pole to
+pole oscillations in the symmetric cells and irregular behavoir in the
+assymetrical shapes, agreeing well with Mannik's experimental
+findings.
+
+Figure~\ref{arrow-pill-stadium} and Figure~\ref{randst-plot-ave} show
+color plots of time-averaged MinD overlayed by arrows depicting
+sequential maxima that are global in space and local in time.  Our
+stochastic method movies (and arrow plots of
+Figure~\ref{randst-plot-ave}) show irregular location of maxima that
+is similar to what is observed experimentally by Mannik. There is a
+general bias towards back and forth behavoir, which can be seen in the
+box plots of Figure~\ref{box-mannik}, but the behavoir is irregular
+and the location of the maxima vary a significant amount.  On the
+other hand, the deterministic simulations show behavoir that is much
+too regular when compared with experiment, exhibiting locations of
+maxima that do not vary.  The deterministic method is seen to be
+inadequate.
 
 Judging that at this point that we have a fair idea of how our two
 methods compare with experiment, we investigate the limits of the
@@ -525,6 +515,32 @@ irregularity in MinD oscillations.
     similar periods.  This is in contrast to our boxpplot comparison
     of one of the Mannik shapes in Figure~\ref{box-mannik}}
   \label{box-stadium}
+\end{figure}
+
+
+\begin{figure}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/box-plot_D}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/plots/box-plot_D}
+  \caption{A comparison of our box plots that show a disparity between
+    the behavoir of the stochastic and deterministic simulations in
+    our Mannik cells.  The deterministic show a regular, robust
+    oscillatory behavoir between the two ends of the cell. The
+    stochastic simulation do show a general back and forth tendency
+    between two ends of the cell, but it is not robust and tends to
+    break down.}
+  \label{box-mannik}
+\end{figure}
+\begin{figure}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/box-plot_D}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-exact/plots/box-plot_D}
+  \caption{A comparison of our box plots that show a disparity between
+    the behavoir of the stochastic and deterministic simulations in
+    our Mannik cells.  The deterministic show a regular, robust
+    oscillatory behavoir between the two ends of the cell. The
+    stochastic simulation do show a general back and forth tendency
+    between two ends of the cell, but it is not robust and tends to
+    break down.}
+  \label{box-mannik}
 \end{figure}
 
 

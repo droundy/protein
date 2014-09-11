@@ -34,6 +34,7 @@ dt = time_step*print_denominator
 #following version of readbox selects out NflD
 def readbox(name):
     data = np.loadtxt(name, converters = {0: ignoreme, 1: ignoreme})
+    print 'data.shape[1]*dt = ',data.shape[1]*dt
     data_stop_index = int(end/dt)
     print 'start time = 0, end_time = ',end
     print 'this is the time covered by the entire data set that youre using'
