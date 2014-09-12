@@ -8,6 +8,7 @@ if "show" not in sys.argv:
 import matplotlib.pyplot as plt
 import pylab
 import re
+import math as m
 
 start = float(sys.argv[8])
 end  = float(sys.argv[9])
@@ -72,7 +73,32 @@ correlation_arrays = [0]*(len(data_full)-1)
 for i in range(len(correlation_arrays)):
     correlation_arrays[i] = data_full[i+1]
 
+#######################################
+#Following is for the decay modelling:
+max_Cs = []
+max_times = []
+while len(max_Cs) < 5:
+    for i in range(3,len(time_array[3:-3])):
+        if (correlation_arrays[0][i] > correlation_arrays[0][i-1]) and (correlation_arrays[0][i] > correlation_arrays[0][i+1]):
+            if (correlation_arrays[0][i] > correlation_arrays[0][i-2]) and (correlation_arrays[0][i] > correlation_arrays[0][i+2]):
+                if (correlation_arrays[0][i] > correlation_arrays[0][i-3]) and (correlation_arrays[0][i] > correlation_arrays[0][i+3]):
+                    max_Cs.append(correlation_arrays[0][i])
+                    max_times.append(time_array[i])
+
+num_calc_periods = 5
+period = (max_times[num_calc_periods] - max_times[0]) / num_calc_periods
+w = 2*m.pi/period
+rate = m.log(max_Cs[0]/max_Cs[num_calc_periods])/(max_times[num_calc_periods]-max_times[0])
+
+print 'Using the equation C = -cos(wt)*exp(rate*t), the period is = ',period,'and the rate is = ',rate
+
+decay = np.zeros_like(time_array) #same size as short correlation array
+for i in range(len(decay)):
+    decay[i] = -m.cos(w*time_array[i])*m.exp(-rate*time_array[i])
+####################################
+
 correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
+decay = decay/np.amax(decay)
 
 colors = ['m','g','r','y','b','c']
 labels = ['Long Array Left','Long Array Mid','Long Array Right','Short Array Left','Short Array Mid','Short Array Right']
@@ -106,7 +132,7 @@ if (corr_type == "auto"):
     plt.xlabel('time (sec)')
     plt.legend()
 
-colors = ['b','g']
+colors = ['b','g','r']
 labels = ['Long Array','Short Array']
 if (corr_type == "rl"):
     pylab.figure()
@@ -117,7 +143,7 @@ if (corr_type == "rl"):
         pylab.xlim(0,time_array[-1])
         pylab.ylim(np.amin(correlation_arrays),np.amax(correlation_arrays))
         pylab.ylabel('Left-Right Correlation')
-
+    pylab.plot(time_array,decay,color=colors[2],label=labels[i])
     correlation_arrays = [0]*(len(data_exact)-1)
     for i in range(len(correlation_arrays)):
         correlation_arrays[i] = data_exact[i+1]

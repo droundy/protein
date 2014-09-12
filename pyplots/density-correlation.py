@@ -115,6 +115,8 @@ for i in range(len(time_array_short)):
 
 printout_file_auto = '.' + job_string + 'fast-auto-correlation.dat'
 printout_file_rl = '.' + job_string + 'fast-correlation-right-left.dat'
+print 'printing out to ',printout_file_auto
+print 'printing out to ',printout_file_rl
 
 auto_p_file = open(printout_file_auto,'w')
 rl_p_file = open(printout_file_rl,'w')
