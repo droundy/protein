@@ -193,7 +193,7 @@ for arg_num in range(len(arg_set)):
     temp_maxes = np.zeros_like(a_data)
     j = 0
     for i in range(1,len(a_data)-1):
-        if a_data[i-1,1] < a_data[i,1] < a_data[i+1,1]:
+        if (a_data[i-1,1] < a_data[i,1]) and (a_data[i+1,1] < a_data[i,1]):
             temp_maxes[j] = a_data[i]
             j+=1
     temp_maxes = temp_maxes[:j,:]
