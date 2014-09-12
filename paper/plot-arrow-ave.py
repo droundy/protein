@@ -150,24 +150,12 @@ for arg_num in range(len(arg_set)):
     Xrot = R[0,0]*X + R[1,0]*Y + X_position[arg_num]
     Yrot = R[0,1]*X + R[1,1]*Y + Y_position[arg_num]
 
-    cdata = np.array([[0  ,1,1,1],
-                      [.02 ,1,1,1],
-                      [.25,0.2,.2,1],
-                      [.35 ,0,.8,0],
-                      [.5 ,1,1,0],
-                      [.7 ,1,0,0],
-                      [1  ,0,0,0]])
-    cdict = {'red':   [], 'green': [], 'blue':  []}
-    for i in range(cdata.shape[0]):
-        cdict['red']   += [(cdata[i, 0], cdata[i, 1], cdata[i, 1])]
-        cdict['green'] += [(cdata[i, 0], cdata[i, 2], cdata[i, 2])]
-        cdict['blue']  += [(cdata[i, 0], cdata[i, 3], cdata[i, 3])]
     time_max = np.max(data[arg_num])
     print 'time_max is', time_max
 
     levels = mycolormap.pancake_levels
-    scaling = 1
-
+    if 'p/' in arg_set[arg_num]:
+        levels = mycolormap.pill_levels
     cs = ax.contourf(Xrot, Yrot, data[arg_num], cmap=mycolormap.cmap, origin='lower', levels=levels)
 
     if arg_num in [1,8]:
