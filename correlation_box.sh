@@ -32,3 +32,47 @@ echo starting !
 
 # srun --job-name="corr p 3.00 0.50 full 0.00 10.00" python pyplots/correlation-plot.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 1500.00 rl &
 # srun --job-name="corr p 3.00 0.50 exact 0.00 10.00" python pyplots/correlation-plot.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 1500.00 rl
+
+
+########################
+
+# list=(yes no)
+# for i in $list;
+# do
+#     echo $i
+# done
+
+srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 600.00 &
+srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 1000.00 &
+cd ../new-protein-0
+srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 300.00 &
+srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 1000.00 &
+cd ../new-protein-1
+srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 200.00 &
+srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 1000.00 &
+cd ../new-protein-2
+srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 200.00 &
+srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 200.00 &
+cd ../new-protein-3
+srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 200.00 &
+srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 200.00 &
+cd ../new-protein-4
+srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 200.00 &
+srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 200.00 &
+cd ../new-protein-5
+srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 200.00 &
+srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 200.00 &
+cd ../new-protein-6
+srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 200.00 &
+srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 200.00 &
+# cd new-protein-7
+# srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 200.00 &
+# srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 200.00 &
+# cd new-protein-8
+# srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 200.00 &
+# srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 200.00 &
+# cd new-protein-9
+# srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 200.00 &
+# srun --job-name="corr p 3.00 0.50 exact 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 exact 0.00 200.00 &
+
+echo finished!!!
