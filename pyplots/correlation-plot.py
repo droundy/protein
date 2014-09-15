@@ -25,35 +25,68 @@ time_step = .1*dx*dx/difD;#sec
 print_denominator = 1000;
 dt = time_step*print_denominator
 
-job_string_full = "/data/shape-%s/%s-%s-%s-%s-%s-full_array/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
-                                                    sys.argv[5],sys.argv[6])
-p = re.compile('[.]')
-job_string_full = p.sub('_',job_string_full)
+#########################################
 
-job_string_exact = "/data/shape-%s/%s-%s-%s-%s-%s-exact/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
-                                                    sys.argv[5],sys.argv[6])
-p = re.compile('[.]')
-job_string_exact = p.sub('_',job_string_exact)
+num_of_data_files = 3
+def create_data_array(sim_type):
+    data_array = []
+    init_weight_array = []
+    weight_array = []
+    for i in range(num_of_data_files):
+        job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
+                                                                sys.argv[5],sys.argv[6],sim_type)
+        p = re.compile('[.]')
+        job_string = p.sub('_',job_string)
+        data_file = ''
+        if i == num_of_data_files-1:
+            if corr_type == "auto":
+                data_file = job_string + 'fast-auto-correlation.dat'
+            elif corr_type == "rl":
+                data_file = job_string + 'fast-correlation-right-left.dat'
+        else:
+            if corr_type == "auto":
+                data_file = '../new-protein-%d/'%(i) + job_string + 'fast-auto-correlation.dat'
+            elif corr_type == "rl":
+                data_file = '../new-protein-%d/'%(i) + job_string + 'fast-correlation-right-left.dat'
+        new_data = np.loadtxt(data_file,skiprows=1)
+        time_of_total_data = np.loadtxt(data_file)[0][1] - np.loadtxt(data_file)[0][0]
+        init_weight_array.append(-new_data[0] + time_of_total_data) # the new_data[0] is an array of the times
+        data_array.append(new_data)
 
-data_file_full = ''
-data_file_exact = ''
-if corr_type == "auto":
-    data_file_full = '.' + job_string_full + 'auto-correlation.dat'
-    data_file_exact = '.' + job_string_exact + 'auto-correlation.dat'
-elif corr_type == "rl":
-    data_file_full = '.' + job_string_full + 'correlation-right-left.dat'
-    data_file_exact = '.' + job_string_exact + 'correlation-right-left.dat'
+    shortest_data_len = 10000000
+    for d in data_array:
+        if d.shape[1] < shortest_data_len:
+            shortest_data_len = d.shape[1]
+    print 'shortest data length ',shortest_data_len
 
-data_full = np.loadtxt(data_file_full)
-data_exact = np.loadtxt(data_file_exact)
+    weight_array = []
+    for i in range(num_of_data_files):
+        weight_array.append(np.zeros(shortest_data_len))
 
-print 'loading data from ',data_file_full
-print 'loading data from ',data_file_exact
+    for i in range(len(weight_array[0])):
+        weight_total = 0
+        for data_set in range(len(weight_array)):
+            weight_total += init_weight_array[data_set][i]
+        for data_set in range(len(weight_array)):
+            weight_array[data_set][i] = init_weight_array[data_set][i]/weight_total
 
-print data_exact.shape
-print data_full.shape
-print data_exact
-print data_full
+    data = np.zeros_like(data_array[0][:,:shortest_data_len])
+    data[0] = np.copy(data_array[0][0,:shortest_data_len])
+
+    for data_set in range(0,len(data_array)):
+        for j in range(1,len(data_array[0])):
+            for i in range(shortest_data_len):
+                data[j][i] += data_array[data_set][j][i]*weight_array[data_set][i]
+    return data
+
+##############################################3
+
+data_full = create_data_array("full_array")
+data_exact = create_data_array("exact")
+
+
+# for i in range(len(data_full[0])):
+#     data_full[1][i] = m.sin(data_full[0][i])
 
 
 print 'start time = ',start,', end_time = ',end
@@ -74,29 +107,37 @@ for i in range(len(correlation_arrays)):
     correlation_arrays[i] = data_full[i+1]
 
 #######################################
+
 #Following is for the decay modelling:
 max_Cs = []
 max_times = []
-while len(max_Cs) < 5:
-    for i in range(3,len(time_array[3:-3])):
-        if (correlation_arrays[0][i] > correlation_arrays[0][i-1]) and (correlation_arrays[0][i] > correlation_arrays[0][i+1]):
-            if (correlation_arrays[0][i] > correlation_arrays[0][i-2]) and (correlation_arrays[0][i] > correlation_arrays[0][i+2]):
-                if (correlation_arrays[0][i] > correlation_arrays[0][i-3]) and (correlation_arrays[0][i] > correlation_arrays[0][i+3]):
-                    max_Cs.append(correlation_arrays[0][i])
-                    max_times.append(time_array[i])
+num_calc_periods = 2
+for i in range(3,len(time_array[3:-3])):
+    if (correlation_arrays[0][i] > correlation_arrays[0][i-1]) and (correlation_arrays[0][i] > correlation_arrays[0][i+1]):
+        if (correlation_arrays[0][i] > correlation_arrays[0][i-2]) and (correlation_arrays[0][i] > correlation_arrays[0][i+2]):
+            if (correlation_arrays[0][i] > correlation_arrays[0][i-3]) and (correlation_arrays[0][i] > correlation_arrays[0][i+3]):
+                max_Cs.append(correlation_arrays[0][i])
+                max_times.append(time_array[i])
+                if len(max_Cs) < num_calc_periods:
+                    break
 
-num_calc_periods = 5
-period = (max_times[num_calc_periods] - max_times[0]) / num_calc_periods
-w = 2*m.pi/period
-rate = m.log(max_Cs[0]/max_Cs[num_calc_periods])/(max_times[num_calc_periods]-max_times[0])
+# if len(max_Cs) < num_calc_periods:
+#     print '\nYou need more data there havent been %d maxima in the correlatation yet\n'%(num_calc_periods)
+#     exit(0)
 
-print 'Using the equation C = -cos(wt)*exp(rate*t), the period is = ',period,'and the rate is = ',rate
+# period = (max_times[num_calc_periods] - max_times[0]) / num_calc_periods
+# w = 2*m.pi/period
+# rate = m.log(max_Cs[0]/max_Cs[num_calc_periods])/(max_times[num_calc_periods]-max_times[0])
 
-decay = np.zeros_like(time_array) #same size as short correlation array
-for i in range(len(decay)):
-    decay[i] = -m.cos(w*time_array[i])*m.exp(-rate*time_array[i])
+# print 'Using the equation C = -cos(wt)*exp(rate*t), the period is = ',period,'and the rate is = ',rate
+
+# decay = np.zeros_like(time_array) #same size as short correlation array
+# for i in range(len(decay)):
+#     decay[i] = -m.cos(w*time_array[i])*m.exp(-rate*time_array[i])
+
 ####################################
 
+decay = np.copy(time_array)
 correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
 decay = decay/np.amax(decay)
 
@@ -160,15 +201,20 @@ if (corr_type == "rl"):
     plt.xlabel('time (sec)')
     plt.legend()
 
+for string in ["full_array","exact"]:
+    job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
+                                                            sys.argv[5],sys.argv[6],string)
+    p = re.compile('[.]')
+    job_string = p.sub('_',job_string)
 
-printout_file = '.' + job_string_full + 'plots/correlation-' + corr_type + '.pdf'
-print 'printing to ',printout_file
-pylab.savefig(printout_file)
+    printout_file = job_string + 'plots/correlation-' + corr_type + '.pdf'
+    print 'printing to ',printout_file
+    pylab.savefig(printout_file)
 
-printout_file = '.' + job_string_exact + 'plots/correlation-' + corr_type + '.pdf'
-print 'printing to ',printout_file
-pylab.savefig(printout_file)
-
+for i in sys.argv:
+    print i
+if "show" in sys.argv:
+    plt.show()
 
 
 

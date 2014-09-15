@@ -9,7 +9,11 @@ import matplotlib.pyplot as plt
 import pylab
 import re
 
-end  = float(sys.argv[9])
+
+print 'For this script, the ninth argument should be the end time of the data set'
+print 'but you can write use no ninth argument if want to just use the full data set'
+constant_start_time = 100.0 #this won't change, will always cut off first 100 seconds of data
+end = 0
 
 def ignoreme(value):
     return 0.0
@@ -23,22 +27,18 @@ print_denominator = 1000;
 dt = time_step*print_denominator
 
 
-
-# jeff = np.array([3,1,2])
-# krebs = np.array([1,2,3])
-# result = np.dot(jeff,krebs)
-# real = 3*1 + 1*2 + 2*3
-# print 'result ',result, 'should be ',real
-# exit(0)
-
 #following version of readbox selects out NflD
 def readbox(name):
     data = np.loadtxt(name, converters = {0: ignoreme, 1: ignoreme})
-    print 'data.shape[1]*dt = ',data.shape[1]*dt
+    global end
+    end = (len(data[0])*dt)-10 #a bit lesst than full data set by default
+    if len(sys.argv) > 9:
+        end  = float(sys.argv[9])
     data_stop_index = int(end/dt)
-    print 'start time = 0, end_time = ',end
+    data_start_index = int(constant_start_time/dt)
+    print 'start time = ',constant_start_time,', end_time = ',end
     print 'this is the time covered by the entire data set that youre using'
-    data = data[:,2:data_stop_index+2]
+    data = data[:,(data_start_index+2):(data_stop_index+2)]
     shortened_data = np.zeros((3, len(data[0,:])))
     first_column_data = np.genfromtxt(name, dtype='str',usecols=(0,))
     row_num = 0
@@ -121,6 +121,10 @@ print 'printing out to ',printout_file_rl
 auto_p_file = open(printout_file_auto,'w')
 rl_p_file = open(printout_file_rl,'w')
 
+#following: first line of data file will tell how much data is being used by full box data array
+rl_p_file.write('%d %d\n'%(constant_start_time,end))
+auto_p_file.write('%d %d\n'%(constant_start_time,end))
+
 for t in time_array_short:
     t = float(t)
     auto_p_file.write('%g '%t)
@@ -139,7 +143,6 @@ for i in range(len(correlation_array[:,0])):
     for c in correlation_array_short[i,:]:
         auto_p_file.write('%g '%c)
     auto_p_file.write('\n')
-
 auto_p_file.close()
 
 correlation_array_rl = correlation_array_rl[:len(correlation_array_short_rl)]
