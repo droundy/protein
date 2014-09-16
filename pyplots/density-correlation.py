@@ -71,7 +71,7 @@ def correlation(data,sec,time):
     # for i in range(len(data[sec,:])-int(time/dt)):
     #     integral += (data[sec,i] - mean) \
     #         * (data[sec,i+int(time/dt)] - mean) * dt
-    integral = np.dot( data[sec,:(len(data[0,:])-int(time/dt))], data[sec,int(time/dt):])
+    integral = np.dot( data[sec,:(len(data[0,:])-int(time/dt))]-mean, data[sec,int(time/dt):]-mean)
     return integral*dt/total_time
 
 def correlation_right_left(data,time):
@@ -82,7 +82,7 @@ def correlation_right_left(data,time):
     # for i in range(len(data[0,:])-int(time/dt)):
     #     integral += (data[0,i] - mean_left) \
     #         * (data[2,i+int(time/dt)] - mean_right) * dt
-    integral = np.dot( data[0,:(len(data[0,:])-int(time/dt))], data[2,int(time/dt):])
+    integral = np.dot( data[0,:(len(data[0,:])-int(time/dt))]-mean_left, data[2,int(time/dt):]-mean_right)
     return integral*dt/total_time
 
 
@@ -96,9 +96,6 @@ for i in range(len(time_array)):
     correlation_array_rl[i] = correlation_right_left(boxfull,time_array[i])
     for sec in range(len(correlation_array[:,0])):
             correlation_array[sec,i] = correlation(boxfull,sec,time_array[i])
-
-
-    #print correlation_array[i]
 
 #Running on the first half of the data to compare between the two:
 boxfull_short = np.copy(boxfull[:,:len(boxfull[0,:])/2])
