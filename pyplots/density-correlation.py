@@ -26,10 +26,15 @@ time_step = .1*dx*dx/difD;#sec
 print_denominator = 1000;
 dt = time_step*print_denominator
 
-
 #following version of readbox selects out NflD
 def readbox(name):
-    data = np.loadtxt(name, converters = {0: ignoreme, 1: ignoreme})
+    for i in range(100,10000,22):
+        try:
+            data = np.loadtxt(name, usecols=tuple(range(0,int(i/dt))), converters = {0:ignoreme, 1:ignoreme})
+        except (ValueError,IndexError):
+            data = np.loadtxt(name, usecols=tuple(range(0,int((i-22)/dt))), converters = {0:ignoreme, 1:ignoreme})
+            print "The end of the data in use occurs at %d seconds"%(i-22)
+            break
     global end
     end = (len(data[0])*dt)-10 #a bit lesst than full data set by default
     if len(sys.argv) > 9:
@@ -43,6 +48,7 @@ def readbox(name):
     first_column_data = np.genfromtxt(name, dtype='str',usecols=(0,))
     row_num = 0
     while first_column_data[row_num] != protein_name:
+        print first_column_data[row_num]
         row_num += 1
     shortened_data = np.copy(data[row_num:row_num+3,:])
     return shortened_data[:,:]
