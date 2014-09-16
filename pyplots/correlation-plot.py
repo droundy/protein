@@ -1,5 +1,5 @@
 from __future__ import division
-import sys
+import sys, os
 import os.path
 import numpy as np
 import matplotlib
@@ -25,6 +25,11 @@ time_step = .1*dx*dx/difD;#sec
 print_denominator = 1000;
 dt = time_step*print_denominator
 
+def notify_reading_file(f):
+    #print 'reading', f
+    #assert os.system('git add -f %s' % f) == 0, "Couldn't git add %s!" % f
+    pass
+
 #########################################
 
 num_of_data_files = 2
@@ -48,6 +53,7 @@ def create_data_array(sim_type):
                 data_file = '../new-protein-%d/'%(i) + job_string + 'fast-auto-correlation.dat'
             elif corr_type == "rl":
                 data_file = '../new-protein-%d/'%(i) + job_string + 'fast-correlation-right-left.dat'
+        notify_reading_file(data_file)
         new_data = np.loadtxt(data_file,skiprows=1)
         time_of_total_data = np.loadtxt(data_file)[0][1] - np.loadtxt(data_file)[0][0]
         init_weight_array.append(-new_data[0] + time_of_total_data) # the new_data[0] is an array of the times
