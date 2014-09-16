@@ -44,21 +44,23 @@
 \maketitle
 
 \section{Introduction}
-It is vital that during the process of bacterial cell division a cell
-avoid minicelling, or splitting into daughter cells with lopsided
-volumes.  Instrumental to this process in \emph{Escherichia coli} is a
-long FtsZ polymer chain that develops on the cell wall in the center
-region of the cell, helping dictate the plane of
-division~\cite{adams2009bacterial, lutkenhaus2007assembly}. Previous
-experimental studies have shown that the MinC protein, known to
-inhibit the FtZ polymer\cite{shen2010examination}, exhibits pole to
-pole oscillatory behavior in conjunction with the MinD protein and a
-MinE that tends to be more localized in the center of the
-cell~\cite{hu1999topological, fu2001mine, shapiro2009and, yu1999ftsz,
-  raskin1999rapid}. The MinC protein will then have a higher time
-averaged concentration in the cell poles, as opposed to the center
-region of the cell, aiding in prohibiting the FtZ from developing in
-the wrong region.
+\fixme{Huang and those who reference him use the terms 'numerical
+  deterministic reaction-diffusion model' and 'stochastic version of
+  this model' for the stochastic.} It is vital that during the process
+of bacterial cell division a cell avoid minicelling, or splitting into
+daughter cells with lopsided volumes.  Instrumental to this process in
+\emph{Escherichia coli} is a long FtsZ polymer chain that develops on
+the cell wall in the center region of the cell, helping dictate the
+plane of division~\cite{adams2009bacterial,
+  lutkenhaus2007assembly}. Previous experimental studies have shown
+that the MinC protein, known to inhibit the FtZ
+polymer\cite{shen2010examination}, exhibits pole to pole oscillatory
+behavior in conjunction with the MinD protein and a MinE that tends to
+be more localized in the center of the cell~\cite{hu1999topological,
+  fu2001mine, shapiro2009and, yu1999ftsz, raskin1999rapid}. The MinC
+protein will then have a higher time averaged concentration in the
+cell poles, as opposed to the center region of the cell, aiding in
+prohibiting the FtZ from developing in the wrong region.
 
 Studies have shown that the cell division process is capable of
 preventing minicelling for fairly perturbed cell
@@ -278,6 +280,22 @@ cells that are slightly larger than this range.
     approximation developed by Zhang et all~\cite{zhang2007gaussian}}.
   \label{image-p}
 \end{figure*}
+
+Huang \emph{et al} ~\cite{huang2003dynamic} has has performed a linear
+stability analysis on the model which shows an upper limit on a steady
+state solution of $2\mu m$.  Cells with dimensions longer than this
+are unstable and show oscillatory behavoir in this direction, where
+cells that are shorter relax into a motionless steady state.  We have
+similarly performed a stability analysis in an infinite slab with a
+thickness equal to our flattened cells ($0.25\mu m$) and have found
+that an equivalent stability limit for half wavelengths is $2.13\mu
+m$. As expected, when decreasing the lengths and widths of our
+simulated flattened cells so that the shortest distance across the
+cell is less than this length, the cells stop exhibiting any
+oscillalitory behavior.  The deterministic simulations relax into a
+motionless state and the stochastic simulations exhibit multiple
+random locations of small maximization.
+
 \section{Naturally Occuring Pill Shaped Cells}
 
 We begin with the naturally occuring pill cell shape.  We peice this
@@ -583,42 +601,7 @@ exact solution method.
 \end{figure}
 
 
-\section{Stability Analysis}
-\label{sec:stability-analysis}
-We have found that in both methods of simulation there is a lower
-length scale that characterizes much of the behavoir.  Regular
-oscillatory behavoir between two poles at opposite ends of the longer
-cellular direction is found in cells which are long enough in one
-dimension for the reaction chain to be unstable but short enough in
-the perpendicular dimension to be stable.  The limits are seen when
-both dimensions are too short to be unstable, so that initial
-assymetry in protein concentration relaxes into a state of no
-oscillation.  In these cell sizes, the deterministic simulations show
-a motionless steady state and the stochastic simulations show random
-fluctuations without any bulk behavoir (see Figure~\ref{box-mannik}).
 
-In order to explain this theoretically, we have performed stability
-analysis of the five differential equations in an infinite slab that
-show a characteristic half wavelength in perturbative spatial
-oscillations at which the system becomes unstable.  This length is
-dependent upon slab thickness as shown in
-Figure~\ref{fig:stability-analysis}.  When increasing the lengths and
-widths of our simulated flattened cells, the cells stop exhibiting two
-pole oscillalitory behavior and instead exhibit multiple positions of
-maximization when the shortest distance across the cell is
-approximately equal to the characteristic half wavelength at the
-particular thickness at which we simulate (our simulations of cells
-with thickness $0.25\mu m$ corresponds to half wavelengths of $2.13\mu
-m$).  Huang~\cite{huang2003dynamic} performs a similar analysis for a
-cylindrical shape \fixme{is it cylindrical or 1d?} and finds
-characteristic half wavelengths of $2\mu m$.
-
-
-Decreasing the cell size in succesive steps, we can see the critical
-size at which the cell oscillations are quickly damped out.
-Figure~\ref{box-mannik} shows box plots of the largest cells simulated
-whose oscillations relax into the steady state solution.  Both have a
-long axis of roughly 2.2$\mu m$, in agreement with theory.
 
 \section{Conclusion}
 No conclusion :(
