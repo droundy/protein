@@ -141,7 +141,7 @@ has not been observed in real cells. \cite{halatek2012highly}
 \end{figure}
 
 
-\section{Model, Methods, and Cell Shapes}
+\section{Model, Methods, and Cell Shapes}\label{sec:model-method-shapes}
 We implement the reaction-diffusion model of Huang \emph{et
   al.}~\cite{huang2003dynamic}.  Figure~\ref{fig:reactions} shows the
 reaction process.  The cytoplasmic MinD:ADP complex undergoes
@@ -264,7 +264,7 @@ dimensions that are tangent to the flattened surface from very small,
 the published Mannik shapes.  Our conclusions are based on all of this
 data, but we present here specific, illustrative examples: two
 flattened shapes that are designed to replicate those published by
-Mannik and two 'stadium' shapes that respectively have the same
+Mannik and two `stadium' shapes that respectively have the same
 quadrupole moments of the two Mannik shapes.
 
 %% Our pill shapes differ from those of Huang \emph{et al.} in that they
@@ -437,198 +437,146 @@ details of the stochastic simulation maxima location.
 \begin{figure*}
   \centering
   \includegraphics[width=\textwidth]{../paper/plot-ave}
-  \caption{Arrows depicting global maxima in space and local
-    maxima in
-    time overlayed on color plots of time averaged total MinD density.
-    A density threshold is chosen and only maxima above this threshold
-    are shown. The plots serve to illistrate what is observed in our
-    movies.  The simulation time covered in these is 1000 seconds
-    \fixme{this is not true yet - need to change the data once its
-      finished right now 2 of them are 1000 the others are like 980}.
-    The top row shows plots published by Mannik of the MinD maxima
-    behavoir and the bottom two rows show our pancake shapes that are
-    designed to have the same shape.  The middle row shows results
-    from the stochastic simulation and the bottom shows results from
-    the deterministic.  We can see that the stochastic method shows
-    behavoir that is similar to experiment while the deterministic
-    method shows maximization that is too regular and robust.}
+  \caption{We display here arrows depicting successive maxima in space
+    and and time overlayed on a color plot of the total MinD density
+    averaged over the same time period.  The simulation time covered
+    for the flattened cells is \fixme{340} seconds, which is the same
+    period of time depicted in the experimental data plots of Mannik
+    \emph{et al.}~\cite{mannik2012robustness}.  For the wild type pill
+    shape, we only cover \fixme{???} seconds, in order to provide a
+    useful comparison due to its shorter oscillation period.  The top
+    row shows plots published by Mannik of the MinD maxima behavoir
+    and the bottom two rows show our simulations using the stochastic
+    and deterministic algorithms, respectively.  We simulated
+    approximations to the two shapes observed by Mannik, which we call
+    \emph{shape A} and \emph{shape B}.  In addition, we studied two
+    flattened stadium shapes which we call \emph{stadium A} and
+    \emph{stadium B} corresponding in aspect ratio and thickness to
+    the two experimental shapes.  The spatial length scale of all the
+    figures shown was identical. Each of the flattened cell shapes
+    uses the same color scale for the number of proteins per unit
+    area.  Finally, we display the natural pill shape, which was also
+    featured in Figs.~\ref{image-p} and~\ref{corr-pill}, with a
+    different color scale to reflect the thicker cell containing more
+    proteins per cross-sectional area.  }
   \label{randst-plot-ave}
 \end{figure*}
 
 \section{Comparison of Mannik's Experimental and Our Stadium Shapes}
 
-We have made and analyzed movies out of the MinD
-concentration that are constructed as those in Figure~\ref{image-p},
-integrated along the flattened axis, in which each frame is seperated
-in simulation time by a half second. Figure~\ref{randst-plot-ave}
-illustrates what is seen in these movies. In his work Mannik presents
+As describe in Section~\ref{sec:model-method-shapes}, we will focus on
+simulation of four flattened cell shapes: two shapes copied from
+Mannik's experiment~\cite{mannik2012robustness} (shape~\emph{A} and
+shape~\emph{B}), and for comparison two symmetrical stadium shapes
+that have the identical aspect ratio, thickness and volume (stadium
+\emph{A} and stadium \emph{B}).  These stadium shapes enable us to
+distinguish between the effect of cellular irregularity and that of
+overall size and aspect ratio.  We note that shape \emph{B} is more
+irregular than shape \emph{A}, and in particular features a prominant
+region of concavity on its left-hand side.  For each of these shapes
+(in addition to the wild type pill shape discussed previously) we have
+simulated in excess of \fixme{???} seconds of evolution of the MinD
+system using both the deterministic model of Huang~\fixme{cite} and
+the stochastic model of Huang~\fixme{cite}.
+
+From each of these flattened simulations, we have chosen a typical 350
+second segment to compare with the results of Mannik exemplified in
 arrow plots in which the arrow heads show the location of sequential
-MinD maxima within the cell.  These experimental plots for two abnormal cell
-shapes are shown in the upper `experiment' section of
-Figure~\ref{randst-plot-ave}.  Following this, we have created plots
-that show maxima that are global in space and local in time.  Of these
-maxima we only show those which have greater concentration than a
-chosen cutoff concentration, and also ignore maxima that appear
-temporaly and spatially adjacent to preceding maxima, in order to
-stop single spikes from appearing as many adjecent ones.  The overall
-effect is to accurately describe what is seen in our movies.
+MinD maxima within the cell (over the same time
+interval)~\cite{mannik2012robustness}.  This comparison is shown in
+Fig.~\ref{randst-plot-ave}.  In addition to arrows between successive
+maxima in space and time, we plot as a colored background the density
+of MinD protiens averaged over the same time period.  We note that we
+have manually verified that our (computer-generated) arrow plots also
+reflect a human interpretation of a movie of the same data.  Finally,
+for comparison we present the same plot for a wild-type cell, with a
+time period of \fixme{???}  seconds to account for its short period of
+oscillation.  In every case, including the wild type pill shape, we
+see irregularity in the location of the maxima when using the
+stochastic approach.  The deterministic method shows uniformly bipolar
+oscillation, with the exception of shape \emph{B}, which develops weak
+intermediate maxima on the right-hand edge of the cell.
 
-We have found that the deterministic simulations of the protein
-reaction sequence discussed above results in robust oscillatory
-behavoir of polar selection and oscillation in not only symmetrical
-shapes, such as the wildtype pill shape, but also in very
-assymetrical, flatttened cells, such as those studied by Mannik.
-After the lower size stability limit of
-section~\ref{sec:stability-analysis} \fixme{this needs to be covered}
-has been surpassed, this qualitative behavoir doesn't seem to have
-size dependence until cells reach sizes that have more than twice the
-dimensions of the Mannik cells.  At this point the robust
-oscillations, while still evident, begin to lose their consistency.
-The Mannik reported cells already seem to be rather large (wild type
-cells are typically smaller than those observed my Mannik
-\cite{kubitschek1990cell,kubitschek1968linear,mannik2012robustness}),
-so we left off simulating cells any larger than twice this size.
-
-Looking at Mannik's shape A in Figure~\ref{randst-plot-ave}, we can
-see that the deterministic simulation selects out two poles, one at
-either end of the cell, and that the MinD does not ever maximize in
-any other location.  All of the flattened cells shown in the figure
-span a time of 350s (as do Mannik's plots), which corresponds to
-\fixme{number of periods} periods for shape A.  The movies show sharp
-peaks at these poles, followed by a spreading out of the MinD out into
-the cell, with no real bias towards any location, until it aggregates
-again at the opposite pole, maximizing there.  The pattern is repeated
-again and again with surprising consistency, \fixme{talk about the
-  time correlation for the deterministic, once the plots are added.}
-
-The results of these deterministic simulations for shape A differ
-significantly with Mannik's experimental results that show much less
-regular behavoir, with a large variation in the location of maxima,
-shown in the experiment section of Figure~\ref{randst-plot-ave}.
-
-The deterministic results of shape B are slightly different, as can be
-seen in the figure.  Here we can see that the proteins maximize on the
-rightward cell wall while on the way to their corner maxima locations.
-Watching the movies, the proteins seem to travel along the wall, from
-corner to corner and back.  This behavoir is still more irregular than
-that of the Mannik experiments, which seem to show some right-left
-back and forth behavoir in a few areas, as opposed to the straight
-pole to pole (traveling along the wall).
-
-These comparisons illustrate our first finding, which is that in
-irregular cell shapes, the deterministic method of simulation is indeed
-inadequate in representing and predicting experimental behavoir.
-
-On the other hand, our stochastic simulations show both robust pole to
-pole oscillations in the symmetric cells and irregular behavoir in the
-assymetrical shapes, agreeing well with Mannik's experimental
-findings.
-
-Figure~\ref{arrow-pill-stadium} and Figure~\ref{randst-plot-ave} show
-color plots of time-averaged MinD overlayed by arrows depicting
-sequential maxima that are global in space and local in time.  Our
-stochastic method movies (and arrow plots of
-Figure~\ref{randst-plot-ave}) show irregular location of maxima that
-is similar to what is observed experimentally by Mannik. There is a
-general bias towards back and forth behavoir, which can be seen in the
-box plots of Figure~\ref{box-mannik}, but the behavoir is irregular
-and the location of the maxima vary a significant amount.  On the
-other hand, the deterministic simulations show behavoir that is much
-too regular when compared with experiment, exhibiting locations of
-maxima that do not vary.  The deterministic method is seen to be
-inadequate.
-
-Judging that at this point that we have a fair idea of how our two
-methods compare with experiment, we investigate the limits of the
-break down of regular activity, by simulating large, regular,
-'stadium' shapes.  These shapes have the flattened, pancake like form
-of the assymetric cells, but from the top down they look as pills
-do. In two dimensions they are composed of a rectangle with two half
-ellipse connected on either end.  They are also made to have a large
-volume that is similar to the Mannik shapes.
-
-We find that both the stochastic and the deterministic solutions show
-regular back and forth oscillations in the stadium shaped cells, as
-can be seen Figure~\ref{box-stadium}.  This suggests that it is the
-irregular, assymetric shape of the Mannik cells, not their size or
-their flattened nature, that causes these cells to exhibit
-irregularity in MinD oscillations.
-
-%% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-5_50-1_00-0_00-15_00-full_array/plots/box-plot_D}
-%%   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-5_50-1_00-0_00-15_00-exact/plots/box-plot_D}
-%%   \caption{A comparison of our box plots that show the similarity
-%%     between the stadium shapes simulated stochastically and
-%%     deterministically.  Both show regular oscillatory maxima with
-%%     similar periods.  This is in contrast to our boxpplot comparison
-%%     of one of the Mannik shapes in Figure~\ref{box-mannik}}
-%%   \label{box-stadium}
-%% \end{figure}
-
-
-%% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/box-plot_D}
-%%   \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/plots/box-plot_D}
-%%   \caption{A comparison of our box plots that show a disparity between
-%%     the behavoir of the stochastic and deterministic simulations in
-%%     our Mannik cells.  The deterministic show a regular, robust
-%%     oscillatory behavoir between the two ends of the cell. The
-%%     stochastic simulation do show a general back and forth tendency
-%%     between two ends of the cell, but it is not robust and tends to
-%%     break down.}
-%%   \label{box-mannik}
-%% \end{figure}
-%% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/box-plot_D}
-%%   \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-exact/plots/box-plot_D}
-%%   \caption{A comparison of our box plots that show a disparity between
-%%     the behavoir of the stochastic and deterministic simulations in
-%%     our Mannik cells.  The deterministic show a regular, robust
-%%     oscillatory behavoir between the two ends of the cell. The
-%%     stochastic simulation do show a general back and forth tendency
-%%     between two ends of the cell, but it is not robust and tends to
-%%     break down.}
-%%   \label{box-mannik}
-%% \end{figure}
-
-
-\fixme{specifically design other arrow plot (with many comparisons) to
-  illustrate point}
-
-
-Figure~\ref{arrow-compare-mannik} shows plots of total MinD
-concentration maxima that are global in space and local in time.  The
-tip of an arrow represents one of these maxima and the adjacent arrow
-(whose tail is touching the previous arrow's tip) points to the next
-such maxima in time.  Mannik \emph{et al.} have published similar
-plots of two of their cells, and we have attempted to replicate the
-shape of these cells in our simulation in order to compare.  We find
-that when we replicate the size as well as shape of their cells as
-near as possible, we do not see the disordered protein behavoir that
-they observe.  Instead we see a robust ability of the cell to find two
-prefered pole locations and to oscillate maxima back and forth very
-steadily between them.  When we increase the size of our cells, we
-indeed see multiple positions of maxima develop, but we never observe
-the random behavoir that they have observed experimentally.  This is
-perhaps due to the exact, continuous method we use when conducting
-simulations.  Stochastic methods would perhaps show more random
-behavoir at these sizes.  We consider this to be a limitation of the
-exact solution method.
-
-\fixme{should I say anything about different/large sizes?}
+%% We found that the deterministic simulations of the MinD system results
+%% in robust and regular oscillatory behavoir of polar selection and
+%% oscillation in not only symmetrical shapes, such as the wildtype pill
+%% shape, but also in very assymetrical, flatttened cells, such as those
+%% observed by Mannik.  We also examined larger and smaller versions of
+%% these shapes, and found this behavior to be very robust, from the
+%% minimum size to sustain oscillation (around \fixme{???} $\mu$m) up to
+%% around twice the cell size reported by Mannik.  At larger sizes than
+%% this, less regular oscillations occur using the deterministic method,
+%% but we note that the cells reported by Mannik are already considerably
+%% larger in volume than typical wild type
+%% cells~\cite{kubitschek1990cell,kubitschek1968linear,mannik2012robustness}.
 
 \begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation-rl.pdf}
   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation-rl.pdf}
   \caption{Correlation for A shapes}
-  \label{corr-A}
+  \label{fig:corr-pancake-A}
 \end{figure}
 
+The predictions of the stochastic as seen in
+Fig.~\ref{randst-plot-ave} are roughly similar to the experimental
+results in terms of irregularity of the locations of maxima, although
+there are locations on the edges of the cells where experiment shows
+maxima occuring that we never see in our simulations, suggesting that
+the model does not precisely reflect the experiment.  We also note
+that the stadium shapes in Fig.~\ref{randst-plot-ave} appear
+qualitatively similar to the irregular shapes in terms of the
+locations of their maxima.  From these results, we conclude that the
+deterministic method is inadequate to explain experimental
+observations of the locations of density maxima of the MinD protein.
 
-
+However, Fig.~\ref{randst-plot-ave} leaves unclear the importance of
+irregularity versus overall thickness and aspect ratio in developing
+an understanding of the origin of the experimentally observed
+behavior.  Although in the movies the stadiums appear to display a
+more regular bipolar oscillation, the arrow plots do not provide a
+convincing demonstration.  To illustrate the difference in behavior
+between shape \emph{A} and stadium \emph{A}, we return in
+Fig.~\ref{fig:corr-pancake-A} to the correlation function between the
+number of proteins in a segment at the top of the cell and the number
+of proteins in a segment at the bottom of the cell.  We computed these
+correlation functions using over \fixme{???} seconds of simulation.
+We found with the stochastic method that the experimental shape
+\emph{A} has a coherence time of under 4 periods, while the
+corresponding stadium \emph{A} has a coherence time of 10 periods.  In
+each case, the deterministic method is perfectly periodic. This
+confirms that using the stochastic method the stadium shape does
+indeed have a far more regular bipolar oscillation than the irregular
+shape \emph{A}.  When we compare shape \emph{B} and stadium \emph{B},
+we see a similar effect, although both coherence times are somewhat
+smaller (2.7 and 6.2, respectively).  From these results we conclude
+that the irregularity seen experimentally is indeed exacerbated by the
+irregular shapes taken on by the cells forced into a thin slit.
 
 \section{Conclusion}
-No conclusion :(
+We have simulated flattened cell shapes similar to those observed
+experimentally by Mannik \emph{et al.}.  We find that the
+deterministic method~\fixme{cite} predicts behavior that completely
+contradicts what is seen experimentally: it predicts stable and
+periodic bipolar oscillation, with a minor intermediate maximum
+appearing in shape \emph{B}.  Thus we conclude that this method is
+inconsistent with experiment, and should not be relied upon for
+predictions of the behavior of the MinD system.
+
+In contrast, the stochastic method~\fixme{cite} predicts spatially
+irregular formation of maxima for all the flattened cells that we
+studied.  In order to better understand the irregular oscillations
+observed in experiment, we simulated flattened ``stadium'' shapes in
+order to distinguish between the effect of flattening and the effect
+of irregular shape.  We found that although the stadium cells
+exhibited somewhat more irregular locations of maxima than the
+wild-type cells, their oscillation was far more periodic and bipolar
+than the irregular cell shapes observed experimentally.  Thus we
+confirm that the disruption of the MinD oscillations seen by Mannik
+\emph{et al.} is largely due to the irregularity of cell shapes
+observed.
+
+\bibliography{paper}
+
 \begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation-rl.pdf}
   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation-rl.pdf}
@@ -636,14 +584,9 @@ No conclusion :(
   \label{corr-B}
 \end{figure}
 
-\bibliography{paper}
-
-
-
 \end{document}
 
 \section*{Appendix}
-
 
 \section{Below are NOTES for the Writing}
 
