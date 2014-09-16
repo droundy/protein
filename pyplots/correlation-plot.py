@@ -156,7 +156,8 @@ if (corr_type == "rl"):
     for i in range(len(correlation_arrays)):
         pylab.subplot(211)
         print 'oeriod ',period
-        pylab.title('Stochastic Correlation '+sys.argv[1]+' '+sys.argv[5]+' rate = %.3g sec^-1'%(rate)+' period = %.3g sec'%(period))
+        pylab.title('Stochastic %s %s 1/rate = %.3g sec period = %.3g sec (ratio %.2g)'
+                    % (sys.argv[1], sys.argv[5], 1/rate, period, 1/(rate*period)))
         pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
         pylab.xlim(0,time_array[-1])
         pylab.ylim(np.amin(correlation_arrays),np.amax(correlation_arrays))

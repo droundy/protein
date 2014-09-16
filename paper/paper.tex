@@ -218,6 +218,30 @@ stochastic simulation method follows the work of
 Kraus~\cite{kraus1996crosstalk} which in turn follows a method
 introduced by Gillespie~\cite{gillespie1977exact}.
 
+\begin{figure*}
+  %\includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot}
+  \includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot}
+  \includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot}
+  \caption{Contour plot images of the concentration of each protein
+    species in a natural pill-shaped bacterium at regular intervals in
+    time (one second intervals), with darker regions indicating higher
+    concentration. The upper plots shows results from the
+    deterministic simulation and the lower shows results from the
+    stochastic simulation.  The cells pictured are $4\micron$ in
+    length, measured from end to end.  The order of frames is such
+    that individual MinD proteins begin at the bottom of the plot (in
+    the MinD:ATP state in the cytoplasm), and progress upward until
+    they reach the MinE:MinD:ATP membrane-bound complex.  At that
+    point, they will spontaneously dissociate into cytoplasmic MinE
+    (the top row) and the starting state of cytoplasmic MinD:ADP.  The
+    densities plotted are integrated along the axis orthogonal to the
+    page, and the color scale is chosen separately for each species
+    with black as the maximum value over space and time.  The
+    stochastic densities are smeared out over space using a guassians
+    approximation developed by Zhang et all~\cite{zhang2007gaussian}}.
+  \label{image-p}
+\end{figure*}
+
 We mean to investigate the geometric limits of the Min system
 oscillations as observed by Mannik \emph{et
   al.}~\cite{mannik2012robustness}, so we model the Min system in a
@@ -255,29 +279,6 @@ $1\micron^3$ to $2\micron^3$~\cite{kubitschek1990cell,
 simulations\cite{huang2003dynamic} and Mannik's experiments and model
 cells that are slightly larger than this range.
 
-\begin{figure*}
-  %\includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot}
-  \includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot}
-  \includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot}
-  \caption{Contour plot images of the concentration of each protein
-    species in a natural pill-shaped bacterium at regular intervals in
-    time (one second intervals), with darker regions indicating higher
-    concentration. The upper plots shows results from the
-    deterministic simulation and the lower shows results from the
-    stochastic simulation.  The cells pictured are $4\micron$ in
-    length, measured from end to end.  The order of frames is such
-    that individual MinD proteins begin at the bottom of the plot (in
-    the MinD:ATP state in the cytoplasm), and progress upward until
-    they reach the MinE:MinD:ATP membrane-bound complex.  At that
-    point, they will spontaneously dissociate into cytoplasmic MinE
-    (the top row) and the starting state of cytoplasmic MinD:ADP.  The
-    densities plotted are integrated along the axis orthogonal to the
-    page, and the color scale is chosen separately for each species
-    with black as the maximum value over space and time.  The
-    stochastic densities are smeared out over space using a guassians
-    approximation developed by Zhang et all~\cite{zhang2007gaussian}}.
-  \label{image-p}
-\end{figure*}
 \section{Naturally Occuring Pill Shaped Cells}
 
 We begin with the naturally occuring pill cell shape.  We peice this
@@ -357,6 +358,12 @@ discussed below, in our analysis of time correlation data \fixme{not
 Table~\ref{tab:pill-periods}, in agreement with the results of Huang
 \emph{et al.}.
 
+\begin{figure}
+  \includegraphics[width=\columnwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation-rl.pdf}
+  \caption{No caption}
+  \label{corr-pill}
+\end{figure}
+
 While the stochastic results show periods that seem to have a high
 degree of regularity as well as similarity to the deterministic
 results, they do differ in the precise locations of the maxima.  While
@@ -386,14 +393,6 @@ details of the stochastic simulation maxima location.
   fit in the paragraph or so that it would take.  For now I've just
   put the whole section at the end of the paper.}
 
-\begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation-rl.pdf}
-  \caption{No caption}
-  \label{corr-pill}
-\end{figure}
-
-\section{Comparison of Mannik's Experimental and Our Stadium Shapes}
-
 \begin{figure*}
   \centering
   \includegraphics[width=\textwidth]{../paper/plot-ave}
@@ -415,7 +414,9 @@ details of the stochastic simulation maxima location.
   \label{randst-plot-ave}
 \end{figure*}
 
-We have made and analyzed movies out of color plots of MinD
+\section{Comparison of Mannik's Experimental and Our Stadium Shapes}
+
+We have made and analyzed movies out of the MinD
 concentration that are constructed as those in Figure~\ref{image-p},
 integrated along the flattened axis, in which each frame is seperated
 in simulation time by a half second. Figure~\ref{randst-plot-ave}
