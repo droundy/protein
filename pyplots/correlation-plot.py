@@ -14,7 +14,7 @@ start = float(sys.argv[8])
 end  = float(sys.argv[9])
 
 if (sys.argv[10] != "auto") and (sys.argv[10] != "rl"):
-    print 'The last command line argument, after the time, should be either \"auto\" or \"rl\"'
+    print 'The command line argument, after the time, should be either \"auto\" or \"rl\"'
     print 'for auto-correlation or right-left correlation'
     exit(1)
 corr_type = sys.argv[10]
@@ -26,13 +26,13 @@ print_denominator = 1000;
 dt = time_step*print_denominator
 
 def notify_reading_file(f):
-    #print 'reading', f
-    #assert os.system('git add -f %s' % f) == 0, "Couldn't git add %s!" % f
+    print 'reading', f
+    assert os.system('git add -f %s' % f) == 0, "Couldn't git add %s!" % f
     pass
 
 #########################################
 
-num_of_data_files = 2
+num_of_data_files = 1
 def create_data_array(sim_type):
     data_array = []
     init_weight_array = []
@@ -54,6 +54,8 @@ def create_data_array(sim_type):
             elif corr_type == "rl":
                 data_file = '../new-protein-%d/'%(i) + job_string + 'fast-correlation-right-left.dat'
         notify_reading_file(data_file)
+        print 'loading ',data_file
+#        if data_file == ""
         new_data = np.loadtxt(data_file,skiprows=1)
         time_of_total_data = np.loadtxt(data_file)[0][1] - np.loadtxt(data_file)[0][0]
         init_weight_array.append(-new_data[0] + time_of_total_data) # the new_data[0] is an array of the times
@@ -115,7 +117,8 @@ for i in range(len(correlation_arrays)):
 #Following is for the decay modelling:
 max_Cs = []
 max_times = []
-num_calc_periods = 5
+num_calc_periods = int(sys.argv[11])
+
 for i in range(3,len(time_array[3:-3])):
     if (correlation_arrays[0][i] >= correlation_arrays[0][i-1]) and (correlation_arrays[0][i] > correlation_arrays[0][i+1]):
         if (correlation_arrays[0][i] >= correlation_arrays[0][i-2]) and (correlation_arrays[0][i] >= correlation_arrays[0][i+2]):
@@ -125,9 +128,7 @@ for i in range(3,len(time_array[3:-3])):
                 if len(max_Cs) > num_calc_periods:
                     break
 
-
-
-if len(max_Cs) < num_calc_periods:
+if len(max_Cs) <= num_calc_periods:
     print '\nYou need more data there havent been %d maxima in the correlatation yet\n'%(num_calc_periods)
     exit(0)
 
@@ -145,41 +146,8 @@ for i in range(len(decay)):
 normalization = np.amax(np.absolute(correlation_arrays))
 correlation_arrays = correlation_arrays/normalization
 decay = decay/normalization
+
 ####################################
-
-
-
-# colors = ['m','g','r','y','b','c']
-# labels = ['Long Array Left','Long Array Mid','Long Array Right','Short Array Left','Short Array Mid','Short Array Right']
-
-# if (corr_type == "auto"):
-#     pylab.figure()
-#     for i in range(len(correlation_arrays)):
-#         if (i == 2) or (i == 5):
-#             pylab.subplot(211)
-#             pylab.title('Stochastic Data, Auto-correlation, '+sys.argv[1]+' '+sys.argv[5]+' rate = '+str(rate)+' period = '+str(period))
-#             pylab.title(sys.argv[1])
-#             pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
-#             pylab.xlim(0,time_array[-1])
-#             pylab.ylim(np.amin(correlation_arrays),np.amax(correlation_arrays))
-#             pylab.ylabel('Auto Correlation')
-
-#     correlation_arrays = [0]*(len(data_exact)-1)
-#     for i in range(len(correlation_arrays)):
-#         correlation_arrays[i] = data_exact[i+1]
-
-#     #correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
-#     for i in range(len(correlation_arrays)):
-#         if (i == 2) or (i == 5):
-#             pylab.subplot(212)
-#             pylab.title('Determinisitc Data')
-#             pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
-#             pylab.xlim(0,time_array[-1])
-#             pylab.ylim(np.amin(correlation_arrays),np.amax(correlation_arrays))
-#             pylab.ylabel('Auto Correlation')
-
-#     plt.xlabel('time (sec)')
-#     plt.legend()
 
 colors = ['b','g','r']
 labels = ['Long Array','Short Array']
@@ -187,7 +155,8 @@ if (corr_type == "rl"):
     pylab.figure()
     for i in range(len(correlation_arrays)):
         pylab.subplot(211)
-        pylab.title('Stochastic Data, Right left correlatation, '+sys.argv[1]+' '+sys.argv[5]+' rate = '+str(rate)+' period = '+str(period))
+        print 'oeriod ',period
+        pylab.title('Stochastic Correlation '+sys.argv[1]+' '+sys.argv[5]+' rate = %.3g sec^-1'%(rate)+' period = %.3g sec'%(period))
         pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
         pylab.xlim(0,time_array[-1])
         pylab.ylim(np.amin(correlation_arrays),np.amax(correlation_arrays))
@@ -201,7 +170,7 @@ if (corr_type == "rl"):
     #correlation_arrays = correlation_arrays/np.amax(correlation_arrays)
     for i in range(len(correlation_arrays)):
         pylab.subplot(212)
-        pylab.title('Deterministic Data')
+        pylab.title('Deterministic Correlation')
         pylab.plot(time_array,correlation_arrays[i],color=colors[i],label=labels[i])
         pylab.xlim(0,time_array[-1])
         pylab.ylim(np.amin(correlation_arrays),np.amax(correlation_arrays))
@@ -217,6 +186,9 @@ for string in ["full_array","exact"]:
     job_string = p.sub('_',job_string)
 
     printout_file = job_string + 'plots/correlation-' + corr_type + '.pdf'
+    if not os.path.exists(job_string + 'plots'):
+        print "making directory "+job_string + 'plots'+" because doesnt exist"
+        os.makedirs(job_string + 'plots')
     print 'printing to ',printout_file
     pylab.savefig(printout_file)
 

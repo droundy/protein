@@ -28,15 +28,16 @@ dt = time_step*print_denominator
 
 #following version of readbox selects out NflD
 def readbox(name):
-    for i in range(100,10000,22):
-        try:
-            data = np.loadtxt(name, usecols=tuple(range(0,int(i/dt))), converters = {0:ignoreme, 1:ignoreme})
-        except (ValueError,IndexError):
-            data = np.loadtxt(name, usecols=tuple(range(0,int((i-22)/dt))), converters = {0:ignoreme, 1:ignoreme})
-            print "The end of the data in use occurs at %d seconds"%(i-22)
-            break
+    data = np.loadtxt(name, converters = {0:ignoreme, 1:ignoreme})
+    # for i in range(100,10000,22):
+    #     try:
+    #         data = np.loadtxt(name, usecols=tuple(range(0,int(i/dt))), converters = {0:ignoreme, 1:ignoreme})
+    #     except (ValueError,IndexError):
+    #         data = np.loadtxt(name, usecols=tuple(range(0,int((i-22)/dt))), converters = {0:ignoreme, 1:ignoreme})
+    #         print "The end of the data in use occurs at %d seconds"%(i-22)
+    #         break
     global end
-    end = (len(data[0])*dt)-10 #a bit lesst than full data set by default
+    end = (len(data[0])*dt)-10 #a bit less than full data set by default
     if len(sys.argv) > 9:
         end  = float(sys.argv[9])
     data_stop_index = int(end/dt)
