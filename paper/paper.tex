@@ -51,37 +51,31 @@ of bacterial cell division a cell avoid minicelling, or splitting into
 daughter cells with lopsided volumes.  Instrumental to this process in
 \emph{Escherichia coli} is a long FtsZ polymer chain that develops on
 the cell wall in the center region of the cell, helping dictate the
-plane of division~\cite{adams2009bacterial,
-  lutkenhaus2007assembly}. Previous experimental studies have shown
-that the MinC protein, known to inhibit the FtZ
-polymer\cite{shen2010examination}, exhibits pole to pole oscillatory
-behavior in conjunction with the MinD protein and a MinE that tends to
-be more localized in the center of the cell~\cite{hu1999topological,
-  fu2001mine, shapiro2009and, yu1999ftsz, raskin1999rapid}. The MinC
-protein will then have a higher time averaged concentration in the
-cell poles, as opposed to the center region of the cell, aiding in
-prohibiting the FtZ from developing in the wrong region.
+plane of
+division~\cite{adams2009bacterial,lutkenhaus2007assembly}. Previous
+experimental studies have shown that the MinC protein, known to
+inhibit the FtZ polymer\cite{shen2010examination}, exhibits pole to
+pole oscillatory behavior between both ends of the wild-type
+pill-shaped cell.  It thus has a higher time averaged concentration in
+the cell poles than in the center region, which aides in prohibiting
+the FtZ from developing in the wrong region.  The MinC is recruited to
+these poles by MinD, which ineracts with another protein, MinE, that
+is neccesary for MinD oscillation.~\cite{hu1999topological,
+  fu2001mine, shapiro2009and, yu1999ftsz, raskin1999rapid}.
 
-Studies have shown that the cell division process is capable of
-preventing minicelling for fairly perturbed cell
-shapes\cite{touhami2006temperature}. Varma et al. studied one
-particular example of a perturbed shape, a three-pronged tube, and
-found both experimental and simulation results\cite{varma2008min} that
-show oscillation. These oscillations seem to seek out the extreme
-poles in the cell shape\cite{corbin2002exploring}
-\cite{juarez2010changes}, and effectively prevent minicelling in most
-cases. However, Mannik et al. have also shown that there are
-limitations to this mechanism\cite{mannik2010bacteria}
-\cite{mannik2009bacterial}. One instance of this behavior is
-observable when the cell has been forced into a flattened, irregular
-shape. Oscillations in this sort of cell shape are far from the
-regular sorts of oscillations seen in the computational work done by
-Huang et al\cite{huang2003dynamic}, who simulate more regular
-shapes. Thus there is an opportunity here to test previously used
-simulation models against more extreme experimental cases than have
-been seen thus far.  In this paper we apply a deterministic method and
-a stochastic method of simulation and compare them against Mannik's
-experimental findings.
+Previous studies have shown that the minD protein system is capable of
+exhibiting oscillations in round shapes as well as in connected three
+pronged tube shapes~\cite{varma2008min}, in which the oscillations
+seem to seek out the extreme poles in the
+cell~\cite{corbin2002exploring} \cite{juarez2010changes}. However,
+Mannik \emph{et al.} have also shown that there are limitations to
+this capability~\cite{mannik2010bacteria}
+\cite{mannik2009bacterial}. They have experimentally forced E. Coli
+cells into flattened irregular shapes of $0.25\mu m$
+thickness. Oscillations in this type of cell shape lose their
+regularity, both temporally and spatially. This allows for an
+opportunity to test previously studied MinD simulation models against
+more extreme experimental cases than have been seen thus far.
 
 A significant amount of work has been done to develop protein reaction
 and diffusion models that exhibit accurate macroscopic dynamics of the
@@ -103,26 +97,33 @@ studies have been made as well of models which rely on MinD mobility
 and attraction on the cell membrane~\cite{kruse2002dynamic,
   howard2005cellular}.  Experimental studies of the Min system's
 association with the cell membrane have also been
-made~\cite{hsieh2010direct}\cite{mileykovskaya2003effects}.
+made~\cite{hsieh2010direct,mileykovskaya2003effects}.
 
 Variations of the Huang 2003 model that stochasticly account for
-variations of molecular interaction \cite{fange2006noise} and
-monte-carlo simulations that implement this stochastic version of
-Huang's mean field reaction rates confirm the major results obtained
-by Huang's model, and more successfully predict experimentally
-observed oscillations in round cell
-phenotypes~\cite{drew2005polymerization, fange2006noise,
-  huang2004min}. Biochemical models of broader scope have also been
-used to study the MinD system and show consistent
-results.\cite{arjunan2010new}.  However, in general, the results of
-the stochastic and monte-carlo simulations have so far yeilded similar
-results to those given by Huang's original, deterministic method of
-simulation.\fixme{Look at the papers again to verify and this and also
-  figure out and cite who says that the stochastic and the
-  deterministic methods of simulation have given similar results.
-  Saying more about these discussions is needed here, I think.
-  Something to the effect that until now there's no compelling reason
-  to avoid the deterministic simulations.}
+variations of molecular
+interaction~\cite{kerr2006division,fange2006noise} and monte-carlo
+simulations that implement this stochastic version of Huang's mean
+field reaction rates confirm the major results obtained by Huang's
+model, and more successfully predict experimentally observed
+oscillations in round cell phenotypes~\cite{fange2006noise,
+  huang2004min}. The successful simulations of three pronged cells
+mentioned above are stochastic
+simulations~\cite{varma2008min}. Biochemical models of broader scope
+have also been used to study the MinD system and show consistent
+results~\cite{arjunan2010new}.
+
+\fixme{There are not any direct comparisons of the deterministic and
+  stochastic methods that I can find other than the fange2006 paper
+  cited above for the round cells.  Those showed that the
+  deterministic couldn't predict oscillations in perfectly round
+  cells, but could in almost round ellipses.  It seems that once the
+  stochastic methods began to be used, nobody really used the
+  deterministic method any longer.  Not sure what to say about this in
+  order to introduce what we do here properly.}
+
+In this paper we apply a deterministic method and a stochastic method
+of simulation and compare them against Mannik's experimental findings.
+
 
 \fixme{Following paragraph is awkward, and I don't think it's needed.}
 Studies have shown as well that MinD binds preferentially to regions
