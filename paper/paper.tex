@@ -289,7 +289,7 @@ cells that are slightly larger than this range.
   \label{image-p}
 \end{figure*}
 
-Huang \emph{et al} ~\cite{huang2003dynamic} has performed a linear
+Huang \emph{et al}~\cite{huang2003dynamic} has performed a linear
 stability analysis on the model which shows an upper limit on a steady
 state solution of a $2\mu m$ wavelength.  Cells with dimensions longer
 than this are unstable and show oscillatory behavoir in this
@@ -451,19 +451,22 @@ Table~\ref{tab:pill-periods}, in agreement with the results of Huang
 \section{Comparison of Mannik's Experimental and Our Stadium Shapes}
 
 As describe in Section~\ref{sec:model-method-shapes}, we will focus on
-simulation of four flattened cell shapes: two shapes copied from
-Mannik's experiment~\cite{mannik2012robustness} (shape~\emph{A} and
+simulation of four illustrative flattened cell shapes: two shapes
+created to replicate those published by
+Mannik~\cite{mannik2012robustness} (shape~\emph{A} and
 shape~\emph{B}), and for comparison two symmetrical stadium shapes
 that have the identical aspect ratio, thickness and volume (stadium
-\emph{A} and stadium \emph{B}).  These stadium shapes enable us to
-distinguish between the effect of cellular irregularity and that of
-overall size and aspect ratio.  We note that shape \emph{B} is more
-irregular than shape \emph{A}, and in particular features a prominant
-region of concavity on its left-hand side.  For each of these shapes
-(in addition to the wild type pill shape discussed previously) we have
-simulated in excess of \fixme{???} seconds of evolution of the MinD
-system using both the deterministic model of Huang~\fixme{cite} and
-the stochastic model of Huang~\fixme{cite}.
+\emph{A} and stadium \emph{B}).  These can be seen in
+Figure~\ref{randst-plot-ave}.  These stadium shapes enable us to
+distinguish between the effect of cellular shape irregularity and
+assymetry, and that of overall size and aspect ratio.  We note that
+shape \emph{B} is more irregular than shape \emph{A}, and in
+particular features a prominant region of concavity on its left-hand
+side.  For each of these shapes (in addition to the wild type pill
+shape discussed previously) we have simulated in excess of \fixme{???}
+seconds of evolution of the MinD system using the deterministic method
+of Huang's model~\cite{huang2003dynamic}, as well as the stochastic
+method.
 
 From each of these flattened simulations, we have chosen a typical 350
 second segment to compare with the results of Mannik exemplified in
@@ -477,11 +480,16 @@ have manually verified that our (computer-generated) arrow plots also
 reflect a human interpretation of a movie of the same data.  Finally,
 for comparison we present the same plot for a wild-type cell, with a
 time period of \fixme{???}  seconds to account for its short period of
-oscillation.  In every case, including the wild type pill shape, we
-see irregularity in the location of the maxima when using the
-stochastic approach.  The deterministic method shows uniformly bipolar
-oscillation, with the exception of shape \emph{B}, which develops weak
-intermediate maxima on the right-hand edge of the cell.
+oscillation.
+
+In every case, including the wild type pill shape, we see irregularity
+in the location of the maxima when using the stochastic approach.  The
+deterministic method shows uniformly bipolar oscillation, with the
+exception of shape \emph{B}, which develops weak intermediate maxima
+on the right-hand edge of the cell.  From these results, we conclude
+that the deterministic method is inadequate to explain experimental
+observations of the locations of density maxima of the MinD protein.
+
 
 %% We found that the deterministic simulations of the MinD system results
 %% in robust and regular oscillatory behavoir of polar selection and
@@ -511,9 +519,7 @@ maxima occuring that we never see in our simulations, suggesting that
 the model does not precisely reflect the experiment.  We also note
 that the stadium shapes in Fig.~\ref{randst-plot-ave} appear
 qualitatively similar to the irregular shapes in terms of the
-locations of their maxima.  From these results, we conclude that the
-deterministic method is inadequate to explain experimental
-observations of the locations of density maxima of the MinD protein.
+locations of their maxima.
 
 However, Fig.~\ref{randst-plot-ave} leaves unclear the importance of
 irregularity versus overall thickness and aspect ratio in developing
