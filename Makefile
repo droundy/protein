@@ -20,11 +20,11 @@ ALL_FIGURES = \
 	paper/plot-ave.pdf \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf \
-	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation-rl.pdf \
-	data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation-rl.pdf \
-	data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation-rl.pdf \
-	data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation-rl.pdf \
-	data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation-rl.pdf \
+	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation.pdf \
+	data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf \
+	data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf \
+	data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf \
+	data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf \
 
 
 paper/paper.pdf: paper/paper.tex ${ALL_FIGURES}
@@ -75,27 +75,27 @@ paper/plot-ave.pdf: paper/plot-arrow-ave.py paper/mycolormap.py \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/ave-time/contour-values-NflD-500-750.dat
 	python paper/plot-arrow-ave.py
 
-data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation-rl.pdf: pyplots/correlation-plot.py \
+data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation.pdf: pyplots/correlation-plot.py \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/fast-correlation-right-left.dat \
 	data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/fast-correlation-right-left.dat
 	python pyplots/correlation-plot.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 500.00 2
 
-data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation-rl.pdf: pyplots/correlation-plot.py \
+data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf: pyplots/correlation-plot.py \
 	data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/fast-correlation-right-left.dat \
 	data/shape-randst/0_25-18_60-28_60-94_00-15_00-exact/fast-correlation-right-left.dat
 	python pyplots/correlation-plot.py randst 0.25 18.60 28.60 94.00 15.00 full_array 0.00 500.00 2
 
-data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation-rl.pdf: pyplots/correlation-plot.py \
+data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf: pyplots/correlation-plot.py \
 	data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/fast-correlation-right-left.dat \
 	data/shape-randst/0_25-18_50-18_50-95_00-15_00-exact/fast-correlation-right-left.dat
 	python pyplots/correlation-plot.py randst 0.25 18.50 18.50 95.00 15.00 full_array 0.00 500.00 2
 
-data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation-rl.pdf: pyplots/correlation-plot.py \
+data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf: pyplots/correlation-plot.py \
 	data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/fast-correlation-right-left.dat \
 	data/shape-stad/0_25-2_92-1_18-0_00-15_00-exact/fast-correlation-right-left.dat
 	python pyplots/correlation-plot.py stad 0.25 2.92 1.18 0.00 15.00 full_array 0.00 500.00 2
 
-data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation-rl.pdf: pyplots/correlation-plot.py \
+data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf: pyplots/correlation-plot.py \
 	data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/fast-correlation-right-left.dat \
 	data/shape-stad/0_25-2_35-1_32-0_00-15_00-exact/fast-correlation-right-left.dat
 	python pyplots/correlation-plot.py stad 0.25 2.35 1.32 0.00 15.00 full_array 0.00 500.00 2
