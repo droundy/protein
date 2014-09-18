@@ -389,19 +389,15 @@ $3\micron$, $4\micron$, and $5\micron$ measured from the tip of one
 end cap to the tip of the other \fixme{I'm running the 2,3,5 pills
   again to make sure that everything in this paragraph is true}. In
 each case, we observe in the deterministic simulations a quick
-establishement (within a few periods) of extremely regular oscillatory
-behavoir that lasts indefinitely.  The stochastic results show
-oscillitions that are similarly regular in time, with periods that
-nearly match those of the deterministic (they differ roughly by a
-factor of .05) \fixme{does this square with the correlation data
-  periods?}. The regularity of the pill shape cell periods is
-discussed below, in our analysis of time correlation data \fixme{not
-  written yet}.  These periods increase with cell length, as shown in
-Table~\ref{tab:pill-periods}, in agreement with the results of Huang
-\emph{et al.}.
+establishement (within a few periods) of regular oscillatory behavoir
+that lasts indefinitely.  This temporal regularity can be seen in
+Figure~\ref{corr-pill}, which shows the temporal correlation of the
+total MinD protein located in the the two polar sections of the cell.
+In the stochastic simulations the pills exhibit coherence times of
+over 7 periods and the determinisitic version cohere indefinately.
 
 \begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation-rl.pdf}
+  \includegraphics[width=\columnwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation.pdf}
   \caption{No caption}
   \label{corr-pill}
 \end{figure}
@@ -413,11 +409,24 @@ the deterministic simulations show maxima that are every time
 concentrated in the center of one of the cell ends, with a symmetric
 smear of protein going out laterally to either side, the stochastic
 simulations show maxima that, while always located somehwere in the
-end region of the cell, occur at different positions within this
+polar region of the cell, occur at different positions within this
 region.  This is reflected in Figure~\ref{image-p}, which shows
 periods that are the same and qualitative behavoir that is
 approximately the same, but also that there is variation in the
 details of the stochastic simulation maxima location.
+
+
+\fixme{Is the table of the cell periods needed? I'm not sure if we
+  have a experiment to compare this to} The stochastic results show
+oscillitions that are similarly regular in time, with periods that
+nearly match those of the deterministic (they differ roughly by a
+factor of .05) \fixme{does this square with the correlation data
+  periods?}. The regularity of the pill shape cell periods is
+discussed below, in our analysis of time correlation data \fixme{not
+  written yet}.  These periods increase with cell length, as shown in
+Table~\ref{tab:pill-periods}, in agreement with the results of Huang
+\emph{et al.}.
+
 
 \begin{table}
   \begin{tabular}{|r|c|c|c|l|}
@@ -427,13 +436,6 @@ details of the stochastic simulation maxima location.
   \caption{Period of oscillation according to length of cell for
     pill-shaped cells.}\label{tab:pill-periods}
 \end{table}
-
-\fixme{Originally the 'Stability Analysis' section came next.  I would
-  like to still mention the results of this, since Huang only did the
-  analysis on the cylinders, and we've done it on the flattened shapes
-  and shown that it works with those too.  But I don't know where to
-  fit in the paragraph or so that it would take.  For now I've just
-  put the whole section at the end of the paper.}
 
 \begin{figure*}
   \centering
@@ -512,8 +514,8 @@ intermediate maxima on the right-hand edge of the cell.
 %% cells~\cite{kubitschek1990cell,kubitschek1968linear,mannik2012robustness}.
 
 \begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation-rl.pdf}
-  \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation-rl.pdf}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf}
+  \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf}
   \caption{Correlation for A shapes}
   \label{fig:corr-pancake-A}
 \end{figure}
@@ -582,8 +584,8 @@ observed.
 \bibliography{paper}
 
 \begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation-rl.pdf}
-  \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation-rl.pdf}
+  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf}
+  \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf}
   \caption{Correlation for B shapes}
   \label{corr-B}
 \end{figure}
