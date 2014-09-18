@@ -38,7 +38,7 @@ def readbox(name):
         end  = float(sys.argv[9])
     data_stop_index = int(end/dt)
     data_start_index = int(constant_start_time/dt)
-    print '\nstart time = ',constant_start_time,', end_time = ',end
+    print 'start time = ',constant_start_time,', end_time = ',end
     print 'this is the time covered by the entire data set that youre using'
     data = data[:,(data_start_index+2):(data_stop_index+2)]
     shortened_data = np.zeros((3, len(data[0,:])))
@@ -82,7 +82,7 @@ num_calcs_so_far = 0
 for sim_type in ["full_array","exact"]:
     for data_length in ["short","long"]:
         for data_file_num in data_files:
-            print 'we are %.0f%% done!' % (num_calcs_so_far*100.0/total_calcs),\
+            print '\nwe are %.0f%% done!' % (num_calcs_so_far*100.0/total_calcs),\
                 'were on data_file #',data_file_num,' ',sim_type,' ',data_length
             num_calcs_so_far += 1
             job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
