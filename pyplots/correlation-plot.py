@@ -95,7 +95,7 @@ data_exact[1] = data_exact[1]/np.amax(np.absolute(data_exact[1]))
 data_exact[2] = data_exact[2]/np.amax(np.absolute(data_exact[2]))
 
 
-colors = ['b','g','r']
+colors = ['b:','g','r']
 labels = ['','Long Array','Short Array']
 pylab.figure()
 pylab.subplot(211)
@@ -103,23 +103,24 @@ for i in range(1,len(data_full)):
     print 'period ',period
     pylab.title('Stochastic %s %s 1/rate = %.3g sec period = %.3g sec (ratio %.2g)'
                 % (sys.argv[1], sys.argv[5], 1/rate, period, 1/(rate*period)))
-    pylab.plot(time_array,data_full[i],color=colors[i],label=labels[i])
+    pylab.plot(time_array,data_full[i],colors[i],label=labels[i])
     pylab.xlim(0,time_array[-1])
     pylab.ylim(np.amin(data_full[i]),np.amax(data_full[i]))
     pylab.ylabel('Left-Right Correlation')
-    pylab.plot(time_array,decay,color=colors[2],label=labels[i])
-pylab.plot(time_array,decay,color='b',label='decay')
+pylab.plot(time_array,decay,colors[0],label='decay')
+plt.legend()
+
     #data_full = data_full/np.amax(data_full)
 pylab.subplot(212)
 for i in range(1,len(data_exact)):
     pylab.title('Deterministic Correlation')
-    pylab.plot(time_array,data_exact[i],color=colors[i],label=labels[i])
+    pylab.plot(time_array,data_exact[i],colors[i],label=labels[i])
     pylab.xlim(0,time_array[-1])
     pylab.ylim(np.amin(data_exact[i]),np.amax(data_exact[i]))
     pylab.ylabel('Left-Right Correlation')
 
-    plt.xlabel('time (sec)')
-    plt.legend()
+plt.xlabel('time (sec)')
+plt.legend()
 
 for string in ["full_array","exact"]:
     job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
