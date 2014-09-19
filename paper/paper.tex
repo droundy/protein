@@ -103,32 +103,40 @@ association with the cell membrane have also been
 made~\cite{hsieh2010direct,mileykovskaya2003effects}.
 
 Variations of the Huang 2003 model that stochasticly account for
-molecular interaction and
-diffusion~\cite{kerr2006division,fange2006noise} confirm the major
-results obtained by Huang's model, and more successfully predict
-experimentally observed oscillations in round cell
-phenotypes~\cite{fange2006noise, huang2004min}. The successful
-simulations of three pronged cells mentioned above are stochastic
-simulations~\cite{varma2008min}. Biochemical models of broader scope
-have also been used to study the MinD system and show consistent
-results~\cite{arjunan2010new}.
+molecular interaction and diffusion~\cite{fange2006noise} and
+monte-carlo simulations that implement this stochastic version of
+Huang's mean field reaction rates~\cite{kerr2006division} broadly
+confirm the major results obtained by Huang's model.  However, they
+more successfully predict experimentally observed oscillations in
+round cell phenotypes~\cite{fange2006noise, huang2004min} and
+variations in other
+quantities~\cite{kruse2007experimentalist}\fixme{If going to use this
+  sentence should list these and reference properly?}. Both
+deterministic and stochastic models are widely used throughout systems
+biology~\cite{lawson2013spatial,robb2014stochastic,oguz2014stochastic,fu2013deterministic,rudiger2014stochastic},
+and it's important to better understand their limitations.  Manniks'
+experiments allow for a new distinct opportunity to test these two
+approaches further.
+%% Biochemical models of broader scope have also been
+%% used to study the MinD system and show consistent
+%% results~\cite{arjunan2010new}.
 
-\fixme{There are not any direct comparisons of the deterministic and
-  stochastic methods that I can find other than the fange2006 paper
-  cited above for the round cells.  Those showed that the
-  deterministic sims are 'bistable' - one type of initial conditions
-  (MinD starting on walls on one side) show oscillations, another type
-  (half cyto is filled with 3/4 of MinD) don't.  Huang in 2004 paper
-  cited above uses numerical determinisitc and finds that it can show
-  oscillations in round cells as well, but right now I can't find it
-  and the journal doesn't give me access to it.  predict oscillations
-  in perfectly round cells unless noise was added to the simulation,
-  but could in almost round ellipses.  It seems that once the
-  stochastic methods began to be used, nobody really used the
-  deterministic method any longer.  Not sure what to say about this in
-  order to introduce what we do here properly.}
+%% \fixme{There are not any direct comparisons of the deterministic and
+%%   stochastic models that I can find other than the fange2006 paper
+%%   cited above for the round cells.  Those showed that the
+%%   deterministic sims are 'bistable' - one type of initial conditions
+%%   (MinD starting on walls on one side) show oscillations, another type
+%%   (half cyto is filled with 3/4 of MinD) don't.  Huang in 2004 paper
+%%   cited above uses numerical determinisitc and finds that it can show
+%%   oscillations in round cells as well, but right now I can't find it
+%%   and the journal doesn't give me access to it.  predict oscillations
+%%   in perfectly round cells unless noise was added to the simulation,
+%%   but could in almost round ellipses.  It seems that once the
+%%   stochastic models began to be used, nobody really used the
+%%   deterministic model any longer.  Not sure what to say about this in
+%%   order to introduce what we do here properly.}
 
-In this paper we apply a deterministic method and a stochastic method
+In this paper we apply a deterministic model and a stochastic model
 of simulation and compare them against Mannik's experimental findings.
 
 
@@ -224,9 +232,9 @@ grid is then constructed in cartesian coordinates, with a grid spacing
 of .05\micron.
 
 We have performed both a basic finite analysis, numerical,
-deterministic simulation that is spatially and temporally discrete,
-and a stochastic analysis that is spatially discrete but continuous in
-time.  Our stochastic simulation method follows the work of
+deterministic model simulation that is spatially and temporally
+discrete, and a stochastic analysis that is spatially discrete but
+continuous in time.  Our stochastic model follows the work of
 Kraus~\cite{kraus1996crosstalk} which in turn follows a method
 introduced by Gillespie~\cite{gillespie1977exact}.
 
@@ -277,8 +285,8 @@ cells that are slightly larger than this range.
     species in a natural pill-shaped bacterium at regular intervals in
     time (one second intervals), with darker regions indicating higher
     concentration. The upper plots shows results from the
-    deterministic simulation and the lower shows results from the
-    stochastic simulation.  The cells pictured are $4\micron$ in
+    deterministic model and the lower shows results from the
+    stochastic model.  The cells pictured are $4\micron$ in
     length, measured from end to end.  The order of frames is such
     that individual MinD proteins begin at the bottom of the plot (in
     the MinD:ATP state in the cytoplasm), and progress upward until
@@ -304,9 +312,9 @@ infinite slab with a thickness equal to that of our flattened cells'
 half wavelengths is $2.13\mu m$. As expected, when decreasing the
 lengths and widths of our simulated flattened cells so that the
 longest distance across the cell is less than this length, the cells
-stop exhibiting any oscillalitory behavior.  The deterministic
-simulations relax into a motionless state and the stochastic
-simulations exhibit multiple random locations of small maximization.
+stop exhibiting any oscillalitory behavior.  The deterministic model
+relaxes into a motionless state and the stochastic model exhibits
+multiple random locations of small maximization.
 
 \section{Naturally Occuring Pill Shaped Cells}
 
@@ -321,7 +329,7 @@ detail the dynamic interaction between the different stages of protein
 that lead to their qualitatively distinct behavoir. Figure
 \ref{image-p} shows the process in a series of frames taken from
 simulation animations for both the deterministic and stochastic
-simulations.  We have 'smeared out' the stochastic concentrations in a
+models.  We have 'smeared out' the stochastic concentrations in a
 manner meant to reproduce the images shown by diffraction limited
 flourescence microscopy.  We do so using the two dimensional gaussian
 approximation developed by Zhang et all~\cite{zhang2007gaussian}.  In
@@ -336,7 +344,7 @@ to the maximum values observed.
 Figure~\ref{image-p} begins about 300 seconds into the simulation and
 shows a typical period of oscillation that in the pill shape repeates
 itself with a high degree of regularity, for both the deterministic
-and stochastic simulations.  At $t=0$ the cytoplasmic MinE is
+and stochastic models.  At $t=0$ the cytoplasmic MinE is
 concentrated in the upper portion of the cell and is diffusing
 downward, where it will react with and stick to wall-bound MinD that
 is concentrated on the membrane in the lower portion of the cell.
@@ -375,13 +383,14 @@ We test cells of radius $.5\micron$ and of lengths $2\micron$,
 $3\micron$, $4\micron$, and $5\micron$ measured from the tip of one
 end cap to the tip of the other \fixme{I'm running the 2,3,5 pills
   again to make sure that everything in this paragraph is true}. In
-each case, we observe in the deterministic simulations a quick
+each case, we observe in the deterministic model a quick
 establishement (within a few periods) of regular oscillatory behavoir
 that lasts indefinitely.  This temporal regularity can be seen in
 Figure~\ref{corr-pill}, which shows the temporal correlation of the
 total MinD protein located in the the two polar sections of the cell.
-In the stochastic simulations the pills exhibit coherence times of
-over 7 periods and the determinisitic version cohere indefinately.
+In the case of the stochastic model the pills exhibit coherence times
+of over 7 periods and in the case of the determinisitic model cohere
+indefinately.
 
 \begin{figure}
   \includegraphics[width=\columnwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation.pdf}
@@ -392,15 +401,15 @@ over 7 periods and the determinisitic version cohere indefinately.
 While the stochastic results show periods that seem to have a high
 degree of regularity as well as similarity to the deterministic
 results, they do differ in the precise locations of the maxima.  While
-the deterministic simulations show maxima that are every time
+the deterministic model shows maxima that are every time
 concentrated in the center of one of the cell ends, with a symmetric
 smear of protein going out laterally to either side, the stochastic
-simulations show maxima that, while always located somehwere in the
-polar region of the cell, occur at different positions within this
-region.  This is reflected in Figure~\ref{image-p}, which shows
-periods that are the same and qualitative behavoir that is
-approximately the same, but also that there is variation in the
-details of the stochastic simulation maxima location.
+model shows maxima that, while always located somehwere in the polar
+region of the cell, occur at different positions within this region.
+This is reflected in Figure~\ref{image-p}, which shows periods that
+are the same and qualitative behavoir that is approximately the same,
+but also that there is variation in the details of the stochastic
+model maxima location.
 
 
 \fixme{Is the table of the cell periods needed? I'm not sure if we
@@ -437,7 +446,7 @@ Table~\ref{tab:pill-periods}, in agreement with the results of Huang
     useful comparison due to its shorter oscillation period.  The top
     row shows plots published by Mannik of the MinD maxima behavoir
     and the bottom two rows show our simulations using the stochastic
-    and deterministic algorithms, respectively.  We simulated
+    and deterministic models, respectively.  We simulated
     approximations to the two shapes observed by Mannik, which we call
     \emph{shape A} and \emph{shape B}.  In addition, we studied two
     flattened stadium shapes which we call \emph{stadium A} and
@@ -468,9 +477,9 @@ shape \emph{B} is more irregular than shape \emph{A}, and in
 particular features a prominant region of concavity on its left-hand
 side.  For each of these shapes (in addition to the wild type pill
 shape discussed previously) we have simulated in excess of \fixme{???}
-seconds of evolution of the MinD system using the deterministic method
-of Huang's model~\cite{huang2003dynamic}, as well as the stochastic
-method.
+seconds of evolution of the MinD system using the deterministic
+version of Huang's model~\cite{huang2003dynamic}, as well as the
+stochastic model.
 
 From each of these flattened simulations, we have chosen a typical 350
 second segment to compare with the results of Mannik exemplified in
@@ -487,11 +496,11 @@ time period of \fixme{???}  seconds to account for its short period of
 oscillation.
 
 In every case, including the wild type pill shape, we see irregularity
-in the location of the maxima when using the stochastic approach.  The
-deterministic method shows uniformly bipolar oscillation, with the
+in the location of the maxima when using the stochastic model.  The
+deterministic model shows uniformly bipolar oscillation, with the
 exception of shape \emph{B}, which develops weak intermediate maxima
 on the right-hand edge of the cell.  From these results, we conclude
-that the deterministic method is inadequate to explain experimental
+that the deterministic model is inadequate to explain experimental
 observations of the locations of density maxima of the MinD protein.
 
 
@@ -515,7 +524,7 @@ observations of the locations of density maxima of the MinD protein.
   \label{fig:corr-pancake-A}
 \end{figure}
 
-The predictions of the stochastic as seen in
+The predictions of the stochastic model as seen in
 Fig.~\ref{randst-plot-ave} are roughly similar to the experimental
 results in terms of irregularity of the locations of maxima, although
 there are locations on the edges of the cells where experiment shows
@@ -536,22 +545,22 @@ Fig.~\ref{fig:corr-pancake-A} to the correlation function between the
 number of proteins in a segment at the top of the cell and the number
 of proteins in a segment at the bottom of the cell.  We computed these
 correlation functions using over \fixme{???} seconds of simulation.
-We found with the stochastic method that the experimental shape
+We found with the stochastic model that the experimental shape
 \emph{A} has a coherence time of under 4 periods, while the
 corresponding stadium \emph{A} has a coherence time of 10 periods.  In
-each case, the deterministic method is perfectly periodic. This
-confirms that using the stochastic method the stadium shape does
-indeed have a far more regular bipolar oscillation than the irregular
-shape \emph{A}.  When we compare shape \emph{B} and stadium \emph{B},
-we see a similar effect, although both coherence times are somewhat
-smaller (2.7 and 6.2, respectively).  From these results we conclude
-that the irregularity seen experimentally is indeed exacerbated by the
+each case, the deterministic model is perfectly periodic. This
+confirms that with the stochastic model the stadium shape does indeed
+have a far more regular bipolar oscillation than the irregular shape
+\emph{A}.  When we compare shape \emph{B} and stadium \emph{B}, we see
+a similar effect, although both coherence times are somewhat smaller
+(2.7 and 6.2, respectively).  From these results we conclude that the
+irregularity seen experimentally is indeed exacerbated by the
 irregular shapes taken on by the cells forced into a thin slit.
 
 \section{Conclusion}
 We have simulated flattened cell shapes similar to those observed
 experimentally by Mannik \emph{et al.}.  We find that the
-deterministic method~\fixme{cite} predicts behavior that completely
+deterministic model~\fixme{cite} predicts behavior that completely
 contradicts what is seen experimentally: it predicts stable and
 periodic bipolar oscillation, with a minor intermediate maximum
 appearing in shape \emph{B}.  Thus we conclude that this method is
@@ -559,9 +568,9 @@ inconsistent with experiment, and should not be relied upon for
 predictions of the behavior of the MinD system.
 
 As found in previous studies~\fixme{cite}, we observe that the
-stochastic method predicts behavior in wild type cells that is
-consistent both with experiment and with the deterministic method.  In
-contrast, the stochastic method~\fixme{cite} predicts spatially
+stochastic model predicts behavior in wild type cells that is
+consistent both with experiment and with the deterministic model.  In
+contrast, the stochastic model~\fixme{cite} predicts spatially
 irregular formation of maxima for all the flattened cells that we
 studied.  In order to better understand the irregular oscillations
 observed in experiment, we simulated flattened ``stadium'' shapes in
