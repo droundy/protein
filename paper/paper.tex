@@ -44,63 +44,65 @@
 \maketitle
 
 \section{Introduction}
-\fixme{Huang and those who reference him use the terms 'numerical
-  deterministic reaction-diffusion model' and 'stochastic version of
-  this model' for the stochastic.} It is vital that during the process
-of bacterial cell division a cell avoid minicelling, or splitting into
-daughter cells with lopsided volumes.  Instrumental to this process in
-\emph{Escherichia coli} is a long FtsZ polymer chain that develops on
-the cell wall in the center region of the cell, helping dictate the
-plane of
-division~\cite{adams2009bacterial,lutkenhaus2007assembly}. Previous
+%% \fixme{Huang and those who reference him use the terms 'numerical
+%%   deterministic reaction-diffusion model' and 'stochastic version of
+%%   this model' for the stochastic.}
+It is vital that during the process of bacterial cell division a cell
+avoid minicelling, or splitting into daughter cells with lopsided
+volumes.  Instrumental to this process in \emph{Escherichia coli} is a
+long FtsZ polymer chain that develops on the cell wall in the center
+region of the cell, helping dictate the plane of
+division~\cite{adams2009bacterial, lutkenhaus2007assembly}. Previous
 experimental studies have shown that the MinC protein, known to
-inhibit the FtZ polymer\cite{shen2010examination}, exhibits regular
+inhibit the FtZ polymer~\cite{shen2010examination}, exhibits regular
 pole to pole oscillatory behavior between both ends of the wild-type
 pill-shaped cell.  It thus has a higher time averaged concentration in
 the cell poles than in the center region, which aides in prohibiting
 the FtZ from developing in the wrong region.  The MinC is recruited to
 these poles by MinD, which ineracts with another protein, MinE, that
-is neccesary for MinD
-oscillation.~\cite{hu1999topological,fu2001mine,shapiro2009and,yu1999ftsz,raskin1999rapid,meacci2005min,raskin1999minde}.
+is neccesary for MinD oscillation.~\cite{hu1999topological,
+  fu2001mine, shapiro2009and, yu1999ftsz, raskin1999rapid,
+  meacci2005min, raskin1999minde}.
 
-Previous studies have shown that the minD protein system is capable of
-exhibiting oscillations in round shapes \cite{fange2006noise}as well
-as in connected three pronged tube shapes~\cite{varma2008min}, in
-which the oscillations seem to seek out the extreme poles in the
-cell~\cite{corbin2002exploring,juarez2010changes}.
+Previous studies have shown experimentally that the MinD protein
+system is capable of exhibiting oscillations in round
+shapes~\cite{fange2006noise} as well as in connected three pronged
+tube shapes~\cite{varma2008min}, in which the oscillations seem to
+seek out the extreme poles in the cell~\cite{corbin2002exploring,
+  juarez2010changes}.  One conclusion of these studies has been that
+the MinD system robustly forms bipolar oscillations regardless of
+variations in cellular shape.
 
-However, Mannik \emph{et al.} have also shown that there are
+However, Mannik \emph{et al.} have recently shown that there are
 limitations to this robust capability to
-oscillate~\cite{mannik2010bacteria,mannik2009bacterial}. They have
+oscillate~\cite{mannik2010bacteria, mannik2009bacterial}. They have
 experimentally forced E. Coli cells into silicon microfabricated
 channels of $0.25\micron$ thickness. Upon entering the channels, the
-cells undergo a rapid mechanical deformation in which they widen along
-their short axis parallel to the channel plane, followed by a slower,
-broadening out along both free axes.  This deformation results in very
-wide (they can reach widths of over $5\micron$), flattened cells that
-when view from the top down show very irregular and assymetric shapes.
-While these cells are still able to divide into surprisingly equal
-volumes, the MinD oscillations within lose their regularity, both
-temporally and spatially. Seen with flourescent microscopy (after
+cells undergo a mechanical deformation in which they both widen and
+lengthen within the plane of the channel.  This deformation results in
+very wide (they can reach widths of over $5\micron$) flattened cells
+that when viewed from the top down show irregular and asymmetric
+shapes.  While these cells are still able to divide into surprisingly
+equal volumes, the MinD oscillations in these cells is irregular,
+both temporally and spatially. Seen with flourescent microscopy (after
 using common genetic techniques to allow the cells to flouresce), the
 MinD seem to maximize in multiple locations within the cell, in a
 seemingly random sequence. This allows for an opportunity to test
 previously studied MinD simulation models against more extreme
-experimental cases than have been seen thus far. \fixme{Perhaps this
-  sentence should come later after we've introduced the simulation
-  research that's been done.}
+experimental cases than have been seen thus far.
 
-A significant amount of work has been done to develop protein reaction
-and diffusion simulation models that exhibit accurate macroscopic
-dynamics of the MinD protein system. Early models involve free
-proteins that affect each others' rates of diffusion and membrane
-attachment, but do not combine into compound
+A number of models of the MinD protein system have been developed,
+which accurately describe the dynamics using simulations of protein
+reaction and diffusion.
+%
+Early models involved free proteins that affect each others' rates of
+diffusion and membrane attachment, but do not combine into compound
 states~\cite{meinhardt2001pattern}.  In 2003 Huang improved upon this
 work with a simple and very successful simulation model based on
 MinD-MinE combination, ATPase hydrolysis, and MinD membrane attachment
 that exhibits accurate MinD oscillations in cylindrical
-cells~\cite{huang2003dynamic}. In this model cytoplasmic MinD is more
-likely to attach to the membrane when MinD is already clustered there
+cells~\cite{huang2003dynamic}. In this model cytoplasmic MinD is
+recruited to the membrane by MinD is already clustered there
 (following observed non-linear attachement of minD on the cell
 membrane), and is stationary once attached.  A number of studies have
 used an approach similar in that they do not rely on the ability of
@@ -111,26 +113,28 @@ studies have been made as well of models which rely on MinD mobility
 and attraction on the cell membrane~\cite{kruse2002dynamic,
   howard2005cellular}.  Experimental studies of the Min system's
 association with the cell membrane have also been
-made~\cite{hsieh2010direct,mileykovskaya2003effects}.
+made~\fixme{finding what results? We don't want to just list what has
+  been done, but rather to summarize the state of
+  knowledge.}~\cite{hsieh2010direct, mileykovskaya2003effects}.
 
-Variations of the Huang 2003 model that stochasticly account for
-molecular interaction and diffusion~\cite{fange2006noise} and
-monte-carlo simulations that implement this stochastic version of
-Huang's mean field reaction rates~\cite{kerr2006division} broadly
-confirm the major results obtained by Huang's model.  However, they
-more successfully predict experimentally observed oscillations in
-round cell phenotypes~\cite{fange2006noise, huang2004min} and
-variations in other
-quantities~\cite{kruse2007experimentalist}\fixme{If going to use this
-  sentence should list these and reference properly?}. Both
-deterministic and stochastic models are widely used throughout systems
-biology~\cite{lawson2013spatial,robb2014stochastic,oguz2014stochastic,fu2013deterministic,rudiger2014stochastic},
-and it's important to better understand their limitations.  Manniks'
-experiments allow for a new distinct opportunity to test these two
-approaches further.
-%% Biochemical models of broader scope have also been
-%% used to study the MinD system and show consistent
-%% results~\cite{arjunan2010new}.
+There are only on the order of 1000 MinD proteins in a given cell,
+which means that stochastic fluctuation can be expected to play a
+large role.  To treat this, there have been a number of variations of
+the Huang 2003 model that stochastically treat molecular interaction
+and diffusion~\cite{fange2006noise, kerr2006division}.  These studies
+largely confirm the results of Huang's model, when applied to the
+wild-type phenotype.  However, the stochastic models more successfully
+predict experimentally observed oscillations in round cell
+phenotypes~\cite{fange2006noise, huang2004min}, and enable prediction
+of fluctuations in the predicted
+behavior~\cite{kruse2007experimentalist}.  Both deterministic and
+stochastic models are widely used throughout systems
+biology~\cite{lawson2013spatial, robb2014stochastic,
+  oguz2014stochastic, fu2013deterministic, rudiger2014stochastic}, and
+have unique advantages and limitations.  The deterministic approach
+has an advantage in providing a simple prediction of average behavior,
+while the stochastic approach enables prediction of fluctuations from
+that mean, and reduces sensitivity to initial conditions.
 
 %% \fixme{There are not any direct comparisons of the deterministic and
 %%   stochastic models that I can find other than the fange2006 paper
@@ -147,19 +151,9 @@ approaches further.
 %%   deterministic model any longer.  Not sure what to say about this in
 %%   order to introduce what we do here properly.}
 
-In this paper we apply a deterministic model and a stochastic model
-of simulation and compare them against Mannik's experimental findings.
-
-
-\fixme{Following paragraph is awkward, and I don't think it's needed.}
-Studies have shown as well that MinD binds preferentially to regions
-enriched with cadiolipin, an anionic phospholipid that collects on
-regions of high negative curvature. This mechanism has been
-incorporated into other
-models.\cite{drew2005polymerization,cytrynbaum2007multistranded,renner2012mind,renner2012mind}
-However, this mechanism of combined clustering, phospholipids and MinD
-has not been observed in real cells. \cite{halatek2012highly}
-
+In this paper we use Huang's 2003 model~\cite{huang2003dynamic} in
+both deterministic and stochastic variants to study flattened cells
+similar to those observed by Mannik~\cite{mannik2009bacterial}.
 
 \begin{figure}
   \includegraphics[width=\columnwidth]{reactions}
