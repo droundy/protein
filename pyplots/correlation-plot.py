@@ -110,24 +110,23 @@ for i in range(1,num_plots):
     pylab.plot(time_array,data_full[i],colors[i],label='stochastic')
     pylab.xlim(0,time_array[-1])
     pylab.ylim(np.amin(data_full[i]),np.amax(data_full[i]))
-    pylab.ylabel('Left-Right Correlation')
 
 if not plot_final_version:
     pylab.plot(time_array,decay,colors[0],label='decay')
 
-pylab.title('%s %s 1/rate = %.3g sec period = %.3g sec (ratio %.2g)'
+pylab.title(r'%s %s $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
             % (sys.argv[1], sys.argv[5], 1/rate, period, 1/(rate*period)))
 
     #data_full = data_full/np.amax(data_full)
 #pylab.subplot(212)
-colors = ['k:','r--','m--.']
+colors = ['k:','r:','m--.']
 for i in range(1,num_plots):
     pylab.plot(time_array,data_exact[i],colors[i],label='deterministic')
     pylab.xlim(0,time_array[-1])
     pylab.ylim(np.amin(data_exact[i]),np.amax(data_exact[i]))
-    pylab.ylabel('Left-Right Correlation')
 
-plt.xlabel('time (sec)')
+pylab.ylabel('$C(t)$')
+plt.xlabel('$t$ (sec)')
 plt.legend()
 
 for string in ["full_array","exact"]:

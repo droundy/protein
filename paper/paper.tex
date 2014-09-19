@@ -416,34 +416,13 @@ opposite direction) can be seen in seconds 15 through 23.
   \label{corr-pill}
 \end{figure}
 
-\fixme{add explanation of correlation function somewhere in the
-  following paragraph.  The math could go in theory/methods section.}
-{
-  \color{red}
-  \begin{equation}
-    C(\tau) \propto \int
-      (N_{\textit{top}}(t) - \bar N_{\textit{top}})
-      (N_{\textit{bottom}}(t+\tau) - \bar N_{\textit{bottom}})dt
-  \end{equation}
-  where...
-  \begin{equation}
-    C(\tau) = -\cos\left(\frac{2\pi\tau}{T}\right) e^{-\frac{\tau}{\tau_0}}
-  \end{equation}
-  where $T$ is the period and $\tau_0$ is the coherence time.
-}
-
 Figure~\ref{corr-pill} shows a plot of the time correlation between
 the total MinD found in the two opposite polar regions.  This
 normalized value is given by
 \begin{equation}
-  C(\tau) = \frac{\int
-    (N_{\textit{top}}(t) - \bar N_{\textit{top}})
-    (N_{\textit{bottom}}(t+\tau) - \bar N_{\textit{bottom}})dt
-  }{
-    \int
-    (N_{\textit{top}}(t) - \bar N_{\textit{top}})
-    (N_{\textit{bottom}}(t) - \bar N_{\textit{bottom}})dt
-  }
+  C(\tau) \propto \int
+  (N_{\textit{top}}(t) - \bar N_{\textit{top}})
+  (N_{\textit{bottom}}(t+\tau) - \bar N_{\textit{bottom}})dt
 \end{equation}
 where $N_{\textit{top}}(t)$ and $N_{\textit{bottom}}(t)$ are the total
 MinD proteins in the outer sections of a cell that has been divided
@@ -452,9 +431,9 @@ periods and the regularity and stability of oscillations.  We have
 fitted them to a simple exponential decay model (akin to that of
 monochromatic light), given by the equation
 \begin{equation}
-  C(\tau) = -\cos\left(\frac{2\pi\tau}{T}\right) e^{-\frac{\tau}{\tau_0}}
+  C(\tau) = -\cos\left(\frac{2\pi\tau}{T}\right) e^{-\frac{\tau}{\tau_c}}
 \end{equation}
-where $T$ is the period and $\tau_0$ is the coherence time.  In the
+where $T$ is the period and $\tau_c$ is the coherence time.  In the
 case of the stochastic model the pill exhibits coherence times of over
 7 periods and in the case of the determinisitic model oscillate
 indefinately with complete coherence.
