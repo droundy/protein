@@ -279,26 +279,20 @@ caps on the long axis ends.
     \includegraphics[width=0.8\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot}
     \vspace{-3em}
   \end{center}
-  \caption{Contour plot images of the concentration of each protein
-    species in a natural pill-shaped bacterium at regular intervals in
-    time (one second intervals), with darker regions indicating higher
-    concentration. The upper plots shows results from the
-    deterministic model and the lower shows results from the
-    stochastic model.  The cells pictured are $4\micron$ in length,
-    measured from end to end.  The order of frames is such that
-    individual MinD proteins begin at the bottom of the plot (in the
-    MinD:ATP state in the cytoplasm), and progress upward until they
-    reach the MinE:MinD:ATP membrane-bound complex.  At that point,
-    they will spontaneously dissociate into cytoplasmic MinE (the top
-    row) and the starting state of cytoplasmic MinD:ADP.  The
-    densities plotted are integrated along the axis orthogonal to the
-    page.  The stochastic densities are broadened using the gaussian
-    smearing approach of Zhang \emph{et
-      al.}~\cite{zhang2007gaussian}}.
+  \caption{Images of the concentration of each protein species in a
+    natural pill-shaped bacterium at one-second time intervals. The
+    upper plots shows results from the deterministic model and the
+    lower shows results from the stochastic model.  The order of
+    frames is such that individual MinD proteins begin at the bottom
+    of the plot (in the MinD:ATP state in the cytoplasm), and progress
+    upward until they reach the MinE:MinD:ATP membrane-bound complex.
+    At that point, they will spontaneously dissociate into cytoplasmic
+    MinE (the top row) and the starting state of cytoplasmic
+    MinD:ADP.}.
   \label{image-p}
 \end{figure*}
 
-Huang \emph{et al}~\cite{huang2003dynamic} has performed a linear
+Huang \emph{et al.}~\cite{huang2003dynamic} has performed a linear
 stability analysis on the model which shows an upper limit on a steady
 state solution of a $2\micron$ wavelength.  Cells with dimensions longer
 than this show spontaneous oscillatory behavoir in this
@@ -318,21 +312,20 @@ random fluctuations without spatial oscillations.
 
 \section{Naturally Occuring Pill Shaped Cells}
 
-We begin with the naturally occuring pill cell shape.  We peice this
-shape together as two hemispherical endcaps attached on either end of
-a cylinder.  This shape follows the early simulations of Huang
-\emph{et al.} but differs in that we have added the end caps for a
-more natural shape, expecting similar results.
+We begin with the naturally occuring pill cell shape.  We piece this
+shape together as a cylinder with hemispherical endcaps.  This shape
+follows the early simulations of Huang \emph{et al.} but differs in
+that we have added the end caps for a more natural shape, expecting
+similar results.
 
-Figure~\ref{image-p} shows a series of color plots of protein cycle
-stage concentration for both the deterministic and stochastic
-models. The cells shown are $4\micron$ in length, measured from end to
-end.  We have 'smeared out' the stochastic concentrations in a manner
-meant to reproduce the images shown by diffraction limited
-flourescence microscopy.  We do so using the two dimensional gaussian
-approximation developed by Zhang \emph{et
-  al.}~\cite{zhang2007gaussian}.  In this approximation we use a
-numerical aperture value of 1.3, which is the same as used by Mannik
+Figure~\ref{image-p} shows a series of color plots of the density of
+proteins at each stage of the reaction cycle. The cells shown are
+$4\micron$ in length, measured from end to end.  We have `smeared out'
+the stochastic concentrations in a manner meant to reproduce the
+images shown by diffraction limited flourescence microscopy.  We do so
+using the two dimensional gaussian approximation developed by Zhang
+\emph{et al.}~\cite{zhang2007gaussian}.  In this approximation we use
+a numerical aperture value of 1.3, which is the same as used by Mannik
 experimentally, and a wavelength of $650nm$.  Each frame is 2.5
 seconds ahead of the last, and each image shows the concentration of a
 given state of protein (of the five described in the reaction model)
@@ -340,35 +333,38 @@ summed over the coordinate orthogonal to the page.
 
 Figure~\ref{image-p} begins about 300 seconds into the simulation and
 shows one period of oscillation.  At $t=0$ there is a high
-concentration of MinD:ATP that has accumulated on the membrane in the
-lower section of the cell. An important aspect of Huang's model is
-that the MinD is attracted to and sticks to the membrane nonlinearly:
-as it accumulates there it begins to 'recruit' other MinD that is
-diffusing in the cytoplasm nearby, causing peaks in concentration to
-build up on the walls.  Meanwhile, the MinE is creeping downward as it
-reacts with the membrane-bound MinD, forming the MinD:MinE:ATP
-complex, breaks it apart, and then diffuses downward a bit more before
-it again reacts with membrane-bound MinD.  This process can seen by
-the famous MinE 'rings' shown in the deterministic model plots, from 0
-seconds to 4 seconds.  The appearence of these rings in the
-deterministic model along side their less convincing appearence in the
+concentration of MinD:ATP that has accumulated on the membrane at the
+bottom of the cell. An important aspect of Huang's model is that the
+MinD is attracted to and sticks to the membrane nonlinearly: as it
+accumulates there it begins to `recruit' other MinD that is diffusing
+in the cytoplasm nearby, causing peaks in concentration to build up on
+the walls.  Meanwhile, the MinE is creeping downward as is bound to
+the membrane-bound MinD, forming the MinD:MinE:ATP complex, then
+breaks it apart and diffuses downward a bit more before it again
+reacts with membrane-bound MinD.  This process can seen in the form of
+the well-known ``MinE rings'' (actually, MinE bound to MinD on the
+membrane).  These rings are visible in the deterministic model plots
+as a green band on the walls from 0 seconds to 4 seconds (and later
+from 15 to 23 seconds).  The appearence of these rings in the
+deterministic model along side their less obvious appearence in the
 stochastic model highlights an advantage of the deterministic model:
-the idealization of deterministic data allows one to see macroscopic
-patterns that might otherwise be missed.  In the stochastic model the
-MinE still exhibits higher concentrations in the same regions
-throughout the process, but what would ideally be a 'ring' pattern is
-instead an assymetric collection of maxima.
+the idealization of deterministic data allows one to see patterns in
+the averaged behavior that might otherwise be missed.  In the
+stochastic model the MinE still exhibits higher concentrations in the
+same regions throughout the process, but what would ideally be a
+``ring'' pattern is instead an asymmetric collection of maxima, which
+would become a ring after phase-locked averaging.
 
 During the formation of these rings, MinE that is diffusing in the
 cytoplasm in the upper portion of the cell will naturally diffuse
-downward, where there is membrane-bound MinD to react with, causing a
+downward, where there is membrane-bound MinD to react with, leading to a
 depletion of MinE in the upper portion of the cell.  As the MinE ring
 converges upon the lower end of the cell, MinD that has been released
 is able to diffuse upward, past the ring, while still in its MinD:ADP
-state.  It then undergoes nucleotide exchange, resulting in MinD:ATP,
-which is ready to accumulate on the walls in the upper portion of the
+state.  After it undergoes nucleotide exchange, resulting in MinD:ATP,
+it is ready to accumulate on the walls in at the top of the
 cell, where the MinE has been depleted.  This can be seen in seconds
-10 through 20 in both models, and the subsequent MinE ring
+10 through 20 in both models, followed by the subsequent MinE ring
 formation and movement upward (beginning the same process in the
 opposite direction) can be seen in seconds 15 through 23.
 
@@ -413,42 +409,37 @@ opposite direction) can be seen in seconds 15 through 23.
   \label{corr-pill}
 \end{figure}
 
-Figure~\ref{corr-pill} shows a plot of the time correlation between
-the total MinD found in the two opposite polar regions.  This
-normalized value is given by
+It is clear from Fig.~\ref{image-p} that the stochastic simulation
+results in a protein distribution that is spatially regular than the
+deterministic model predicts.  In fact, when viewed as a movie (see
+supplementary material), the stochastic model exhibits a ``starry
+night'' effect, as recruitment leads to clusters of MinD forming on
+the wall and then subsequently dissipating.  This naturally leads to
+irregularity in the temporal periodicity of the system, which we
+quantify by examining the temporal correlation function of the total
+MinD found in two opposite polar regions.
+%
+This correlation function, which is displayed in Fig.~\ref{corr-pill},
+is given by
 \begin{equation}
   C(\tau) \propto \int
   (N_{\textit{top}}(t) - \bar N_{\textit{top}})
   (N_{\textit{bottom}}(t+\tau) - \bar N_{\textit{bottom}})dt
 \end{equation}
 where $N_{\textit{top}}(t)$ and $N_{\textit{bottom}}(t)$ are the total
-MinD proteins in the outer sections of a cell that has been divided
-into thirds along its long axis.  These plots heolp us in studying the
-periods and the regularity and stability of oscillations.  We have
-fitted them to a simple exponential decay model (akin to that of
-monochromatic light), given by the equation
+MinD proteins in the top and bottom sections of a cell that has been
+divided into thirds along its long axis.  These plots help us in
+studying the periods and the regularity and stability of oscillations.
+These curves are well fit with a simple exponential decoherence model,
+given by the equation
 \begin{equation}
   C(\tau) = -\cos\left(\frac{2\pi\tau}{T}\right) e^{-\frac{\tau}{\tau_c}}
 \end{equation}
 where $T$ is the period and $\tau_c$ is the coherence time.  In the
-case of the stochastic model the pill exhibits coherence times of over
-7 periods and in the case of the determinisitic model oscillate
-indefinately with complete coherence.
-
-\fixme{Do we want anything from the following paragrph?}While the
-stochastic results show periods that seem to have a high degree of
-regularity as well as similarity to the deterministic results, they do
-differ in the precise locations of the maxima.  While the
-deterministic model shows maxima that are every time concentrated in
-the center of one of the cell ends, with a symmetric smear of protein
-going out laterally to either side, the stochastic model shows maxima
-that, while always located somehwere in the polar region of the cell,
-occur at different positions within this region.  This is reflected in
-Figure~\ref{image-p}, which shows periods that are the same and
-qualitative behavoir that is approximately the same, but also that
-there is variation in the details of the stochastic model maxima
-location.  \fixme{I think we should discuss stochastic picture
-  earlier.}
+case of the stochastic model the pill exhibits coherence times of
+about 7 periods and in the case of the determinisitic model oscillate
+indefinitely with complete coherence, indicating that its behavior is
+perfectly periodic.
 
 \begin{figure*}
   \centering
