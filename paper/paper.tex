@@ -421,16 +421,6 @@ opposite direction) can be seen in seconds 15 through 23.
 {
   \color{red}
   \begin{equation}
-    C(\tau) = \frac{\int
-      (N_{\textit{top}}(t) - \bar N_{\textit{top}})
-      (N_{\textit{bottom}}(t+\tau) - \bar N_{\textit{bottom}})dt
-    }{
-      \int
-      (N_{\textit{top}}(t) - \bar N_{\textit{top}})
-      (N_{\textit{bottom}}(t) - \bar N_{\textit{bottom}})dt
-    }
-  \end{equation}
-  \begin{equation}
     C(\tau) \propto \int
       (N_{\textit{top}}(t) - \bar N_{\textit{top}})
       (N_{\textit{bottom}}(t+\tau) - \bar N_{\textit{bottom}})dt
@@ -442,31 +432,47 @@ opposite direction) can be seen in seconds 15 through 23.
   where $T$ is the period and $\tau_0$ is the coherence time.
 }
 
+Figure~\ref{corr-pill} shows a plot of the time correlation between
+the total MinD found in the two opposite polar regions.  This
+normalized value is given by
+\begin{equation}
+  C(\tau) = \frac{\int
+    (N_{\textit{top}}(t) - \bar N_{\textit{top}})
+    (N_{\textit{bottom}}(t+\tau) - \bar N_{\textit{bottom}})dt
+  }{
+    \int
+    (N_{\textit{top}}(t) - \bar N_{\textit{top}})
+    (N_{\textit{bottom}}(t) - \bar N_{\textit{bottom}})dt
+  }
+\end{equation}
+where $N_{\textit{top}}(t)$ and $N_{\textit{bottom}}(t)$ are the total
+MinD proteins in the outer sections of a cell that has been divided
+into thirds along its long axis.  These plots heolp us in studying the
+periods and the regularity and stability of oscillations.  We have
+fitted them to a simple exponential decay model (akin to that of
+monochromatic light), given by the equation
+\begin{equation}
+  C(\tau) = -\cos\left(\frac{2\pi\tau}{T}\right) e^{-\frac{\tau}{\tau_0}}
+\end{equation}
+where $T$ is the period and $\tau_0$ is the coherence time.  In the
+case of the stochastic model the pill exhibits coherence times of over
+7 periods and in the case of the determinisitic model oscillate
+indefinately with complete coherence.
 
-We present simulations of a cell with radius $.5\micron$ and length
-$4\micron$, measured from the tip of one end cap to the tip of the
-other. We observe in the deterministic model a quick establishement
-(within a few periods) of regular oscillatory behavoir that lasts
-indefinitely.  This temporal regularity can be seen in
-Figure~\ref{corr-pill}, which shows the temporal correlation of the
-total MinD protein located in the the two polar sections of the cell.
-In the case of the stochastic model the pill exhibits coherence times
-of over 7 periods and in the case of the determinisitic model
-oscillate indefinately with complete coherence.
-
-While the stochastic results show periods that seem to have a high
-degree of regularity as well as similarity to the deterministic
-results, they do differ in the precise locations of the maxima.  While
-the deterministic model shows maxima that are every time
-concentrated in the center of one of the cell ends, with a symmetric
-smear of protein going out laterally to either side, the stochastic
-model shows maxima that, while always located somehwere in the polar
-region of the cell, occur at different positions within this region.
-This is reflected in Figure~\ref{image-p}, which shows periods that
-are the same and qualitative behavoir that is approximately the same,
-but also that there is variation in the details of the stochastic
-model maxima location.  \fixme{I think we should discuss stochastic
-  picture earlier.}
+\fixme{Do we want anything from the following paragrph?}While the
+stochastic results show periods that seem to have a high degree of
+regularity as well as similarity to the deterministic results, they do
+differ in the precise locations of the maxima.  While the
+deterministic model shows maxima that are every time concentrated in
+the center of one of the cell ends, with a symmetric smear of protein
+going out laterally to either side, the stochastic model shows maxima
+that, while always located somehwere in the polar region of the cell,
+occur at different positions within this region.  This is reflected in
+Figure~\ref{image-p}, which shows periods that are the same and
+qualitative behavoir that is approximately the same, but also that
+there is variation in the details of the stochastic model maxima
+location.  \fixme{I think we should discuss stochastic picture
+  earlier.}
 
 \begin{figure*}
   \centering
