@@ -12,7 +12,7 @@ import re
 
 print 'For this script, the ninth argument should be the end time of the data set'
 print 'but you can write use no ninth argument if want to just use the full data set'
-constant_start_time = 100.0 #this won't change, will always cut off first 100 seconds of data
+constant_start_time = 0.0 #this won't change, will always cut off first 100 seconds of data
 end = 0
 
 def ignoreme(value):
@@ -29,8 +29,45 @@ dt = time_step*print_denominator
 longest_data_len = 0
 
 
+def adjust_data_files(sim_type,data_files):
+    if sim_type == "full_array" and sys.argv[1] == "stad" and sys.argv[3] == "2.92":
+        return [0,1,2,3,4,5]
+    elif sim_type == "full_array":
+        return [10,0,1,2,3,4,5]
+    else:
+        data_files = [10,0,1,2,3,4,5]
+        if sys.argv[1] == "stad" and sys.argv[3] == "2.92":
+            data_files = [0,1,2,3,4,5]
+        longest_data_size = 0
+        longest_data_num = 30
+        for i in data_files:
+            job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
+                                                               sys.argv[5],sys.argv[6],sys.argv[7])
+            p = re.compile('[.]')
+            job_string = p.sub('_',job_string)
+            data_file = ''
+            if i == 10:
+                data_file = job_string + 'box-plot.dat'
+            else:
+                data_file = '../new-protein-%d/'%(i) + job_string + 'box-plot.dat'
+                if not os.path.isfile(data_file):
+                    print '\n',data_file, ' doesnt exist so we cant load it'
+                    exit(0)
+            data = np.loadtxt(data_file, converters = {0:ignoreme, 1:ignoreme})
+            if len(data[0]) > longest_data_size:
+                longest_data_size = len(data[0])
+                longest_data_num = i
+    print 'longest data number is %d and it covers %g seconds of data'%(longest_data_num,longest_data_size*dt)
+    return [longest_data_num]
+
+
+
+
+
+
 def readbox(name):
     #notify_reading_file(data_file)
+    print '\n',data_file,'\n'
     data = np.loadtxt(data_file, converters = {0:ignoreme, 1:ignoreme})
     global end
     end = (len(data[0])*dt)-10 #a bit less than full data set by default
@@ -60,10 +97,7 @@ def mean_density(data,sec):
     return float(total)/float(len(data[sec,:]))
 
 
-
 data_files = [10,0,1,2,3,4,5]
-if sys.argv[1] == "stad" and sys.argv[3] == "2.92":
-    data_files = [0,1,2,3,4,5]
 taus = np.arange(0,1000,dt)
 
 total_times_full = np.arange(0,1000,dt)
@@ -76,11 +110,13 @@ corrs_full_short  = np.zeros_like(taus)
 corrs_exact = np.zeros_like(taus)
 corrs_exact_short = np.zeros_like(taus)
 
-total_calcs = len(data_files)*4
+total_calcs = len(data_files)*2 +2
 num_calcs_so_far = 0
 
-for sim_type in ["full_array","exact"]:
-    for data_length in ["short","long"]:
+for sim_type in ["exact","full_array"]:
+    data_files = adjust_data_files(sim_type,data_files)
+    print sim_type,' ',data_files
+    for data_length in ["long","short"]:
         for data_file_num in data_files:
             print '\nwe are %.0f%% done!' % (num_calcs_so_far*100.0/total_calcs),\
                 'were on data_file #',data_file_num,' ',sim_type,' ',data_length
