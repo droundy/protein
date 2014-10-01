@@ -83,7 +83,7 @@ data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation.pdf: pyplots
 data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf: pyplots/correlation-plot.py \
 	data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/fast-correlation-right-left.dat \
 	data/shape-randst/0_25-18_60-28_60-94_00-15_00-exact/fast-correlation-right-left.dat
-	python pyplots/correlation-plot.py randst 0.25 18.60 28.60 94.00 15.00 full_array 0.00 500.00 2
+	python pyplots/correlation-plot.py randst 0.25 18.60 28.60 94.00 15.00 full_array 0.00 3000.00 2
 
 data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf: pyplots/correlation-plot.py \
 	data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/fast-correlation-right-left.dat \

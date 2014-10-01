@@ -3,8 +3,8 @@ import sys, os
 import os.path
 import numpy as np
 import matplotlib
-# if "show" not in sys.argv:
-#     matplotlib.use("Agg")
+if "show" not in sys.argv:
+    matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pylab
 import re
@@ -40,6 +40,11 @@ job_string = p.sub('_',job_string)
 data_file = job_string + 'fast-correlation-right-left.dat'
 print 'loading file ',data_file
 data_exact = np.loadtxt(data_file)
+
+# plt.figure()
+# plt.plot(data_exact[0],data_exact[1])
+# plt.show()
+# exit(0)
 
 print 'start time = ',start,', end_time = ',end
 if (len(data_full[0,:])*dt < end or len(data_exact[0,:])*dt < end):
@@ -86,13 +91,13 @@ for i in range(len(decay)):
 
 ####################################
 
-normalization = np.amax(np.absolute(data_full[1]))
-data_full[1] = data_full[1]/normalization
-decay = decay/normalization
+# normalization = np.amax(np.absolute(data_full[1]))
+# data_full[1] = data_full[1]/normalization
+# decay = decay/normalization
 
-data_full[2] = data_full[2]/np.amax(np.absolute(data_full[2]))
-data_exact[1] = data_exact[1]/np.amax(np.absolute(data_exact[1]))
-data_exact[2] = data_exact[2]/np.amax(np.absolute(data_exact[2]))
+# data_full[2] = data_full[2]/np.amax(np.absolute(data_full[2]))
+# data_exact[1] = data_exact[1]/np.amax(np.absolute(data_exact[1]))
+# data_exact[2] = data_exact[2]/np.amax(np.absolute(data_exact[2]))
 
 plot_final_version = True
 

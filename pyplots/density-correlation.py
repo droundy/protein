@@ -3,8 +3,8 @@ import sys
 import os.path
 import numpy as np
 import matplotlib
-if "show" not in sys.argv:
-    matplotlib.use("Agg")
+#if "show" not in sys.argv:
+#    matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pylab
 import re
@@ -12,7 +12,7 @@ import re
 
 print 'For this script, the ninth argument should be the end time of the data set'
 print 'but you can write use no ninth argument if want to just use the full data set'
-constant_start_time = 0.0 #this won't change, will always cut off first 100 seconds of data
+constant_start_time = 100.0 #this won't change, will always cut off first 100 seconds of data
 end = 0
 
 def ignoreme(value):
@@ -29,15 +29,13 @@ dt = time_step*print_denominator
 longest_data_len = 0
 
 
-def adjust_data_files(sim_type,data_files):
+def adjust_data_files(sim_type):
     if sim_type == "full_array" and sys.argv[1] == "stad" and sys.argv[3] == "2.92":
         return [0,1,2,3,4,5]
     elif sim_type == "full_array":
         return [10,0,1,2,3,4,5]
     else:
         data_files = [10,0,1,2,3,4,5]
-        if sys.argv[1] == "stad" and sys.argv[3] == "2.92":
-            data_files = [0,1,2,3,4,5]
         longest_data_size = 0
         longest_data_num = 30
         for i in data_files:
@@ -97,25 +95,25 @@ def mean_density(data,sec):
     return float(total)/float(len(data[sec,:]))
 
 
-data_files = [10,0,1,2,3,4,5]
-taus = np.arange(0,1000,dt)
+len_of_taus = 3000
+taus = np.arange(0,len_of_taus,dt)
 
-total_times_full = np.arange(0,1000,dt)
-total_times_full_short = np.arange(0,1000,dt)
-total_times_exact = np.arange(0,1000,dt)
-total_times_exact_short = np.arange(0,1000,dt)
+total_times_full = np.arange(0,len_of_taus,dt)
+total_times_full_short = np.arange(0,len_of_taus,dt)
+total_times_exact = np.arange(0,len_of_taus,dt)
+total_times_exact_short = np.arange(0,len_of_taus,dt)
 
 corrs_full  = np.zeros_like(taus)
 corrs_full_short  = np.zeros_like(taus)
 corrs_exact = np.zeros_like(taus)
 corrs_exact_short = np.zeros_like(taus)
 
-total_calcs = len(data_files)*2 +2
+total_calcs = 16
 num_calcs_so_far = 0
 
 for sim_type in ["exact","full_array"]:
-    data_files = adjust_data_files(sim_type,data_files)
-    print sim_type,' ',data_files
+    data_files = adjust_data_files(sim_type)
+    print 'sim_type ',sim_type,' data_files ',data_files
     for data_length in ["long","short"]:
         for data_file_num in data_files:
             print '\nwe are %.0f%% done!' % (num_calcs_so_far*100.0/total_calcs),\
@@ -133,7 +131,15 @@ for sim_type in ["exact","full_array"]:
             if not os.path.isfile(data_file):
                 print '\n',data_file, ' doesnt exist so we cant load it'
                 exit(0)
+            print data_file
             data = readbox(data_file)
+            print 'time if data ',dt*len(data[0,:])
+#             plt.figure()
+#             plt.plot(np.arange(len(data[0,:])),data[0,:],color='r')
+# #            plt.plot(np.arange(len(data[0,:])),data[1,:],color='b')
+#             plt.plot(np.arange(len(data[0,:])),data[2,:],color='g')
+#             plt.show()
+#            exit(0)
             if len(data[0,:]) > longest_data_len:
                 longest_data_len = len(data[0,:])
             if data_length == "short":
@@ -188,10 +194,10 @@ for c in corrs_full_short:
 
 printout_file.close()
 
-plt.figure()
-plt.plot(taus,corrs_full)
-plt.xlim(0,longest_data_len*dt)
-plt.show()
+# plt.figure()
+# plt.plot(taus,corrs_full)
+# plt.xlim(0,longest_data_len*dt)
+# plt.show()
 
 
 ##for the exact:
