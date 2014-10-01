@@ -40,7 +40,7 @@ def adjust_data_files(sim_type):
         longest_data_num = 30
         for i in data_files:
             job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
-                                                               sys.argv[5],sys.argv[6],sys.argv[7])
+                                                               sys.argv[5],sys.argv[6],sim_type)
             p = re.compile('[.]')
             job_string = p.sub('_',job_string)
             data_file = ''
@@ -52,6 +52,8 @@ def adjust_data_files(sim_type):
                     print '\n',data_file, ' doesnt exist so we cant load it'
                     exit(0)
             data = np.loadtxt(data_file, converters = {0:ignoreme, 1:ignoreme})
+            print data_file
+            print 'total time covered by file = ',len(data[0])*dt
             if len(data[0]) > longest_data_size:
                 longest_data_size = len(data[0])
                 longest_data_num = i
@@ -69,6 +71,7 @@ def readbox(name):
     data = np.loadtxt(data_file, converters = {0:ignoreme, 1:ignoreme})
     global end
     end = (len(data[0])*dt)-10 #a bit less than full data set by default
+    print 'length of data ',len(data[0])
     if len(sys.argv) > 9 and end > float(sys.argv[9]):
         end  = float(sys.argv[9])
     data_stop_index = int(end/dt)
