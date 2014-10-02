@@ -91,9 +91,10 @@ for i in range(len(decay)):
 
 ####################################
 
-# normalization = np.amax(np.absolute(data_full[1]))
-# data_full[1] = data_full[1]/normalization
-# decay = decay/normalization
+normalization = np.amax(np.absolute(data_exact[1]))
+data_full[1] = data_full[1]/normalization
+data_exact[1] = data_exact[1]/normalization
+decay = decay/normalization
 
 # data_full[2] = data_full[2]/np.amax(np.absolute(data_full[2]))
 # data_exact[1] = data_exact[1]/np.amax(np.absolute(data_exact[1]))
@@ -121,6 +122,20 @@ if not plot_final_version:
 
 pylab.title(r'%s %s $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
             % (sys.argv[1], sys.argv[5], 1/rate, period, 1/(rate*period)))
+if sys.argv[1] == 'randst' and sys.argv[5] == '95.00':
+    # pylab.title(r'Temporal correlation of mannik A, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
+    #             % (1/rate, period, 1/(rate*period)))
+    pylab.title(r'Temporal correlation of mannik A')
+elif sys.argv[1] == 'stad' and sys.argv[4] == '1.32':
+    # pylab.title(r'Temporal correlation of stadium A, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
+    #             % (1/rate, period, 1/(rate*period)))
+    pylab.title(r'Temporal correlation of stadium A')
+elif sys.argv[1] == 'p':
+    # pylab.title(r'Temporal correlation of pill-shaped cell, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
+    #             % (1/rate, period, 1/(rate*period)))
+    pylab.title(r'Temporal correlation of wild-type pill shape')
+
+
 
     #data_full = data_full/np.amax(data_full)
 #pylab.subplot(212)
