@@ -85,6 +85,13 @@ plt.axes().get_xaxis().set_ticklabels(range(len(smeared_data))[::int(2.5*skip_ti
 plt.axes().set_aspect('equal')
 plt.axes().get_yaxis().set_ticks_position('none')
 plt.axes().get_xaxis().set_ticks_position('none')
+if sim_type == 'full_array':
+    plt.axes().set_title('Stochastic Model',x=.2)
+elif sim_type == 'exact':
+    plt.axes().set_title('Deterministic Model',x=.2)
+else:
+    print '\nSomething went wrong while writing the title of the plots\n\n'
+    exit(1)
 plt.xlabel('time (s)')
 
 # I got the colorbar bit here from

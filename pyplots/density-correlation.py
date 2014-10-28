@@ -35,7 +35,7 @@ def adjust_data_files(sim_type):
     elif sim_type == "full_array":
         return [10,0,1,2,3,4,5]
     else:
-        data_files = [10,0,1,2,3,4,5]
+        data_files = [0,1,2,3,4,5]
         longest_data_size = 0
         longest_data_num = 30
         for i in data_files:
@@ -52,7 +52,6 @@ def adjust_data_files(sim_type):
                     print '\n',data_file, ' doesnt exist so we cant load it'
                     exit(0)
             data = np.loadtxt(data_file, converters = {0:ignoreme, 1:ignoreme})
-            print data_file
             print 'total time covered by file = ',len(data[0])*dt
             if len(data[0]) > longest_data_size:
                 longest_data_size = len(data[0])
