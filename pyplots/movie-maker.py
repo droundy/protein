@@ -69,12 +69,14 @@ print number_of_videos
 for video_num in range(number_of_videos):
     start_file = int( start_time/dump_time_step + video_num*num_in_a_video )
     end_file = int( start_time/dump_time_step + (video_num + 1)*num_in_a_video )
+#    print '\n\n HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHhere\n\n'
     if (video_num + 1 == number_of_videos):
         end_file = int(end_time/float(dump_time_step))
+#        print '\nHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHhello? end_file = %d ',end_file
     file_names = ""
     for i in range(start_file,end_file):
         file_names += '.' + job_string + protein_name + '/images/frame-%05d.png '%(i)
-    os.system('convert -delay 10 '+file_names+ '.' + job_string + 'plots/density-movie-'+str(protein_name) \
+    os.system('convert -delay 20 '+file_names+ '.' + job_string + 'plots/density-movie-'+str(protein_name) \
                   +str(int(start_file*dump_time_step))+ '-' +str(int(end_file*dump_time_step))+'.mp4')
 
 

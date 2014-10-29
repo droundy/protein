@@ -166,10 +166,10 @@ for arg_num in range(len(arg_set)):
             axColor = plt.axes([in_viewport_x(pill_bar_x), in_viewport_y(color_bar_y),
                                 0.02, in_viewport_y(color_bar_height)])
         cb = plt.colorbar(cs, cax=axColor)
-        cb.set_label('molecules$/\mu^2$')
+        cb.set_label('molecules$/\mu m^2$')
 
     ax.add_artist(matplotlib.patches.Rectangle((col_1x-1.5,row_my), 3, 0.1, facecolor='b'))
-    ax.text(col_1x, row_my - 0.3, r'$3\mu$',
+    ax.text(col_1x, row_my - 0.3, r'$3\mu m$',
             verticalalignment='top', horizontalalignment='center')
 
     start_time = float(bound_times[arg_num*2])
