@@ -76,7 +76,23 @@ for video_num in range(number_of_videos):
     file_names = ""
     for i in range(start_file,end_file):
         file_names += '.' + job_string + protein_name + '/images/frame-%05d.png '%(i)
-    os.system('convert -delay 20 '+file_names+ '.' + job_string + 'plots/density-movie-'+str(protein_name) \
+    cell_shape = ''
+    if load.f_shape == 'p':
+        cell_shape = 'pill-'
+    elif load.f_shape == 'randst':
+        if f_param4 == '95.00':
+            cell_shape = 'shape-A-'
+        if f_param4 == '94.00':
+            cell_shape = 'shape-B-'
+    elif load.f_shape == 'stad':
+        if f_param2 == '2.35':
+            cell_shape = 'stadium-A-'
+        if f_param2 == '2.92':
+            cell_shape = 'stadium-B-'
+    print cell_shape
+    # os.system('convert -delay 20 '+file_names+ '.' + job_string + 'plots/density-movie-total-MinD-'+\
+    #               +str(int(start_file*dump_time_step))+ '-' +str(int(end_file*dump_time_step))+'.mp4')
+    os.system('convert -delay 30 '+file_names+ './movies/density-movie-total-MinD-'+cell_shape\
                   +str(int(start_file*dump_time_step))+ '-' +str(int(end_file*dump_time_step))+'.mp4')
 
 

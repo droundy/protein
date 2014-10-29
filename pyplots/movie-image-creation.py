@@ -69,7 +69,7 @@ if (input_end_time >= total_number_of_files*dump_time_step):
 
 
 time_left = input_end_time - input_start_time
-video_limit = 400 #time of each gif created
+video_limit = 500 #time of each gif created
 full_video_list = []#list of video_limit long movies
 exact_video_list = []#list of video_limit long movies
 video_number = 0
@@ -199,10 +199,11 @@ def contourplt(full_protein,exact_protein,video_number):
         #big_sub.axis('off')
         big_sub.set_xticks([])
         big_sub.set_yticks([])
-        plt.ylabel('Color scales shown in molecules$/\mu m^2$ ')
+        big_sub.set_ylabel('Color scales shown in molecules$/\mu m^2$ ')
         big_sub.yaxis.set_label_position("right")
-        plt.title('%d seconds'%(index - int(input_start_time/dump_time_step)))
-        big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.44,y=1.01)
+        plt.title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))))
+
+
         # big_sub.yaxis.set_visible(False)
         # big_sub.xaxis.set_visible(False)
 
@@ -213,7 +214,6 @@ def contourplt(full_protein,exact_protein,video_number):
                               cmap=plt.cm.jet,origin='lower',levels=my_full_color_levels)
         cbar = plt.colorbar(CS)
         plt.clim(full_minval,full_maxval)
-        plt.title("Stochastic Simulation of 3.00 $\mu m$ Pill Shaped Cell")
 
         sub2 = fig.add_subplot(212,aspect='equal')
         sub2.yaxis.set_visible(False)
@@ -223,6 +223,30 @@ def contourplt(full_protein,exact_protein,video_number):
         plt.clim(exact_minval,exact_maxval)
         plt.title("Deterministic Simulation of 3.00 $\mu m$ Pill Shaped Cell")
         cbar = plt.colorbar(CS)
+
+        if load.f_shape == 'p':
+            big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.44,y=1.01)
+            sub1.set_title("Stochastic Simulation of 3.00 $\mu m$ Pill Shaped Cell")
+            sub2.set_title("Deterministic Simulation of 3.00 $\mu m$ Pill Shaped Cell")
+        elif load.f_shape == 'randst':
+            if f_param4 == '95.00':
+                big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.60,y=1.06)
+                sub1.set_title("Stochastic Simulation of shape-A cell")
+                sub2.set_title("Deterministic Simulation of shape-A cell")
+            if f_param4 == '94.00':
+                big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.50,y=1.06)
+                sub1.set_title("Stochastic Simulation of shape-B cell")
+                sub2.set_title("Deterministic Simulation of shape-B cell")
+        elif load.f_shape == 'stad':
+            if f_param2 == '2.35':
+                big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.50,y=1.06)
+                sub1.set_title("Stochastic Simulation of stadium-A cell")
+                sub2.set_title("Deterministic Simulation of stadium-A cell")
+            if f_param2 == '2.92':
+                big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.44,y=1.06)
+                sub1.set_title("Stochastic Simulation of stadium-B cell")
+                sub2.set_title("Deterministic Simulation of stadium-B cell")
+
         #fig.subplots_adjust(right=0.8)
         #cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
         #fig.colorbar(im,cax=cbar_ax)
