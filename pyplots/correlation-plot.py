@@ -91,8 +91,9 @@ for i in range(len(decay)):
 
 ####################################
 
-normalization = np.amax(np.absolute(data_exact[1]))
+normalization = np.amax(np.absolute(data_full[1]))
 data_full[1] = data_full[1]/normalization
+normalization = np.amax(np.absolute(data_exact[1]))
 data_exact[1] = data_exact[1]/normalization
 decay = decay/normalization
 
@@ -145,7 +146,7 @@ for i in range(1,num_plots):
     pylab.xlim(0,time_array[-1])
     pylab.ylim(np.amin(data_exact[i]),np.amax(data_exact[i]))
 
-pylab.ylabel('$C(t)$')
+pylab.ylabel(r'$C(\tau)$')
 plt.xlabel(r'$\tau$ (sec)')
 plt.legend()
 

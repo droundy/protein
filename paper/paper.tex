@@ -61,8 +61,8 @@ pill-shaped cell.  It thus has a higher time averaged concentration in
 the cell poles than in the center region, which aides in preventing
 the FtZ from developing in the wrong region.  The MinC is recruited to
 these poles by MinD, which itself interacts with another protein,
-MinE, in such a fashion as to exhibit pole to pole oscillatory
-behavoir.~\cite{hu1999topological, fu2001mine, shapiro2009and,
+MinE, in a system which exhibits pole-to-pole oscillatory
+behavoir~\cite{hu1999topological, fu2001mine, shapiro2009and,
   yu1999ftsz, raskin1999rapid, meacci2005min, raskin1999minde}.
 
 Previous experimental studies have shown that the MinD protein system
@@ -116,9 +116,9 @@ and attraction on the cell membrane~\cite{kruse2002dynamic,
 There are only on the order of 1000 MinD proteins in a given cell,
 which means that stochastic fluctuation can be expected to play a
 large role.  To treat this, there have been a number of variations of
-the Huang 2003 model that stochastically treat molecular interaction
-and diffusion~\cite{fange2006noise, kerr2006division}\fixme{talk about
-  this awkward sentence}.  These studies largely confirm the results
+the Huang 2003 model that stochastically simulate the same
+reaction-diffusion equations~\cite{fange2006noise, kerr2006division}.
+These studies largely confirm the results
 of Huang's model when applied to the wild-type, pill-shaped phenotype.
 However, the stochastic models more successfully predict
 experimentally observed oscillations in round cell
@@ -192,8 +192,8 @@ The model is defined by a set of five reaction-diffusion equations:
   \frac{\partial \sigma_{DE}}{\partial t} = -k_{de}\sigma_{DE}+k_E\sigma_D\rho_E\hspace{3cm}
   \label{eq:FifthPDE}
 \end{multline}
-where $\rho$ is cytoplasmic protein density ($\micron^{-3}$), $\sigma$
-is membrane bound density ($\micron^{-2}$), $\mathcal{D}_D$ and
+where $\rho$ is cytoplasmic protein density (proteins$/\micron^{3}$), $\sigma$
+is membrane bound density (proteins$/\micron^{2}$), $\mathcal{D}_D$ and
 $\mathcal{D}_{E}$ are the diffusions constants for MinD and MinE,
 respectively, $k_D^{\textrm{ADP $\rightarrow$ ATP}}$ is the rate of
 conversion from MinD:ADP to the MinD:ATP complex, $k_D$ is the rate of
@@ -293,19 +293,20 @@ caps on the long axis ends.
 \end{figure*}
 
 Huang \emph{et al.}~\cite{huang2003dynamic} has performed a linear
-stability analysis on the model which shows an upper limit on a steady
-state solution of a $2\micron$ half wavelength.  Cells with dimensions
-longer than this show spontaneous oscillatory behavoir in this
-direction, while cells that are shorter relax into a motionless steady
-state.  We have similarly performed a stability analysis in an
-infinite slab with a thickness equal to that of our flattened cells
-($0.25\micron$) and have found that an equivalent stability limit for
-half wavelength is $2.13\micron$. As expected, when decreasing the
-lengths and widths of our simulated flattened cells so that the
-longest distance across the cell is less than this length, the cells
-stop exhibiting any oscillatory behavior.  The deterministic model
-relaxes into a motionless state and the stochastic model exhibits
-random fluctuations without spatial oscillations.
+stability analysis on a cylindrical model which shows an upper limit
+on a steady state solution of a $2\micron$ half wavelength.  Cells
+with dimensions longer than this show spontaneous oscillatory behavoir
+in this direction, while cells that are shorter relax into a
+motionless steady state.  We have similarly performed a linear
+stability analysis on an infinite slab with a thickness equal to that
+of our flattened cells ($0.25\micron$) and have found that an
+equivalent stability limit for half wavelength is $2.13\micron$. As
+expected, when decreasing the lengths and widths of our simulated
+flattened cells so that the longest distance across the cell is less
+than this length, the cells stop exhibiting any oscillatory behavior.
+The deterministic model relaxes into a motionless state and the
+stochastic model exhibits random fluctuations without spatial
+oscillations.
 
 \section{Naturally Occuring Pill Shaped Cells}
 
@@ -408,7 +409,9 @@ seen in seconds 15 through 23.
     two opposite polar regions of the pill-shaped cell, shown against
     the correlation time.  Data for both the the determinisitic and
     stochastic models are shown.  The stochastic model shows an
-    oscillation period of 39.5 seconds and decay time of 307 seconds.}
+    oscillation period of 39.5 seconds and decay time of 307 seconds.
+    The correlation functions are scaled to have the same initial
+    value.}
   \label{corr-pill}
 \end{figure}
 
@@ -533,13 +536,14 @@ observations of the locations of density maxima of the MinD protein.
     two opposite polar regions of the shape \emph{A} (above) and the
     stadium \emph{A} (below) cell shapes, shown against the
     correlation time.  Data for both the the determinisitic and
-    stochastic models are shown.  For shape \emph{A}, the stochastic
-    model shows an oscillation period of 53.1 seconds and decay time
-    of 246 seconds, so that it takes roughly 4.6 periods for the
-    behavoir to decohere.  For the stadium \emph{A}, the same model
-    shows an oscillation period of 51 seconds and decay time of 323
-    seconds, so that it takes roughly 6.3 periods for the behavoir to
-    decohere.}
+    stochastic models are shown, and the correlation functions are
+    scaled to have the same initial value.  For shape \emph{A}, the
+    stochastic model shows an oscillation period of 53.1 seconds and
+    decay time of 246 seconds, so that it takes roughly 4.6 periods
+    for the behavoir to decohere.  For the stadium \emph{A}, the same
+    model shows an oscillation period of 51 seconds and decay time of
+    323 seconds, so that it takes roughly 6.3 periods for the behavoir
+    to decohere.}
   \label{fig:corr-pancake-A}
 \end{figure}
 
@@ -579,10 +583,7 @@ We see that both in the shape \emph{A} and stadium \emph{A}, the
 deterministic model is perfectly periodic.  Both the deterministic and
 stochastic model correlations have the same number of proteins in
 their cells, and have been normalized with the same normalization
-factor, so that they can be directly compared against eachother.  At
-$\tau=0$, the stochastic correlation is already seen to be lower than
-the deterministic, reflecting the fact that the stochastic data
-sometimes shows maxima or minima at both ends simultaneously.  The
+factor, so that they can be directly compared against eachother.  The
 stochastic simulation of shape \emph{A} has a coherence time of 4.6
 periods, while the corresponding simulation of stadium \emph{A} has a
 coherence time of 6.3 periods.  This moderate difference in coherence
