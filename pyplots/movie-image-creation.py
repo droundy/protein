@@ -74,13 +74,31 @@ full_video_list = []#list of video_limit long movies
 exact_video_list = []#list of video_limit long movies
 video_number = 0
 
+time_stochastic_is_behind = 0.0
+if load.f_shape == 'p':
+    time_stochastic_is_behind = 7.0
+elif load.f_shape == 'randst':
+    if f_param4 == '95.00':
+        time_stochastic_is_behind = 20.0
+    if f_param4 == '94.00':
+        time_stochastic_is_behind = 30.0
+elif load.f_shape == 'stad':
+    if f_param2 == '2.35':
+        time_stochastic_is_behind = 23.0
+    if f_param2 == '2.92':
+        time_stochastic_is_behind = 12.0
+else:
+    print 'soemthigns wrong!'
+    exit(1)
+
 while (time_left > 0):
     next_end_time = input_start_time + (video_number+1)*video_limit
     if next_end_time > input_end_time:
         next_end_time = input_end_time
     print "next_end_time = ",next_end_time
-    full_video_list = full_video_list + [load.data(protein=protein_name, sim_type='full_array',start_time = input_start_time + video_number*video_limit,
-                                         end_time = next_end_time)]
+    full_video_list = full_video_list + [load.data(protein=protein_name, sim_type='full_array', \
+                                                       start_time = time_stochastic_is_behind + input_start_time + video_number*video_limit, \
+                                                       end_time = time_stochastic_is_behind + next_end_time)]
     exact_video_list = exact_video_list + [load.data(protein=protein_name, sim_type='exact',start_time = input_start_time + video_number*video_limit,
                                          end_time = next_end_time)]
     time_left -= video_limit
@@ -225,25 +243,25 @@ def contourplt(full_protein,exact_protein,video_number):
         cbar = plt.colorbar(CS)
 
         if load.f_shape == 'p':
-            big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.44,y=1.01)
+            big_sub.set_title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))),x=0.44,y=1.01)
             sub1.set_title("Stochastic Simulation of 3.00 $\mu m$ Pill Shaped Cell")
             sub2.set_title("Deterministic Simulation of 3.00 $\mu m$ Pill Shaped Cell")
         elif load.f_shape == 'randst':
             if f_param4 == '95.00':
-                big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.60,y=1.06)
+                big_sub.set_title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))),x=0.60,y=1.06)
                 sub1.set_title("Stochastic Simulation of shape-A cell")
                 sub2.set_title("Deterministic Simulation of shape-A cell")
             if f_param4 == '94.00':
-                big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.50,y=1.06)
+                big_sub.set_title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))),x=0.50,y=1.06)
                 sub1.set_title("Stochastic Simulation of shape-B cell")
                 sub2.set_title("Deterministic Simulation of shape-B cell")
         elif load.f_shape == 'stad':
             if f_param2 == '2.35':
-                big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.50,y=1.06)
+                big_sub.set_title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))),x=0.50,y=1.06)
                 sub1.set_title("Stochastic Simulation of stadium-A cell")
                 sub2.set_title("Deterministic Simulation of stadium-A cell")
             if f_param2 == '2.92':
-                big_sub.set_title('%d seconds'%(index - int(input_start_time/dump_time_step)),x=0.44,y=1.06)
+                big_sub.set_title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))),x=0.44,y=1.06)
                 sub1.set_title("Stochastic Simulation of stadium-B cell")
                 sub2.set_title("Deterministic Simulation of stadium-B cell")
 
