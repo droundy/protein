@@ -3,7 +3,9 @@ CXXFLAGS = -g -O2 -Wall -Werror
 .SUFFIXES: .tex .dvi .ps .bib .bbl .pdf .fig .eps .aux .jpg .png .svg \
 		.gp .mf .2602gf .pl .xgr
 
-all: protein_microscopy paper/paper.pdf test-weights
+#all: protein_microscopy paper/paper.pdf test-weights
+
+all: protein_microscopy paper/paper-one.pdf test-weights
 
 test-weights: test-weights.cpp weights.cpp weights.h
 	g++ ${CXXFLAGS} -o test-weights test-weights.cpp weights.cpp
@@ -26,9 +28,13 @@ ALL_FIGURES = \
 	data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf \
 	data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf
 
-paper/paper.pdf: paper/paper.tex ${ALL_FIGURES}
+# paper/paper.pdf: paper/paper.tex ${ALL_FIGURES}
+# 	echo ${ALL_FIGURES}
+# 	cd paper && pdflatex paper.tex && bibtex paper && pdflatex paper.tex && pdflatex paper.tex
+
+paper/paper-one.pdf: paper/paper-one.tex ${ALL_FIGURES}
 	echo ${ALL_FIGURES}
-	cd paper && pdflatex paper.tex && bibtex paper && pdflatex paper.tex && pdflatex paper.tex
+	cd paper && pdflatex paper-one.tex && bibtex paper-one && pdflatex paper-one.tex && pdflatex paper-one.tex
 
 protein_test: protein_test.cpp protein_utils.cpp protein_membrane.cpp weights.cpp
 
