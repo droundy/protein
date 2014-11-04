@@ -37,9 +37,9 @@
   in reproducing the qualitatively irregular behavoir, while the
   stochastic model, based on the same differential equations, is able
   to accurately predict what has been seen.  We also find that it is
-  the newly deformed cells' increased width and altered aspect ratio
-  that is responsible for the irregular oscillation behavoir, as
-  opposed to the irregularity of the cell shape.
+  the flattened nature of the newly deformed cells' shape that is
+  responsible for the irregular oscillation behavoir, as opposed to
+  its irregularity and asymmetry.
 \end{abstract}
 
 \maketitle
@@ -481,15 +481,15 @@ shape~\emph{B}), and for comparison two symmetrical stadium shapes
 that have the identical aspect ratio, thickness and volume (stadium
 \emph{A} and stadium \emph{B}), shown in Figure~\ref{randst-plot-ave}.
 These stadium shapes enable us to distinguish between the effect of
-cellular shape irregularity and assymetry, and that of overall size
-and aspect ratio.  We note that shape \emph{B} is more irregular than
-shape \emph{A}, and in particular features a prominant region of
-concavity on its left-hand side.  For each of these shapes (in
-addition to the wild-type pill shape discussed previously) we have
-simulated in excess of 15000 seconds (over 4 hours) of evolution of
-the MinD system using the deterministic version of Huang's
-model~\cite{huang2003dynamic}, and in excess of 100000 seconds (over
-27 hours) using the stochastic model.
+flattening the cell and the cell shape's irregularity and asymmetry.
+We note that shape \emph{B} is more irregular than shape \emph{A}, and
+in particular features a prominant region of concavity on its
+left-hand side.  For each of these shapes (in addition to the
+wild-type pill shape discussed previously) we have simulated in excess
+of 15000 seconds (over 4 hours) of evolution of the MinD system using
+the deterministic version of Huang's model~\cite{huang2003dynamic},
+and in excess of 100000 seconds (over 27 hours) using the stochastic
+model.
 
 From each of these flattened simulations, we have chosen a typical 350
 second segment to compare with the puplished results of
@@ -554,13 +554,13 @@ appear to have maxima location irregularity that is qualitatively
 similar to our Mannik shapes and to experiment.
 
 However Fig.~\ref{randst-plot-ave} leaves unclear the importance of
-cell shape irregularity versus overall size and aspect ratio in
-developing an understanding of the origin of the experimentally
-observed behavior.  Although in the movies the stadiums appear to
-display, on average over long time scales, a more regular bipolar
-oscillation than the irregular mannik shapes, the limited time range
-of the arrow plots (350 seconds) is inadequate when studying this
-difference in behavoir.  We therefore return to the correlation
+the flattening of the cell versus cell shape irregularity and
+asymmetry in developing an understanding of the origin of the
+experimentally observed behavior.  Although in the movies the stadiums
+appear to display, on average over long time scales, a more regular
+bipolar oscillation than the irregular mannik shapes, the limited time
+range of the arrow plots (350 seconds) is inadequate when studying
+this difference in behavoir.  We therefore return to the correlation
 function between the number of proteins in a segment at the top of the
 cell and the number of proteins in a segment at the bottom of the
 cell.  Fig.~\ref{fig:corr-pancake-A} shows this plot for shape
@@ -589,11 +589,11 @@ stochastic simulation of shape \emph{A} has a coherence time of 4.6
 periods, while the corresponding simulation of stadium \emph{A} has a
 coherence time of 6.3 periods.
 %
-The correlation function for stadium \emph{B} (5.5 periods, not shown)
-is similar to that of stadium~\emph{A}, with similar coherence time,
-while shape~\emph{B} exhibits a lower coherence time (2.2 periods).
-In the deterministic model, shape~\emph{B} is not precisely periodic
-on biologically relevant timescales, which is reflected in
+The correlation function for stadium \emph{B} is similar to that of
+stadium~\emph{A}, with similar coherence time (5.5 periods, not
+shown), while shape~\emph{B} exhibits a lower coherence time (2.2
+periods).  In the deterministic model, shape~\emph{B} is not precisely
+periodic on biologically relevant timescales, which is reflected in
 Fig.~\ref{randst-plot-ave}, in which the arrows describing the
 deterministic model applied to shape \emph{B} show minor maxima
 forming on the right-hand side of the cell, in contrast to the regular
@@ -601,20 +601,23 @@ polar maxima formed by shape~\emph{A} and the two stadiums.
 %
 From the stochastic correlation data, we conclude that irregularity of
 shape has only a moderate affect on the temporal regularity of the
-oscillatory behavior, leaving the polar oscillation largely intact,
-with even the very distorted shape~\emph{B} exhibiting only a factor
-of two greater decoherence.
+oscillatory behavior, with even the very distorted shape~\emph{B}
+exhibiting only a factor of two greater decoherence.
 
 \section{Conclusion}
 
-\fixme{Stochastic model successfully explains experiment.}
-
-\fixme{Deterministic is terrible.}
-%
 We have simulated flattened cell shapes similar to those observed
 experimentally by Mannik \emph{et al.}, with a stochastic and a
-deterministic version of Huang's widely used reaction-diffusion
-model. We find that the deterministic model~\cite{huang2003dynamic}
+deterministic version of Huang's widely used reaction-diffusion model.
+We find that the stochastic model predicts experimentally accurate
+qualitative behavoir in both the wild-type, pill-shaped cells (as
+found in previous studies~\cite{fange2006noise, varma2008min,
+  kruse2007experimentalist}), as well as in the new, flattened,
+irregularly shaped cells.  These flattened cells invariably show
+spatially irregular formation of maxima that is also seen
+experimentally.
+
+We find that the deterministic model~\cite{huang2003dynamic}
 predicts behavior that contradicts what is seen experimentally, namely
 robust and periodic bipolar oscillation in irregularly shaped cells,
 with a minor intermediate maximum appearing in shape \emph{B}.  Thus
@@ -622,32 +625,16 @@ we conclude that this method is inconsistent with experiment, and
 should not be relied upon for predictions of the behavior of the MinD
 system.
 
-\fixme{What is the point here? Should it be cut?}
-%
-As found in previous studies~\cite{fange2006noise, varma2008min,
-  kruse2007experimentalist}, we observe that the stochastic model
-predicts qualitative behavior in wild-type, pill-shaped cells that is
-broadly consistent both with experiment and with the deterministic
-model. However, even in these simple pill-shaped cells the stochastic
-model shows variation in the location of MinD maxima on either end of
-the cell. This model also predicts spatially irregular formation of
-maxima for all the flattened cells that we studied, in agreement with
-experiment.
-
-\fixme{Observations of irregularity would be seen even in regularly
-  shaped flattened or pancake cells.}
-%
 In order to understand the irregular MinD oscillations observed in
 experiments with flattened cells, we simulated flattened ``stadium''
 shapes in order to distinguish between the effect of flattening and
-the effect of irregular shape.  We did not find a significant
-difference in the coherence of bipolar oscillations within these
-stadium shapes and the irregular shapes observed by Mannik \emph{et
-  al.}.  Thus we conclude that the disruption of the MinD oscillations
-seen by Mannik \emph{et al.}  is largely due to the flattened cell
-shape and greater than average size, as opposed to its irregularity.
-
-\fixme{Talk about flattened cells throughout vs. irregular cells.}
+the effect of irregular shape.  We found only a moderate difference in
+the coherence of bipolar oscillations within these stadium shapes and
+the irregular shapes observed by Mannik \emph{et al.}, and have
+observed visually the same qualitative spatially irregular formation
+of maxima in both.  Thus we conclude that the disruption of the MinD
+oscillations seen by Mannik \emph{et al.}  is largely due to the
+flattening of the cell shape, as opposed to its irregularity.
 
 \bibliography{paper}
 
