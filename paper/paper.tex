@@ -30,16 +30,15 @@
   the cell.  While this system usually exhibits robust polar
   oscillations in a variety of cell shapes, new experiments have shown
   that when the cells are mechanically deformed into wide, flattened
-  out, irregular shapes, the robust regularity of this oscillatory
-  behavoir is no longer seen. Here we study widely used stochastic and
-  deterministic models of Min-system simulation within these new cell
-  shapes.  We find that the deterministic model is largely inadequate
-  in reproducing the qualitatively irregular behavoir, while the
-  stochastic model, based on the same differential equations, is able
-  to accurately predict what has been seen.  We also find that it is
-  the flattened nature of the newly deformed cells' shape that is
-  responsible for the irregular oscillation behavoir, as opposed to
-  its irregularity and asymmetry.
+  out, irregular shapes, the spatial regularity of these oscillations
+  breaks down. Here we study widely used stochastic and deterministic
+  models of Min-system simulation within these new cell shapes.  We
+  find that the deterministic model is decidedly inadequate to
+  reproduce the experimentally observed behavoir, while the stochastic
+  model, based on the same differential equations, is able to do so
+  accurately.  We also find that it is the flattening rather than the
+  irregularity and asymmetry of the cell shape that causes the
+  irregular oscillation behavoir.
 \end{abstract}
 
 \maketitle
@@ -100,7 +99,7 @@ MinD-MinE combination, ATPase hydrolysis, and MinD membrane attachment
 that exhibits accurate MinD oscillations in cylindrical
 cells~\cite{huang2003dynamic}. In this model cytoplasmic MinD is
 recruited to the membrane by MinD that is already clustered there
-(following observed non-linear attachement of minD on the cell
+(following observed non-linear attachement of MinD on the cell
 membrane~\cite{hu2002dynamic,shih2002division}), and is stationary
 once attached.  A number of studies have used an approach similar in
 that they do not rely on the ability of MinD to move along the walls
@@ -115,12 +114,12 @@ which means that stochastic fluctuation can be expected to play a
 large role.  To treat this, there have been a number of variations of
 the Huang 2003 model that stochastically simulate the same
 reaction-diffusion equations~\cite{fange2006noise, kerr2006division}.
-These studies largely confirm the results
-of Huang's model when applied to the wild-type, pill-shaped phenotype.
-However, the stochastic models more successfully predict
+These studies largely confirm the results of Huang's deterministic
+model when applied to the wild-type, pill-shaped phenotype.  However,
+the stochastic models are slightly more successful in predicting
 experimentally observed oscillations in round cell
-phenotypes~\cite{fange2006noise, huang2004min}, and enable prediction
-of fluctuations in the predicted
+phenotypes~\cite{fange2006noise, huang2004min}, and they enable
+prediction of fluctuations in the predicted
 behavior~\cite{kruse2007experimentalist}.  Both deterministic and
 stochastic models are widely used throughout systems
 biology~\cite{lawson2013spatial, robb2014stochastic,
@@ -637,10 +636,15 @@ version of the model~\cite{huang2003dynamic} predicts behavior that
 contradicts experimental observations, namely robust and periodic
 bipolar oscillation in irregularly shaped cells, with a minor
 intermediate maximum appearing in shape \emph{B}.  Thus we conclude
-that this method is inconsistent with experiment, and cannot be
-relied upon for predictions of the behavior of the MinD system.
-\fixme{Confirm others? What failures have already been seen? Is this
-  the most dramatic?}
+that this method is inconsistent with experiment, and cannot be relied
+upon for predictions of the behavior of the MinD system.  This is the
+most clear example of the inadequacy of the deterministic simulation
+method in reproducing experimental behavoir of the MinD system to
+date.  Until now the results of deterministic and stochastic
+simulation have largely coincided, with the stochastic method showing
+minor differences in behavoir when compared to deterministic
+models~\cite{kerr2006division, fange2006noise, huang2004min,
+  kruse2007experimentalist}.
 
 We find that flattened but regular and symmetric cells exhibit MinD
 oscillations that are qualitatively similar to the oscillations
