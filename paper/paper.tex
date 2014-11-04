@@ -606,35 +606,65 @@ exhibiting only a factor of two greater decoherence.
 
 \section{Conclusion}
 
-We have simulated flattened cell shapes similar to those observed
-experimentally by Mannik \emph{et al.}, with a stochastic and a
-deterministic version of Huang's widely used reaction-diffusion model.
-We find that the stochastic model predicts experimentally accurate
-qualitative behavoir in both the wild-type, pill-shaped cells (as
-found in previous studies~\cite{fange2006noise, varma2008min,
-  kruse2007experimentalist}), as well as in the new, flattened,
-irregularly shaped cells.  These flattened cells invariably show
-spatially irregular formation of maxima that is also seen
-experimentally.
+We find agreement between our stochastic simulations and experiments
+showing disrupted bipolar MinD oscillation in asymmetric flattened
+E. coli cells~\cite{mannik2012robustness}.  As observed
+experimentally, our simulations predict that MinD maxima will form in
+a spatially irregular sequence of locations.  This result builds upon
+existing results showing that this model is effective in a variety of
+wild-type and mutated cell shapes~\cite{fange2006noise, varma2008min,
+  kruse2007experimentalist}, and reinforces that the stochastic
+variation of Huang's 2003 model~\cite{fange2006noise,
+  kerr2006division} has considerable predictive power beyond the
+standard wild-type cell.
 
-We find that the deterministic model~\cite{huang2003dynamic}
-predicts behavior that contradicts what is seen experimentally, namely
-robust and periodic bipolar oscillation in irregularly shaped cells,
-with a minor intermediate maximum appearing in shape \emph{B}.  Thus
-we conclude that this method is inconsistent with experiment, and
-should not be relied upon for predictions of the behavior of the MinD
-system.
 
-In order to understand the irregular MinD oscillations observed in
-experiments with flattened cells, we simulated flattened ``stadium''
-shapes in order to distinguish between the effect of flattening and
-the effect of irregular shape.  We found only a moderate difference in
-the coherence of bipolar oscillations within these stadium shapes and
-the irregular shapes observed by Mannik \emph{et al.}, and have
-observed visually the same qualitative spatially irregular formation
-of maxima in both.  Thus we conclude that the disruption of the MinD
-oscillations seen by Mannik \emph{et al.}  is largely due to the
-flattening of the cell shape, as opposed to its irregularity.
+%
+%% We have simulated flattened cell shapes similar to those observed
+%% experimentally by Mannik \emph{et al.}, with a stochastic and a
+%% deterministic version of Huang's widely used reaction-diffusion model.
+%% %
+%% We find that the stochastic model predicts experimentally accurate
+%% qualitative behavoir in both the wild-type, pill-shaped cells (as
+%% found in previous studies~\cite{fange2006noise, varma2008min,
+%%   kruse2007experimentalist}), as well as in the new, flattened,
+%% irregularly shaped cells.  These flattened cells invariably show
+%% spatially irregular formation of maxima as has been observed
+%% experimentally.
+
+In contrast to the stochastic model, the original deterministic
+version of the model~\cite{huang2003dynamic} predicts behavior that
+contradicts experimental observations, namely robust and periodic
+bipolar oscillation in irregularly shaped cells, with a minor
+intermediate maximum appearing in shape \emph{B}.  Thus we conclude
+that this method is inconsistent with experiment, and cannot be
+relied upon for predictions of the behavior of the MinD system.
+\fixme{Confirm others? What failures have already been seen? Is this
+  the most dramatic?}
+
+We find that flattened but regular and symmetric cells exhibit MinD
+oscillations that are qualitatively similar to the oscillations
+observed experimentally (and in our simulation) in irregular and
+asymmetric cells.  This demonstrates that asymmetry is not required in
+order to induce spatially irregular MinD oscillations.  In addition,
+the temporal regularity of oscillations is only moderately affected by
+irregularity in the shape of flattened cells.  Thus we conclude
+that it is the flattening of the cells rather than their irregular
+shape that primarily causes the spatial irregularity of maxima which
+is observed by Mannik \emph{et al.}~\cite{mannik2012robustness}.
+%% %
+%% In order to understand the irregular MinD oscillations observed in
+%% experiments with flattened cells, we simulated flattened ``stadium''
+%% shapes in order to distinguish between the effect of flattening and
+%% the effect of irregular shape.
+%% %
+%% We found only a moderate difference in the coherence of bipolar
+%% oscillations within these stadium shapes and the irregular shapes
+%% observed by Mannik \emph{et al.}, and have observed visually the same
+%% qualitative spatially irregular formation of maxima in both.  Thus we
+%% conclude that the disruption of the MinD oscillations seen by Mannik
+%% \emph{et al.}  is largely due to the flattening of the cell shape, as
+%% opposed to its irregularity.
 
 \bibliography{paper}
 
