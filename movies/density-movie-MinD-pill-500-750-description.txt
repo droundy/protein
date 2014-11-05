@@ -1,0 +1,6 @@
+Movie that shows the evolution of MinD density over a 250 second
+interval in a wild-type, pill-shaped cell.  There is one frame for
+every half second of simulation time. Above are results from the
+stochastic model and below are results from the deterministic model.
+The density shown is integrated over the direction normal to the
+screen, so that the data is shown in molecules/micron^2.
