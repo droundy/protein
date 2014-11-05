@@ -40,7 +40,7 @@
 
 \begin{document}
 
-\title{Robustness of MinD oscillation in \textbf{\emph{Escherichia coli}} with
+\title{Robustness of MinD oscillation in \emph{Escherichia coli} with
   diverse cell shapes}
 
 \author{Jeff B. Schulte\affil{1}{Department of Physics, Oregon State University},
@@ -50,6 +50,8 @@ David Roundy\affil{1}{}}
 
 \contributor{Submitted to Proceedings of the National Academy of Sciences
 of the United States of America}
+
+\significancetext{In order to determine blah de blah...}
 
 \maketitle
 
@@ -166,11 +168,11 @@ In this paper we use Huang's 2003 model~\cite{huang2003dynamic} in
 both deterministic and stochastic variants to study flattened cells
 similar to those observed by Mannik~\cite{mannik2009bacterial}.
 
-%% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{reactions}
-%%   \caption{Reactions included in the model of Huang \emph{et
-%%       al.}~\cite{huang2003dynamic}.}\label{fig:reactions}
-%% \end{figure}
+\begin{figure}
+  \includegraphics[width=8.7cm]{reactions}
+  \caption{Reactions included in the model of Huang \emph{et
+      al.}~\cite{huang2003dynamic}.}\label{fig:reactions}
+\end{figure}
 
 
 \section{Model, Methods, and Cell Shapes}\label{sec:model-method-shapes}
@@ -271,26 +273,26 @@ thickness, and volume as the two Mannik shapes.  Viewed from the top
 down, these stadium shapes appear as rectangles with semi-circular end
 caps on the long axis ends.
 
-%% \begin{figure*}
-%%   %\includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot}
-%%   \begin{center}
-%%     \includegraphics[width=0.8\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot}\\
-%%     \vspace{-1.5em}
-%%     \includegraphics[width=0.8\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot}
-%%     \vspace{-1.5em}
-%%   \end{center}
-%%   \caption{Images of the concentration of each protein species in a
-%%     natural pill-shaped bacterium at one-second time intervals. The
-%%     upper plots shows results from the deterministic model and the
-%%     lower shows results from the stochastic model.  The order of
-%%     frames is such that individual MinD proteins begin at the bottom
-%%     of the plot (in the MinD:ATP state in the cytoplasm), and progress
-%%     upward until they reach the MinE:MinD:ATP membrane-bound complex.
-%%     At that point, they will spontaneously dissociate into cytoplasmic
-%%     MinE (the top row) and the starting state of cytoplasmic
-%%     MinD:ADP.}.
-%%   \label{image-p}
-%% \end{figure*}
+\begin{figure*}
+  %\includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot}
+  \begin{center}
+    \includegraphics[height=6.4cm]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot}\\
+    \vspace{-1.5em}
+    \includegraphics[height=6.4cm]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot}
+    \vspace{-1.5em}
+  \end{center}
+  \caption{Images of the concentration of each protein species in a
+    natural pill-shaped bacterium at one-second time intervals. The
+    upper plots shows results from the deterministic model and the
+    lower shows results from the stochastic model.  The order of
+    frames is such that individual MinD proteins begin at the bottom
+    of the plot (in the MinD:ATP state in the cytoplasm), and progress
+    upward until they reach the MinE:MinD:ATP membrane-bound complex.
+    At that point, they will spontaneously dissociate into cytoplasmic
+    MinE (the top row) and the starting state of cytoplasmic
+    MinD:ADP.}.
+  \label{image-p}
+\end{figure*}
 
 Huang \emph{et al.}~\cite{huang2003dynamic} has performed a linear
 stability analysis on a cylindrical model which shows an upper limit
@@ -310,17 +312,19 @@ oscillations.
 
 \section{Naturally Occuring Pill Shaped Cells}
 
-%% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation.pdf}
-%%   \caption{Temporal correlation function of the total MinD found in
-%%     two opposite polar regions of the pill-shaped cell, shown against
-%%     the correlation time.  Data for both the the determinisitic and
-%%     stochastic models are shown.  The stochastic model shows an
-%%     oscillation period of 39.5 seconds and coherence time of 307 seconds.
-%%     The correlation functions are scaled to have the same initial
-%%     value.}
-%%   \label{corr-pill}
-%% \end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[height=6.4cm]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation.pdf}
+  \end{center}
+  \caption{Temporal correlation function of the total MinD found in
+    two opposite polar regions of the pill-shaped cell, shown against
+    the correlation time.  Data for both the the determinisitic and
+    stochastic models are shown.  The stochastic model shows an
+    oscillation period of 39.5 seconds and coherence time of 307 seconds.
+    The correlation functions are scaled to have the same initial
+    value.}
+  \label{corr-pill}
+\end{figure}
 
 We begin with the naturally occuring pill cell shape.  We piece this
 shape together as a cylinder with hemispherical endcaps.  This shape
@@ -411,51 +415,53 @@ about 8 periods and in the case of the determinisitic model oscillate
 indefinitely with complete coherence, indicating that its behavior is
 perfectly periodic.
 
-%% \begin{figure*}
-%%   \centering
-%%   \includegraphics[width=0.8\textwidth]{../paper/plot-ave}
-%%   \caption{We display here arrows depicting successive maxima in space
-%%     and and time overlayed on a color plot of the total MinD density
-%%     averaged over the same time period.  The simulation time covered
-%%     for the flattened cells is 350 seconds, which is the same
-%%     period of time depicted in the experimental data plots of Mannik
-%%     \emph{et al.}~\cite{mannik2012robustness}.  For the wild-type pill
-%%     shape, we only cover 250 seconds, in order to provide a
-%%     useful comparison due to its shorter oscillation period.  The top
-%%     row shows plots published by Mannik of the MinD maxima behavoir
-%%     and the bottom two rows show our simulations using the stochastic
-%%     and deterministic models, respectively.  We simulated
-%%     approximations to the two shapes observed by Mannik, which we call
-%%     \emph{shape A} and \emph{shape B}.  In addition, we studied two
-%%     flattened stadium shapes which we call \emph{stadium A} and
-%%     \emph{stadium B} corresponding in aspect ratio and thickness to
-%%     the two experimental shapes.  The spatial length scale of all the
-%%     figures shown was identical. Each of the flattened cell shapes
-%%     uses the same color scale for the number of proteins per unit
-%%     area.  Finally, we display the natural pill shape, which was also
-%%     featured in Figs.~\ref{image-p} and~\ref{corr-pill}, with a
-%%     different color scale to reflect the thicker cell containing more
-%%     proteins per cross-sectional area.  }
-%%   \label{randst-plot-ave}
-%% \end{figure*}
+\begin{figure*}
+  \centering
+  \includegraphics[width=16cm]{../paper/plot-ave}
+  \caption{We display here arrows depicting successive maxima in space
+    and and time overlayed on a color plot of the total MinD density
+    averaged over the same time period.  The simulation time covered
+    for the flattened cells is 350 seconds, which is the same
+    period of time depicted in the experimental data plots of Mannik
+    \emph{et al.}~\cite{mannik2012robustness}.  For the wild-type pill
+    shape, we only cover 250 seconds, in order to provide a
+    useful comparison due to its shorter oscillation period.  The top
+    row shows plots published by Mannik of the MinD maxima behavoir
+    and the bottom two rows show our simulations using the stochastic
+    and deterministic models, respectively.  We simulated
+    approximations to the two shapes observed by Mannik, which we call
+    \emph{shape A} and \emph{shape B}.  In addition, we studied two
+    flattened stadium shapes which we call \emph{stadium A} and
+    \emph{stadium B} corresponding in aspect ratio and thickness to
+    the two experimental shapes.  The spatial length scale of all the
+    figures shown was identical. Each of the flattened cell shapes
+    uses the same color scale for the number of proteins per unit
+    area.  Finally, we display the natural pill shape, which was also
+    featured in Figs.~\ref{image-p} and~\ref{corr-pill}, with a
+    different color scale to reflect the thicker cell containing more
+    proteins per cross-sectional area.  }
+  \label{randst-plot-ave}
+\end{figure*}
 
-%% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf}
-%%   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf}
-%%   \caption{Temporal correlation function of the total MinD found in
-%%     two opposite polar regions of the shape \emph{A} (above) and the
-%%     stadium \emph{A} (below) cell shapes, shown against the
-%%     correlation time.  Data for both the the determinisitic and
-%%     stochastic models are shown, and the correlation functions are
-%%     scaled to have the same initial value.  For shape \emph{A}, the
-%%     stochastic model shows an oscillation period of 53.1 seconds and
-%%     coherence time of 246 seconds, so that it takes roughly 4.6 periods
-%%     for the behavoir to decohere.  For the stadium \emph{A}, the same
-%%     model shows an oscillation period of 51 seconds and coherence time of
-%%     323 seconds, so that it takes roughly 6.3 periods for the behavoir
-%%     to decohere.}
-%%   \label{fig:corr-pancake-A}
-%% \end{figure}
+\begin{figure}
+  \begin{center}
+    \includegraphics[height=6.4cm]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf}\\
+    \includegraphics[height=6.4cm]{../data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf}
+  \end{center}
+  \caption{Temporal correlation function of the total MinD found in
+    two opposite polar regions of the shape \emph{A} (above) and the
+    stadium \emph{A} (below) cell shapes, shown against the
+    correlation time.  Data for both the the determinisitic and
+    stochastic models are shown, and the correlation functions are
+    scaled to have the same initial value.  For shape \emph{A}, the
+    stochastic model shows an oscillation period of 53.1 seconds and
+    coherence time of 246 seconds, so that it takes roughly 4.6 periods
+    for the behavoir to decohere.  For the stadium \emph{A}, the same
+    model shows an oscillation period of 51 seconds and coherence time of
+    323 seconds, so that it takes roughly 6.3 periods for the behavoir
+    to decohere.}
+  \label{fig:corr-pancake-A}
+\end{figure}
 
 \section{Comparison of Mannik's Experimental and Our Stadium Shapes}
 As described in Section~\ref{sec:model-method-shapes}, we will focus
@@ -540,8 +546,8 @@ correlation times up to 500 seconds, a biologically relevent
 timescale.
 
 %% \begin{figure}
-%%   \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf}
-%%   \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf}
+%%   \includegraphics[width=8.7cm]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf}
+%%   \includegraphics[width=8.7cm]{../data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf}
 %%   \caption{Correlation for B shapes}
 %%   \label{corr-B}
 %% \end{figure}
@@ -624,101 +630,103 @@ that it is the flattening of the cells rather than their irregular
 shape that primarily causes the spatial irregularity of maxima which
 is observed by Mannik \emph{et al.}~\cite{mannik2012robustness}.
 
+%% %\section*{Appendix}
+%% \begin{acknowledgments}
+%% This work was partially supported by
+%% Spanish Ministry of Science and Technology Grant BFM2002-02042 (to D.C. and
+%% J.L.R.) and by National Science Foundation Grand DMS-0245242 (to C.F.).
+%% \end{acknowledgments}
+
 \bibliographystyle{plain}
-\bibliography{paper-one}
+\bibliography{paper-MinD}
 \end{article}
 
-%\section*{Appendix}
-\begin{acknowledgments}
-This work was partially supported by
-Spanish Ministry of Science and Technology Grant BFM2002-02042 (to D.C. and
-J.L.R.) and by National Science Foundation Grand DMS-0245242 (to C.F.).
-\end{acknowledgments}
+%% \clearpage
 
-\begin{figure}
-  \includegraphics[width=\columnwidth]{reactions}
-  \caption{Reactions included in the model of Huang \emph{et
-      al.}~\cite{huang2003dynamic}.}\label{fig:reactions}
-\end{figure}
+%% \begin{figure}
+%%   \includegraphics[width=8.7cm]{reactions}
+%%   \caption{Reactions included in the model of Huang \emph{et
+%%       al.}~\cite{huang2003dynamic}.}\label{fig:reactions}
+%% \end{figure}
 
-\begin{figure*}
-  %\includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot}
-  \begin{center}
-    \includegraphics[width=0.8\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot}\\
-    \vspace{-1.5em}
-    \includegraphics[width=0.8\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot}
-    \vspace{-1.5em}
-  \end{center}
-  \caption{Images of the concentration of each protein species in a
-    natural pill-shaped bacterium at one-second time intervals. The
-    upper plots shows results from the deterministic model and the
-    lower shows results from the stochastic model.  The order of
-    frames is such that individual MinD proteins begin at the bottom
-    of the plot (in the MinD:ATP state in the cytoplasm), and progress
-    upward until they reach the MinE:MinD:ATP membrane-bound complex.
-    At that point, they will spontaneously dissociate into cytoplasmic
-    MinE (the top row) and the starting state of cytoplasmic
-    MinD:ADP.}.
-  \label{image-p}
-\end{figure*}
+%% \begin{figure*}
+%%   %\includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot}
+%%   \begin{center}
+%%     \includegraphics[width=0.8\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot}\\
+%%     \vspace{-1.5em}
+%%     \includegraphics[width=0.8\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot}
+%%     \vspace{-1.5em}
+%%   \end{center}
+%%   \caption{Images of the concentration of each protein species in a
+%%     natural pill-shaped bacterium at one-second time intervals. The
+%%     upper plots shows results from the deterministic model and the
+%%     lower shows results from the stochastic model.  The order of
+%%     frames is such that individual MinD proteins begin at the bottom
+%%     of the plot (in the MinD:ATP state in the cytoplasm), and progress
+%%     upward until they reach the MinE:MinD:ATP membrane-bound complex.
+%%     At that point, they will spontaneously dissociate into cytoplasmic
+%%     MinE (the top row) and the starting state of cytoplasmic
+%%     MinD:ADP.}.
+%%   \label{image-p}
+%% \end{figure*}
 
-\begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation.pdf}
-  \caption{Temporal correlation function of the total MinD found in
-    two opposite polar regions of the pill-shaped cell, shown against
-    the correlation time.  Data for both the the determinisitic and
-    stochastic models are shown.  The stochastic model shows an
-    oscillation period of 39.5 seconds and coherence time of 307 seconds.
-    The correlation functions are scaled to have the same initial
-    value.}
-  \label{corr-pill}
-\end{figure}
+%% \begin{figure}
+%%   \includegraphics[width=8.7cm]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/correlation.pdf}
+%%   \caption{Temporal correlation function of the total MinD found in
+%%     two opposite polar regions of the pill-shaped cell, shown against
+%%     the correlation time.  Data for both the the determinisitic and
+%%     stochastic models are shown.  The stochastic model shows an
+%%     oscillation period of 39.5 seconds and coherence time of 307 seconds.
+%%     The correlation functions are scaled to have the same initial
+%%     value.}
+%%   \label{corr-pill}
+%% \end{figure}
 
-\begin{figure*}
-  \centering
-  \includegraphics[width=0.8\textwidth]{../paper/plot-ave}
-  \caption{We display here arrows depicting successive maxima in space
-    and and time overlayed on a color plot of the total MinD density
-    averaged over the same time period.  The simulation time covered
-    for the flattened cells is 350 seconds, which is the same
-    period of time depicted in the experimental data plots of Mannik
-    \emph{et al.}~\cite{mannik2012robustness}.  For the wild-type pill
-    shape, we only cover 250 seconds, in order to provide a
-    useful comparison due to its shorter oscillation period.  The top
-    row shows plots published by Mannik of the MinD maxima behavoir
-    and the bottom two rows show our simulations using the stochastic
-    and deterministic models, respectively.  We simulated
-    approximations to the two shapes observed by Mannik, which we call
-    \emph{shape A} and \emph{shape B}.  In addition, we studied two
-    flattened stadium shapes which we call \emph{stadium A} and
-    \emph{stadium B} corresponding in aspect ratio and thickness to
-    the two experimental shapes.  The spatial length scale of all the
-    figures shown was identical. Each of the flattened cell shapes
-    uses the same color scale for the number of proteins per unit
-    area.  Finally, we display the natural pill shape, which was also
-    featured in Figs.~\ref{image-p} and~\ref{corr-pill}, with a
-    different color scale to reflect the thicker cell containing more
-    proteins per cross-sectional area.  }
-  \label{randst-plot-ave}
-\end{figure*}
+%% \begin{figure*}
+%%   \centering
+%%   \includegraphics[width=0.8\textwidth]{../paper/plot-ave}
+%%   \caption{We display here arrows depicting successive maxima in space
+%%     and and time overlayed on a color plot of the total MinD density
+%%     averaged over the same time period.  The simulation time covered
+%%     for the flattened cells is 350 seconds, which is the same
+%%     period of time depicted in the experimental data plots of Mannik
+%%     \emph{et al.}~\cite{mannik2012robustness}.  For the wild-type pill
+%%     shape, we only cover 250 seconds, in order to provide a
+%%     useful comparison due to its shorter oscillation period.  The top
+%%     row shows plots published by Mannik of the MinD maxima behavoir
+%%     and the bottom two rows show our simulations using the stochastic
+%%     and deterministic models, respectively.  We simulated
+%%     approximations to the two shapes observed by Mannik, which we call
+%%     \emph{shape A} and \emph{shape B}.  In addition, we studied two
+%%     flattened stadium shapes which we call \emph{stadium A} and
+%%     \emph{stadium B} corresponding in aspect ratio and thickness to
+%%     the two experimental shapes.  The spatial length scale of all the
+%%     figures shown was identical. Each of the flattened cell shapes
+%%     uses the same color scale for the number of proteins per unit
+%%     area.  Finally, we display the natural pill shape, which was also
+%%     featured in Figs.~\ref{image-p} and~\ref{corr-pill}, with a
+%%     different color scale to reflect the thicker cell containing more
+%%     proteins per cross-sectional area.  }
+%%   \label{randst-plot-ave}
+%% \end{figure*}
 
-\begin{figure}
-  \includegraphics[width=\columnwidth]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf}
-  \includegraphics[width=\columnwidth]{../data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf}
-  \caption{Temporal correlation function of the total MinD found in
-    two opposite polar regions of the shape \emph{A} (above) and the
-    stadium \emph{A} (below) cell shapes, shown against the
-    correlation time.  Data for both the the determinisitic and
-    stochastic models are shown, and the correlation functions are
-    scaled to have the same initial value.  For shape \emph{A}, the
-    stochastic model shows an oscillation period of 53.1 seconds and
-    coherence time of 246 seconds, so that it takes roughly 4.6 periods
-    for the behavoir to decohere.  For the stadium \emph{A}, the same
-    model shows an oscillation period of 51 seconds and coherence time of
-    323 seconds, so that it takes roughly 6.3 periods for the behavoir
-    to decohere.}
-  \label{fig:corr-pancake-A}
-\end{figure}
+%% \begin{figure}
+%%   \includegraphics[width=8.7cm]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf}
+%%   \includegraphics[width=8.7cm]{../data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf}
+%%   \caption{Temporal correlation function of the total MinD found in
+%%     two opposite polar regions of the shape \emph{A} (above) and the
+%%     stadium \emph{A} (below) cell shapes, shown against the
+%%     correlation time.  Data for both the the determinisitic and
+%%     stochastic models are shown, and the correlation functions are
+%%     scaled to have the same initial value.  For shape \emph{A}, the
+%%     stochastic model shows an oscillation period of 53.1 seconds and
+%%     coherence time of 246 seconds, so that it takes roughly 4.6 periods
+%%     for the behavoir to decohere.  For the stadium \emph{A}, the same
+%%     model shows an oscillation period of 51 seconds and coherence time of
+%%     323 seconds, so that it takes roughly 6.3 periods for the behavoir
+%%     to decohere.}
+%%   \label{fig:corr-pancake-A}
+%% \end{figure}
 
 
 \end{document}
