@@ -75,7 +75,7 @@ for video_num in range(number_of_videos):
 #        print '\nHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHhello? end_file = %d ',end_file
     file_names = ""
     for i in range(start_file,end_file):
-        file_names += '.' + job_string + protein_name + '/images/frame-%05d.png '%(i)
+        file_names += '-i .' + job_string + protein_name + '/images/frame-%05d.png '%(i)
     cell_shape = ''
     if load.f_shape == 'p':
         cell_shape = 'pill-'
@@ -90,12 +90,15 @@ for video_num in range(number_of_videos):
         if f_param2 == '2.92':
             cell_shape = 'stadium-B-'
     print cell_shape
+    os.system('avconv -r 8 '+file_names+ './movies/density-movie-total-MinD-'+cell_shape\
+                  +str(int(start_file*dump_time_step))+ '-' +str(int(end_file*dump_time_step))+'.avi')
     # os.system('convert -delay 20 '+file_names+ '.' + job_string + 'plots/density-movie-total-MinD-'+\
     #               +str(int(start_file*dump_time_step))+ '-' +str(int(end_file*dump_time_step))+'.mp4')
-    os.system('convert -delay 30 '+file_names+ './movies/density-movie-total-MinD-'+cell_shape\
-                  +str(int(start_file*dump_time_step))+ '-' +str(int(end_file*dump_time_step))+'.mp4')
+    # os.system('ffmpeg -i '+file_names+ '-r 24 ./movies/density-movie-total-MinD-'+cell_shape\
+    #               +str(int(start_file*dump_time_step))+ '-' +str(int(end_file*dump_time_step))+'.avi')
 
-
+    # convert -delay 30 '+file_names+ './movies/density-movie-total-MinD-'+cell_shape\
+    #               +str(int(start_file*dump_time_step))+ '-' +str(int(end_file*dump_time_step))+'.avi')
 
 
 # ./data/shape-"+f_shape+"/plots/"+load.debug_str+load.hires_str \
