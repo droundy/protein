@@ -101,8 +101,21 @@ while (time_left > 0):
                                                        end_time = time_stochastic_is_behind + next_end_time)]
     exact_video_list = exact_video_list + [load.data(protein=protein_name, sim_type='exact',start_time = input_start_time + video_number*video_limit,
                                          end_time = next_end_time)]
+    print 'e',next_end_time
+    print 's',input_start_time
+    print ''
     time_left -= video_limit
     video_number += 1
+
+
+# for lis in full_video_list:
+#     print lis.dataset.shape
+#     for vid in lis.dataset:
+#         print vid[3]
+#         #for line in vid:
+#             #print line
+#         print '\n\n\n'
+# exit(0)
 
 
 # print "video number = ",video_number
@@ -204,6 +217,10 @@ def contourplt(full_protein,exact_protein,video_number):
     print len(smeared_data[0][0])
 #generate a sequence of .png's for each file (printed time step). these will be used to create a gif.
     for index in range(int(input_start_time/dump_time_step), int(input_start_time/dump_time_step) + len(exact_protein.dataset), 1):
+        print index
+#        print smeared_data[index-int(input_start_time/dump_time_step)][4]
+        # print exact_protein.dataset[index-int(input_start_time/dump_time_step)][4]
+        # print '\n\n\n'
         #page = protein.dataset[k]
         # print './data/shape-'+f_shape+'/plots/images/'+load.debug_str+load.hires_str+load.slice_str+'tp_'+str(k)+'-'+str(protein.protein)+ \
         #                 '-'+f_shape+'-'+f_param1+'-'+f_param2+'-'+f_param3+'-'+f_param4+'-'+dens_factor+'-'+sim_type+'.png'
@@ -238,32 +255,33 @@ def contourplt(full_protein,exact_protein,video_number):
         plt.xlabel('microns')
         CS = plt.contourf(Z, Y, exact_protein.dataset[index-int(input_start_time/dump_time_step)], \
                               cmap=plt.cm.jet,origin='lower',levels=my_exact_color_levels)
+        print "just plotted index ",index
         plt.clim(exact_minval,exact_maxval)
-        plt.title("Deterministic Simulation of 3.00 $\mu m$ Pill Shaped Cell")
+        plt.title("Deterministic simulation of the pill shaped cell")
         cbar = plt.colorbar(CS)
 
         if load.f_shape == 'p':
             big_sub.set_title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))),x=0.44,y=1.01)
-            sub1.set_title("Stochastic Simulation of 3.00 $\mu m$ Pill Shaped Cell")
-            sub2.set_title("Deterministic Simulation of 3.00 $\mu m$ Pill Shaped Cell")
+            sub1.set_title("Stochastic simulation of pill shaped cell")
+            sub2.set_title("Deterministic simulation of pill shaped cell")
         elif load.f_shape == 'randst':
             if f_param4 == '95.00':
                 big_sub.set_title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))),x=0.60,y=1.06)
-                sub1.set_title("Stochastic Simulation of shape-A cell")
-                sub2.set_title("Deterministic Simulation of shape-A cell")
+                sub1.set_title("Stochastic simulation of shape-A cell")
+                sub2.set_title("Deterministic simulation of shape-A cell")
             if f_param4 == '94.00':
                 big_sub.set_title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))),x=0.50,y=1.06)
-                sub1.set_title("Stochastic Simulation of shape-B cell")
-                sub2.set_title("Deterministic Simulation of shape-B cell")
+                sub1.set_title("Stochastic simulation of shape-B cell")
+                sub2.set_title("Deterministic simulation of shape-B cell")
         elif load.f_shape == 'stad':
             if f_param2 == '2.35':
                 big_sub.set_title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))),x=0.50,y=1.06)
-                sub1.set_title("Stochastic Simulation of stadium-A cell")
-                sub2.set_title("Deterministic Simulation of stadium-A cell")
+                sub1.set_title("Stochastic simulation of stadium-A cell")
+                sub2.set_title("Deterministic simulation of stadium-A cell")
             if f_param2 == '2.92':
                 big_sub.set_title('%d seconds'%int(dump_time_step*(index - int(input_start_time/dump_time_step))),x=0.44,y=1.06)
-                sub1.set_title("Stochastic Simulation of stadium-B cell")
-                sub2.set_title("Deterministic Simulation of stadium-B cell")
+                sub1.set_title("Stochastic simulation of stadium-B cell")
+                sub2.set_title("Deterministic simulation of stadium-B cell")
 
         #fig.subplots_adjust(right=0.8)
         #cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
@@ -287,7 +305,8 @@ def contourplt(full_protein,exact_protein,video_number):
             os.makedirs(dir_name)
         name = '.' + full_job_string + protein_name + '/images/frame-%05d.png'%(index)
         print name
-        plt.savefig(name,dpi=50)
+        plt.savefig(name,dpi=150)
+        #plt.show()
     return 0
 
 # contourplt(NDE)
