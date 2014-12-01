@@ -1,11 +1,19 @@
 protein
 =======
+If seeing the project for the first time, be sure to check out the avi movies (in the movies directory)!
+
+Make with make.
 
 protein_microscopy
 --------------------------------
 The command line argument syntax for running a simulation is as follows:
 
-    ./protein_microscopy shape A B C D density_lopsidedness -optional_flags
+    ./protein_microscopy shape A B C D density_lopsidedness size_modifier sim_type -optional_flags
+
+example:
+randst 0.25 16.00 26.00 94.00 15.00 1.3 full_array -dump
+
+sim_type can be full_array or exact
 
 Where the optional flags are:
 
@@ -18,9 +26,9 @@ The possible shapes are:
     p: pill
     randst: one of 4 custom shapes, specified by argument D
     triangle: triangle
-    st: stadium shape. think a flattened pill.
+    stad: stadium shape. think a flattened pill.
 
-The parameters A, B, C, and D have different meanings for each shape. They are:
+The parameters A, B, C, and D have different meanings for each shape.
 
 batch submit
 --------------------------------
@@ -44,12 +52,5 @@ It will only run the jobs on slurm if the srun command is present (after ./batch
 
 plotting programs
 --------------------------------
-The three main plotting programs used are located in pyplots. They are box_plot.py, arrow_plot.py, and time_map.py. They take command line arguments in exactly the same way as running protein_microscopy. For example:
 
-   python pyplots/box_plot.py p 4.00 0.50 0.00 0.00 15.00 -slice -hires
-   python pyplots/box_plot.py p 4.00 0.50 0.00 0.00 15.00 -hires
-
-   python pyplots/time_map.py p 4.00 0.50 0.00 0.00 15.00 -slice -hires
-   python pyplots/time_map.py p 4.00 0.50 0.00 0.00 15.00 -slice
-
-Each plot works this way.
+There are a number of different plotting programs, they are in the pyplots directory.
