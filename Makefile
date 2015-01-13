@@ -5,7 +5,7 @@ CXXFLAGS = -g -O2 -Wall -Werror
 
 #all: protein_microscopy paper/paper.pdf test-weights
 
-all: protein_microscopy paper/paper-MinD.pdf test-weights
+all: protein_microscopy paper/plos.pdf paper/paper-MinD.pdf test-weights
 
 test-weights: test-weights.cpp weights.cpp weights.h
 	g++ ${CXXFLAGS} -o test-weights test-weights.cpp weights.cpp
@@ -31,6 +31,9 @@ ALL_FIGURES = \
 # paper/paper.pdf: paper/paper.tex ${ALL_FIGURES}
 # 	echo ${ALL_FIGURES}
 # 	cd paper && pdflatex paper.tex && bibtex paper && pdflatex paper.tex && pdflatex paper.tex
+
+paper/plos.pdf: paper/paper-MinD.pdf paper/plos.tex
+	cd paper && pdflatex plos.tex && bibtex plos && pdflatex plos.tex && pdflatex plos.tex
 
 paper/paper-MinD.pdf: paper/paper-MinD.tex ${ALL_FIGURES}
 	echo ${ALL_FIGURES}
