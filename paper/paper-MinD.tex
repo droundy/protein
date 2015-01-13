@@ -11,6 +11,7 @@
 %\usepackage[dvips]{graphicx}
 %\usepackage{pnastwoF}
 \usepackage{amssymb,amsfonts,amsmath}
+\usepackage{cite}
 
 \newcommand{\red}[1]{{\bf \color{red} #1}}
 \newcommand{\blue}[1]{{\bf \color{blue} #1}}
@@ -40,8 +41,8 @@
 
 \begin{document}
 
-\title{Robustness of MinD oscillation in \emph{Escherichia coli} with
-  diverse cell shapes}
+\title{Theoretical prediction of disrupted Min oscillation in
+  flattened \emph{Escherichia coli}}
 
 \author{Jeff B. Schulte\affil{1}{Department of Physics, Oregon State University},
 Rene W. Zeto\affil{1}{}
@@ -70,18 +71,20 @@ of the United States of America}
 \begin{abstract}
   The dynamics of the Min-protein system help \emph{Escherichia coli}
   regulate the process of cell division by identifying the center of
-  the cell.  While this system usually exhibits robust polar
-  oscillations in a variety of cell shapes, new experiments have shown
-  that when the cells are mechanically deformed into wide, flattened
-  out, irregular shapes, the spatial regularity of these oscillations
-  breaks down. Here we study widely used stochastic and deterministic
-  models of Min-system simulation within these new cell shapes.  We
-  find that the deterministic model is decidedly inadequate to
-  reproduce the experimentally observed behavoir, while the stochastic
-  model, based on the same differential equations, is able to do so
-  accurately.  We also find that it is the flattening rather than the
-  irregularity and asymmetry of the cell shape that causes the
-  irregular oscillation behavoir.
+  the cell.  While this system usually exhibits robust bipolar
+  oscillations in a variety of cell shapes, recent experiments have
+  shown that when the cells are mechanically deformed into wide,
+  flattened out, irregular shapes, the spatial regularity of these
+  oscillations breaks down. We employ widely used stochastic and
+  deterministic models of the Min system to simulate cells with flattened
+  shapes.  The deterministic model predicts strong bipolar
+  oscillations, in contradiction with the experimentally observed
+  behavior, while the stochastic model, which is based on the same
+  reaction-diffusion equations, does predict spatially irregular
+  oscillations as observed in experiment.  We further report
+  simulations of symmetric but flattened cell shapes, and find that it
+  is the flattening rather than the asymmetry of the cell shapes that
+  causes the irregular oscillation behavior.
 \end{abstract}
 
 \keywords{MinD | \emph{Escherichia coli} | stochastic | deterministic }
@@ -96,15 +99,15 @@ with lopsided volumes.  Instrumental to this process in
 the cell wall in the center region of the cell, helping dictate the
 plane of division~\cite{adams2009bacterial,
   lutkenhaus2007assembly}. Previous experimental studies have shown
-that the MinC protein, known to inhibit the FtZ
+that the MinC protein, known to inhibit the FtsZ
 polymer~\cite{shen2010examination}, exhibits regular pole to pole
 oscillatory behavior between both ends of the wild-type pill-shaped
 cell.  It thus has a higher time averaged concentration in the cell
-poles than in the center region, which aides in preventing the FtZ
+poles than in the center region, which aides in preventing the FtsZ
 from developing in the wrong region.  The MinC is recruited to these
 poles by MinD, which itself interacts with another protein, MinE, in a
 system which exhibits pole-to-pole oscillatory
-behavoir~\cite{shapiro2009and, yu1999ftsz,
+behavior~\cite{shapiro2009and, yu1999ftsz,
   meacci2005min,huang2003dynamic,kerr2006division,mannik2009bacterial}.
 %% \cite{hu1999topological, fu2001mine, shapiro2009and,
 %%   yu1999ftsz, raskin1999rapid, meacci2005min, raskin1999minde}.
@@ -129,11 +132,15 @@ $5\micron$) flattened cells that when viewed from the top down have
 irregular and asymmetric shapes.  While these cells are still able to
 divide into surprisingly equal volumes, the MinD oscillations in these
 cells are irregular, both temporally and spatially. Seen with
-flourescent microscopy, the MinD maximize in multiple locations within
+fluorescent microscopy, the MinD maximize in multiple locations within
 the cell, in a seemingly random sequence. These experiments allow for
 an opportunity to test MinD simulation models against more extreme
 cases than have been seen thus far.
 
+\fixme{THE FOLLOWING NEEDS much CHANGING.  Many reaction-diffusion
+  models have been proposed... There are several newer models that
+  incorporate new experimental results.}
+%
 A number of models of the MinD protein system have been developed,
 which accurately describe the dynamics using simulations of
 reaction-diffusion equations.
@@ -146,7 +153,7 @@ MinD-MinE combination, ATPase hydrolysis, and MinD membrane attachment
 that exhibits accurate MinD oscillations in cylindrical
 cells~\cite{huang2003dynamic}. In this model cytoplasmic MinD is
 recruited to the membrane by MinD that is already clustered there
-(following observed non-linear attachement of MinD on the cell
+(following observed non-linear attachment of MinD on the cell
 membrane~\cite{hu2002dynamic,shih2002division}), and is stationary
 once attached.  A number of studies have used an approach similar in
 that they do not rely on the ability of MinD to move along the walls
@@ -159,7 +166,7 @@ and attraction on the cell membrane~\cite{kruse2002dynamic,
 There are only on the order of 1000 MinD proteins in a given cell,
 which means that stochastic fluctuation can be expected to play a
 large role.  To treat this, there have been a number of variations of
-the Huang 2003 model that stochastically simulate the same
+the Huang 2003 model that stochastically simulate the same \fixme{similar}
 reaction-diffusion equations~\cite{fange2006noise, kerr2006division}.
 These studies largely confirm the results of Huang's deterministic
 model when applied to the wild-type, pill-shaped phenotype.  However,
@@ -180,7 +187,9 @@ that mean, and reduces sensitivity to initial conditions.
 %%   oguz2014stochastic, fu2013deterministic, rudiger2014stochastic}, and
 In this paper we use Huang's 2003 model~\cite{huang2003dynamic} in
 both deterministic and stochastic variants to study flattened cells
-similar to those observed by Mannik~\cite{mannik2009bacterial}.
+similar to those observed by Mannik \emph{et
+  al.}~\cite{mannik2009bacterial}.  \fixme{Some weak
+  justification... it has been widely used.}
 
 \begin{figure}
   \includegraphics[width=8.7cm]{reactions}
@@ -196,7 +205,7 @@ reaction process.  The cytoplasmic MinD:ADP complex undergoes
 nucleotide exchange and is changed into the MinD:ATP complex.  This
 will naturally diffuse and attach to the cell membrane.  A cytoplasmic
 MinE will attach to the wall bound MinD:ATP complex and after a time
-will activate ATP hydrolosis.  This breaks up the complex, releasing
+will activate ATP hydrolysis.  This breaks up the complex, releasing
 MinE, phosphate, and MinD:ADP back into the cytoplasm.  The MinD:ADP
 will undergo nucleotide exchange and begin again the cyclic process.
 The model is defined by a set of five reaction-diffusion equations:
@@ -224,18 +233,18 @@ The model is defined by a set of five reaction-diffusion equations:
 \end{multline}
 where $\rho$ is cytoplasmic protein density (proteins$/\micron^{3}$), $\sigma$
 is membrane bound density (proteins$/\micron^{2}$), $\mathcal{D}_D$ and
-$\mathcal{D}_{E}$ are the diffusions constants for MinD and MinE,
+$\mathcal{D}_{E}$ are the diffusion constants for MinD and MinE,
 respectively, $k_D^{\textrm{ADP $\rightarrow$ ATP}}$ is the rate of
 conversion from MinD:ADP to the MinD:ATP complex, $k_D$ is the rate of
-MinD:ATP attachement to the membrane when no protein is already
+MinD:ATP attachment to the membrane when no protein is already
 attached there, $k_{dD}$ is the increase of this rate when MinD:ATP is
-present on the membrane, $k_{de}$ is the rate of hydrolisis of the
+present on the membrane, $k_{de}$ is the rate of hydrolysis of the
 MinD:MinE:ATP complex, $k_E$ is the rate of cytoplasmic MinE binding
 to membrane bound MinD:ATP complex, and $d_w$ is the distance from the
 point in space to the closest wall.  The Dirac delta function
 $\delta(d_w)$, which we need to describe the location of the membrane,
 has units of $\micron^{-1}$ and is zero everywhere except at the wall.
-Equations \ref{eq:d-on-wall} and \ref{eq:FifthPDE} are only relevent
+Equations \ref{eq:d-on-wall} and \ref{eq:FifthPDE} are only relevant
 at the membrane because the membrane-bound density values have no
 meaning in the cytoplasm.
 
@@ -258,7 +267,7 @@ $1,000/\micron$ and $350/\micron$, respectively, in a cylindrical cell
 of radius $0.5\micron$, and in our (non-cylindrical) cells we use the
 same number of proteins per unit volume.  These concentration values
 are $1273\micron^{-3}$ and $446\micron^{-3}$, respectively. We perform
-simulations with a 3D grid in cartesian coordinates that has a grid
+simulations with a 3D grid in Cartesian coordinates that has a grid
 spacing of .05\micron.
 
 We have performed both a numerical, deterministic model simulation
@@ -272,7 +281,7 @@ We mean to investigate the geometric limits of the Min system
 oscillations as observed by Mannik \emph{et
   al.}~\cite{mannik2012robustness}, so we have modeled the Min system
 in several cell shapes and sizes.  Here we present a selection of
-these, beginning with naturally occuring pill-shaped cells, followed
+these, beginning with naturally occurring pill-shaped cells, followed
 by a number of flattened out shapes which reflect the experiments of
 Mannik \emph{et al.}, in which bacteria are confined within a thin
 slit of height $0.25\micron$ ~\cite{mannik2012robustness}.  Viewed
@@ -281,11 +290,13 @@ from the side they have at their edges a semicircular protrusion (one
 may imagine the shape of a pancake).
 %
 In this paper we focus on four specific flattened cell shapes.  Two of
-these shapes replicate those published by Mannik, and the other two
-are `stadium' shapes that respectively have the same aspect ratio,
-thickness, and volume as the two Mannik shapes.  Viewed from the top
-down, these stadium shapes appear as rectangles with semi-circular end
-caps on the long axis ends.
+these shapes replicate those published by Mannik \emph{et al.}, and
+the other two are `stadium' shapes that respectively have the same
+aspect ratio, thickness, and volume as the two cell shapes
+experimentally observed by Mannik \emph{et
+  al.}~\cite{mannik2012robustness}.  Viewed from the top down, these
+stadium shapes appear as rectangles with semi-circular end caps on the
+long axis ends.
 
 \begin{figure*}
   %\includegraphics[width=\textwidth]{../data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/image-plot}
@@ -311,7 +322,7 @@ caps on the long axis ends.
 Huang \emph{et al.}~\cite{huang2003dynamic} has performed a linear
 stability analysis on a cylindrical model which shows an upper limit
 on a steady state solution of a $2\micron$ half wavelength.  Cells
-with dimensions longer than this show spontaneous oscillatory behavoir
+with dimensions longer than this show spontaneous oscillatory behavior
 in this direction, while cells that are shorter relax into a
 motionless steady state.  We have similarly performed a linear
 stability analysis on an infinite slab with a thickness equal to that
@@ -324,7 +335,7 @@ The deterministic model relaxes into a motionless state and the
 stochastic model exhibits random fluctuations without spatial
 oscillations.
 
-\section{Naturally Occuring Pill Shaped Cells}
+\section{Naturally Occurring Pill Shaped Cells}
 
 \begin{figure}
   \begin{center}
@@ -332,7 +343,7 @@ oscillations.
   \end{center}
   \caption{Temporal correlation function of the total MinD found in
     two opposite polar regions of the pill-shaped cell, shown against
-    the correlation time.  Data for both the the determinisitic and
+    the correlation time.  Data for both the the deterministic and
     stochastic models are shown.  The stochastic model shows an
     oscillation period of 39.5 seconds and coherence time of 307 seconds.
     The correlation functions are scaled to have the same initial
@@ -340,8 +351,8 @@ oscillations.
   \label{corr-pill}
 \end{figure}
 
-We begin with the naturally occuring pill cell shape.  We piece this
-shape together as a cylinder with hemispherical endcaps.  This shape
+We begin with the naturally occurring pill cell shape.  We piece this
+shape together as a cylinder with hemispherical end caps.  This shape
 follows the early simulations of Huang \emph{et al.} but differs in
 that we have added the end caps for a more natural shape, expecting
 similar results.
@@ -351,8 +362,8 @@ proteins at each stage of the reaction cycle. Deterministic simulation
 data is shown above and stochastic simulation data is shown below.
 The cells shown are $4\micron$ in length, measured from end to end.
 We have `smeared out' the stochastic concentrations in a manner meant
-to reproduce the images shown by diffraction limited flourescence
-microscopy.  We do so using the two dimensional gaussian approximation
+to reproduce the images shown by diffraction limited fluorescence
+microscopy.  We do so using the two dimensional Gaussian approximation
 developed by Zhang \emph{et al.}~\cite{zhang2007gaussian}.  In this
 approximation we use a numerical aperture value of 1.3, which is the
 same as used by Mannik experimentally, and a wavelength of $650nm$.
@@ -374,8 +385,8 @@ membrane-bound MinD.  This process can be seen in the form of the
 well-known ``MinE rings'' (actually, MinE bound to MinD on the
 membrane).  These rings are visible in the deterministic model plots
 as a green band on the walls from 0 seconds to 4 seconds (and later
-from 15 to 23 seconds).  The appearence of these rings in the
-deterministic model along side their less obvious appearence in the
+from 15 to 23 seconds).  The appearance of these rings in the
+deterministic model along side their less obvious appearance in the
 stochastic model highlights an advantage of the deterministic model:
 the idealization of deterministic data allows one to see patterns in
 the averaged behavior that might otherwise be missed.  In the
@@ -403,10 +414,11 @@ results in a protein distribution that is less spatially regular than
 the deterministic model predicts.  In fact, when viewed as a movie
 (see supplementary material), the stochastic model exhibits a ``starry
 night'' effect, as recruitment leads to clusters of MinD forming on
-the wall and then subsequently dissipating.  This naturally leads to
-irregularity in the temporal periodicity of the system, which we
-quantify by examining the temporal correlation function of the total
-MinD found in two opposite polar regions.
+the wall and then subsequently dissipating.  \fixme{Talk about
+  membrane diffusion blurring out the starry night.}  This naturally
+leads to irregularity in the temporal periodicity of the system, which
+we quantify by examining the temporal correlation function of the
+total MinD found in two opposite polar regions.
 %
 This correlation function, which is displayed in Fig.~\ref{corr-pill},
 is given by
@@ -425,7 +437,7 @@ model, given by the equation
 \end{equation}
 where $T$ is the period and $\tau_c$ is the coherence time.  In the
 case of the stochastic model the pill exhibits coherence times of
-about 8 periods and in the case of the determinisitic model oscillate
+about 8 periods and in the case of the deterministic model oscillate
 indefinitely with complete coherence, indicating that its behavior is
 perfectly periodic.
 
@@ -440,7 +452,7 @@ perfectly periodic.
     \emph{et al.}~\cite{mannik2012robustness}.  For the wild-type pill
     shape, we only cover 250 seconds, in order to provide a
     useful comparison due to its shorter oscillation period.  The top
-    row shows plots published by Mannik of the MinD maxima behavoir
+    row shows plots published by Mannik \emph{et al.} of the MinD maxima behavior
     and the bottom two rows show our simulations using the stochastic
     and deterministic models, respectively.  We simulated
     approximations to the two shapes observed by Mannik, which we call
@@ -470,9 +482,9 @@ perfectly periodic.
     scaled to have the same initial value.  For shape \emph{A}, the
     stochastic model shows an oscillation period of 53.1 seconds and
     coherence time of 246 seconds, so that it takes roughly 4.6 periods
-    for the behavoir to decohere.  For the stadium \emph{A}, the same
+    for the behavior to decohere.  For the stadium \emph{A}, the same
     model shows an oscillation period of 51 seconds and coherence time of
-    323 seconds, so that it takes roughly 6.3 periods for the behavoir
+    323 seconds, so that it takes roughly 6.3 periods for the behavior
     to decohere.}
   \label{fig:corr-pancake-A}
 \end{figure}
@@ -481,14 +493,14 @@ perfectly periodic.
 As described in Section~\ref{sec:model-method-shapes}, we will focus
 on simulation of four illustrative flattened cell shapes: two shapes
 created to replicate those shapes observed experimentally by
-Mannik~\cite{mannik2012robustness} (shape~\emph{A} and
+Mannik \emph{et al.}~\cite{mannik2012robustness} (shape~\emph{A} and
 shape~\emph{B}), and for comparison two symmetrical stadium shapes
 that have the identical aspect ratio, thickness and volume (stadium
 \emph{A} and stadium \emph{B}), shown in Figure~\ref{randst-plot-ave}.
 These stadium shapes enable us to distinguish between the effect of
 flattening the cell and the cell shape's irregularity and asymmetry.
 We note that shape \emph{B} is more irregular than shape \emph{A}, and
-in particular features a prominant region of concavity on its
+in particular features a prominent region of concavity on its
 left-hand side.  For each of these shapes (in addition to the
 wild-type pill shape discussed previously) we have simulated in excess
 of 15000 seconds (over 4 hours) of evolution of the MinD system using
@@ -497,12 +509,12 @@ and in excess of 100000 seconds (over 27 hours) using the stochastic
 model.
 
 From each of these flattened simulations, we have chosen a typical 350
-second segment to compare with the puplished results of
-Mannik~\cite{mannik2012robustness}, exemplified in arrow plots in
+second segment to compare with the published results of
+Mannik \emph{et al.}~\cite{mannik2012robustness}, exemplified in arrow plots in
 which the arrow heads show the location of sequential MinD maxima
 within the cell (in Fig.~\ref{randst-plot-ave}).  In addition to
 arrows between successive maxima in space and time, we plot as a
-colored background the density of MinD protiens averaged over the same
+colored background the density of MinD proteins averaged over the same
 time period.  We note that we have manually verified that our
 (computer-generated) arrow plots also reflect a human interpretation
 of a movie of the same data.  Finally, for comparison we present the
@@ -533,30 +545,30 @@ observations of the locations of density maxima of the MinD protein.
 The predictions of the stochastic model are roughly similar to the
 experimental results in terms of irregularity of the locations of
 maxima, although there are locations on the edges of the cells where
-experiment shows maxima occuring that we never see in our simulations,
+experiment shows maxima occurring that we never see in our simulations,
 suggesting that the model does not precisely reflect the experiment.
 We also note that the stadium shapes in Fig.~\ref{randst-plot-ave}
 appear to have maxima location irregularity that is qualitatively
-similar to our Mannik shapes and to experiment.
+similar to our irregular shapes and to experiment.
 
 However Fig.~\ref{randst-plot-ave} leaves unclear the importance of
 the flattening of the cell versus cell shape irregularity and
 asymmetry in developing an understanding of the origin of the
 experimentally observed behavior.  Although in the movies the stadiums
-appear to display, on average over long time scales, a more regular
-bipolar oscillation than the irregular mannik shapes, the limited time
-range of the arrow plots (350 seconds) is inadequate when studying
-this difference in behavoir.  We therefore return to the correlation
-function between the number of proteins in a segment at the top of the
-cell and the number of proteins in a segment at the bottom of the
-cell.  Fig.~\ref{fig:corr-pancake-A} shows this plot for shape
-\emph{A} and stadium \emph{A}.  E. Coli cell doubling times vary
+appear to display, on average over long time scales, a somewhat more
+regular oscillation than appears in the irregular shapes \emph{A} and
+\emph{B}, the limited time range of the arrow plots (350 seconds) is
+inadequate to make this comparison.  We therefore return to the
+correlation function between the number of proteins in a segment at
+the top of the cell and the number of proteins in a segment at the
+bottom of the cell.  Fig.~\ref{fig:corr-pancake-A} shows this plot for
+shape \emph{A} and stadium \emph{A}.  E. Coli cell doubling times vary
 widely depending on environmental conditions, but will often be
 between 20 minutes to 100 minutes~\cite{pierucci1972chromosome}, while
-flourescent microscopy experiments have shown that the FtsZ ring
+fluorescent microscopy experiments have shown that the FtsZ ring
 builds itself with a half life of roughly 30
 seconds~\cite{stricker2002rapid}.  Here we plot correlations of
-correlation times up to 500 seconds, a biologically relevent
+correlation times up to 500 seconds, a biologically relevant
 timescale.
 
 %% \begin{figure}
@@ -570,7 +582,7 @@ We see that both in the shape \emph{A} and stadium \emph{A}, the
 deterministic model is perfectly periodic.  Both the deterministic and
 stochastic model correlations have the same number of proteins in
 their cells, and have been normalized with the same normalization
-factor, so that they can be directly compared against eachother.  The
+factor, so that they can be directly compared against each other.  The
 stochastic simulation of shape \emph{A} has a coherence time of 4.6
 periods, while the corresponding simulation of stadium \emph{A} has a
 coherence time of 6.3 periods.
@@ -602,7 +614,8 @@ wild-type and mutated cell shapes~\cite{fange2006noise, varma2008min,
   kruse2007experimentalist}, and reinforces that the stochastic
 variation of Huang's 2003 model~\cite{fange2006noise,
   kerr2006division} has considerable predictive power beyond the
-standard wild-type cell.
+standard wild-type cell.  \fixme{Discuss which of these are likely to
+  map to more recent models.}
 
 
 %
@@ -620,16 +633,17 @@ standard wild-type cell.
 
 In contrast to the stochastic model, the original deterministic
 version of the model~\cite{huang2003dynamic} predicts behavior that
-contradicts experimental observations, namely robust and periodic
-bipolar oscillation in irregularly shaped cells, with a minor
-intermediate maximum appearing in shape \emph{B}.  Thus we conclude
-that this method is inconsistent with experiment, and cannot be relied
-upon for predictions of the behavior of the MinD system.  This is the
-most clear example of the inadequacy of the deterministic simulation
-method in reproducing experimental behavoir of the MinD system to
-date.  Until now the results of deterministic and stochastic
-simulation have largely coincided, with the stochastic method showing
-minor differences in behavoir when compared to deterministic
+contradicts experimental observations.  Specifically, the
+deterministic model predicts robust and periodic bipolar oscillation
+in irregularly shaped cells, with a minor intermediate maximum
+appearing in shape \emph{B}.  Thus we conclude that this method is
+inconsistent with experiment, and cannot be relied upon for
+predictions of the behavior of the MinD system.  This is the most
+clear example of the inadequacy of the deterministic simulation method
+in reproducing experimental behavior of the MinD system to date.
+Until now the results of deterministic and stochastic simulation have
+largely coincided, with the stochastic method showing minor
+differences in behavior when compared to deterministic
 models~\cite{kerr2006division, fange2006noise, huang2004min,
   kruse2007experimentalist}.
 
@@ -639,10 +653,10 @@ observed experimentally (and in our simulation) in irregular and
 asymmetric cells.  This demonstrates that asymmetry is not required in
 order to induce spatially irregular MinD oscillations.  In addition,
 the temporal regularity of oscillations is only moderately affected by
-irregularity in the shape of flattened cells.  Thus we conclude
-that it is the flattening of the cells rather than their irregular
-shape that primarily causes the spatial irregularity of maxima which
-is observed by Mannik \emph{et al.}~\cite{mannik2012robustness}.
+irregularity in the shape of flattened cells.  Thus we conclude that
+it is the flattening of the cells rather than their irregular shape
+that primarily causes the disruption of regular bipolar oscillation
+which is observed by Mannik \emph{et al.}~\cite{mannik2012robustness}.
 
 %% %\section*{Appendix}
 %% \begin{acknowledgments}
@@ -651,7 +665,7 @@ is observed by Mannik \emph{et al.}~\cite{mannik2012robustness}.
 %% J.L.R.) and by National Science Foundation Grand DMS-0245242 (to C.F.).
 %% \end{acknowledgments}
 
-\bibliographystyle{plain}
+\bibliographystyle{pnas2011}
 \bibliography{paper-MinD}
 \end{article}
 
@@ -742,6 +756,50 @@ is observed by Mannik \emph{et al.}~\cite{mannik2012robustness}.
 %%   \label{fig:corr-pancake-A}
 %% \end{figure}
 
+
+\section*{Supplementary Information 1}
+
+Movie that shows the evolution of MinD density over a 250 second
+interval in a wild-type, pill-shaped cell.  There is one frame for
+every half second of simulation time. Above are results from the
+stochastic model and below are results from the deterministic model.
+The density shown is integrated over the direction normal to the
+screen, so that the data is shown in molecules/$\micron^2$.
+
+\section*{Supplementary Information 2}
+
+Movie that shows the evolution of MinD density over a 350 second
+interval in the shape A cell.  There is one frame for every half
+second of simulation time. Above are results from the stochastic model
+and below are results from the deterministic model.  The density shown
+is integrated over the direction normal to the screen, so that the
+data is shown in molecules/$\micron^2$.
+
+\section*{Supplementary Information 3}
+
+Movie that shows the evolution of MinD density over a 350 second
+interval in the shape B cell.  There is one frame for every half
+second of simulation time. Above are results from the stochastic model
+and below are results from the deterministic model.  The density shown
+is integrated over the direction normal to the screen, so that the
+data is shown in molecules/$\micron^2$.
+
+\section*{Supplementary Information 4}
+
+Movie that shows the evolution of MinD density over a 350 second
+interval in the stadium A cell.  There is one frame for every half
+second of simulation time. Above are results from the stochastic model
+and below are results from the deterministic model.  The density shown
+is integrated over the direction normal to the screen, so that the
+data is shown in molecules/$\micron^2$.
+
+\section*{Supplementary Information 5}
+Movie that shows the evolution of MinD density over a 350 second
+interval in the stadium B cell.  There is one frame for every half
+second of simulation time. Above are results from the stochastic model
+and below are results from the deterministic model.  The density shown
+is integrated over the direction normal to the screen, so that the
+data is shown in molecules/$\micron^2$.
 
 \end{document}
 
