@@ -220,6 +220,98 @@ David Roundy\textsuperscript{1}
 
 \linenumbers
 
+\fixme{
+  First referee:
+  \begin{enumerate}
+  \item Add discussion of ``platform'' --- wrote our own code,
+    publically available (cite github?).
+  \item Make 3D geometries available? Cite that the publically
+    available code can generate them?
+  \item Claims differential equations aren't needed.
+  \item Claims wild-type movie-ish plot not needed.
+  \item Points out problems with Huang 2003:
+    \begin{enumerate}
+    \item Lacks diffusion on the membrane
+    \item Underestimates diffusion in cytoplasm by a factor of 5-6.5.
+    \item Uses MinD-ADP -> MinD-ATP that is 3 times lower than
+      experimental bound.
+    \item (Still debated) No evidence that DE recruits to membrane.
+    \item Works in only a limited part of parameters phase space, and
+      could not account for important things like
+      temperature-independence.
+    \end{enumerate}
+  \item Height should be bigger to compare with experiment.  0.4-0.6
+    microns.  \textcolor{blue}{HIGH PRIORITY!!! to figure this out}
+
+    The 0.25 micron height of the cells used in this study does not
+    represent the experimental settings well. The simulations are
+    based on the flattened cell shapes reported from the experiments
+    by Mannik et al 2009 and 2012. In these experimental studies,
+    E. coli were shown to be able to grow in channels as low as 0.6
+    micron in hard silicon structures, and no more than 0.4 micron
+    (see Mannik 2009). Indeed, 0.25 micron channels were constructed
+    with PDMS ceilings, which is a rather flexible polymer allowing
+    bacteria to deform it to effectively higher channels. Thus the
+    simulations would be more realistic if performed in the range of
+    0.4-0.6 micron thickness.
+
+    \emph{If you can't make it grow in a .3 micron (rigid) silicon channel,
+      then we and you observe it growing in a .25 micron flexible
+      channel, it presumably must be able to grow because it deformed
+      the channel to larger than .3 microns.}
+  \item Starry night in the wild-type cells is a problem.
+  \item Better explanation of correlation function (which is
+    interesting!).
+  \item Shape A is the interesting bit in our main figure.
+  \item Would like more analysis of stochastic locations in different
+    geometries.  Clusters?  Could add more geometries?
+  \item Bold conclusions about flattening.  Talk about both width and
+    thickness.  Compare Halatek 2012.  Wants systematically more
+    geometries again.
+  \item Is doubtful of our correlation plots relative to those of
+    Fange and Elf 2006.
+  \item Clarify (esp in conclusions) what we mean by flattening and
+    irregular shape.  ``breaking the cylindrical symmetry and
+    flattening the cells.'' versus ``breaking the mirror plane
+    symmetry of the cross-section of a flattned cell.''
+  \item[TODO suggestion] Switch to Halatek and Frey
+  \item[TODO suggestion] Thoroughly explor shape parameter space
+  \item[TODO suggestion] Check robustness of our conclusions with
+    respect to changes in (reaction-diffusion?) parameters.
+  \item Check order of figures and their references.
+  \item Cite biological (non-computational) works e.g. Corbin 2008.
+  \end{enumerate}
+  Second referee:
+  \begin{enumerate}
+  \item Nitpicks about language of deterministic model versus
+    stochastic model.  (Read carefully)
+  \item Explain in greater detail the obviousness (maybe) that the
+    deterministic approach doesn't have fluctuations.  RESPOND:
+    chaotic systems do deterministically result in fluctuations.
+    Explain this somewhere, and discuss triviality of the conclusion
+    that deterministic is wrong because it does not exhibit these
+    irregularities.
+  \item Would like temporal averages over cell-cycle time scales.
+  \item More discussion of how flattening leads to spatial
+    irregularities.  Compare with large nearly spherical e. coli Shih
+    2005.  See also Halatek and Frey 2012 for rotating oscillation
+    axis due to destabilization of short modes.  How does this connect
+    with our stability analysis?
+  \item Should mention more recent revisions of the model.
+  \item Fange and Elf do not use the same reaction-diffusion
+    equations.
+  \item Clarify statement about 1000 proteins and stochastic
+    fluctuation.  Reword about a continuum description omitting
+    information?
+  \item Do not call Huang parameters ``wild type values.''  They are
+    fitted parameters.
+  \item Add methods section for numerics (deterministic).
+  \item Add details of the linear stability analysis.
+  \end{enumerate}
+}
+
+\fixme{Redo stability analysis with larger thickness, whatever we pick.}
+
 \section*{Introduction}
 It is vital that during the process of bacterial cell
 division a cell avoid minicelling, or splitting into daughter cells
