@@ -266,10 +266,6 @@ the cell, in a seemingly random sequence. These experiments allow for
 an opportunity to test MinD simulation models against more extreme
 cases than have been seen thus far.
 
-\fixme{THE FOLLOWING NEEDS much CHANGING.  Many reaction-diffusion
-  models have been proposed... There are several newer models that
-  incorporate new experimental results.}
-%
 A number of models of the MinD protein system have been developed that
 accurately describe its basic oscillatory nature.
 %
@@ -285,18 +281,17 @@ recruited to the membrane by MinD that is already clustered there
 membrane~\cite{hu2002dynamic,shih2002division}), and is stationary
 once attached.
 %
-Some of these models
-\cite{fange2006noise,bonny2013membrane,halatek2012highly} modify the
-Huang model cited above to more accurately treat experimental findings
-published after his 2003 paper \cite{Meacci2007,Loose2011}. They
-introduce diffusion along the membrane that is two to three orders of
-magnitude lower than that within the cytoplasm, revise the process of
-MinD recruitment to the membrane, and change some of the constants
-used in the model. The Bonny 2013 model assumes an instantaneous
-nucleotide exchange rate at one point in the reaction cycle, and
-relies upon MinE’s ability to independently remain attached to the
-membrane in a manner that allows it to react with a number of MinD
-proteins before disassociating.
+Several models
+\cite{fange2006noise,bonny2013membrane,halatek2012highly} modify
+Huang's original model to more accurately treat experimental findings
+published after his 2003 paper \cite{Meacci2007,Loose2011}. These
+models introduce slow diffusion along the membrane (two to three
+orders of magnitude slower than that within the cytoplasm), revise the
+process of MinD recruitment to the membrane, and change some of the
+constants used in the model. The Bonny 2013 model assumes an
+instantaneous nucleotide exchange rate, and allows MinE to remain
+independently attached to the membrane after dissasociating with
+MinD~\cite{bonny2013membrane}.
 %
 
 
@@ -330,11 +325,12 @@ that mean, and reduces sensitivity to initial conditions.
 
 %% biology~\cite{lawson2013spatial, robb2014stochastic,
 %%   oguz2014stochastic, fu2013deterministic, rudiger2014stochastic}, and
-In this paper we use Huang's 2003 model~\cite{huang2003dynamic} in
-both deterministic and stochastic variants to study flattened cells
-similar to those observed by Mannik \emph{et
-  al.}~\cite{mannik2009bacterial}.  \fixme{Some weak
-  justification... it has been widely used.}
+In this paper we use Huang's original 2003
+model~\cite{huang2003dynamic}, which has been widely
+used~\cite{hattne2005stochastic} \fixme{search for more}, in both
+deterministic and stochastic variants to study flattened cells similar
+to those observed by Mannik \emph{et al.}~\cite{mannik2009bacterial}.
+\fixme{Some weak justification... it has been widely used.}
 
 \begin{figure}
   \includegraphics[width=8.7cm]{reactions}
