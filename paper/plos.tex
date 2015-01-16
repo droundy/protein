@@ -343,12 +343,18 @@ oscillations regardless of variations in cellular shape.
 
 However, Mannik \emph{et al.} have recently shown that there are
 limitations to this robust capability to
-oscillate~\cite{mannik2010bacteria, mannik2009bacterial}. They have
-experimentally forced \emph{E. coli} cells into microfabricated
-silicon channels of $0.25\micron$ thickness. Upon entering the
-channels, the cells undergo a mechanical deformation in which they
-both widen and lengthen within the plane of the channel.  This
-deformation results in very wide (they can reach widths of over
+oscillate~\cite{mannik2012robustness,mannik2009bacterial,mannik2010bacteria}. They
+have experimentally forced \emph{E. coli} cells into microfabricated
+channels of $0.25\micron$ thickness, in which they area able to grow
+and divide. The channels, which are covered in a layer of PDMS, are
+deformable to some degree.  Experiments with a different geometry that
+is constructed without PDMS show that it's reasonable to assume the
+bacteria deform the PDMS channels to a thickness of at least
+$0.4\micron$~\cite{mannik2009bacterial,mannik2010bacteria}.
+
+Upon entering the channels, the cells undergo a mechanical deformation
+in which they both widen and lengthen within the plane of the channel.
+This deformation results in very wide (they can reach widths of over
 $5\micron$) flattened cells that when viewed from the top down have
 irregular and asymmetric shapes.  While these cells are still able to
 divide into surprisingly equal volumes, the MinD oscillations in these
@@ -376,14 +382,14 @@ once attached.
 Several models
 \cite{fange2006noise,bonny2013membrane,halatek2012highly} modify
 Huang's original model to more accurately treat experimental findings
-published after his 2003 paper \cite{Meacci2007,Loose2011}. These
-models introduce slow diffusion along the membrane (two to three
-orders of magnitude slower than that within the cytoplasm), revise the
-process of MinD recruitment to the membrane, and change some of the
-constants used in the model. The Bonny 2013 model assumes an
-instantaneous nucleotide exchange rate, and allows MinE to remain
-independently attached to the membrane after dissasociating with
-MinD~\cite{bonny2013membrane}.
+published after his 2003 paper
+\cite{meacci2006mobility,loose2011min}. These models introduce slow
+diffusion along the membrane (two to three orders of magnitude slower
+than that within the cytoplasm), revise the process of MinD
+recruitment to the membrane, and change some of the constants used in
+the model. The Bonny 2013 model assumes an instantaneous nucleotide
+exchange rate, and allows MinE to remain independently attached to the
+membrane after dissasociating with MinD~\cite{bonny2013membrane}.
 %
 
 
@@ -419,10 +425,11 @@ that mean, and reduces sensitivity to initial conditions.
 %%   oguz2014stochastic, fu2013deterministic, rudiger2014stochastic}, and
 In this paper we use Huang's original 2003
 model~\cite{huang2003dynamic}, which has been widely
-used~\cite{hattne2005stochastic} \fixme{search for more}, in both
-deterministic and stochastic variants to study flattened cells similar
-to those observed by Mannik \emph{et al.}~\cite{mannik2009bacterial}.
-\fixme{Some weak justification... it has been widely used.}
+used~\cite{hattne2005stochastic} \fixme{search for more} in both
+deterministic and stochastic variants, to study flattened cells of
+$0.4\micron$ thickness that are similar to those observed by Mannik
+\emph{et al.}~\cite{mannik2009bacterial}.  \fixme{Some weak
+  justification... it has been widely used.}
 
 \begin{figure}
   \includegraphics[width=8.7cm]{reactions}
