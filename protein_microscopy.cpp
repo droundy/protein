@@ -1050,7 +1050,7 @@ int main (int argc, char *argv[]) {
       }
 
       //arrow plot
-      if (i<arrow_iter && false) {
+      if (i> int(500/time_step) && i < (arrow_iter+int(500/time_step)) && false) {
         double storemaxval = 0;
         double currentval;
         for (int a=0; a<Ny; a++) {
@@ -1483,7 +1483,7 @@ int main (int argc, char *argv[]) {
     }
 
     for (int pNum=0; pNum<numProteins; pNum++) {
-      if (i<arrow_iter && false) {
+      if (i> int(500/time_step) && i<(arrow_iter + int(500/time_step)) && false) {
         //would like to know how long this algorithm takes and change it if should
         if (i%printout_iterations == 0) {
           time_t starting_time;
