@@ -247,7 +247,7 @@ int main (int argc, char *argv[]) {
   }
 
   //fixed simulation parameters
-  tot_time = 200;//20000; //sec
+  tot_time = 20000; //sec
   if (debug_flag==1) {
     tot_time = 15;
   }
@@ -1050,7 +1050,7 @@ int main (int argc, char *argv[]) {
       }
 
       //arrow plot
-      if (i> int(500/time_step) && i < (arrow_iter+int(500/time_step)) && false) {
+      if (i < arrow_iter && false) {
         double storemaxval = 0;
         double currentval;
         for (int a=0; a<Ny; a++) {
@@ -1483,7 +1483,7 @@ int main (int argc, char *argv[]) {
     }
 
     for (int pNum=0; pNum<numProteins; pNum++) {
-      if (i> int(500/time_step) && i<(arrow_iter + int(500/time_step)) && false) {
+      if (i<arrow_iter && false) {
         //would like to know how long this algorithm takes and change it if should
         if (i%printout_iterations == 0) {
           time_t starting_time;
