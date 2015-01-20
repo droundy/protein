@@ -131,10 +131,24 @@ double mem_f(double x, double y, double z) {
   if(mem_f_shape=="randst" || mem_f_shape=="TIE_fighter" || mem_f_shape=="triangle" || mem_f_shape=="stad"){
     double X = Nx*dx;
     double f_2d = 0;
-    if(mem_f_shape=="randst") f_2d = f_2D_randst(y,z);
+    if(mem_f_shape=="triangle") f_2d = f_2D_triangle(y,z);
     else if(mem_f_shape=="TIE_fighter") f_2d = f_2D_TIE_fighter(y,z);
-    else if(mem_f_shape=="triangle") f_2d = f_2D_triangle(y,z);
-    else if(mem_f_shape=="stad") f_2d = f_2D_stad(y,z);
+    else if(mem_f_shape=="randst") {
+      f_2d = f_2D_randst(y,z);
+      for (double yd = y-((A-.25)/2.0); yd <= y+((A-.25)/2.0); yd+=dx/4.0) {
+        for (double zd = z-((A-.25)/2.0); zd <= z+((A-.25)/2.0); zd+=dx/4.0) {
+          if (f_2D_randst(yd,zd) <= 0) f_2d = -1.0;
+        }
+      }
+    }
+    else if(mem_f_shape=="stad") {
+      f_2d = f_2D_stad(y,z);
+      for (double yd = y-((A-.25)/2.0); yd <= y+((A-.25)/2.0); yd+=dx/4.0) {
+        for (double zd = z-((A-.25)/2.0); zd <= z+((A-.25)/2.0); zd+=dx/4.0) {
+          if (f_2D_stad(yd,zd) <= 0) f_2d = -1.0;
+        }
+      }
+    }
     else {
       printf("somethings wrong with the shape argument!!!");
       exit(1);

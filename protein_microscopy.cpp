@@ -247,7 +247,7 @@ int main (int argc, char *argv[]) {
   }
 
   //fixed simulation parameters
-  tot_time = 20000; //sec
+  tot_time = 200;//20000; //sec
   if (debug_flag==1) {
     tot_time = 15;
   }
