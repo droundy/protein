@@ -137,7 +137,7 @@ double mem_f(double x, double y, double z) {
       f_2d = f_2D_randst(y,z);
       for (double yd = y-((A-.25)/2.0); yd <= y+((A-.25)/2.0); yd+=dx/4.0) {
         for (double zd = z-((A-.25)/2.0); zd <= z+((A-.25)/2.0); zd+=dx/4.0) {
-          if (f_2D_randst(yd,zd) <= 0) f_2d = -1.0;
+          if (f_2D_randst(yd,zd) > 0.0) f_2d = 0.1;
         }
       }
     }
@@ -145,7 +145,7 @@ double mem_f(double x, double y, double z) {
       f_2d = f_2D_stad(y,z);
       for (double yd = y-((A-.25)/2.0); yd <= y+((A-.25)/2.0); yd+=dx/4.0) {
         for (double zd = z-((A-.25)/2.0); zd <= z+((A-.25)/2.0); zd+=dx/4.0) {
-          if (f_2D_stad(yd,zd) <= 0) f_2d = -1.0;
+          if (f_2D_stad(yd,zd) > 0.0) f_2d = 0.1;
         }
       }
     }
@@ -164,10 +164,24 @@ double mem_f(double x, double y, double z) {
       for (double z0 = z-(A/2.0+2.0*dx); z0<z+(A/2.0+2.0*dx); z0+=dx/2.0) {
         if ( (y-y0)*(y-y0)+(z-z0)*(z-z0) < (y-closest_y0)*(y-closest_y0)+(z-closest_z0)*(z-closest_z0) ) {
           double f0 = 0;
-          if(mem_f_shape=="randst") f0 = f_2D_randst(y0,z0);
           if(mem_f_shape=="TIE_fighter") f0 = f_2D_TIE_fighter(y0,z0);
           if(mem_f_shape=="triangle") f0 = f_2D_triangle(y0,z0);
-          if(mem_f_shape=="stad") f0 = f_2D_stad(y0,z0);
+          if(mem_f_shape=="randst") {
+            f0 = f_2D_randst(y0,z0);
+            for (double yd = y0-((A-.25)/2.0); yd <= y0+((A-.25)/2.0); yd+=dx/4.0) {
+              for (double zd = z0-((A-.25)/2.0); zd <= z0+((A-.25)/2.0); zd+=dx/4.0) {
+                if (f_2D_randst(yd,zd) > 0.0) f0 = 0.1;
+              }
+            }
+          }
+          if(mem_f_shape=="stad") {
+            f0 = f_2D_stad(y0,z0);
+            for (double yd = y0-((A-.25)/2.0); yd <= y0+((A-.25)/2.0); yd+=dx/4.0) {
+              for (double zd = z0-((A-.25)/2.0); zd <= z0+((A-.25)/2.0); zd+=dx/4.0) {
+                if (f_2D_stad(yd,zd) > 0.0) f0 = 0.1;
+              }
+            }
+          }
           if (f0 <= 0) {
             closest_y0 = y0;
             closest_z0 = z0;
