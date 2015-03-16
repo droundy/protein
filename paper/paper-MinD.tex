@@ -255,7 +255,7 @@ MinD-MinE combination, ATPase hydrolysis, and MinD membrane attachment
 that exhibits accurate MinD oscillations in cylindrical
 cells~\cite{huang2003dynamic}. In this model cytoplasmic MinD is
 recruited to the membrane by MinD that is already clustered there
-(following observed non-linear attachment of MinD on the cell
+(following experimentally observed non-linear attachment of MinD on the cell
 membrane~\cite{hu2002dynamic,shih2002division}), and is stationary
 once attached.  A number of studies have used an approach similar in
 that they do not rely on the ability of MinD to move along the walls
@@ -344,7 +344,7 @@ present on the membrane, $k_{de}$ is the rate of hydrolysis of the
 MinD:MinE:ATP complex, $k_E$ is the rate of cytoplasmic MinE binding
 to membrane bound MinD:ATP complex, and $d_w$ is the distance from the
 point in space to the closest wall.  The Dirac delta function
-$\delta(d_w)$, which we need to describe the location of the membrane,
+$\delta(d_w)$, which we use to describe the location of the membrane,
 has units of $\micron^{-1}$ and is zero everywhere except at the wall.
 Equations \ref{eq:d-on-wall} and \ref{eq:FifthPDE} are only relevant
 at the membrane because the membrane-bound density values have no
@@ -368,15 +368,16 @@ Huang's simulations use total MinD and MinE concentrations of
 $1,000/\micron$ and $350/\micron$, respectively, in a cylindrical cell
 of radius $0.5\micron$, and in our (non-cylindrical) cells we use the
 same number of proteins per unit volume.  These concentration values
-are $1273\micron^{-3}$ and $446\micron^{-3}$, respectively. \blue{(1,2)}
-We have chosen to write our own simulation platform and membrane
-creation tools from scratch, instead of using existing available
-software used in previous studies\fixme{cite previous studies}. We
-believe there is value in re-creating results with alternative
-software.  Our simulations take place within a three-dimensional
-Cartesian grid that has a grid spacing of .05\micron, and our cell
-shapes are specified by positions and thicknesses of a series of
-gaussians.  Our code is publically available on github.com~\fixme{cite
+are $1273\micron^{-3}$ and $446\micron^{-3}$,
+respectively. \blue{(1,2)} We have chosen to write our own simulation
+platform and membrane creation tools from scratch, instead of using
+existing available software used in previous studies\fixme{cite
+  previous studies}. We believe there is value in re-creating results
+with alternative software.  Our simulations take place within a
+three-dimensional Cartesian grid that has a grid spacing of
+.05\micron, and our cell shapes are specified as the zero of an
+analytic function which can generate the geometry presented in this
+paper.  Our code is publically available on github.com~\fixme{cite
   github account in references?}
 
 We have performed both a numerical, deterministic model simulation
@@ -393,16 +394,17 @@ in several cell shapes and sizes.  Here we present a selection of
 these, beginning with naturally occurring pill-shaped cells, followed
 by a number of flattened out shapes which reflect the experiments of
 Mannik \emph{et al.}, in which bacteria are confined within thin
-slits.  \blue{(6)}These slits begin with a width of .25\micron, but
-they are coated with a PDMS lining that the cells are able to deform,
-while tests with pure silicon, non-deformable slits show that the
-greatest thickness for which cells are able to penetrate is
+slits.  \blue{(6)}These slits are fabricated with a width of
+.25\micron, but they are coated with a PDMS lining that the cells are
+able to deform, raising uncertainty in the actual cell thickness.
+Tests with pure silicon, non-deformable slits show that the greatest
+thickness for which cells are able to penetrate is
 .4\micron~\cite{mannik2012robustness,mannik2009bacterial}.  We
 therefore assume that the PDMS slits have been deformed to this
-thickness and here simulate flattened cells with a thickness of
-.4\micron.  Viewed from the top down the cells have the shapes
-described below and viewed from the side they have at their edges a
-semicircular protrusion (one may imagine the shape of a pancake).
+thickness and simulate flattened cells with a thickness of .4\micron.
+Viewed from the top down the cells have the shapes described below and
+viewed from the side they have at their edges a semicircular
+cross-section (one may imagine the shape of a pancake).
 %
 In this paper we focus on four specific flattened cell shapes.  Two of
 these shapes replicate those published by Mannik \emph{et al.}, and
@@ -460,9 +462,9 @@ oscillations.
     two opposite polar regions of the pill-shaped cell, shown against
     the correlation time.  Data for both the the deterministic and
     stochastic models are shown.  The stochastic model shows an
-    oscillation period of \fixme{following not correct anymore} 39.5
-    seconds and coherence time of 307 seconds.  The correlation
-    functions are scaled to have the same initial value.}
+    oscillation period of 39.5 seconds and coherence time of 307
+    seconds.  The correlation functions are scaled to have the same
+    initial value.}
   \label{corr-pill}
 \end{figure}
 
@@ -771,8 +773,9 @@ order to induce spatially irregular MinD oscillations.  In addition,
 the temporal regularity of oscillations is only moderately affected by
 irregularity in the shape of flattened cells.  Thus we conclude that
 it is the flattening of the cells rather than their irregular shape
-that primarily causes the disruption of regular bipolar oscillation
-which is observed by Mannik \emph{et al.}~\cite{mannik2012robustness}.
+viewed from above that primarily causes the disruption of regular
+bipolar oscillation which is observed by Mannik \emph{et
+  al.}~\cite{mannik2012robustness}.
 
 %% %\section*{Appendix}
 %% \begin{acknowledgments}
