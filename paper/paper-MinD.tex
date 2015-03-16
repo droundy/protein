@@ -443,14 +443,23 @@ with dimensions longer than this show spontaneous oscillatory behavior
 in this direction, while cells that are shorter relax into a
 motionless steady state.  We have similarly performed a linear
 stability analysis on an infinite slab with a thickness equal to that
-of our flattened cells ($0.25\micron$) and have found that an
-equivalent stability limit for half wavelength is $2.13\micron$. As
-expected, when decreasing the lengths and widths of our simulated
-flattened cells so that the longest distance across the cell is less
-than this length, the cells stop exhibiting any oscillatory behavior.
-The deterministic model relaxes into a motionless state and the
-stochastic model exhibits random fluctuations without spatial
-oscillations.
+of our flattened cells ($0.40\micron$).  We first solve the model's
+five differential equations for the steady state solution, using for
+our concentrations of MinD and MinE the same as the total in
+simulation.  We then add small, spatially harmonic density
+perturbations to the density, throwing away any terms that are
+nonlinear in perturbation.  The sign of the eigenvalues of the
+resulting matrix informs us whether harmonic perturbations at a
+specified wavelength will evolve toward the steady state solution or
+not, so picking a wavelength that ensures all eigenvalues are of the
+correct sign allows for an upper stability limit. Through this method
+we arrive at an upper half wavelength stability limit of $1.56\micron$
+for our $0.40\micron$ flattened cells. As expected, when decreasing
+the lengths and widths of our simulated flattened cells so that the
+longest distance across the cell is less than this length, the cells
+stop exhibiting any oscillatory behavior.  The deterministic model
+relaxes into a motionless state and the stochastic model exhibits
+random fluctuations without spatial oscillations.
 
 \section{Naturally Occurring Pill Shaped Cells}
 
