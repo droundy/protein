@@ -27,25 +27,20 @@ protein_name = "NflD"
 arrow_file = open('arrow-file.txt','w')
 
 
-# arg_set = ["randst/0.25-18.50-18.50-95.00-15.00-full_array",
-#            "randst/0.25-18.60-28.60-94.00-15.00-full_array",
-#            "stad/0.25-3.00-1.18-0.00-15.00-full_array",
-#            "randst/0.25-18.50-18.50-95.00-15.00-exact",
-#            "randst/0.25-18.60-28.60-94.00-15.00-exact",
-#            "stad/0.25-3.00-1.18-0.00-15.00-exact"]
-arg_set = ["randst/0.25-18.50-18.50-95.00-15.00-exact",
-           "randst/0.25-18.50-18.50-95.00-15.00-full_array",
-           "randst/0.25-18.60-28.60-94.00-15.00-exact",
-           "randst/0.25-18.60-28.60-94.00-15.00-full_array",
-           "stad/0.25-2.35-1.32-0.00-15.00-exact",
-           "stad/0.25-2.35-1.32-0.00-15.00-full_array",
-           "stad/0.25-2.92-1.18-0.00-15.00-exact",
-           "stad/0.25-2.92-1.18-0.00-15.00-full_array",
+arg_set = ["randst/0.40-18.50-18.50-95.00-15.00-exact",
+           "randst/0.40-18.50-18.50-95.00-15.00-full_array",
+           "randst/0.40-18.60-28.60-94.00-15.00-exact",
+           "randst/0.40-18.60-28.60-94.00-15.00-full_array",
+           "stad/0.40-2.35-1.32-0.00-15.00-exact",
+           "stad/0.40-2.35-1.32-0.00-15.00-full_array",
+           "stad/0.40-2.92-1.18-0.00-15.00-exact",
+           "stad/0.40-2.92-1.18-0.00-15.00-full_array",
            "p/3.00-0.50-0.00-0.00-15.00-exact",
            "p/3.00-0.50-0.00-0.00-15.00-full_array"]
 
 bound_times = [500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,850,500,750,500,750]
-arrow_goals = [13, 12, 10, 11, 13, 12, 13, 15, 12, 10]
+#arrow_goals = [13, 12, 10, 11, 13, 12, 13, 15, 12, 10]
+arrow_goals = [10, 12, 11, 10, 12, 13, 11, 12, 12, 10]
 
 row_0y = 0.0          # 1.0
 row_1y = row_0y + 7.0 # 6.0
@@ -112,9 +107,6 @@ data = [0]*(len(arg_set)+2)
 for arg_num in range(len(arg_set)):
     data[arg_num] = np.loadtxt(contour_values[arg_num])
 
-
-arrow_file = open('arrow_printout.txt', 'w')
-
 #rotate and plot sim data
 for arg_num in range(len(arg_set)):
     x = np.arange(0., data[arg_num].shape[0])*dx
@@ -156,6 +148,8 @@ for arg_num in range(len(arg_set)):
     levels = mycolormap.pancake_levels
     if 'p/' in arg_set[arg_num]:
         levels = mycolormap.pill_levels
+    else:
+        levels = 1.5*levels
     cs = ax.contourf(Xrot, Yrot, data[arg_num], cmap=mycolormap.cmap, origin='lower', levels=levels)
 
     if arg_num in [1,8]:
@@ -201,6 +195,7 @@ for arg_num in range(len(arg_set)):
     x_vals = [0]*(arrow_goal+1)
     while len(x_vals) > arrow_goal:
         arrow_cutoff += 0.1
+        #print arrow_cutoff
             #print 'trying arrow_cutoff', arrow_cutoff, 'with num arrows', len(x_vals)
         large_a_data = np.zeros((len(a_data[a_data[:,1]>arrow_cutoff,:]),4))
         large_a_data[:,:] = a_data[a_data[:,1]>arrow_cutoff,:]
@@ -231,10 +226,9 @@ for arg_num in range(len(arg_set)):
             times = np.append(times,clean_data[i,0])
             #print 'finished with arrow_cutoff', arrow_cutoff, 'and num arrows', len(x_vals)
 
-    arrow_file.write(arg_set[arg_num])
+    #arrow_file.write(arg_set[arg_num])
     for i in range(len(times)):
-        arrow_file.write('\n %g %g %g %g\n'%(times[i],amount[i],x_vals[i],y_vals[i]))
-
+        arrow_file.write('%g %g %g %g\n'%(times[i],amount[i],x_vals[i],y_vals[i]))
 
     x_vals -= meanX
     y_vals -= meanY

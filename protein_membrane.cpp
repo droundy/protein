@@ -135,19 +135,19 @@ double mem_f(double x, double y, double z) {
     else if(mem_f_shape=="TIE_fighter") f_2d = f_2D_TIE_fighter(y,z);
     else if(mem_f_shape=="randst") {
       f_2d = f_2D_randst(y,z);
-      for (double yd = y-((A-.25)/2.0); yd <= y+((A-.25)/2.0); yd+=dx/4.0) {
-        for (double zd = z-((A-.25)/2.0); zd <= z+((A-.25)/2.0); zd+=dx/4.0) {
-          if (f_2D_randst(yd,zd) > 0.0) f_2d = 0.1;
-        }
-      }
+      // for (double yd = y-((A-.25)/2.0); yd <= y+((A-.25)/2.0); yd+=dx/4.0) {
+      //   for (double zd = z-((A-.25)/2.0); zd <= z+((A-.25)/2.0); zd+=dx/4.0) {
+      //     if (f_2D_randst(yd,zd) > 0.0) f_2d = 0.1;
+      //   }
+      // }
     }
     else if(mem_f_shape=="stad") {
       f_2d = f_2D_stad(y,z);
-      for (double yd = y-((A-.25)/2.0); yd <= y+((A-.25)/2.0); yd+=dx/4.0) {
-        for (double zd = z-((A-.25)/2.0); zd <= z+((A-.25)/2.0); zd+=dx/4.0) {
-          if (f_2D_stad(yd,zd) > 0.0) f_2d = 0.1;
-        }
-      }
+      // for (double yd = y-((A-.25)/2.0); yd <= y+((A-.25)/2.0); yd+=dx/4.0) {
+      //   for (double zd = z-((A-.25)/2.0); zd <= z+((A-.25)/2.0); zd+=dx/4.0) {
+      //     if (f_2D_stad(yd,zd) > 0.0) f_2d = 0.1;
+      //   }
+      // }
     }
     else {
       printf("somethings wrong with the shape argument!!!");
@@ -168,19 +168,19 @@ double mem_f(double x, double y, double z) {
           if(mem_f_shape=="triangle") f0 = f_2D_triangle(y0,z0);
           if(mem_f_shape=="randst") {
             f0 = f_2D_randst(y0,z0);
-            for (double yd = y0-((A-.25)/2.0); yd <= y0+((A-.25)/2.0); yd+=dx/4.0) {
-              for (double zd = z0-((A-.25)/2.0); zd <= z0+((A-.25)/2.0); zd+=dx/4.0) {
-                if (f_2D_randst(yd,zd) > 0.0) f0 = 0.1;
-              }
-            }
+            // for (double yd = y0-((A-.25)/2.0); yd <= y0+((A-.25)/2.0); yd+=dx/4.0) {
+            //   for (double zd = z0-((A-.25)/2.0); zd <= z0+((A-.25)/2.0); zd+=dx/4.0) {
+            //     if (f_2D_randst(yd,zd) > 0.0) f0 = 0.1;
+            //   }
+            // }
           }
           if(mem_f_shape=="stad") {
             f0 = f_2D_stad(y0,z0);
-            for (double yd = y0-((A-.25)/2.0); yd <= y0+((A-.25)/2.0); yd+=dx/4.0) {
-              for (double zd = z0-((A-.25)/2.0); zd <= z0+((A-.25)/2.0); zd+=dx/4.0) {
-                if (f_2D_stad(yd,zd) > 0.0) f0 = 0.1;
-              }
-            }
+            // for (double yd = y0-((A-.25)/2.0); yd <= y0+((A-.25)/2.0); yd+=dx/4.0) {
+            //   for (double zd = z0-((A-.25)/2.0); zd <= z0+((A-.25)/2.0); zd+=dx/4.0) {
+            //     if (f_2D_stad(yd,zd) > 0.0) f0 = 0.1;
+            //   }
+            // }
           }
           if (f0 <= 0) {
             closest_y0 = y0;
@@ -491,7 +491,14 @@ double find_intersection(const double fXYZ, const double fXYz, const double fXyZ
 
 
 void set_membrane(double mem_A[]) {
+  int count = 0;
+  printf("Total number is %d",Nx*Ny*Nz);
+  double start_time = double(clock())/double(CLOCKS_PER_SEC);
   for(int xi=0;xi<Nx;xi++){
+    double time = double(clock())/double(CLOCKS_PER_SEC) - start_time;
+    printf("Finished %d, at xi,yi,zi %d,%d,%d, which is  %g and has taken %g minutes\n",
+           count,xi,0,0,100.0*double(count)/double(Nx*Ny*Nz),time/60.0);
+    fflush(stdout);
     for(int yi=0;yi<Ny;yi++){
       for(int zi=0;zi<Nz;zi++){
         double fXYZ = mem_f((xi+0.5)*dx, (yi+0.5)*dx, (zi+0.5)*dx);

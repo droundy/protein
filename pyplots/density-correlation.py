@@ -30,35 +30,40 @@ longest_data_len = 0
 
 
 def adjust_data_files(sim_type):
-    if sim_type == "full_array" and sys.argv[1] == "stad" and sys.argv[3] == "2.92":
-        return [0,1,2,3,4,5]
-    elif sim_type == "full_array":
-        return [10,0,1,2,3,4,5]
+    print sim_type
+    if sim_type == "full_array":
+        if sys.argv[1] == "stad":
+            return [10,0,1,2]
+        elif sys.argv[1] == "randst":
+            return [10,0,1,2]
     else:
-        data_files = [0,1,2,3,4,5]
-        longest_data_size = 0
-        longest_data_num = 30
-        for i in data_files:
-            job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
-                                                               sys.argv[5],sys.argv[6],sim_type)
-            p = re.compile('[.]')
-            job_string = p.sub('_',job_string)
-            data_file = ''
-            if i == 10:
-                data_file = job_string + 'box-plot.dat'
-            else:
-                data_file = '../new-protein-%d/'%(i) + job_string + 'box-plot.dat'
-                if not os.path.isfile(data_file):
-                    print '\n',data_file, ' doesnt exist so we cant load it'
-                    exit(0)
-            data = np.loadtxt(data_file, converters = {0:ignoreme, 1:ignoreme})
-            print 'total time covered by file = ',len(data[0])*dt
-            if len(data[0]) > longest_data_size:
-                longest_data_size = len(data[0])
-                longest_data_num = i
-    print 'longest data number is %d and it covers %g seconds of data'%(longest_data_num,longest_data_size*dt)
-    return [longest_data_num]
-
+        return [10]
+    #     data_files = [10]
+    #     print "full array directories used are:"
+    #     for d in data_files:
+    #         print 'data files using are ',d
+    #     longest_data_size = 0
+    #     longest_data_num = 30
+    #     for i in data_files:
+    #         job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
+    #                                                            sys.argv[5],sys.argv[6],sim_type)
+    #         p = re.compile('[.]')
+    #         job_string = p.sub('_',job_string)
+    #         data_file = ''
+    #         if i == 10:
+    #             data_file = job_string + 'box-plot.dat'
+    #         else:
+    #             data_file = '../new-protein-%d/'%(i) + job_string + 'box-plot.dat'
+    #             if not os.path.isfile(data_file):
+    #                 print '\n',data_file, ' doesnt exist so we cant load it'
+    #                 exit(0)
+    #         data = np.loadtxt(data_file, converters = {0:ignoreme, 1:ignoreme})
+    #         print 'total time covered by file = ',len(data[0])*dt
+    #         if len(data[0]) > longest_data_size:
+    #             longest_data_size = len(data[0])
+    #             longest_data_num = i
+    # print 'longest data number is %d and it covers %g seconds of data'%(longest_data_num,longest_data_size*dt)
+    # return [longest_data_num]
 
 
 
@@ -66,8 +71,8 @@ def adjust_data_files(sim_type):
 
 def readbox(name):
     #notify_reading_file(data_file)
-    print '\n',data_file,'\n'
-    data = np.loadtxt(data_file, converters = {0:ignoreme, 1:ignoreme})
+    print '\nData file now loading is ',name ,'\n'
+    data = np.loadtxt(name, converters = {0:ignoreme, 1:ignoreme})
     global end
     end = (len(data[0])*dt)-10 #a bit less than full data set by default
     print 'length of data ',len(data[0])
@@ -135,7 +140,7 @@ for sim_type in ["exact","full_array"]:
                 exit(0)
             print data_file
             data = readbox(data_file)
-            print 'time if data ',dt*len(data[0,:])
+            print 'time of data ',dt*len(data[0,:])
 #             plt.figure()
 #             plt.plot(np.arange(len(data[0,:])),data[0,:],color='r')
 # #            plt.plot(np.arange(len(data[0,:])),data[1,:],color='b')

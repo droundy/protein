@@ -116,7 +116,7 @@ for i in range(1,num_plots):
     print 'period ',period
     pylab.plot(time_array,data_full[i],colors[i],label='stochastic')
     pylab.xlim(0,time_array[-1])
-    #pylab.ylim(np.amin(data_full[i]),np.amax(data_full[i]))
+    pylab.ylim(np.amin(data_full[i]),np.amax(data_full[i]))
 
 if not plot_final_version:
     pylab.plot(time_array,decay,colors[0],label='decay')
@@ -126,11 +126,11 @@ pylab.title(r'%s %s $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
 if sys.argv[1] == 'randst' and sys.argv[5] == '95.00':
     #pylab.title(r'mannik A, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
     #            % (1/rate, period, 1/(rate*period)))
-    pylab.title(r'Temporal correlation of shape A')
+    pylab.title(r'Temporal correlation of shape A,  $\tau_c = %.3g$ sec'%(1/rate))
 elif sys.argv[1] == 'stad' and sys.argv[4] == '1.32':
     #pylab.title(r'stadium A, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
     #            % (1/rate, period, 1/(rate*period)))
-    pylab.title(r'Temporal correlation of stadium A')
+    pylab.title(r'Temporal correlation of stadium A,  $\tau_c = %.3g$ sec'%(1/rate))
 elif sys.argv[1] == 'p':
     #pylab.title(r'pill-shaped cell, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
     #            % (1/rate, period, 1/(rate*period)))
@@ -144,23 +144,29 @@ colors = ['k:','r:','m--.']
 for i in range(1,num_plots):
     pylab.plot(time_array,data_exact[i],colors[i],label='deterministic')
     pylab.xlim(0,time_array[-1])
-    #pylab.ylim(np.amin(data_exact[i]),np.amax(data_exact[i]))
+    pylab.ylim(np.amin(data_exact[i]),np.amax(data_exact[i]))
 
 pylab.ylabel(r'$C(\tau)$')
 plt.xlabel(r'$\tau$ (sec)')
 plt.legend()
 
-for string in ["full_array","exact"]:
-    job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
-                                                       sys.argv[5],sys.argv[6],string)
-    p = re.compile('[.]')
-    job_string = p.sub('_',job_string)
-    if not os.path.exists(job_string + 'plots'):
-        print "making directory "+job_string + 'plots'+" because doesnt exist"
-        os.makedirs(job_string + 'plots')
-    printout_file = job_string + 'plots/correlation.pdf'
-    print 'printing to ',printout_file
-    pylab.savefig(printout_file)
+if sys.argv[1] == 'randst' and sys.argv[5] == '95.00':
+    pylab.savefig("intel-correlation-A.pdf")
+elif sys.argv[1] == 'stad' and sys.argv[4] == '1.32':
+    pylab.savefig("intel-correlation-stad-A.pdf")
+
+# for string in ["full_array","exact"]:
+#     job_string = "data/shape-%s/%s-%s-%s-%s-%s-%s/" % (sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],
+#                                                        sys.argv[5],sys.argv[6],string)
+#     p = re.compile('[.]')
+#     job_string = p.sub('_',job_string)
+#     if not os.path.exists(job_string + 'plots'):
+#         print "making directory "+job_string + 'plots'+" because doesnt exist"
+#         os.makedirs(job_string + 'plots')
+#     printout_file = job_string + 'plots/correlation.pdf'
+#     print 'printing to ',printout_file
+#     pylab.savefig(printout_file)
+
 
 for i in sys.argv:
     print i

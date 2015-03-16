@@ -41,6 +41,107 @@
 
 \begin{document}
 
+\fixme{
+  First referee:
+  \begin{enumerate}
+  \item \blue{David} Add discussion of ``platform'' --- wrote our own code,
+    publically available (cite github?).
+  \item \blue{David} Make 3D geometries available? Cite that the publically
+    available code can generate them?
+  \item Claims differential equations aren't needed.
+  \item Claims wild-type movie-ish plot not needed.
+  \item Points out problems with Huang 2003:
+    \begin{enumerate}
+    \item Lacks diffusion on the membrane. Supported by Meacci 2006,
+      which experimentally tries to measure diffusion on membrane, has
+      a tough time, but shows that definitely diffuses.
+    \item Underestimates diffusion in cytoplasm by a factor of 5-6.5.
+      Supported by Meacci 2006, who concludes a rate of 16 microns
+      squared per sec for MinD and 10 microns squared per sec for
+      MinE.
+    \item Uses MinD-ADP -> MinD-ATP that is 3 times lower than
+      experimental bound. Halatek uses ADP->ATP of 1/6 s-1. They cite
+      Meacci 2006, who state that there is a lower bound on reference
+      time of 3 seconds, so this constant has an upper bound of 1/3
+      s-1.
+    \item (Still debated) No evidence that DE recruits to membrane.
+    \item Works in only a limited part of parameters phase space, and
+      could not account for important things like
+      temperature-independence.
+    \end{enumerate}
+  \item \blue{David} - Height should be bigger to compare
+    with experiment.  0.4-0.6 microns.  \textcolor{blue}{HIGH
+      PRIORITY!!!  to figure this out}
+
+    The 0.25 micron height of the cells used in this study does not
+    represent the experimental settings well. The simulations are
+    based on the flattened cell shapes reported from the experiments
+    by Mannik et al 2009 and 2012. In these experimental studies,
+    E. coli were shown to be able to grow in channels as low as 0.6
+    micron in hard silicon structures, and no more than 0.4 micron
+    (see Mannik 2009). Indeed, 0.25 micron channels were constructed
+    with PDMS ceilings, which is a rather flexible polymer allowing
+    bacteria to deform it to effectively higher channels. Thus the
+    simulations would be more realistic if performed in the range of
+    0.4-0.6 micron thickness.
+
+    \emph{If you can't make it grow in a .3 micron (rigid) silicon channel,
+      then we and you observe it growing in a .25 micron flexible
+      channel, it presumably must be able to grow because it deformed
+      the channel to larger than .3 microns.}
+  \item Starry night in the wild-type cells is a problem.
+  \item Better explanation of correlation function (which is
+    interesting!).
+  \item Shape A is the interesting bit in our main figure.
+  \item Would like more analysis of stochastic locations in different
+    geometries.  Clusters?  Could add more geometries?
+  \item Bold conclusions about flattening.  Talk about both width and
+    thickness.  Compare Halatek 2012.  Wants systematically more
+    geometries again.
+  \item Is doubtful of our correlation plots relative to those of
+    Fange and Elf 2006.
+  \item Clarify (esp in conclusions) what we mean by flattening and
+    irregular shape.  ``breaking the cylindrical symmetry and
+    flattening the cells.'' versus ``breaking the mirror plane
+    symmetry of the cross-section of a flattned cell.''
+  \item[TODO suggestion] Switch to Halatek and Frey
+  \item[TODO suggestion] Thoroughly explor shape parameter space
+  \item[TODO suggestion] Check robustness of our conclusions with
+    respect to changes in (reaction-diffusion?) parameters.
+  \item Check order of figures and their references.
+  \item Cite biological (non-computational) works e.g. Corbin 2008.
+  \end{enumerate}
+  Second referee:
+  \begin{enumerate}
+  \item Nitpicks about language of deterministic model versus
+    stochastic model.  (Read carefully)
+  \item Explain in greater detail the obviousness (maybe) that the
+    deterministic approach doesn't have fluctuations.  RESPOND:
+    chaotic systems do deterministically result in fluctuations.
+    Explain this somewhere, and discuss triviality of the conclusion
+    that deterministic is wrong because it does not exhibit these
+    irregularities.
+  \item Would like temporal averages over cell-cycle time scales.
+  \item More discussion of how flattening leads to spatial
+    irregularities.  Compare with large nearly spherical e. coli Shih
+    2005.  See also Halatek and Frey 2012 for rotating oscillation
+    axis due to destabilization of short modes.  How does this connect
+    with our stability analysis?
+  \item Should mention more recent revisions of the model.
+  \item Fange and Elf do not use the same reaction-diffusion
+    equations.
+  \item Clarify statement about 1000 proteins and stochastic
+    fluctuation.  Reword about a continuum description omitting
+    information?
+  \item Do not call Huang parameters ``wild type values.''  They are
+    fitted parameters.
+  \item Add methods section for numerics (deterministic).
+  \item Add details of the linear stability analysis.
+  \end{enumerate}
+}
+
+\fixme{Redo stability analysis with larger thickness, whatever we pick.}
+
 \title{Theoretical prediction of disrupted Min oscillation in
   flattened \emph{Escherichia coli}}
 
@@ -124,18 +225,19 @@ However, Mannik \emph{et al.} have recently shown that there are
 limitations to this robust capability to
 oscillate~\cite{mannik2010bacteria, mannik2009bacterial}. They have
 experimentally forced \emph{E. coli} cells into microfabricated
-silicon channels of $0.25\micron$ thickness. Upon entering the
-channels, the cells undergo a mechanical deformation in which they
-both widen and lengthen within the plane of the channel.  This
-deformation results in very wide (they can reach widths of over
-$5\micron$) flattened cells that when viewed from the top down have
-irregular and asymmetric shapes.  While these cells are still able to
-divide into surprisingly equal volumes, the MinD oscillations in these
-cells are irregular, both temporally and spatially. Seen with
-fluorescent microscopy, the MinD maximize in multiple locations within
-the cell, in a seemingly random sequence. These experiments allow for
-an opportunity to test MinD simulation models against more extreme
-cases than have been seen thus far.
+silicon channels of thickness less than that of the natural diameter
+of the cells. Upon entering the channels, the cells undergo a
+mechanical deformation in which they both widen and lengthen within
+the plane of the channel.  This deformation results in very wide (they
+can reach widths of over $5\micron$) flattened cells that when viewed
+from the top down have irregular and asymmetric shapes.  While these
+cells are still able to divide into surprisingly equal volumes, the
+MinD oscillations in these cells are irregular, both temporally and
+spatially. Seen with fluorescent microscopy, the MinD maximize in
+multiple locations within the cell, in a seemingly random
+sequence. These experiments allow for an opportunity to test MinD
+simulation models against more extreme cases than have been seen thus
+far.
 
 \fixme{THE FOLLOWING NEEDS much CHANGING.  Many reaction-diffusion
   models have been proposed... There are several newer models that
@@ -251,7 +353,7 @@ meaning in the cytoplasm.
 Our diffusion and reaction rates are shown below.  We are interested
 primarily in the effect of cellular size and shape on the protein
 oscillations, so we follow Huang\cite{huang2003dynamic} and do not
-deviate from the wild-type values used in the cited work.
+deviate from the perameter values used in the cited work.
 
 \begin{gather*}
   \mathcal{D}_D = \mathcal{D}_{E} = 2.5\micron^2/\text{sec}\\
@@ -266,9 +368,16 @@ Huang's simulations use total MinD and MinE concentrations of
 $1,000/\micron$ and $350/\micron$, respectively, in a cylindrical cell
 of radius $0.5\micron$, and in our (non-cylindrical) cells we use the
 same number of proteins per unit volume.  These concentration values
-are $1273\micron^{-3}$ and $446\micron^{-3}$, respectively. We perform
-simulations with a 3D grid in Cartesian coordinates that has a grid
-spacing of .05\micron.
+are $1273\micron^{-3}$ and $446\micron^{-3}$, respectively. \blue{(1,2)}
+We have chosen to write our own simulation platform and membrane
+creation tools from scratch, instead of using existing available
+software used in previous studies\fixme{cite previous studies}. We
+believe there is value in re-creating results with alternative
+software.  Our simulations take place within a three-dimensional
+Cartesian grid that has a grid spacing of .05\micron, and our cell
+shapes are specified by positions and thicknesses of a series of
+gaussians.  Our code is publically available on github.com~\fixme{cite
+  github account in references?}
 
 We have performed both a numerical, deterministic model simulation
 that is spatially and temporally discrete, and a stochastic simulation
@@ -283,11 +392,17 @@ oscillations as observed by Mannik \emph{et
 in several cell shapes and sizes.  Here we present a selection of
 these, beginning with naturally occurring pill-shaped cells, followed
 by a number of flattened out shapes which reflect the experiments of
-Mannik \emph{et al.}, in which bacteria are confined within a thin
-slit of height $0.25\micron$ ~\cite{mannik2012robustness}.  Viewed
-from the top down the cells have the shapes described below and viewed
-from the side they have at their edges a semicircular protrusion (one
-may imagine the shape of a pancake).
+Mannik \emph{et al.}, in which bacteria are confined within thin
+slits.  \blue{(6)}These slits begin with a width of .25\micron, but
+they are coated with a PDMS lining that the cells are able to deform,
+while tests with pure silicon, non-deformable slits show that the
+greatest thickness for which cells are able to penetrate is
+.4\micron~\cite{mannik2012robustness,mannik2009bacterial}.  We
+therefore assume that the PDMS slits have been deformed to this
+thickness and here simulate flattened cells with a thickness of
+.4\micron.  Viewed from the top down the cells have the shapes
+described below and viewed from the side they have at their edges a
+semicircular protrusion (one may imagine the shape of a pancake).
 %
 In this paper we focus on four specific flattened cell shapes.  Two of
 these shapes replicate those published by Mannik \emph{et al.}, and
@@ -345,9 +460,9 @@ oscillations.
     two opposite polar regions of the pill-shaped cell, shown against
     the correlation time.  Data for both the the deterministic and
     stochastic models are shown.  The stochastic model shows an
-    oscillation period of 39.5 seconds and coherence time of 307 seconds.
-    The correlation functions are scaled to have the same initial
-    value.}
+    oscillation period of \fixme{following not correct anymore} 39.5
+    seconds and coherence time of 307 seconds.  The correlation
+    functions are scaled to have the same initial value.}
   \label{corr-pill}
 \end{figure}
 
@@ -471,8 +586,8 @@ perfectly periodic.
 
 \begin{figure}
   \begin{center}
-    \includegraphics[height=6.4cm]{../data/shape-randst/0_25-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf}\\
-    \includegraphics[height=6.4cm]{../data/shape-stad/0_25-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf}
+    \includegraphics[height=6.4cm]{../data/shape-randst/0_40-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf}\\
+    \includegraphics[height=6.4cm]{../data/shape-stad/0_40-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf}
   \end{center}
   \caption{Temporal correlation function of the total MinD found in
     two opposite polar regions of the shape \emph{A} (above) and the
@@ -481,11 +596,12 @@ perfectly periodic.
     stochastic models are shown, and the correlation functions are
     scaled to have the same initial value.  For shape \emph{A}, the
     stochastic model shows an oscillation period of 53.1 seconds and
-    coherence time of 246 seconds, so that it takes roughly 4.6 periods
-    for the behavior to decohere.  For the stadium \emph{A}, the same
-    model shows an oscillation period of 51 seconds and coherence time of
-    323 seconds, so that it takes roughly 6.3 periods for the behavior
-    to decohere.}
+    coherence time of 246 seconds, so that it takes roughly 4.6
+    periods for the behavior to decohere.  For the stadium \emph{A},
+    the same model shows an oscillation period of \fixme{following not
+      correct anymore} 51 seconds and coherence time of 323 seconds,
+    so that it takes roughly 6.3 periods for the behavior to
+    decohere.}
   \label{fig:corr-pancake-A}
 \end{figure}
 
@@ -571,12 +687,12 @@ seconds~\cite{stricker2002rapid}.  Here we plot correlations of
 correlation times up to 500 seconds, a biologically relevant
 timescale.
 
-%% \begin{figure}
-%%   \includegraphics[width=8.7cm]{../data/shape-randst/0_25-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf}
-%%   \includegraphics[width=8.7cm]{../data/shape-stad/0_25-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf}
-%%   \caption{Correlation for B shapes}
-%%   \label{corr-B}
-%% \end{figure}
+\begin{figure}
+  \includegraphics[width=8.7cm]{../data/shape-randst/0_40-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf}
+  \includegraphics[width=8.7cm]{../data/shape-stad/0_40-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf}
+  \caption{Correlation for B shapes}
+  \label{corr-B}
+\end{figure}
 
 We see that both in the shape \emph{A} and stadium \emph{A}, the
 deterministic model is perfectly periodic.  Both the deterministic and

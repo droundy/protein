@@ -21,8 +21,9 @@ const double rate_E = .093; // (um)^3 s^-1
 
 enum reaction {ADP_to_ATP, DE_to_ADP_E, ATP_to_D, E_D_to_DE, X_ADP_pos, X_ADP_neg, Y_ADP_pos, Y_ADP_neg, Z_ADP_pos,
                Z_ADP_neg, X_ATP_pos, X_ATP_neg, Y_ATP_pos, Y_ATP_neg, Z_ATP_pos, Z_ATP_neg, X_E_pos, X_E_neg,
-               Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg};
-const int num_pos_reactions = Z_E_neg+1;
+               Y_E_pos, Y_E_neg, Z_E_pos, Z_E_neg, X_MemD_pos, X_MemD_neg, Y_MemD_pos, Y_MemD_neg, Z_MemD_pos, Z_MemD_neg,
+               X_MemDE_pos, X_MemDE_neg, Y_MemDE_pos, Y_MemDE_neg, Z_MemDE_pos, Z_MemDE_neg};
+const int num_pos_reactions = Z_MemDE_neg+1;
 const int d[6][3] =
   {
     {1,0,0},
