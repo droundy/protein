@@ -227,9 +227,9 @@ David Roundy\textsuperscript{1}
 \fixme{
   First referee:
   \begin{enumerate}
-  \item Add discussion of ``platform'' --- wrote our own code,
+  \item \blue{Done} Add discussion of ``platform'' --- wrote our own code,
     publically available (cite github?).
-  \item Make 3D geometries available? Cite that the publically
+  \item \blue{Done} Make 3D geometries available? Cite that the publically
     available code can generate them?
   \item Claims differential equations aren't needed.
   \item Claims wild-type movie-ish plot not needed.
@@ -257,7 +257,7 @@ David Roundy\textsuperscript{1}
       could not account for important things like
       temperature-independence.
     \end{enumerate}
-  \item Height should be bigger to compare with experiment.  0.4-0.6
+  \item \blue{Done} Height should be bigger to compare with experiment.  0.4-0.6
     microns.  The 0.25 micron height of the cells used in this study
     does not represent the experimental settings well. The simulations
     are based on the flattened cell shapes reported from the
@@ -274,7 +274,7 @@ David Roundy\textsuperscript{1}
       then we and you observe it growing in a .25 micron flexible
       channel, it presumably must be able to grow because it deformed
       the channel to larger than .3 microns.}
-  \item Starry night in the wild-type cells is a problem.
+  \item \blue{David} Starry night in the wild-type cells is a problem.
   \item Better explanation of correlation function (which is
     interesting!).
   \item Shape A is the interesting bit in our main figure.
@@ -300,7 +300,7 @@ David Roundy\textsuperscript{1}
   \begin{enumerate}
   \item Nitpicks about language of deterministic model versus
     stochastic model.  (Read carefully)
-  \item Explain in greater detail the obviousness (maybe) that the
+  \item \blue{David} Explain in greater detail the obviousness (maybe) that the
     deterministic approach doesn't have fluctuations.  RESPOND:
     chaotic systems do deterministically result in fluctuations.
     Explain this somewhere, and discuss triviality of the conclusion
@@ -312,22 +312,23 @@ David Roundy\textsuperscript{1}
     2005.  See also Halatek and Frey 2012 for rotating oscillation
     axis due to destabilization of short modes.  How does this connect
     with our stability analysis?
-  \item Should mention more recent revisions of the model.
+  \item \blue{David} Should mention more recent revisions of the model.
   \item Fange and Elf do not use the same reaction-diffusion
     equations.
   \item Clarify statement about 1000 proteins and stochastic
     fluctuation.  Reword about a continuum description omitting
     information?
-  \item Do not call Huang parameters ``wild type values.''  They are
+  \item \blue{Done} Do not call Huang parameters ``wild type values.''  They are
     fitted parameters.
   \item Add methods section for numerics (deterministic).
-  \item Add details of the linear stability analysis.
-  \item (From jeff): still need to fix periods on correlation plots
+  \item \blue{Done} Add details of the linear stability analysis.
+  \item \blue{David} Still need to fix periods on.  \blue{About this
+    point - I updated the data and it seems the result is defferent
+    from before - the stadium shapes seem to be temporally correlated
+    for much longer compared with the shape A than before.}
+    correlation plots
   \end{enumerate}
 }
-
-
-\fixme{Redo stability analysis with larger thickness, whatever we pick.}
 
 \section*{Introduction}
 It is vital that during the process of bacterial cell
@@ -391,7 +392,7 @@ recruited to the membrane by MinD that is already clustered there
 membrane~\cite{hu2002dynamic,shih2002division}), and is stationary
 once attached.
 %
-Several models
+\blue{(5)} Several models
 \cite{fange2006noise,bonny2013membrane,halatek2012highly} modify
 Huang's original model to more accurately treat experimental findings
 published after his 2003 paper
@@ -506,7 +507,7 @@ meaning in the cytoplasm.
 Our diffusion and reaction rates are shown below.  We are interested
 primarily in the effect of cellular size and shape on the protein
 oscillations, so we follow Huang\cite{huang2003dynamic} and do not
-deviate from the wild-type values used in the cited work.
+deviate from the \blue{(8)} parameter values used in the cited work.
 
 \begin{gather*}
   \mathcal{D}_D = \mathcal{D}_{E} = 2.5\micron^2/\text{sec}\\
@@ -521,16 +522,17 @@ Huang's simulations use total MinD and MinE concentrations of
 $1,000/\micron$ and $350/\micron$, respectively, in a cylindrical cell
 of radius $0.5\micron$, and in our (non-cylindrical) cells we use the
 same number of proteins per unit volume.  These concentration values
-are $1273\micron^{-3}$ and $446\micron^{-3}$, respectively. We have
-chosen to write our own simulation platform and membrane creation
-tools from scratch, instead of using existing available software used
-in previous studies\fixme{cite previous studies} (we believe there is
-value in re-creating results with alternative software).  Our
-simulations take place within a three-dimensional Cartesian grid that
-has a grid spacing of .05\micron, and our cell shapes are specified as
-the zero of an analytic function which can generate the geometry
-presented in this paper.  Our code is publically available on
-github.com~\fixme{cite github account in references? Yes!}
+are $1273\micron^{-3}$ and $446\micron^{-3}$,
+respectively. \blue{(1,2)} We have chosen to write our own simulation
+platform and membrane creation tools from scratch, instead of using
+existing available software used in previous studies\fixme{cite
+  previous studies} (we believe there is value in re-creating results
+with alternative software).  Our simulations take place within a
+three-dimensional Cartesian grid that has a grid spacing of
+.05\micron, and our cell shapes are specified as the zero of an
+analytic function which can generate the geometry presented in this
+paper.  Our code is publically available on github.com~\fixme{cite
+  github account in references? Yes!}
 
 We have performed both a numerical, deterministic model simulation
 that is spatially and temporally discrete, and a stochastic simulation
@@ -591,7 +593,7 @@ long axis ends.
 \end{figure*}
 
 
-Huang \emph{et al.}~\cite{huang2003dynamic} has performed a linear
+\blue{(10)}  Huang \emph{et al.}~\cite{huang2003dynamic} has performed a linear
 stability analysis on a cylindrical model which shows an upper limit
 on a steady state solution of a $2\micron$ half wavelength.  Cells
 with dimensions longer than this spontaneously develop spatial
@@ -693,7 +695,7 @@ followed by the subsequent MinE ring formation and movement upward
 (beginning the same process in the opposite direction) that can be
 seen in seconds 15 through 23.
 
-\blue{(5a)} Both Fig.~\ref{image-p} and its associated movies (see
+\blue{(5a),(7)} Both Fig.~\ref{image-p} and its associated movies (see
 supplementary material), show that the stochastic model exhibits a
 ``starry night'' effect characterized by spatially fixed points of
 protein density build up, as recruitment leads to clusters of MinD
@@ -733,6 +735,7 @@ perfectly periodic.
 \begin{figure*}
   \centering
   \hspace{-3cm}
+  \vspace{1cm}
   \includegraphics[width=16cm]{../paper/plot-ave}
   \caption{We display here arrows depicting successive maxima in space
     and and time overlayed on a color plot of the total MinD density
@@ -814,10 +817,12 @@ account for its short period of oscillation.
 
 In every case, including the wild-type pill shape, we see irregularity
 in the location of the maxima when using the stochastic model.  The
-deterministic model shows uniformly bipolar oscillation, with the
-exception of shape \emph{B}, which develops weak intermediate maxima
-on the right-hand edge of the cell.  From these results, we conclude
-that the deterministic model is inadequate to explain experimental
+deterministic model shows uniformly bipolar oscillation. \blue{(2)}
+It's worth pointing out that this is a significant result, since for
+irregular shapes it would be reasonable to hypothesize a chaotic
+system, which would be shown by irregular determinisitic data.  From
+these results and how they compare with experiment, we conclude that
+the deterministic model is inadequate to explain experimental
 observations of the locations of density maxima of the MinD protein.
 
 %% We found that the deterministic simulations of the MinD system results
@@ -918,8 +923,7 @@ In contrast to the stochastic model, the original deterministic
 version of the model~\cite{huang2003dynamic} predicts behavior that
 contradicts experimental observations.  Specifically, the
 deterministic model predicts robust and periodic bipolar oscillation
-in irregularly shaped cells, with a minor intermediate maximum
-appearing in shape \emph{B}.  Thus we conclude that this method is
+in irregularly shaped cells.  Thus we conclude that this method is
 inconsistent with experiment, and cannot be relied upon for
 predictions of the behavior of the MinD system.  This is the most
 clear example of the inadequacy of the deterministic simulation method

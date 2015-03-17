@@ -124,17 +124,17 @@ if not plot_final_version:
 pylab.title(r'%s %s $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
             % (sys.argv[1], sys.argv[5], 1/rate, period, 1/(rate*period)))
 if sys.argv[1] == 'randst' and sys.argv[5] == '95.00':
-    #pylab.title(r'mannik A, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
-    #            % (1/rate, period, 1/(rate*period)))
-    pylab.title(r'Temporal correlation of shape A')
+    pylab.title(r'mannik A, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
+                % (1/rate, period, 1/(rate*period)))
+    #pylab.title(r'Temporal correlation of shape A')
 elif sys.argv[1] == 'stad' and sys.argv[4] == '1.32':
-    #pylab.title(r'stadium A, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
-    #            % (1/rate, period, 1/(rate*period)))
-    pylab.title(r'Temporal correlation of stadium A')
+    pylab.title(r'stadium A, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
+                % (1/rate, period, 1/(rate*period)))
+    #pylab.title(r'Temporal correlation of stadium A')
 elif sys.argv[1] == 'p':
-    #pylab.title(r'pill-shaped cell, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
-    #            % (1/rate, period, 1/(rate*period)))
-    pylab.title(r'Temporal correlation of wild-type pill shape')
+    pylab.title(r'pill-shaped cell, $\tau_c = %.3g$ sec $T = %.3g$ sec (ratio %.2g)'
+                % (1/rate, period, 1/(rate*period)))
+    #pylab.title(r'Temporal correlation of wild-type pill shape')
 
 
 
