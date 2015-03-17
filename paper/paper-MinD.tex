@@ -52,9 +52,14 @@
   \item Claims wild-type movie-ish plot not needed.
   \item Points out problems with Huang 2003:
     \begin{enumerate}
-    \item Lacks diffusion on the membrane. Supported by Meacci 2006,
-      which experimentally tries to measure diffusion on membrane, has
-      a tough time, but shows that definitely diffuses.
+    \item \blue{David.  I've added a paragraph discussing the starry
+      night in the context of the membrane diffusion.  I didn't say
+      anything about a one half period allowing diffusion to smear an
+      entire pole, because it seems to contradict the next paragraph.
+      What do you think?} Lacks diffusion on the membrane. Supported
+      by Meacci 2006, which experimentally tries to measure diffusion
+      on membrane, has a tough time, but shows that definitely
+      diffuses.
     \item Underestimates diffusion in cytoplasm by a factor of 5-6.5.
       Supported by Meacci 2006, who concludes a rate of 16 microns
       squared per sec for MinD and 10 microns squared per sec for
@@ -369,11 +374,11 @@ $1,000/\micron$ and $350/\micron$, respectively, in a cylindrical cell
 of radius $0.5\micron$, and in our (non-cylindrical) cells we use the
 same number of proteins per unit volume.  These concentration values
 are $1273\micron^{-3}$ and $446\micron^{-3}$,
-respectively. \blue{(1,2)} We have chosen to write our own simulation
+respectively.  We have chosen to write our own simulation
 platform and membrane creation tools from scratch, instead of using
 existing available software used in previous studies\fixme{cite
-  previous studies}. We believe there is value in re-creating results
-with alternative software.  Our simulations take place within a
+  previous studies} (we believe there is value in re-creating results
+with alternative software).  Our simulations take place within a
 three-dimensional Cartesian grid that has a grid spacing of
 .05\micron, and our cell shapes are specified as the zero of an
 analytic function which can generate the geometry presented in this
@@ -535,16 +540,21 @@ followed by the subsequent MinE ring formation and movement upward
 (beginning the same process in the opposite direction) that can be
 seen in seconds 15 through 23.
 
-It is clear from Fig.~\ref{image-p} that the stochastic simulation
+\blue{(5a)} Both Fig.~\ref{image-p} and its associated movies (see
+supplementary material), show that the stochastic model exhibits a
+``starry night'' effect characterized by spatially fixed points of
+protein density build up, as recruitment leads to clusters of MinD
+forming on the wall and then subsequently dissipating.  We attribute
+this effect to the fact that the Huang model does not include
+diffusion along the membrane, which has been experimentally verified
+yet found to be two orders of magnitude less than diffusion in the
+cytoplasm~\cite{meacci2005min}. Even ignoring this effect, however, it
+is clear from Fig.~\ref{image-p} that the stochastic simulation
 results in a protein distribution that is less spatially regular than
-the deterministic model predicts.  In fact, when viewed as a movie
-(see supplementary material), the stochastic model exhibits a ``starry
-night'' effect, as recruitment leads to clusters of MinD forming on
-the wall and then subsequently dissipating.  \fixme{Talk about
-  membrane diffusion blurring out the starry night.}  This naturally
-leads to irregularity in the temporal periodicity of the system, which
-we quantify by examining the temporal correlation function of the
-total MinD found in two opposite polar regions.
+the deterministic model predicts.  This naturally leads to
+irregularity in the temporal periodicity of the system, which we
+quantify by examining the temporal correlation function of the total
+MinD found in two opposite polar regions.
 %
 This correlation function, which is displayed in Fig.~\ref{corr-pill},
 is given by
@@ -650,11 +660,10 @@ account for its short period of oscillation.
 
 In every case, including the wild-type pill shape, we see irregularity
 in the location of the maxima when using the stochastic model.  The
-deterministic model shows uniformly bipolar oscillation, with the
-exception of shape \emph{B}, which develops weak intermediate maxima
-on the right-hand edge of the cell.  From these results, we conclude
-that the deterministic model is inadequate to explain experimental
-observations of the locations of density maxima of the MinD protein.
+deterministic model shows uniformly bipolar oscillation.  From these
+results, we conclude that the deterministic model is inadequate to
+explain experimental observations of the locations of density maxima
+of the MinD protein.
 
 %% We found that the deterministic simulations of the MinD system results
 %% in robust and regular oscillatory behavoir of polar selection and

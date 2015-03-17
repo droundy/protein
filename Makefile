@@ -5,7 +5,7 @@ CXXFLAGS = -g -O2 -Wall -Werror
 
 #all: protein_microscopy test-weights
 
-all: protein_microscopy paper/paper-MinD.pdf test-weights #paper/plos.pdf
+all: protein_microscopy paper/paper-MinD.pdf test-weights paper/plos.pdf
 
 test-weights: test-weights.cpp weights.cpp weights.h
 	g++ ${CXXFLAGS} -o test-weights test-weights.cpp weights.cpp

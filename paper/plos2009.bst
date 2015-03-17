@@ -35,7 +35,7 @@
  % where # is a number determined by the ordering in the reference list.
  % The order in the reference list is that by which the works were originally
  %   cited in the text, or that in the database.
- %---------------------------------------------------------------------
+ %----------------------------------------------------------------------
 
 ENTRY
   { address
