@@ -375,7 +375,13 @@ cells are irregular, both temporally and spatially. Seen with
 fluorescent microscopy, the MinD maximize in multiple locations within
 the cell, in a seemingly random sequence. These experiments allow for
 an opportunity to test MinD simulation models against more extreme
-cases than have been seen thus far.
+cases than have been seen thus far.  \fixme{\blue{(2)} An additional
+  interesting question is whether the irregularity observed by Mannik
+  \emph{et al.} indicates that the MinD system can become chaotic (as
+  in e.g. Ref.~\citenum{kuramoto1978diffusion}), or if this
+irregularity is the result of a stochastic but nonchaotic process.}
+\fixme{Jeff, please skim this chaos citation, which I cannot access
+  from here.}
 
 A number of models of the MinD protein system have been developed that
 accurately describe its basic oscillatory nature.
@@ -400,9 +406,10 @@ published after his 2003 paper
 diffusion along the membrane (two to three orders of magnitude slower
 than that within the cytoplasm), revise the process of MinD
 recruitment to the membrane, and change some of the constants used in
-the model. The Bonny 2013 model assumes an instantaneous nucleotide
-exchange rate, and allows MinE to remain independently attached to the
-membrane after dissasociating with MinD~\cite{bonny2013membrane}.
+the model.  In addition, Bonny \emph{et al.} assume an instantaneous
+nucleotide exchange rate, and allows MinE to remain independently
+attached to the membrane after dissasociating with
+MinD~\cite{bonny2013membrane}.
 %
 
 
@@ -699,17 +706,24 @@ seen in seconds 15 through 23.
 supplementary material), show that the stochastic model exhibits a
 ``starry night'' effect characterized by spatially fixed points of
 protein density build up, as recruitment leads to clusters of MinD
-forming on the wall and then subsequently dissipating.  We attribute
-this effect to the fact that the Huang model does not include
-diffusion along the membrane, which has been experimentally verified
-yet found to be two orders of magnitude less than diffusion in the
-cytoplasm~\cite{meacci2005min}. Even ignoring this effect, however, it
-is clear from Fig.~\ref{image-p} that the stochastic simulation
-results in a protein distribution that is less spatially regular than
-the deterministic model predicts.  This naturally leads to
-irregularity in the temporal periodicity of the system, which we
-quantify by examining the temporal correlation function of the total
-MinD found in two opposite polar regions.
+forming on the wall and then subsequently dissipating.  This results
+from the lack of inclusion of diffusion along the membrane in Huang's
+model, which would spread out these recruitment clusters.  Experiments
+have confirmed that diffusion along the membrane does occur, albeit
+with a rate two orders of magnitude lower than that in the
+cytoplasm~\cite{meacci2005min}.  \fixme{I would really like to see an
+  estimate of the diffusivity width here.  A ``star'' from the starry
+  night effect lasts about 10 seconds, so we could just figure out how
+  far the protein would diffuse in 5 or 10 seconds.  If it comes out
+  to close to 1 micron, we can then say that we do not expect this
+  starry night effect to be observed in wild-type cells.}  \fixme{I'm
+  not sure what the following sentence means.}  Even ignoring this
+effect, however, it is clear from Fig.~\ref{image-p} that the
+stochastic simulation results in a protein distribution that is less
+spatially regular than the deterministic model predicts.  This
+naturally leads to irregularity in the temporal periodicity of the
+system, which we quantify by examining the temporal correlation
+function of the total MinD found in two opposite polar regions.
 %
 This correlation function, which is displayed in Fig.~\ref{corr-pill},
 is given by
@@ -817,10 +831,10 @@ account for its short period of oscillation.
 
 In every case, including the wild-type pill shape, we see irregularity
 in the location of the maxima when using the stochastic model.  The
-deterministic model shows uniformly bipolar oscillation. \blue{(2)}
-It's worth pointing out that this is a significant result, since for
-irregular shapes it would be reasonable to hypothesize a chaotic
-system, which would be shown by irregular determinisitic data.  From
+deterministic model shows uniformly bipolar oscillation.  \blue{(2)}
+\fixme{We conclude that the model is \emph{not} chaotic (which would
+  show irregularity in the deterministic computation), but rather that
+  the irregularity results purely from stochastic processes.}  From
 these results and how they compare with experiment, we conclude that
 the deterministic model is inadequate to explain experimental
 observations of the locations of density maxima of the MinD protein.
