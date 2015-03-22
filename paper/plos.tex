@@ -59,7 +59,7 @@
 %
 % Please be sure to include all portions of an equation in the math environment.
 %
-% Do not include text that is not math in the math environment. For example, CO2 will be CO\textsubscript{2}.
+% Do not include text that is not math in the math environment. For example , CO2 will be CO\textsubscript{2}.
 %
 % Please add line breaks to long display equations when possible in order to fit size of the column. 
 %
@@ -236,23 +236,21 @@ David Roundy\textsuperscript{1}
   \item Points out problems with Huang 2003:
     \begin{enumerate}
     \item \blue{David.  I've added some sentences discussing the
-      starry night in the context of the membrane diffusion.  I didn't
-      say anything about a one half period allowing diffusion to smear
-      an entire pole, because it seems to contradict the second part
-      of this paragraph.  What do you think?} Lacks diffusion on the
-      membrane. Supported by Meacci 2006, which experimentally tries
-      to measure diffusion on membrane, has a tough time, but shows
-      that definitely diffuses.
-    \item Underestimates diffusion in cytoplasm by a factor of 5-6.5.
+      starry night effect and membrane diffusion blurring out the
+      stars.  I have some confusion however about the diffusion
+      lengths.}  Lacks diffusion on the membrane. Supported by Meacci
+      2006, which experimentally tries to measure diffusion on
+      membrane, has a tough time, but shows that definitely diffuses.
+    \item \blue{David} Underestimates diffusion in cytoplasm by a factor of 5-6.5.
       Supported by Meacci 2006, who concludes a rate of 16 microns
       squared per sec for MinD and 10 microns squared per sec for
       MinE.
-    \item Uses MinD-ADP -> MinD-ATP that is 3 times lower than
+    \item \blue{David} Uses MinD-ADP -> MinD-ATP that is 3 times lower than
       experimental bound. Halatek uses ADP->ATP of 1/6 s-1. They cite
       Meacci 2006, who state that there is a lower bound on reference
       time of 3 seconds, so this constant has an upper bound of 1/3
       s-1.
-    \item (Still debated) No evidence that DE recruits to membrane.
+    \item \blue{David} (Still debated) No evidence that DE recruits to membrane.
     \item Works in only a limited part of parameters phase space, and
       could not account for important things like
       temperature-independence.
@@ -285,16 +283,24 @@ David Roundy\textsuperscript{1}
     geometries again.
   \item Is doubtful of our correlation plots relative to those of
     Fange and Elf 2006.
-  \item Clarify (esp in conclusions) what we mean by flattening and
-    irregular shape.  ``breaking the cylindrical symmetry and
-    flattening the cells.'' versus ``breaking the mirror plane
-    symmetry of the cross-section of a flattned cell.''
+  \item \blue{David. Read the refferee report with regard to this, and
+    not sure what he wants...} Clarify (esp in conclusions) what we
+    mean by flattening and irregular shape.  ``breaking the
+    cylindrical symmetry and flattening the cells.'' versus ``breaking
+    the mirror plane symmetry of the cross-section of a flattned
+    cell.''
   \item[TODO suggestion] Switch to Halatek and Frey
   \item[TODO suggestion] Thoroughly explor shape parameter space
   \item[TODO suggestion] Check robustness of our conclusions with
     respect to changes in (reaction-diffusion?) parameters.
   \item Check order of figures and their references.
-  \item Cite biological (non-computational) works e.g. Corbin 2008.
+  \item \blue{David.  I cited the Corbin paper (although he's got a
+    typo because Corbin 2008 is after the fange 2006 paper. I could
+    cite other experimental papers, but the sentence in question
+    specifically refers to changes made to the Huang model, and the
+    papers cited are the main reasons that those changes have been
+    made.)} Cite biological (non-computational) works, that the
+    e.g. Corbin 2008.
   \end{enumerate}
   Second referee:
   \begin{enumerate}
@@ -313,14 +319,17 @@ David Roundy\textsuperscript{1}
     axis due to destabilization of short modes.  How does this connect
     with our stability analysis?
   \item \blue{David} Should mention more recent revisions of the model.
-  \item Fange and Elf do not use the same reaction-diffusion
+  \item \blue{David} Fange and Huang do not use the same reaction-diffusion
     equations.
-  \item Clarify statement about 1000 proteins and stochastic
-    fluctuation.  Reword about a continuum description omitting
-    information?
+  \item \blue{David.  I read the referee's note about this.  Not sure
+    what he/she wants.}  Clarify statement about 1000 proteins and
+    stochastic fluctuation.  Reword about a continuum description
+    omitting information?
   \item \blue{Done} Do not call Huang parameters ``wild type values.''  They are
     fitted parameters.
-  \item Add methods section for numerics (deterministic).
+  \item \blue{Done?  I think our additions to the Methods section
+    addressed this?}  Add methods section for numerics
+    (deterministic).
   \item \blue{Done} Add details of the linear stability analysis.
   \item \blue{David} Still need to fix periods on correlation plots.
     \blue{About this point - I updated the data and it seems the
@@ -375,14 +384,12 @@ cells are irregular, both temporally and spatially. Seen with
 fluorescent microscopy, the MinD maximize in multiple locations within
 the cell, in a seemingly random sequence. These experiments allow for
 an opportunity to test MinD simulation models against more extreme
-cases than have been seen thus far.  \fixme{\blue{(2)} An additional
-  interesting question is whether the irregularity observed by Mannik
-  \emph{et al.} indicates that the MinD system can become chaotic (as
-  in e.g. Ref.~\citenum{kuramoto1978diffusion}), or if this
-irregularity is the result of a stochastic but nonchaotic process.}
-\fixme{Jeff, please skim this chaos citation, which I cannot access
-  from here.}
-
+cases than have been seen thus far.  \blue{(2)} An additional
+interesting question is whether the irregularity observed by Mannik
+\emph{et al.} indicates that the MinD system can become chaotic (as in
+e.g. Ref.~\citenum{kuramoto1978diffusion}), or if this irregularity is
+the result of a stochastic but nonchaotic process.
+%
 A number of models of the MinD protein system have been developed that
 accurately describe its basic oscillatory nature.
 %
@@ -398,33 +405,24 @@ recruited to the membrane by MinD that is already clustered there
 membrane~\cite{hu2002dynamic,shih2002division}), and is stationary
 once attached.
 %
-\blue{(5)} Several models
+\blue{(5a,b,c,d)} Several models
 \cite{fange2006noise,bonny2013membrane,halatek2012highly} modify
-Huang's original model to more accurately treat experimental findings
-published after his 2003 paper
-\cite{meacci2006mobility,loose2011min}. These models introduce slow
-diffusion along the membrane (two to three orders of magnitude slower
-than that within the cytoplasm), revise the process of MinD
-recruitment to the membrane, and change some of the constants used in
-the model.  In addition, Bonny \emph{et al.} assume an instantaneous
-nucleotide exchange rate, and allows MinE to remain independently
+Huang's original model to more accurately treat experimental findings,
+some of which were published after his 2003 paper\blue{(15)}
+\cite{meacci2006mobility,loose2011min,corbin2002exploring}. These
+models introduce slow diffusion along the membrane (two to three
+orders of magnitude slower than that within the cytoplasm), revise the
+process of MinD recruitment to the membrane, increase the rate of
+diffusion within the cytpolasm, and decrease or assume
+instanaeous~\cite{bonny2013membrane} the nucleotide exchange rate.  In
+addition, Bonny \emph{et al.} allows MinE to remain independently
 attached to the membrane after dissasociating with
 MinD~\cite{bonny2013membrane}.
 %
-
-
-%%  A number of studies have used an approach similar in
-%% that they do not rely on the ability of MinD to move along the walls
-%% and cluster~\cite{kruse2007experimentalist, meinhardt2001pattern,
-%%   drew2005polymerization, fange2006noise, kerr2006division}, while
-%% studies have been made as well of models which rely on MinD mobility
-%% and attraction on the cell membrane~\cite{kruse2002dynamic,
-%%   howard2005cellular}.
-
 There are only on the order of 1000 MinD proteins in a given cell,
 which means that stochastic fluctuation can be expected to play a
 large role.  To treat this, there have been a number of variations of
-the Huang 2003 model that stochastically simulate the same \fixme{similar}
+the Huang 2003 model that stochastically simulate the similar
 reaction-diffusion equations~\cite{fange2006noise, kerr2006division}.
 These studies largely confirm the results of Huang's deterministic
 model when applied to the wild-type, pill-shaped phenotype.  However,
@@ -445,11 +443,12 @@ that mean, and reduces sensitivity to initial conditions.
 %%   oguz2014stochastic, fu2013deterministic, rudiger2014stochastic}, and
 In this paper we use Huang's original 2003
 model~\cite{huang2003dynamic}, which has been widely
-used~\cite{hattne2005stochastic} \fixme{search for more} in both
-deterministic and stochastic variants, to study flattened cells of
-$0.4\micron$ thickness that are similar to those observed by Mannik
-\emph{et al.}~\cite{mannik2009bacterial}.  \fixme{Some weak
-  justification... it has been widely used.}
+used~\cite{hattne2005stochastic,huang2004min,kerr2006division}
+\fixme{I couldn't find too many.  Most (like Bonny and Halatek) use
+  modified versions.} in both deterministic and stochastic variants,
+to study flattened cells of $0.4\micron$ thickness that are similar to
+those observed by Mannik \emph{et al.}~\cite{mannik2009bacterial}.
+\fixme{Some weak justification... it has been widely used.}
 
 \begin{figure}
   \includegraphics[width=8.7cm]{reactions}
@@ -532,14 +531,14 @@ same number of proteins per unit volume.  These concentration values
 are $1273\micron^{-3}$ and $446\micron^{-3}$,
 respectively. \blue{(1,2)} We have chosen to write our own simulation
 platform and membrane creation tools from scratch, instead of using
-existing available software used in previous studies\fixme{cite
-  previous studies} (we believe there is value in re-creating results
-with alternative software).  Our simulations take place within a
-three-dimensional Cartesian grid that has a grid spacing of
-.05\micron, and our cell shapes are specified as the zero of an
-analytic function which can generate the geometry presented in this
-paper.  Our code is publically available on github.com~\fixme{cite
-  github account in references? Yes!}
+existing available software used in previous
+studies~\cite{bonny2013membrane,fange2006noise,halatek2012highly,kerr2006division}
+(we believe there is value in re-creating results with alternative
+software).  Our simulations take place within a three-dimensional
+Cartesian grid that has a grid spacing of .05\micron, and our cell
+shapes are specified as the zero of an analytic function which can
+generate the geometry presented in this paper.  Our code is publically
+available on github.com~\cite{git}.
 
 We have performed both a numerical, deterministic model simulation
 that is spatially and temporally discrete, and a stochastic simulation
@@ -711,22 +710,23 @@ from the lack of inclusion of diffusion along the membrane in Huang's
 model, which would spread out these recruitment clusters.  Experiments
 have confirmed that diffusion along the membrane does occur, albeit
 with a rate two orders of magnitude lower than that in the
-cytoplasm~\cite{meacci2005min}.  \fixme{I would really like to see an
-  estimate of the diffusivity width here.  A ``star'' from the starry
-  night effect lasts about 10 seconds, so we could just figure out how
-  far the protein would diffuse in 5 or 10 seconds.  If it comes out
-  to close to 1 micron, we can then say that we do not expect this
-  starry night effect to be observed in wild-type cells.}  \fixme{I'm
-  not sure what the following sentence means.}  Even ignoring this
-effect, however, it is clear from Fig.~\ref{image-p} that the
-stochastic simulation results in a protein distribution that is less
-spatially regular than the deterministic model predicts.  This
-naturally leads to irregularity in the temporal periodicity of the
-system, which we quantify by examining the temporal correlation
-function of the total MinD found in two opposite polar regions.
-%
-This correlation function, which is displayed in Fig.~\ref{corr-pill},
-is given by
+cytoplasm~\cite{meacci2005min}.  The 'stars' in the effect seem to
+last for about 10 seconds. The membrane-bound proteins will travel an
+approximate distance of \fixme{see note} microns during one of these
+periods of time, enough to 'blur out' this effect in wild-type pill
+cells.  \fixme{calculating with $<x^2> = Dt$ and $D_{membrane} =
+  .16\mu^2/s m$, which is just the experimental cytoplasmic value
+  divided by 100, yields 1.2 microns, which maybe is too high for what
+  we're trying to say?  Halatek uses $D_{membrane} = .013\mu^2/s m$,
+  for which the same calculation would give .36 microns, which is
+  better.  Halatek doesn't say why he uses a value that seems to be
+  different than what Meacci claim to have found.  Halatek just says
+  it's experimentally valid and cites their work.  What to do?}
+
+We also analyze the temporal periodicity of the system, which we
+quantify with temporal correlation function of the total MinD found in
+two opposite polar regions.  This correlation function, which is
+displayed in Fig.~\ref{corr-pill}, is given by
 \begin{equation}
   C(\tau) \propto \int
   (N_{\textit{top}}(t) - \bar N_{\textit{top}})
@@ -832,12 +832,12 @@ account for its short period of oscillation.
 In every case, including the wild-type pill shape, we see irregularity
 in the location of the maxima when using the stochastic model.  The
 deterministic model shows uniformly bipolar oscillation.  \blue{(2)}
-\fixme{We conclude that the model is \emph{not} chaotic (which would
-  show irregularity in the deterministic computation), but rather that
-  the irregularity results purely from stochastic processes.}  From
-these results and how they compare with experiment, we conclude that
-the deterministic model is inadequate to explain experimental
-observations of the locations of density maxima of the MinD protein.
+We conclude that the model is \emph{not} chaotic (which would show
+irregularity in the deterministic computation), but rather that the
+irregularity results purely from stochastic processes.  From these
+results and how they compare with experiment, we conclude that the
+deterministic model is inadequate to explain experimental observations
+of the locations of density maxima of the MinD protein.
 
 %% We found that the deterministic simulations of the MinD system results
 %% in robust and regular oscillatory behavoir of polar selection and
@@ -910,14 +910,16 @@ We find agreement between our stochastic simulations and experiments
 showing disrupted bipolar MinD oscillation in asymmetric flattened
 E. coli cells~\cite{mannik2012robustness}.  As observed
 experimentally, our simulations predict that MinD maxima will form in
-a spatially irregular sequence of locations.  This result builds upon
-existing results showing that this model is effective in a variety of
-wild-type and mutated cell shapes~\cite{fange2006noise, varma2008min,
-  kruse2007experimentalist}, and reinforces that the stochastic
-variation of Huang's 2003 model~\cite{fange2006noise,
-  kerr2006division} has considerable predictive power beyond the
-standard wild-type cell.  \fixme{Discuss which of these are likely to
-  map to more recent models.}
+a spatially irregular sequence of locations.  \blue{(6)}\fixme{Do you think this
+  sentence make it sounds like Fange has the same model as Huang?}
+This result builds upon existing results showing that this model and
+its derivatives are effective in a variety of wild-type and mutated
+cell shapes~\cite{fange2006noise, varma2008min,
+  kruse2007experimentalist}, and reinforces that stochastic variations
+of Huang's 2003 model~\cite{fange2006noise, kerr2006division} has
+considerable predictive power beyond the standard wild-type cell.
+\fixme{Discuss which of these are likely to map to more recent
+  models.}
 
 
 %
