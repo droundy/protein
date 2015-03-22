@@ -5,13 +5,13 @@ echo starting !
 srun --job-name="corr randst 18.50 95.00 full_array 0.00" python pyplots/density-correlation.py randst 0.40 18.50 18.50 95.00 15.00 full_array 0.00 &
 #srun --job-name="corr randst 18.50 95.00 exact 0.00" python pyplots/density-correlation.py randst 0.40 18.50 18.50 95.00 15.00 exact 0.00 &
 
-srun --job-name="corr randst 18.60 94.00 full_array 0.00" python pyplots/density-correlation.py randst 0.40 18.60 28.60 94.00 15.00 full_array 0.00 &
+#srun --job-name="corr randst 18.60 94.00 full_array 0.00" python pyplots/density-correlation.py randst 0.40 18.60 28.60 94.00 15.00 full_array 0.00 &
 #srun --job-name="corr randst 18.60 94.00 exact 0.00" python pyplots/density-correlation.py randst 0.40 18.60 28.60 94.00 15.00 exact 0.00 &
 
-srun --job-name="corr stad 2.35 1.32 full 0.00" python pyplots/density-correlation.py stad 0.40 2.35 1.32 0.00 15.00 full_array 0.00 &
+#srun --job-name="corr stad 2.35 1.32 full 0.00" python pyplots/density-correlation.py stad 0.40 2.35 1.32 0.00 15.00 full_array 0.00 &
 #srun --job-name="corr stad 2.35 exact 0.00" python pyplots/density-correlation.py stad 0.40 2.35 1.32 0.00 15.00 exact 0.00 &
 
-srun --job-name="corr stad 2.92 1.18 full 0.00" python pyplots/density-correlation.py stad 0.40 2.92 1.18 0.00 15.00 full_array 0.00 &
+#srun --job-name="corr stad 2.92 1.18 full 0.00" python pyplots/density-correlation.py stad 0.40 2.92 1.18 0.00 15.00 full_array 0.00 &
 #srun --job-name="corr stad 2.92 exact 0.00" python pyplots/density-correlation.py stad 0.40 2.92 1.18 0.00 15.00 exact 0.00
 
 #srun --job-name="corr p 3.00 0.50 full 0.00 6000.00" python pyplots/density-correlation.py p 3.00 0.50 0.00 0.00 15.00 full_array 0.00 &

@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import pylab
 import re
 
-
 print 'For this script, the ninth argument should be the end time of the data set'
 print 'but you can write use no ninth argument if want to just use the full data set'
 constant_start_time = 100.0 #this won't change, will always cut off first 100 seconds of data
@@ -35,7 +34,10 @@ def adjust_data_files(sim_type):
         if sys.argv[1] == "stad":
             return [10,0,1,2]
         elif sys.argv[1] == "randst":
-            return [10,0,1,2]
+            if sys.argv == "95.00":
+                return [10,0,1]
+            else:
+                return [10,0,1,2]
     else:
         return [10]
     #     data_files = [10]
