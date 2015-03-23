@@ -17,6 +17,8 @@ end = 0
 def ignoreme(value):
     return 0.0
 
+print sys.argv[4]
+
 protein_name = "NflD"
 
 difD = 2.5
@@ -34,7 +36,8 @@ def adjust_data_files(sim_type):
         if sys.argv[1] == "stad":
             return [10,0,1,2]
         elif sys.argv[1] == "randst":
-            if sys.argv == "95.00":
+            if sys.argv[4] == "18.50":
+                print "using [10,0,1]"
                 return [10,0,1]
             else:
                 return [10,0,1,2]
