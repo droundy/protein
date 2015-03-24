@@ -37,8 +37,8 @@ def adjust_data_files(sim_type):
             return [10,0,1,2]
         elif sys.argv[1] == "randst":
             if sys.argv[4] == "18.50":
-                print "using [10,0,1]"
-                return [10,0,1]
+                print "using [10,0,1,2]"
+                return [10,0,1,2]
             else:
                 return [10,0,1,2]
     else:
