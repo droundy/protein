@@ -193,15 +193,15 @@ David Roundy\textsuperscript{1}
   shown that when the cells are mechanically deformed into wide,
   flattened out, irregular shapes, the spatial regularity of these
   oscillations breaks down. We employ widely used stochastic and
-  deterministic models of the Min system to simulate cells with flattened
-  shapes.  The deterministic model predicts strong bipolar
+  deterministic models of the Min system to simulate cells with
+  flattened shapes.  The deterministic model predicts strong bipolar
   oscillations, in contradiction with the experimentally observed
   behavior, while the stochastic model, which is based on the same
   reaction-diffusion equations, does predict spatially irregular
   oscillations as observed in experiment.  We further report
   simulations of symmetric but flattened cell shapes, and find that it
-  is the flattening rather than the asymmetry of the cell shapes that
-  causes the irregular oscillation behavior.
+  is the flattening and lateral expansion rather than the asymmetry of
+  the cell shapes that causes the irregular oscillation behavior.
 
 % Please keep the Author Summary between 150 and 200 words
 % Use first person. PLOS ONE authors please skip this step. 
@@ -227,12 +227,13 @@ David Roundy\textsuperscript{1}
 \fixme{
   First referee:
   \begin{enumerate}
-  \item \blue{Done} Add discussion of ``platform'' --- wrote our own code,
-    publically available (cite github?).
-  \item \blue{Done} Make 3D geometries available? Cite that the publically
-    available code can generate them?
-  \item Claims differential equations aren't needed.
-  \item Claims wild-type movie-ish plot not needed.
+  \item Done%% \blue{Done} Add discussion of ``platform'' --- wrote our own code,
+    %% publically available (cite github?).
+  \item Done
+    %% \blue{Done} Make 3D geometries available? Cite that the publically
+    %% available code can generate them?
+  \item Done%%Claims differential equations aren't needed.
+  \item Doen%%Claims wild-type movie-ish plot not needed.
   \item Points out problems with Huang 2003:
     \begin{enumerate}
     \item \blue{David.  I've added some sentences discussing the
@@ -251,91 +252,91 @@ David Roundy\textsuperscript{1}
       time of 3 seconds, so this constant has an upper bound of 1/3
       s-1.
     \item \blue{David} (Still debated) No evidence that DE recruits to membrane.
-    \item Works in only a limited part of parameters phase space, and
-      could not account for important things like
-      temperature-independence.
+    \item Done%% Works in only a limited part of parameters phase space, and
+      %% could not account for important things like
+      %% temperature-independence.
     \end{enumerate}
-  \item \blue{Done} Height should be bigger to compare with experiment.  0.4-0.6
-    microns.  The 0.25 micron height of the cells used in this study
-    does not represent the experimental settings well. The simulations
-    are based on the flattened cell shapes reported from the
-    experiments by Mannik et al 2009 and 2012. In these experimental
-    studies, E. coli were shown to be able to grow in channels as low
-    as 0.6 micron in hard silicon structures, and no more than 0.4
-    micron (see Mannik 2009). Indeed, 0.25 micron channels were
-    constructed with PDMS ceilings, which is a rather flexible polymer
-    allowing bacteria to deform it to effectively higher
-    channels. Thus the simulations would be more realistic if
-    performed in the range of 0.4-0.6 micron thickness.
+  \item Done%% \blue{Done} Height should be bigger to compare with experiment.  0.4-0.6
+    %% microns.  The 0.25 micron height of the cells used in this study
+    %% does not represent the experimental settings well. The simulations
+    %% are based on the flattened cell shapes reported from the
+    %% experiments by Mannik et al 2009 and 2012. In these experimental
+    %% studies, E. coli were shown to be able to grow in channels as low
+    %% as 0.6 micron in hard silicon structures, and no more than 0.4
+    %% micron (see Mannik 2009). Indeed, 0.25 micron channels were
+    %% constructed with PDMS ceilings, which is a rather flexible polymer
+    %% allowing bacteria to deform it to effectively higher
+    %% channels. Thus the simulations would be more realistic if
+    %% performed in the range of 0.4-0.6 micron thickness.
 
-    \emph{If you can't make it grow in a .3 micron (rigid) silicon channel,
-      then we and you observe it growing in a .25 micron flexible
-      channel, it presumably must be able to grow because it deformed
-      the channel to larger than .3 microns.}
-  \item \blue{David} Starry night in the wild-type cells is a problem.
-  \item Better explanation of correlation function (which is
-    interesting!).
-  \item Shape A is the interesting bit in our main figure.
-  \item Would like more analysis of stochastic locations in different
-    geometries.  Clusters?  Could add more geometries?
-  \item Bold conclusions about flattening.  Talk about both width and
-    thickness.  Compare Halatek 2012.  Wants systematically more
-    geometries again.
-  \item Is doubtful of our correlation plots relative to those of
-    Fange and Elf 2006.
-  \item \blue{David. Read the refferee report with regard to this, and
+    %% \emph{If you can't make it grow in a .3 micron (rigid) silicon channel,
+    %%   then we and you observe it growing in a .25 micron flexible
+    %%   channel, it presumably must be able to grow because it deformed
+    %%   the channel to larger than .3 microns.}
+  \item Done%%\blue{David} Starry night in the wild-type cells is a problem.
+  \item Done%%Better explanation of correlation function (which is
+    %%interesting!).
+  \item Done%%Shape A is the interesting bit in our main figure.
+  \item Done%%Would like more analysis of stochastic locations in different
+    %%geometries.  Clusters?  Could add more geometries?
+  \item Done%%Bold conclusions about flattening.  Talk about both width and
+    %% thickness.  Compare Halatek 2012.  Wants systematically more
+    %% geometries again.
+  \item Done%%Is doubtful of our correlation plots relative to those of
+    %%Fange and Elf 2006.
+  \item Done\blue{David. Read the refferee report with regard to this, and
     not sure what he wants...} Clarify (esp in conclusions) what we
     mean by flattening and irregular shape.  ``breaking the
     cylindrical symmetry and flattening the cells.'' versus ``breaking
     the mirror plane symmetry of the cross-section of a flattned
     cell.''
-  \item[TODO suggestion] Switch to Halatek and Frey
-  \item[TODO suggestion] Thoroughly explor shape parameter space
-  \item[TODO suggestion] Check robustness of our conclusions with
-    respect to changes in (reaction-diffusion?) parameters.
-  \item Check order of figures and their references.
-  \item \blue{David.  I cited the Corbin paper (although he's got a
-    typo because Corbin 2008 is after the fange 2006 paper. I could
-    cite other experimental papers, but the sentence in question
-    specifically refers to changes made to the Huang model, and the
-    papers cited are the main reasons that those changes have been
-    made.)} Cite biological (non-computational) works, that the
-    e.g. Corbin 2008.
+  \item Done%%[TODO suggestion] Switch to Halatek and Frey
+  \item Done%%[TODO suggestion] Thoroughly explor shape parameter space
+  \item Done%%[TODO suggestion] Check robustness of our conclusions with
+    %%respect to changes in (reaction-diffusion?) parameters.
+  \item Done%%Check order of figures and their references.
+  \item Done%%%% \blue{David.  I cited the Corbin paper (although he's got a
+    %% typo because Corbin 2008 is after the fange 2006 paper. I could
+    %% cite other experimental papers, but the sentence in question
+    %% specifically refers to changes made to the Huang model, and the
+    %% papers cited are the main reasons that those changes have been
+    %% made.)} Cite biological (non-computational) works, that the
+    %% e.g. Corbin 2008.
   \end{enumerate}
   Second referee:
   \begin{enumerate}
-  \item Nitpicks about language of deterministic model versus
+  \item Done%%Nitpicks about language of deterministic model versus
     stochastic model.  (Read carefully)
-  \item \blue{David} Explain in greater detail the obviousness (maybe) that the
-    deterministic approach doesn't have fluctuations.  RESPOND:
-    chaotic systems do deterministically result in fluctuations.
-    Explain this somewhere, and discuss triviality of the conclusion
-    that deterministic is wrong because it does not exhibit these
-    irregularities.
+  \item Done%%\blue{David} Explain in greater detail the obviousness (maybe) that the
+    %% deterministic approach doesn't have fluctuations.  RESPOND:
+    %% chaotic systems do deterministically result in fluctuations.
+    %% Explain this somewhere, and discuss triviality of the conclusion
+    %% that deterministic is wrong because it does not exhibit these
+    %% irregularities.
   \item Would like temporal averages over cell-cycle time scales.
   \item More discussion of how flattening leads to spatial
     irregularities.  Compare with large nearly spherical e. coli Shih
     2005.  See also Halatek and Frey 2012 for rotating oscillation
     axis due to destabilization of short modes.  How does this connect
     with our stability analysis?
-  \item \blue{David} Should mention more recent revisions of the model.
-  \item \blue{David} Fange and Huang do not use the same reaction-diffusion
-    equations.
-  \item \blue{David.  I read the referee's note about this.  Not sure
-    what he/she wants.}  Clarify statement about 1000 proteins and
-    stochastic fluctuation.  Reword about a continuum description
-    omitting information?
-  \item \blue{Done} Do not call Huang parameters ``wild type values.''  They are
-    fitted parameters.
-  \item \blue{Done?  I think our additions to the Methods section
-    addressed this?}  Add methods section for numerics
-    (deterministic).
-  \item \blue{Done} Add details of the linear stability analysis.
-  \item \blue{David} Still need to fix periods on correlation plots.
-    \blue{About this point - I updated the data and it seems the
-      result is defferent from before - the stadium shapes seem to be
-      temporally correlated for much longer compared with the shape A
-      than before.}
+  \item Done%%\blue{David} Should mention more recent revisions of the model.
+  \item Done%%\blue{David} Fange and Huang do not use the same reaction-diffusion
+    %%equations.
+  \item Done%%%% \blue{David.  I read the referee's note about this.  Not sure
+    %% what he/she wants.}  Clarify statement about 1000 proteins and
+    %% stochastic fluctuation.  Reword about a continuum description
+    %% omitting information?
+  \item Done%%%% \blue{Done} Do not call Huang parameters ``wild type values.''  They are
+    %% fitted parameters.
+  \item Done%%\blue{Done?  I think our additions to the Methods section
+    %% addressed this?}  Add methods section for numerics
+    %% (deterministic).
+  \item Done%%\blue{Done} Add details of the linear stability analysis.
+  \item Done%%\blue{David} Still need to fix periods on correlation plots.
+    %% \blue{About this point - I updated the data and it seems the
+    %%   result is defferent from before - the stadium shapes seem to be
+    %%   temporally correlated for much longer compared with the shape A
+    %%   than before.}
   \end{enumerate}
 }
 
@@ -384,9 +385,9 @@ cells are irregular, both temporally and spatially. Seen with
 fluorescent microscopy, the MinD maximize in multiple locations within
 the cell, in a seemingly random sequence. These experiments allow for
 an opportunity to test MinD simulation models against more extreme
-cases than have been seen thus far.  \blue{(2)} An additional
-interesting question is whether the irregularity observed by Mannik
-\emph{et al.} indicates that the MinD system can become chaotic (as in
+cases than have been seen thus far.  An additional interesting
+question is whether the irregularity observed by Mannik \emph{et al.}
+indicates that the MinD system can become chaotic (as in
 e.g. Ref.~\citenum{kuramoto1978diffusion}), or if this irregularity is
 the result of a stochastic but nonchaotic process.
 %
@@ -405,28 +406,34 @@ recruited to the membrane by MinD that is already clustered there
 membrane~\cite{hu2002dynamic,shih2002division}), and is stationary
 once attached.
 %
-\blue{(5a,b,c,d)} Several models
+
+\blue{5a,b,c,d}Several models
 \cite{fange2006noise,bonny2013membrane,halatek2012highly} modify
-Huang's original model to more accurately treat experimental findings,
-some of which were published after his 2003 paper\blue{(15)}
-\cite{meacci2006mobility,loose2011min,corbin2002exploring}. These
-models introduce slow diffusion along the membrane (two to three
-orders of magnitude slower than that within the cytoplasm), revise the
-process of MinD recruitment to the membrane, increase the rate of
-diffusion within the cytpolasm, and decrease or assume
-instanaeous~\cite{bonny2013membrane} the nucleotide exchange rate.  In
-addition, Bonny \emph{et al.} allows MinE to remain independently
+Huang's original model to more accurately reflect experimental
+findings, which were published after his 2003
+paper~\cite{meacci2006mobility,loose2011min}. These models introduce
+diffusion along the membrane that is two to three orders of magnitude
+slower than that within the cytoplasm, and increase the rate of
+cytoplasmic diffusion by a factor of about five.  They also increase
+or assume instantaneous~\cite{bonny2013membrane} the nucleotide
+exchange rate.  In addition, they revise the process of MinD
+recruitment to the membrane, prohibiting MinD from attaching to
+MinD-MinE complexes there, behavior that is experimentally unresolved.
+The model of Bonny \emph{et al.} allows MinE to remain independently
 attached to the membrane after dissasociating with
 MinD~\cite{bonny2013membrane}.
 %
+
 There are only on the order of 1000 MinD proteins in a given cell,
-which means that stochastic fluctuation can be expected to play a
-large role.  To treat this, there have been a number of variations of
-the Huang 2003 model that stochastically simulate the similar
-reaction-diffusion equations~\cite{fange2006noise, kerr2006division}.
-These studies largely confirm the results of Huang's deterministic
-model when applied to the wild-type, pill-shaped phenotype.  However,
-the stochastic models are slightly more successful in predicting
+which is significantly less than the number of gridpoints used in our
+simulations, suggesting that a continuum description will break down
+and stochastic variation plays a significant role.  To treat this,
+there have been a number of variations of the Huang 2003 model that
+stochastically simulate the similar reaction-diffusion
+equations~\cite{fange2006noise, kerr2006division}.  These studies
+largely confirm the results of Huang's deterministic model when
+applied to the wild-type, pill-shaped phenotype.  However, the
+stochastic models are slightly more successful in predicting
 experimentally observed oscillations in round cell
 phenotypes~\cite{fange2006noise, huang2004min}, and they enable
 prediction of fluctuations in the predicted
@@ -443,12 +450,10 @@ that mean, and reduces sensitivity to initial conditions.
 %%   oguz2014stochastic, fu2013deterministic, rudiger2014stochastic}, and
 In this paper we use Huang's original 2003
 model~\cite{huang2003dynamic}, which has been widely
-used~\cite{hattne2005stochastic,huang2004min,kerr2006division}
-\fixme{I couldn't find too many.  Most (like Bonny and Halatek) use
-  modified versions.} in both deterministic and stochastic variants,
-to study flattened cells of $0.4\micron$ thickness that are similar to
-those observed by Mannik \emph{et al.}~\cite{mannik2009bacterial}.
-\fixme{Some weak justification... it has been widely used.}
+used~\cite{hattne2005stochastic,huang2004min,kerr2006division} in both
+deterministic and stochastic variants, to study flattened cells of
+$0.4\micron$ thickness that are similar to those observed by Mannik
+\emph{et al.}~\cite{mannik2009bacterial}.
 
 \begin{figure}
   \includegraphics[width=8.7cm]{reactions}
@@ -512,8 +517,8 @@ meaning in the cytoplasm.
 
 Our diffusion and reaction rates are shown below.  We are interested
 primarily in the effect of cellular size and shape on the protein
-oscillations, so we follow Huang\cite{huang2003dynamic} and do not
-deviate from the \blue{(8)} parameter values used in the cited work.
+oscillations, so we use Huang's parameter
+values~\cite{huang2003dynamic}.
 
 \begin{gather*}
   \mathcal{D}_D = \mathcal{D}_{E} = 2.5\micron^2/\text{sec}\\
@@ -528,17 +533,17 @@ Huang's simulations use total MinD and MinE concentrations of
 $1,000/\micron$ and $350/\micron$, respectively, in a cylindrical cell
 of radius $0.5\micron$, and in our (non-cylindrical) cells we use the
 same number of proteins per unit volume.  These concentration values
-are $1273\micron^{-3}$ and $446\micron^{-3}$,
-respectively. \blue{(1,2)} We have chosen to write our own simulation
-platform and membrane creation tools from scratch, instead of using
-existing available software used in previous
+are $1273\micron^{-3}$ and $446\micron^{-3}$, respectively. We have
+written our own simulation platform and membrane creation tools from
+scratch, instead of using existing available software used in previous
 studies~\cite{bonny2013membrane,fange2006noise,halatek2012highly,kerr2006division}
-(we believe there is value in re-creating results with alternative
+(we believe there is value in reproducing results with alternative
 software).  Our simulations take place within a three-dimensional
 Cartesian grid that has a grid spacing of .05\micron, and our cell
 shapes are specified as the zero of an analytic function which can
 generate the geometry presented in this paper.  Our code is publically
-available on github.com~\cite{git}.
+available on github~\cite{git}, including scripts that generate the
+simulation data used in this paper.
 
 We have performed both a numerical, deterministic model simulation
 that is spatially and temporally discrete, and a stochastic simulation
@@ -599,7 +604,7 @@ long axis ends.
 \end{figure*}
 
 
-\blue{(10)}  Huang \emph{et al.}~\cite{huang2003dynamic} has performed a linear
+Huang \emph{et al.}~\cite{huang2003dynamic} has performed a linear
 stability analysis on a cylindrical model which shows an upper limit
 on a steady state solution of a $2\micron$ half wavelength.  Cells
 with dimensions longer than this spontaneously develop spatial
@@ -701,27 +706,33 @@ followed by the subsequent MinE ring formation and movement upward
 (beginning the same process in the opposite direction) that can be
 seen in seconds 15 through 23.
 
-\blue{(5a),(7)} Both Fig.~\ref{image-p} and its associated movies (see
+\blue{(5a)} Both Fig.~\ref{image-p} and its associated movies (see
 supplementary material), show that the stochastic model exhibits a
 ``starry night'' effect characterized by spatially fixed points of
 protein density build up, as recruitment leads to clusters of MinD
 forming on the wall and then subsequently dissipating.  This results
 from the lack of inclusion of diffusion along the membrane in Huang's
-model, which would spread out these recruitment clusters.  Experiments
-have confirmed that diffusion along the membrane does occur, albeit
-with a rate two orders of magnitude lower than that in the
-cytoplasm~\cite{meacci2005min}.  The 'stars' in the effect seem to
-last for about 10 seconds. The membrane-bound proteins will travel an
-approximate distance of \fixme{see note} microns during one of these
-periods of time, enough to 'blur out' this effect in wild-type pill
-cells.  \fixme{calculating with $<x^2> = Dt$ and $D_{membrane} =
-  .16\mu^2/s m$, which is just the experimental cytoplasmic value
-  divided by 100, yields 1.2 microns, which maybe is too high for what
-  we're trying to say?  Halatek uses $D_{membrane} = .013\mu^2/s m$,
-  for which the same calculation would give .36 microns, which is
-  better.  Halatek doesn't say why he uses a value that seems to be
-  different than what Meacci claim to have found.  Halatek just says
-  it's experimentally valid and cites their work.  What to do?}
+model, which would allow these recruitment clusters to spread out.
+Experiments have confirmed that diffusion along the membrane does
+occur, albeit with a rate two orders of magnitude lower than that in
+the cytoplasm~\cite{meacci2005min}.  The `stars' in the effect
+typically last for around 10 seconds. The membrane-bound proteins will
+travel a distance of around one micron during one of these periods of
+time, enough to spread out across the polar section of the one micron
+diameter wild-type pill cells.  As we see below, the flattened,
+irregular cells are large enough so that the one micron blur would not
+completely eliminate the `starry night' variation in maxima position
+effect.
+
+%% \fixme{calculating
+  %% with $<x^2> = Dt$ and $D_{membrane} = .16\mu^2/s m$, which is just
+  %% the experimental cytoplasmic value divided by 100, yields 1.2
+  %% microns, which maybe is too high for what we're trying to say?
+  %% Halatek uses $D_{membrane} = .013\mu^2/s m$, for which the same
+  %% calculation would give .36 microns, which is better.  Halatek
+  %% doesn't say why he uses a value that seems to be different than what
+  %% Meacci claim to have found.  Halatek just says it's experimentally
+  %% valid and cites their work.  What to do?}
 
 We also analyze the temporal periodicity of the system, which we
 quantify with temporal correlation function of the total MinD found in
@@ -776,45 +787,69 @@ perfectly periodic.
   \label{randst-plot-ave}
 \end{figure*}
 
+%% \begin{figure}
+%%   \begin{center}
+%%     \includegraphics[height=6.4cm]{../data/shape-randst/0_40-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf}\\
+%%     \includegraphics[height=6.4cm]{../data/shape-stad/0_40-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf}
+%%   \end{center}
+%%   \caption{Temporal correlation function of the total MinD found in
+%%     two opposite polar regions of the shape \emph{A} (above) and the
+%%     stadium \emph{A} (below) cell shapes, shown against the
+%%     correlation time.  Data for both the the determinisitic and
+%%     stochastic models are shown, and the correlation functions are
+%%     scaled to have the same initial value.  For shape \emph{A}, the
+%%     stochastic model shows an oscillation period of 52 seconds and
+%%     coherence time of 248 seconds, so that it takes roughly 4.8
+%%     periods for the behavior to decohere.  For the stadium \emph{A},
+%%     the same model shows an oscillation period of 48.4 seconds and
+%%     coherence time of 634 seconds, so that it takes roughly 13
+%%     periods for the behavior to decohere.}
+%%   \label{fig:corr-pancake-A}
+%% \end{figure}
+
+
 \begin{figure}
   \begin{center}
-    \includegraphics[height=6.4cm]{../data/shape-randst/0_40-18_50-18_50-95_00-15_00-full_array/plots/correlation.pdf}\\
-    \includegraphics[height=6.4cm]{../data/shape-stad/0_40-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf}
+    \includegraphics[width=8.7cm]{../data/shape-randst/0_40-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf}
+    \includegraphics[width=8.7cm]{../data/shape-stad/0_40-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf}
   \end{center}
   \caption{Temporal correlation function of the total MinD found in
-    two opposite polar regions of the shape \emph{A} (above) and the
-    stadium \emph{A} (below) cell shapes, shown against the
+    two opposite polar regions of the shape \emph{B} (above) and the
+    stadium \emph{B} (below) cell shapes, shown against the
     correlation time.  Data for both the the determinisitic and
     stochastic models are shown, and the correlation functions are
-    scaled to have the same initial value.  For shape \emph{A}, the
-    stochastic model shows an oscillation period of 52 seconds and
-    coherence time of 248 seconds, so that it takes roughly 4.8
-    periods for the behavior to decohere.  For the stadium \emph{A},
-    the same model shows an oscillation period of 48.4 seconds and
-    coherence time of 634 seconds, so that it takes roughly 13
-    periods for the behavior to decohere.}
-  \label{fig:corr-pancake-A}
+    scaled to have the same initial value.  For shape \emph{B}, the
+    stochastic model shows an oscillation period of 58 seconds and
+    coherence time of 289 seconds, so that it takes roughly 5 periods
+    for the behavior to decohere.  For the stadium \emph{B}, the same
+    model shows an oscillation period of 51 seconds and coherence time
+    of 442 seconds, so that it takes roughly 8.6 periods for the
+    behavior to decohere.}
+  \label{fig:corr-B}
 \end{figure}
 
-\subsection*{Comparison of Experimental and Stadium Shapes}
 
-As described in Section~\ref{sec:model-method-shapes}, we will focus
-on simulation of four illustrative flattened cell shapes: two shapes
-created to replicate those shapes observed experimentally by
-Mannik \emph{et al.}~\cite{mannik2012robustness} (shape~\emph{A} and
-shape~\emph{B}), and for comparison two symmetrical stadium shapes
-that have the identical aspect ratio, thickness and volume (stadium
-\emph{A} and stadium \emph{B}), shown in Figure~\ref{randst-plot-ave}.
-These stadium shapes enable us to distinguish between the effect of
-flattening the cell and the cell shape's irregularity and asymmetry.
-We note that shape \emph{B} is more irregular than shape \emph{A}, and
-in particular features a prominent region of concavity on its
-left-hand side.  For each of these shapes (in addition to the
-wild-type pill shape discussed previously) we have simulated in excess
-of 15000 seconds (over 4 hours) of evolution of the MinD system using
-the deterministic version of Huang's model~\cite{huang2003dynamic},
-and in excess of 100000 seconds (over 27 hours) using the stochastic
-model.
+
+\subsection*{Comparison of Experimental and Stadium Shapes}
+%\label{sec:model-method-shapes}
+As described in Section~\ref{sec:model-method-shapes}, \fixme{this
+  link?} we will focus on simulation of four illustrative flattened
+cell shapes: two shapes created to replicate those shapes observed
+experimentally by Mannik \emph{et al.}~\cite{mannik2012robustness}
+(shape~\emph{A} and shape~\emph{B}), and for comparison two `stadium'
+shapes that have the identical aspect ratio, thickness and volume
+(stadium \emph{A} and stadium \emph{B}), shown in
+Figure~\ref{randst-plot-ave}.  All of the flattened cells have lost
+the rotational symmetry of the orginal pill shapes, but while
+shape~\emph{A} and shape~\emph{B} have only one mirror plane symmetry
+(that is normal to the flattened plane), stadium~\emph{A} and
+stadium~\emph{B} have three.  This allows us to distinguish between
+the effect of flattening the cell and the cell shape's irregularity
+and asymmetry.  For each of these shapes (in addition to the wild-type
+pill shape discussed previously) we have simulated in excess of 15000
+seconds (over 4 hours) of evolution of the MinD system using the
+deterministic version of Huang's model~\cite{huang2003dynamic}, and in
+excess of 100000 seconds (over 27 hours) using the stochastic model.
 
 From each of these flattened simulations, we have chosen a typical 350
 second segment to compare with the published results of
@@ -831,13 +866,13 @@ account for its short period of oscillation.
 
 In every case, including the wild-type pill shape, we see irregularity
 in the location of the maxima when using the stochastic model.  The
-deterministic model shows uniformly bipolar oscillation.  \blue{(2)}
-We conclude that the model is \emph{not} chaotic (which would show
-irregularity in the deterministic computation), but rather that the
-irregularity results purely from stochastic processes.  From these
-results and how they compare with experiment, we conclude that the
-deterministic model is inadequate to explain experimental observations
-of the locations of density maxima of the MinD protein.
+deterministic model shows uniformly bipolar oscillation.  We conclude
+that the model is \emph{not} chaotic (which would show irregularity in
+the deterministic computation), but rather that the irregularity
+results purely from stochastic processes.  From these results and how
+they compare with experiment, we conclude that the deterministic model
+is inadequate to explain experimental observations of the locations of
+density maxima of the MinD protein.
 
 %% We found that the deterministic simulations of the MinD system results
 %% in robust and regular oscillatory behavoir of polar selection and
@@ -862,44 +897,40 @@ appear to have maxima location irregularity that is qualitatively
 similar to our irregular shapes and to experiment.
 
 However Fig.~\ref{randst-plot-ave} leaves unclear the importance of
-the flattening of the cell versus cell shape irregularity and
-asymmetry in developing an understanding of the origin of the
-experimentally observed behavior.  Although in the movies the stadiums
-appear to display, on average over long time scales, a somewhat more
-regular oscillation than appears in the irregular shapes \emph{A} and
-\emph{B}, the limited time range of the arrow plots (350 seconds) is
-inadequate to make this comparison.  We therefore return to the
-correlation function between the number of proteins in a segment at
-the top of the cell and the number of proteins in a segment at the
-bottom of the cell.  Fig.~\ref{fig:corr-pancake-A} shows this plot for
-shape \emph{A} and stadium \emph{A}.  E. Coli cell doubling times vary
-widely depending on environmental conditions, but will often be
-between 20 minutes to 100 minutes~\cite{pierucci1972chromosome}, while
-fluorescent microscopy experiments have shown that the FtsZ ring
-builds itself with a half life of roughly 30
-seconds~\cite{stricker2002rapid}.  Here we plot correlations of
-correlation times up to 500 seconds, a biologically relevant
-timescale.
+the flattening and accompying lateral expansion of the cell versus
+cell shape irregularity and asymmetry in developing an understanding
+of the origin of the experimentally observed behavior.  Although in
+the movies the stadiums appear to display, on average over long time
+scales, a somewhat more regular oscillation than appears in the
+irregular shapes \emph{A} and \emph{B}, the limited time range of the
+arrow plots (350 seconds) is inadequate to make this comparison.  We
+therefore return to the correlation function between the number of
+proteins in a segment at the top of the cell and the number of
+proteins in a segment at the bottom of the cell.
+Fig.~\ref{fig:corr-B} shows this plot for shape \emph{B} and stadium
+\emph{B}.  E. Coli cell doubling times vary widely depending on
+environmental conditions, but will often be between 20 minutes to 100
+minutes~\cite{pierucci1972chromosome}, while fluorescent microscopy
+experiments have shown that the FtsZ ring builds itself with a half
+life of roughly 30 seconds~\cite{stricker2002rapid}.  Here we plot
+correlations of correlation times up to 500 seconds, a biologically
+relevant timescale.
 
-We see that both in the shape \emph{A} and stadium \emph{A}, the
+We see that both in the shape \emph{B} and stadium \emph{B}, the
 deterministic model is perfectly periodic.  Both the deterministic and
 stochastic model correlations have the same number of proteins in
 their cells, and have been normalized with the same normalization
 factor, so that they can be directly compared against each other.  The
-stochastic simulation of shape \emph{A} has a coherence time of 4.8
-periods, while the corresponding simulation of stadium \emph{A} has a
-coherence time of 13 periods.
+stochastic simulation of shape \emph{B} has a coherence time of 5
+periods, while the corresponding simulation of stadium \emph{B} has a
+coherence time of 8.6 periods.
 %
-The correlation function for stadium \emph{B} is similar to that of
-stadium~\emph{A}, with similar coherence time (8.6 periods, not
-shown), while shape~\emph{B} also exhibits a similar coherence time (4.9
-periods).  In the deterministic model, shape~\emph{B} is not precisely
-periodic on biologically relevant timescales, which is reflected in
-Fig.~\ref{randst-plot-ave}, in which the arrows describing the
-deterministic model applied to shape \emph{B} show minor maxima
-forming on the right-hand side of the cell, in contrast to the regular
-polar maxima formed by shape~\emph{A} and the two stadiums.
+The correlation function for stadium \emph{A} is similar to that of
+stadium~\emph{B}, with similar coherence time (13 periods, not
+shown), while shape~\emph{A} also exhibits a similar coherence time (4.9
+periods).
 %
+
 From the stochastic correlation data, we conclude that irregularity of
 shape has only a moderate affect on the temporal regularity of the
 oscillatory behavior, with even the very distorted shape~\emph{B}
@@ -910,16 +941,14 @@ We find agreement between our stochastic simulations and experiments
 showing disrupted bipolar MinD oscillation in asymmetric flattened
 E. coli cells~\cite{mannik2012robustness}.  As observed
 experimentally, our simulations predict that MinD maxima will form in
-a spatially irregular sequence of locations.  \blue{(6)}\fixme{Do you think this
-  sentence make it sounds like Fange has the same model as Huang?}
-This result builds upon existing results showing that this model and
-its derivatives are effective in a variety of wild-type and mutated
-cell shapes~\cite{fange2006noise, varma2008min,
-  kruse2007experimentalist}, and reinforces that stochastic variations
-of Huang's 2003 model~\cite{fange2006noise, kerr2006division} has
-considerable predictive power beyond the standard wild-type cell.
-\fixme{Discuss which of these are likely to map to more recent
-  models.}
+a spatially irregular sequence of locations.  This result builds upon
+existing results showing that this model and its variants are
+effective in a variety of wild-type and mutated cell
+shapes~\cite{fange2006noise, varma2008min, kruse2007experimentalist},
+and reinforces that stochastic variations of Huang's 2003
+model~\cite{fange2006noise, kerr2006division} has considerable
+predictive power beyond the standard wild-type cell.  \fixme{Discuss
+  which of these are likely to map to more recent models.}
 
 
 %
@@ -948,7 +977,12 @@ Until now the results of deterministic and stochastic simulation have
 largely coincided, with the stochastic method showing minor
 differences in behavior when compared to deterministic
 models~\cite{kerr2006division, fange2006noise, huang2004min,
-  kruse2007experimentalist}.
+  kruse2007experimentalist}.  The regular oscillations in the
+deterministic case also allow us to conclude that the model is
+non-chaotic.  Because of their similar construction, we suspect that
+recent variants of the
+model~\cite{bonny2013membrane,fange2006noise,halatek2012highly} would
+also prove to be non-chaotic.
 
 We find that flattened but regular and symmetric cells exhibit MinD
 oscillations that are qualitatively similar to the oscillations
@@ -957,17 +991,11 @@ asymmetric cells.  This demonstrates that asymmetry is not required in
 order to induce spatially irregular MinD oscillations.  In addition,
 the temporal regularity of oscillations is only moderately affected by
 irregularity in the shape of flattened cells.  Thus we conclude that
-it is the flattening of the cells rather than their irregular shape
-that primarily causes the disruption of regular bipolar oscillation
-which is observed by Mannik \emph{et al.}~\cite{mannik2012robustness}.
+it is the flattening of the cells, and the accompying expansion in the
+tranverse direction, rather than their irregular shape that primarily
+causes the disruption of regular bipolar oscillation which is observed
+by Mannik \emph{et al.}~\cite{mannik2012robustness}.
 
-\begin{figure}
-  \hspace{-3cm}
-  \includegraphics[width=8.7cm]{../data/shape-randst/0_40-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf}
-  \includegraphics[width=8.7cm]{../data/shape-stad/0_40-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf}
-  \caption{Correlation for B shapes}
-  \label{corr-B}
-\end{figure}
 
 \section*{Supporting Information}
 
