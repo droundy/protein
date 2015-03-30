@@ -210,15 +210,15 @@ David Roundy\textsuperscript{1}
   When an E. Coli cell divides it must split into two relatively equal
   volumes in order to survive.  One mechanism that aids in this
   process is a system of proteins that oscillate between cell ends and
-  help the original cell divide along its center.  A recent
-  experiment found that by drastically deforming these cells this
-  oscillation can be disrupted.  We examine these oscillations in
-  similarly deformed cells computationally, using two widely used
-  simulation models, and find good agreement using one of them.  The
-  other model fails in a manner far more dramatic than has been
-  previously observed.  Furthermore, we find that the effect observed
-  experimentally in asymmetric and flattened cells is primarily a
-  result of the flattening, not the asymmetry.
+  help the original cell divide along its center.  A recent experiment
+  found that by drastically deforming these cells this oscillation can
+  be disrupted.  We examine these oscillations in similarly deformed
+  cells computationally, using two widely used simulation models, and
+  find good agreement using one of them.  The other model fails in a
+  manner far more dramatic than has been previously observed.
+  Furthermore, we find that the effect observed experimentally in
+  asymmetric and flattened cells is primarily a result of the
+  flattening and lateral expansion, not the asymmetry.
 
 \linenumbers
 
@@ -247,12 +247,12 @@ Previous experimental studies have shown that the MinD protein system
 is capable of exhibiting oscillations in round
 shapes~\cite{fange2006noise} as well as in connected three pronged
 tube shapes~\cite{varma2008min}, in which the oscillations seem to
-seek out the extreme poles in the cell.  One conclusion of these
-studies has been that the MinD system robustly forms bipolar
-oscillations regardless of variations in cellular shape.
-
-However, Mannik \emph{et al.} have recently shown that there are
-limitations to this robust capability to
+seek out the extreme poles in the cell.
+%%   One conclusion of these
+%% studies has been that the MinD system robustly forms bipolar
+%% oscillations regardless of variations in cellular shape.
+Mannik \emph{et al.} have recently shown that there are limitations to
+this robust capability to
 oscillate~\cite{mannik2012robustness,mannik2009bacterial,mannik2010bacteria}. They
 have experimentally forced \emph{E. coli} cells into microfabricated
 channels of thickness less than that of the natural diameter of the
@@ -263,13 +263,13 @@ deformation results in very wide (they can reach widths of over
 $5\micron$) flattened cells that when viewed from the top down have
 irregular and asymmetric shapes.  While these cells are still able to
 divide into surprisingly equal volumes, the MinD oscillations in these
-cells are irregular, both temporally and spatially. Seen with
-fluorescent microscopy, the MinD maximize in multiple locations within
-the cell, in a seemingly random sequence. These experiments allow for
-an opportunity to test MinD simulation models against more extreme
-cases than have been seen thus far.  An additional interesting
-question is whether the irregularity observed by Mannik \emph{et al.}
-indicates that the MinD system can become chaotic (as in
+cells are spatially irregular. Seen with fluorescent microscopy, the
+MinD maximize in multiple locations within the cell, in a seemingly
+random sequence. These experiments allow for an opportunity to test
+models of the MinD system against more extreme cases than have been
+seen thus far.  An additional interesting question is whether the
+irregularity observed by Mannik \emph{et al.}  indicates that the MinD
+system can become chaotic (as in
 e.g. Ref.~\citenum{kuramoto1978diffusion}), or if this irregularity is
 the result of a stochastic but nonchaotic process.
 %
@@ -297,14 +297,14 @@ diffusion along the membrane that is two to three orders of magnitude
 slower than that within the cytoplasm, and increase the rate of
 cytoplasmic diffusion by a factor of about five, reflecting an
 experimental measurement of these
-parameters~\cite{meacci2006mobility}.  They also increase or assume
-instantaneous~\cite{bonny2013membrane} the nucleotide exchange rate.
-In addition, they revise the process of MinD recruitment to the
-membrane, prohibiting MinD from being recruited to the membrane by
-MinD-MinE complexes, behavior that has not been observed
-experimentally.  The model of Bonny \emph{et al.} allows MinE to
-remain independently attached to the membrane after dissasociating
-with MinD~\cite{bonny2013membrane}.
+parameters~\cite{meacci2006mobility}.  They also increase
+or assume instantaneous~\cite{bonny2013membrane} the nucleotide
+exchange rate.  In addition, they revise the process of MinD
+recruitment to the membrane, removing recruitment of MinD to the
+membrane by MinD-MinE complexes, behavior that has not been observed
+experimentally.  The model of Bonny \emph{et al.} further more allows
+MinE to remain independently attached to the membrane after
+dissasociating with MinD~\cite{bonny2013membrane}.
 %
 
 There are only on the order of a thousand MinD proteins in a given
@@ -420,14 +420,13 @@ same number of proteins per unit volume.  These concentration values
 are $1273\micron^{-3}$ and $446\micron^{-3}$, respectively. We have
 written our own simulation platform and membrane creation tools from
 scratch, instead of using existing available software used in previous
-studies~\cite{bonny2013membrane,fange2006noise,halatek2012highly,kerr2006division}
-(we believe there is value in reproducing results with alternative
-software).  Our simulations take place within a three-dimensional
-Cartesian grid that has a grid spacing of .05\micron, and our cell
-shapes are specified as the zero of an analytic function which can
-generate the geometry presented in this paper.  Our code is publically
-available on github~\cite{git}, including scripts that generate the
-simulation data used in this paper.
+studies~\cite{bonny2013membrane,fange2006noise,halatek2012highly,kerr2006division}.
+Our simulations take place within a three-dimensional Cartesian grid
+that has a grid spacing of .05\micron, and our cell shapes are
+specified as the zero of an analytic function which can generate the
+geometry presented in this paper.  This code is publically available
+on github~\cite{git}, including scripts that generate the simulation
+data used in this paper.
 
 We have performed both a numerical, deterministic model simulation
 that is spatially and temporally discrete, and a stochastic simulation
@@ -446,7 +445,7 @@ Mannik \emph{et al.}, in which bacteria are confined within a thin
 slits.  These slits are fabricated with a width of .25\micron, but
 they are coated with a PDMS lining that the cells are able to deform,
 raising uncertainty in the actual cell thickness.  Tests with pure
-silicon, non-deformable slits show that the greatest thickness for
+silicon, non-deformable slits show that the smallest thickness for
 which cells are able to penetrate is
 .4\micron~\cite{mannik2012robustness,mannik2009bacterial}.  We
 therefore assume that the PDMS slits have been deformed to this
@@ -488,7 +487,7 @@ long axis ends.
 \end{figure*}
 
 
-Huang \emph{et al.}~\cite{huang2003dynamic} has performed a linear
+Huang \emph{et al.}~\cite{huang2003dynamic} have performed a linear
 stability analysis on a cylindrical model which shows an upper limit
 on a steady state solution of a $2\micron$ half wavelength.  Cells
 with dimensions longer than this spontaneously develop spatial
@@ -567,7 +566,7 @@ well-known ``MinE rings'' (actually, MinE bound to MinD on the
 membrane).  These rings are visible in the deterministic model plots
 as a green band on the walls from 0 seconds to 4 seconds (and later
 from 15 to 23 seconds).  The appearance of these rings in the
-deterministic model along side their less obvious appearance in the
+deterministic model alongside their less obvious appearance in the
 stochastic model highlights an advantage of the deterministic model:
 the idealization of deterministic data allows one to see patterns in
 the averaged behavior that might otherwise be missed.  In the
@@ -594,18 +593,18 @@ Both Fig.~\ref{image-p} and its associated movies (see supplementary
 material), show that the stochastic model exhibits a ``starry night''
 effect characterized by spatially fixed points of protein density
 build up, as recruitment leads to clusters of MinD forming on the wall
-and then subsequently dissipating.  This effect is strengthened by the
-lack of inclusion of diffusion along the membrane in Huang's model,
-since this diffusion could allow these recruitment clusters to spread
-out.  Experiments have confirmed that diffusion along the membrane
-does occur, albeit with a rate two orders of magnitude lower than that
-in the cytoplasm~\cite{meacci2005min}.  The `stars' in the effect
-typically last for around 10 seconds. The membrane-bound proteins will
-diffuse by a distance of around one micron during this time, which is
-enough to spread out across the polar section of a one micron diameter
-wild-type pill cell.  As we see below, the flattened, irregular cells
-are larger so that the one micron blur would not completely eliminate
-this `starry night' effect.
+and then subsequently dissipating.  This results from the omission of
+diffusion along the membrane from Huang's model, which would allow
+these recruitment clusters to spread out.  Experiments have confirmed
+that diffusion along the membrane does occur, albeit with a rate two
+orders of magnitude lower than that in the
+cytoplasm~\cite{meacci2005min}.  The `stars' in the effect typically
+last for around 10 seconds. The membrane-bound proteins will diffuse
+by a distance of around one micron during this time, which is enough
+to spread out across the polar section of the one micron diameter
+wild-type pill cells.  As we see below, the flattened, irregular cells
+are large enough that this one micron blurring would not completely
+eliminate this `starry night' effect.
 
 %% \fixme{calculating
   %% with $<x^2> = Dt$ and $D_{membrane} = .16\mu^2/s m$, which is just
@@ -618,9 +617,9 @@ this `starry night' effect.
   %% valid and cites their work.  What to do?}
 
 We also analyze the temporal periodicity of the system, which we
-quantify with temporal correlation function of the total MinD found in
-two opposite polar regions.  This correlation function, which is
-displayed in Fig.~\ref{corr-pill}, is given by
+quantify with the temporal correlation function of the total MinD
+found in two opposite polar regions.  This correlation function, which
+is displayed in Fig.~\ref{corr-pill}, is given by
 \begin{equation}
   C(\tau) \propto \int
   (N_{\textit{top}}(t) - \bar N_{\textit{top}})
@@ -638,7 +637,7 @@ where $T$ is the period and $\tau_c$ is the coherence time.  In the
 case of the stochastic model the pill exhibits coherence times of
 about 8 periods and in the case of the deterministic model oscillate
 indefinitely with complete coherence, indicating that its behavior is
-perfectly periodic.
+periodic.
 
 \begin{figure*}
   \centering
@@ -781,23 +780,22 @@ similar to our irregular shapes and to experiment.
 
 However Fig.~\ref{randst-plot-ave} leaves unclear the importance of
 the flattening and accompying lateral expansion of the cell versus
-cell shape irregularity and asymmetry in developing an understanding
-of the origin of the experimentally observed behavior.  Although in
-the movies the stadiums appear to display, on average over long time
-scales, a somewhat more regular oscillation than appears in the
-irregular shapes \emph{A} and \emph{B}, the limited time range of the
-arrow plots (350 seconds) is inadequate to make this comparison.  We
-therefore return to the correlation function between the number of
-proteins in a segment at the top of the cell and the number of
-proteins in a segment at the bottom of the cell.
-Fig.~\ref{fig:corr-B} shows this plot for shape \emph{B} and stadium
-\emph{B}.  E. Coli cell doubling times vary widely depending on
+cell shape irregularity and asymmetry in the temporal regularity of
+the oscillations.  Although in the movies the stadiums appear to
+display, on average over long time scales, a somewhat more regular
+oscillation than appears in the irregular shapes \emph{A} and
+\emph{B}, the limited time range of the arrow plots (350 seconds) is
+inadequate to make this comparison.  We therefore return to the
+correlation function between the number of proteins in a segment at
+the top of the cell and the number of proteins in a segment at the
+bottom of the cell.  Fig.~\ref{fig:corr-B} shows this plot for shape
+\emph{B} and stadium \emph{B}.  Here we plot correlations of
+correlation times up to 500 seconds, a biologically relevant
+timescale.  E. Coli cell doubling times vary widely depending on
 environmental conditions, but will often be between 20 minutes to 100
 minutes~\cite{pierucci1972chromosome}, while fluorescent microscopy
 experiments have shown that the FtsZ ring builds itself with a half
-life of roughly 30 seconds~\cite{stricker2002rapid}.  Here we plot
-correlations of correlation times up to 500 seconds, a biologically
-relevant timescale.
+life of roughly 30 seconds~\cite{stricker2002rapid}.
 
 We see that both in the shape \emph{B} and stadium \emph{B}, the
 deterministic model is perfectly periodic.  Both the deterministic and
@@ -809,11 +807,12 @@ periods, while the corresponding simulation of stadium \emph{B} has a
 coherence time of 8.6 periods.
 %
 The correlation function for stadium \emph{A} is similar to that of
-stadium~\emph{B}, with similar coherence time (13 periods, not
-shown), while shape~\emph{A} also exhibits a similar coherence time (4.9
-periods).
+stadium~\emph{B}, with similar coherence time (13 periods, not shown),
+while shape~\emph{A} also exhibits a similar coherence time (4.9
+periods).  This confirms that the stadium shapes do indeed oscillate
+somewhat more regularly than the irrelgular shapes, but both are
+comparable to the wild-type pill shape.
 %
-
 From the stochastic correlation data, we conclude that irregularity of
 shape has only a moderate affect on the temporal regularity of the
 oscillatory behavior, with even the very distorted shape~\emph{B}
