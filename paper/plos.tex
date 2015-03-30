@@ -188,20 +188,20 @@ David Roundy\textsuperscript{1}
 \section*{Abstract}
   The dynamics of the Min-protein system help \emph{Escherichia coli}
   regulate the process of cell division by identifying the center of
-  the cell.  While this system usually exhibits robust bipolar
-  oscillations in a variety of cell shapes, recent experiments have
-  shown that when the cells are mechanically deformed into wide,
-  flattened out, irregular shapes, the spatial regularity of these
-  oscillations breaks down. We employ widely used stochastic and
-  deterministic models of the Min system to simulate cells with
-  flattened shapes.  The deterministic model predicts strong bipolar
-  oscillations, in contradiction with the experimentally observed
-  behavior, while the stochastic model, which is based on the same
-  reaction-diffusion equations, does predict spatially irregular
-  oscillations as observed in experiment.  We further report
-  simulations of symmetric but flattened cell shapes, and find that it
-  is the flattening and lateral expansion rather than the asymmetry of
-  the cell shapes that causes the irregular oscillation behavior.
+  the cell.  While this system exhibits robust bipolar oscillations in
+  wild-type cell shapes, recent experiments have shown that when the
+  cells are mechanically deformed into wide, flattened out, irregular
+  shapes, the spatial regularity of these oscillations breaks down. We
+  employ widely used stochastic and deterministic models of the Min
+  system to simulate cells with flattened shapes.  The deterministic
+  model predicts strong bipolar oscillations, in contradiction with
+  the experimentally observed behavior, while the stochastic model,
+  which is based on the same reaction-diffusion equations, does
+  predict spatially irregular oscillations as observed in experiment.
+  We further report simulations of flattened but more symmetric
+  shapes, and find that it is the flattening and lateral expansion
+  rather than the asymmetry of the cell shapes that causes the
+  irregular oscillation behavior.
 
 % Please keep the Author Summary between 150 and 200 words
 % Use first person. PLOS ONE authors please skip this step. 
@@ -245,9 +245,9 @@ behavior~\cite{shapiro2009and, yu1999ftsz,
 
 Previous experimental studies have shown that the MinD protein system
 is capable of exhibiting oscillations in round
-shapes~\cite{fange2006noise} as well as in connected three pronged
-tube shapes~\cite{varma2008min}, in which the oscillations seem to
-seek out the extreme poles in the cell.
+shapes~\cite{corbin2002exploring,fange2006noise} as well as in
+connected three pronged tube shapes~\cite{varma2008min}, in which the
+oscillations seem to seek out the extreme poles in the cell.
 %%   One conclusion of these
 %% studies has been that the MinD system robustly forms bipolar
 %% oscillations regardless of variations in cellular shape.
@@ -273,6 +273,7 @@ system can become chaotic (as in
 e.g. Ref.~\citenum{kuramoto1978diffusion}), or if this irregularity is
 the result of a stochastic but nonchaotic process.
 %
+
 A number of models of the MinD protein system have been developed that
 accurately describe its basic oscillatory nature.
 %
@@ -304,11 +305,11 @@ recruitment to the membrane, removing recruitment of MinD to the
 membrane by MinD-MinE complexes, behavior that has not been observed
 experimentally.  The model of Bonny \emph{et al.} further more allows
 MinE to remain independently attached to the membrane after
-dissasociating with MinD~\cite{bonny2013membrane}.
+disassociating with MinD~\cite{bonny2013membrane}.
 %
 
 There are only on the order of a thousand MinD proteins in a given
-cell, which is fewer than the number of gridpoints used in our
+cell, which is fewer than the number of grid points used in our
 simulations, suggesting that the deterministic continuum
 description--which requires fractional numbers of proteins at each
 grid point---may break down, and that stochastic behavior may play a
@@ -424,7 +425,7 @@ studies~\cite{bonny2013membrane,fange2006noise,halatek2012highly,kerr2006divisio
 Our simulations take place within a three-dimensional Cartesian grid
 that has a grid spacing of .05\micron, and our cell shapes are
 specified as the zero of an analytic function which can generate the
-geometry presented in this paper.  This code is publically available
+geometry presented in this paper.  This code is publicly available
 on github~\cite{git}, including scripts that generate the simulation
 data used in this paper.
 
@@ -441,7 +442,7 @@ oscillations as observed by Mannik \emph{et
 in several cell shapes and sizes.  Here we present a selection of
 these, beginning with naturally occurring pill-shaped cells, followed
 by a number of flattened out shapes which reflect the experiments of
-Mannik \emph{et al.}, in which bacteria are confined within a thin
+Mannik \emph{et al.}, in which bacteria are confined within thin
 slits.  These slits are fabricated with a width of .25\micron, but
 they are coated with a PDMS lining that the cells are able to deform,
 raising uncertainty in the actual cell thickness.  Tests with pure
@@ -701,7 +702,7 @@ periodic.
   \caption{Temporal correlation function of the total MinD found in
     two opposite polar regions of the shape \emph{B} (above) and the
     stadium \emph{B} (below) cell shapes, shown against the
-    correlation time.  Data for both the the determinisitic and
+    correlation time.  Data for both the the deterministic and
     stochastic models are shown, and the correlation functions are
     scaled to have the same initial value.  For shape \emph{B}, the
     stochastic model shows an oscillation period of 58 seconds and
@@ -724,17 +725,19 @@ observed experimentally by Mannik \emph{et
 shape~\emph{B}), and for comparison two `stadium' shapes that have the
 identical aspect ratio, thickness and volume (stadium \emph{A} and
 stadium \emph{B}), shown in Figure~\ref{randst-plot-ave}.  All of the
-flattened cells have lost the rotational symmetry of the orginal pill
+flattened cells have lost the rotational symmetry of the original pill
 shapes, but while shape~\emph{A} and shape~\emph{B} have only one
 mirror plane symmetry (that is normal to the flattened plane),
 stadium~\emph{A} and stadium~\emph{B} have three.  This allows us to
 distinguish between the effect of flattening the cell and the cell
-shape's irregularity and asymmetry.  For each of these shapes (in
-addition to the wild-type pill shape discussed previously) we have
-simulated in excess of 15000 seconds (over 4 hours) of evolution of
-the MinD system using the deterministic version of Huang's
-model~\cite{huang2003dynamic}, and in excess of 100000 seconds (over
-27 hours) using the stochastic model.
+shape's irregularity and asymmetry.
+
+%% For each of these shapes (in
+%% addition to the wild-type pill shape discussed previously) we have
+%% simulated in excess of 15000 seconds (over 4 hours) of evolution of
+%% the MinD system using the deterministic version of Huang's
+%% model~\cite{huang2003dynamic}, and in excess of 100000 seconds (over
+%% 27 hours) using the stochastic model.
 
 From each of these flattened simulations, we have chosen a typical 350
 second segment to compare with the published results of
@@ -782,7 +785,7 @@ appear to have maxima location irregularity that is qualitatively
 similar to our irregular shapes and to experiment.
 
 However Fig.~\ref{randst-plot-ave} leaves unclear the importance of
-the flattening and accompying lateral expansion of the cell versus
+the flattening and accompanying lateral expansion of the cell versus
 cell shape irregularity and asymmetry in the temporal regularity of
 the oscillations.  Although in the movies the stadiums appear to
 display, on average over long time scales, a somewhat more regular
@@ -813,7 +816,7 @@ The correlation function for stadium \emph{A} is similar to that of
 stadium~\emph{B}, with similar coherence time (13 periods, not shown),
 while shape~\emph{A} also exhibits a similar coherence time (4.9
 periods).  This confirms that the stadium shapes do indeed oscillate
-somewhat more regularly than the irrelgular shapes, but both are
+somewhat more regularly than the irregular shapes, but both are
 comparable to the wild-type pill shape.
 %
 From the stochastic correlation data, we conclude that irregularity of
@@ -861,8 +864,8 @@ asymmetric cells.  This demonstrates that asymmetry is not required in
 order to induce spatially irregular MinD oscillations.  In addition,
 the temporal regularity of oscillations is only moderately affected by
 irregularity in the shape of flattened cells.  Thus we conclude that
-it is the flattening of the cells, and the accompying expansion in the
-tranverse direction, rather than their irregular shape that primarily
+it is the flattening of the cells, and the accompanying expansion in the
+transverse direction, rather than their irregular shape that primarily
 causes the disruption of regular bipolar oscillation which is observed
 by Mannik \emph{et al.}~\cite{mannik2012robustness}.
 
