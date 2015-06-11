@@ -1,0 +1,93 @@
+Dear Editor,
+
+We thank the referees for their helpful comments.  We have made a
+number of revisions to our paper in response to their suggestions,
+which we enumerate below, along with our response to each comment and
+suggestion of the referees.  Each referee had several major concerns
+and a few minor suggestions, which we will address in the order that
+they were given, beginning with Referee #1.
+
+Referee #1.
+
+1. The largest concern of Referee #1 was our choice of Huang et al's
+model for our simulations.  The referee acknowledges that we can stay
+with this model, but feels that our justifaction that this model is
+inadequate.  The referee objects that the fact that this model has
+been widely is an inappropriate justification.  While we agree that
+this alone is not a sufficient reason for studying this model, we do
+believe that it is relevant: this is not some obscure older model that
+we are testing, but rather the basis of all more recent models.
+
+ FIXME NEED TO COME UP WITH MORE JUSTIFICATION? OR SIMPLY STATE THAT
+ WE THINK IT IS RELEVANT?
+
+2. As a secondary point, the referee points out we cannot conclude
+that some other deterministic model could not demonstrate chaotic
+behavior that explains the experimental results of Mannik et al.  We
+agree that this cannot be ruled out, and have ADDED CLARIFICATION
+WHERE?
+
+3. The referee when looking at Figure 4 observes that the stadium
+shapes exhibit osciallation that is largely bipolar, and expresses
+doubt in our claim that the oscillations in stadium shapes are
+irregular.  In particular, the referee points out that if we average
+over many periods, we would find that the oscillations are indeed
+bipolar.  We agree with this statement, but not with the conclusion.
+Averaging the locations of the maxima would indeed miss the point of
+the comparison with experiment, which is in examining the sequence of
+locations of maxima.
+
+We have EDITED WHAT? to moderate our claims.
+
+Minor points:
+
+4. The referee points out that MinD clusters had been considered prior
+to Huang.  We have EDITED WHAT to include this reference.
+
+5. ANOTHER EDIT TO DISCUSSION OF EARLIER WORK.
+
+6. The referee points out that two previous works have also
+demonstrated that stochastic simulations are needed in order to
+explain WHAT?.  WE HAVE EDITED OUR DISCUSSION TO ILLUSTRATE THIS.
+
+Referee #3.
+
+7. The referee #3 also expressed doubt about our conclusion with
+regard to the effect of irregular shape which we base on our stadium
+models.  Unlike the previous referee, the criticism is based not on
+the spatial output (Figure 4), but rather on the reported coherence
+times.  We had attempted to make a distinction between spatially
+irregular oscillation and temporally irregular oscillations.  This
+distinction was evidently not clear, so we have ADDED AN EXPLICIT
+DISCUSSION OF THE FACT THAT WE OBSERVE A GREATER DISRUPTION IN
+TEMPORAL REGULARITY IN THE IRREGULARLY SHAPED CELLS.  FIXME WHAT DO WE
+DO ABOUT SPATIAL IRREGULARITY?
+
+8. The referee also questioned how the cell was divided in
+order to perform the coherence time calculations, pointing out that a
+smaller region could lead to a shorter coherence time.  EXPLAIN HOW WE
+DIVIDE THE CELLS UP IN THIRDS BY VOLUME? IT'S AWKWARD THAT WE DON'T
+DIVIDE ALONG LONG AXIS.
+
+9. The referee points out that the "starry night" patterns are
+inconsistent with experiments.  We agree with the referee that
+membrane diffusion will alleviate this problem.  WE HAVE ADDED A
+CLARIFICATION TO THIS EFFECT WHERE?
+
+Minor points:
+
+10. The referee requested a clarification to the caption of Figure 1,
+which we HAVE ADDED.
+
+11. The referee suggests that we should write $\mu m^2$ over $\mu^2$
+for square microns.  We have made this change.  FIXME DO SO.
+
+12. The referee suggested a title is needed in the caption of Figure
+number 4.  WE HAVE ADDED A TITLE.
+
+13. As requested WE HAVE CORRECTED THE CAPITALIZATION OF "E. coli".
+FIXME.
+
+14. The referee corrected us regarding the location at which the FtsZ
+polymer forms, which is not on the cell wall, but rather near the
+cytoplasmic side of the inner membrane.
