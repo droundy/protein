@@ -18,6 +18,8 @@ this alone is not a sufficient reason for studying this model, we do
 believe that it is relevant: this is not some obscure older model that
 we are testing, but rather the basis of all more recent models.
 
+ <Jeff gives this a quick shot!>
+
  FIXME NEED TO COME UP WITH MORE JUSTIFICATION? OR SIMPLY STATE THAT
  WE THINK IT IS RELEVANT?
 
@@ -26,6 +28,8 @@ that some other deterministic model could not demonstrate chaotic
 behavior that explains the experimental results of Mannik et al.  We
 agree that this cannot be ruled out, and have ADDED CLARIFICATION
 WHERE?
+
+  <David>
 
 3. The referee when looking at Figure 4 observes that the stadium
 shapes exhibit osciallation that is largely bipolar, and expresses
@@ -39,16 +43,24 @@ locations of maxima.
 
 We have EDITED WHAT? to moderate our claims.
 
+  <Jeff does this.>
+
 Minor points:
 
 4. The referee points out that MinD clusters had been considered prior
 to Huang.  We have EDITED WHAT to include this reference.
 
+  <David adds this.>
+
 5. ANOTHER EDIT TO DISCUSSION OF EARLIER WORK.
+
+  <David does this.>
 
 6. The referee points out that two previous works have also
 demonstrated that stochastic simulations are needed in order to
 explain WHAT?.  WE HAVE EDITED OUR DISCUSSION TO ILLUSTRATE THIS.
+
+  <David does this.>
 
 Referee #3.
 
@@ -63,31 +75,47 @@ DISCUSSION OF THE FACT THAT WE OBSERVE A GREATER DISRUPTION IN
 TEMPORAL REGULARITY IN THE IRREGULARLY SHAPED CELLS.  FIXME WHAT DO WE
 DO ABOUT SPATIAL IRREGULARITY?
 
+  <Jeff does this.>
+
 8. The referee also questioned how the cell was divided in
 order to perform the coherence time calculations, pointing out that a
 smaller region could lead to a shorter coherence time.  EXPLAIN HOW WE
 DIVIDE THE CELLS UP IN THIRDS BY VOLUME? IT'S AWKWARD THAT WE DON'T
 DIVIDE ALONG LONG AXIS.
 
+  <Jeff discusses this.  David thinks it was by thirds of volume.>
+
 9. The referee points out that the "starry night" patterns are
 inconsistent with experiments.  We agree with the referee that
 membrane diffusion will alleviate this problem.  WE HAVE ADDED A
 CLARIFICATION TO THIS EFFECT WHERE?
+
+  <David>
 
 Minor points:
 
 10. The referee requested a clarification to the caption of Figure 1,
 which we HAVE ADDED.
 
+  <Jeff>
+
 11. The referee suggests that we should write $\mu m^2$ over $\mu^2$
 for square microns.  We have made this change.  FIXME DO SO.
+
+  <David>
 
 12. The referee suggested a title is needed in the caption of Figure
 number 4.  WE HAVE ADDED A TITLE.
 
+  <Jeff>
+
 13. As requested WE HAVE CORRECTED THE CAPITALIZATION OF "E. coli".
 FIXME.
+
+  <David>
 
 14. The referee corrected us regarding the location at which the FtsZ
 polymer forms, which is not on the cell wall, but rather near the
 cytoplasmic side of the inner membrane.
+
+  <David>
