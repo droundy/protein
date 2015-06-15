@@ -26,10 +26,10 @@ we are testing, but rather the basis of all more recent models.
 2. As a secondary point, the referee points out we cannot conclude
 that some other deterministic model could not demonstrate chaotic
 behavior that explains the experimental results of Mannik et al.  We
-agree that this cannot be ruled out, and have ADDED CLARIFICATION
-WHERE?
-
-  <David>
+agree that this cannot be ruled out, and have added mention of this to
+our "Comparison of Experimental and Stadium Shapes", and have made
+even more tentative our suggestion in the summary that other similar
+deterministic models may also prove to be non-chaotic.
 
 3. The referee when looking at Figure 4 observes that the stadium
 shapes exhibit osciallation that is largely bipolar, and expresses
@@ -47,10 +47,10 @@ We have EDITED WHAT? to moderate our claims.
 
 Minor points:
 
-4. The referee points out that MinD clusters had been considered prior
-to Huang.  We have EDITED WHAT to include this reference.
-
-  <David adds this.>
+4. The referee points out that MinD clusters had been considered by
+Kruse prior to Huang.  We thank the referee for pointing out this
+oversight, and have updated our background section to include this
+reference and more accurately reflect the historical development.
 
 5. ANOTHER EDIT TO DISCUSSION OF EARLIER WORK.
 
