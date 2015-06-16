@@ -52,9 +52,9 @@ Kruse prior to Huang.  We thank the referee for pointing out this
 oversight, and have updated our background section to include this
 reference and more accurately reflect the historical development.
 
-5. ANOTHER EDIT TO DISCUSSION OF EARLIER WORK.
-
-  <David does this.>
+5. Based on the referee's suggestion, we have clarified that reference
+11 does not extend Huang's model, except in that it simulates the same
+reaction-diffusion equations stochastically.
 
 6. The referee points out that two previous works have also
 demonstrated that stochastic simulations are needed in order to
