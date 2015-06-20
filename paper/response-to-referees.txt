@@ -72,16 +72,24 @@ times.  We had attempted to make a distinction between spatially
 irregular oscillation and temporally irregular oscillations.  This
 distinction was evidently not clear, so we have ADDED AN EXPLICIT
 DISCUSSION OF THE FACT THAT WE OBSERVE A GREATER DISRUPTION IN
-TEMPORAL REGULARITY IN THE IRREGULARLY SHAPED CELLS.  FIXME WHAT DO WE
-DO ABOUT SPATIAL IRREGULARITY?
+TEMPORAL REGULARITY IN THE IRREGULARLY SHAPED CELLS.  JEFFSAYS{Changed
+the last sentence before the conclusion.  I don't think it needs much
+changing except maybe moderate our claims a bit (which I tried to
+do).}  FIXME WHAT DO WE DO ABOUT SPATIAL IRREGULARITY?
 
   <Jeff does this.>
 
-8. The referee also questioned how the cell was divided in
-order to perform the coherence time calculations, pointing out that a
-smaller region could lead to a shorter coherence time.  EXPLAIN HOW WE
-DIVIDE THE CELLS UP IN THIRDS BY VOLUME? IT'S AWKWARD THAT WE DON'T
-DIVIDE ALONG LONG AXIS.
+8. The referee also questioned how the cell was divided in order to
+perform the coherence time calculations, pointing out that a smaller
+region could lead to a shorter coherence time.  EXPLAIN HOW WE DIVIDE
+THE CELLS UP IN THIRDS BY VOLUME? IT'S AWKWARD THAT WE DON'T DIVIDE
+ALONG LONG AXIS.  JEFFSAYS{Bad news here.  It looks like I did this
+dividing up the cells by eye.  Originally the slices were used to
+created the box plots, which was only a way to visualize the data in
+smaller time domains, so there's wasn't really any disadvantage to
+doing it roughly like this (we even had the visually appealing little
+colored diagrams on the sides of the box plots).  Not sure what to say
+abou this in text.}
 
   <Jeff discusses this.  David thinks it was by thirds of volume.>
 
@@ -95,7 +103,7 @@ CLARIFICATION TO THIS EFFECT WHERE?
 Minor points:
 
 10. The referee requested a clarification to the caption of Figure 1,
-which we HAVE ADDED.
+which we HAVE ADDED. JEFFSAYS{huh?}
 
   <Jeff>
 
