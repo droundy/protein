@@ -16,12 +16,10 @@ inadequate.  The referee objects that the fact that this model has
 been widely is an inappropriate justification.  While we agree that
 this alone is not a sufficient reason for studying this model, we do
 believe that it is relevant: this is not some obscure older model that
-we are testing, but rather the basis of all more recent models.
-
- <Jeff gives this a quick shot!>
-
- FIXME NEED TO COME UP WITH MORE JUSTIFICATION? OR SIMPLY STATE THAT
- WE THINK IT IS RELEVANT?
+we are testing, but rather the basis of all more recent models.  We
+believe that the limitations of this model are of interest, and have
+added some discussion to the end of the introduction section
+explaining this.
 
 2. As a secondary point, the referee points out we cannot conclude
 that some other deterministic model could not demonstrate chaotic
@@ -41,9 +39,12 @@ Averaging the locations of the maxima would indeed miss the point of
 the comparison with experiment, which is in examining the sequence of
 locations of maxima.
 
-We have EDITED WHAT? to moderate our claims.
+We have edited the "comparison of experimental and stadium shapes"
+section to moderate our claims regarding the spatial irregularity of the
+experimental and stadium shapes as predicted by the stochastic model.
 
-  <Jeff does this.>
+<Jeff will figure out what other places need to be changed to reflect
+this reduced claim. EDIT ELSEHWERE AND EDIT HERE!>
 
 Minor points:
 
@@ -68,16 +69,11 @@ Referee #3.
 regard to the effect of irregular shape which we base on our stadium
 models.  Unlike the previous referee, the criticism is based not on
 the spatial output (Figure 4), but rather on the reported coherence
-times.  We had attempted to make a distinction between spatially
-irregular oscillation and temporally irregular oscillations.  This
-distinction was evidently not clear, so we have ADDED AN EXPLICIT
-DISCUSSION OF THE FACT THAT WE OBSERVE A GREATER DISRUPTION IN
-TEMPORAL REGULARITY IN THE IRREGULARLY SHAPED CELLS.  JEFFSAYS{Changed
-the last sentence before the conclusion.  I don't think it needs much
-changing except maybe moderate our claims a bit (which I tried to
-do).}  FIXME WHAT DO WE DO ABOUT SPATIAL IRREGULARITY?
+times.  We agree with the referee that our concluding sentence
+immediately prior to the conclusion section was unjustified, and have
+edited this sentence to reflect the referee's objections.
 
-  <Jeff does this.>
+<Jeff will check if we talk about decoherence times later>
 
 8. The referee also questioned how the cell was divided in order to
 perform the coherence time calculations, pointing out that a smaller
@@ -91,7 +87,8 @@ doing it roughly like this (we even had the visually appealing little
 colored diagrams on the sides of the box plots).  Not sure what to say
 abou this in text.}
 
-  <Jeff discusses this.  David thinks it was by thirds of volume.>
+  <Jeff needs to find out how much volume in each section! Then write
+  text explaining this...>
 
 9. The referee points out that the "starry night" patterns are
 inconsistent with experiments.  We agree with the referee that
@@ -102,10 +99,9 @@ CLARIFICATION TO THIS EFFECT WHERE?
 
 Minor points:
 
-10. The referee requested a clarification to the caption of Figure 1,
-which we HAVE ADDED. JEFFSAYS{huh?}
-
-  <Jeff>
+10. As the referee requested, we have clarified the caption of Figure
+1, to include the fact that these reactions are for a Min system
+model that is used in this work.
 
 11. The referee suggests that we should write $\mu m^2$ over $\mu^2$
 for square microns.  We have made this change.  FIXME DO SO.
@@ -113,9 +109,8 @@ for square microns.  We have made this change.  FIXME DO SO.
   <David>
 
 12. The referee suggested a title is needed in the caption of Figure
-number 4.  WE HAVE ADDED A TITLE.
-
-  <Jeff>
+number 4.  We have edited the caption to begin with an appropriate
+title-like sentence fragment, rather than "We display here...".
 
 13. As requested WE HAVE CORRECTED THE CAPITALIZATION OF "E. coli".
 FIXME.
