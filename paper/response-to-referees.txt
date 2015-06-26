@@ -57,11 +57,11 @@ reference and more accurately reflect the historical development.
 11 does not extend Huang's model, except in that it simulates the same
 reaction-diffusion equations stochastically.
 
-6. The referee points out that two previous works have also
-demonstrated that stochastic simulations are needed in order to
-explain WHAT?.  WE HAVE EDITED OUR DISCUSSION TO ILLUSTRATE THIS.
-
-  <David does this.>
+6. The referee points out that we failed to mention that stochastic
+simulations are needed to explain the experimentally observed
+length-dependence of fluctuations in the Min system.  We have added
+mention of this additional evidence of the importance of inclusion of
+stochastic effects, in the paragraph suggested by the referee.
 
 Referee #3.
 
