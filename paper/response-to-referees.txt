@@ -40,7 +40,7 @@ the comparison with experiment, which is in examining the sequence of
 locations of maxima.
 
 We have edited the "comparison of experimental and stadium shapes"
-section to moderate our claims regarding the spatial irregularity of the
+section, the conclusion, and the abstract to moderate our claims regarding the spatial irregularity of the
 experimental and stadium shapes as predicted by the stochastic model.
 
 <Jeff will figure out what other places need to be changed to reflect
@@ -72,8 +72,12 @@ the spatial output (Figure 4), but rather on the reported coherence
 times.  We agree with the referee that our concluding sentence
 immediately prior to the conclusion section was unjustified, and have
 edited this sentence to reflect the referee's objections.
+JEFFSAYS{The only thing I could see to change in addition to the above is that 
+I added a 'maybe' to the abstract.  Don't think we need to note it.}
+
 
 <Jeff will check if we talk about decoherence times later>
+
 
 8. The referee also questioned how the cell was divided in order to
 perform the coherence time calculations, pointing out that a smaller
@@ -86,6 +90,12 @@ smaller time domains, so there's wasn't really any disadvantage to
 doing it roughly like this (we even had the visually appealing little
 colored diagrams on the sides of the box plots).  Not sure what to say
 abou this in text.}
+JEFFSAYS {I figured we should do this one together because I really didn't
+know what to say.  Here's the volumes:
+shape A - left 1.29 mid 3.29 right 2.12
+shape B - left 1.41 mid 2.48 right 1.91
+stad A - left 1.91 mid 2.62 right 1.84
+stad B - left 1.88 mid 2.49 right 1.82}
 
   <Jeff needs to find out how much volume in each section! Then write
   text explaining this...>
