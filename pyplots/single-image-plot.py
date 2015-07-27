@@ -104,7 +104,7 @@ cax = divider.append_axes("right", "3%", pad="1%")
 # cbar = plt.colorbar(cax=cax,ticks=[0,maxval])
 # cbar.ax.set_yticklabels(['0', 'max'])
 cbar = plt.colorbar(cax=cax)
-cbar.set_label('molecules/$\mu^2$')
+cbar.set_label('molecules/$\mu m^2$')
 
 #plt.colorbar(ticks=[])
 plt.tight_layout()

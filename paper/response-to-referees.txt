@@ -113,19 +113,15 @@ Minor points:
 1, to include the fact that these reactions are for a Min system
 model that is used in this work.
 
-11. The referee suggests that we should write $\mu m^2$ over $\mu^2$
-for square microns.  We have made this change.  FIXME DO SO.
-
-  <David>
+11. The referee suggests that we should consistently write $\mu m^2$
+over $\mu^2$ for square microns.  We have made this change to the plot
+that used $\mu^2$.
 
 12. The referee suggested a title is needed in the caption of Figure
 number 4.  We have edited the caption to begin with an appropriate
 title-like sentence fragment, rather than "We display here...".
 
-13. As requested WE HAVE CORRECTED THE CAPITALIZATION OF "E. coli".
-FIXME.
-
-  <David>
+13. As requested we have corrected the capitalization of "E. coli".
 
 14. The referee corrected us regarding the location at which the FtsZ
 polymer forms, which is not on the cell wall, but rather near the
