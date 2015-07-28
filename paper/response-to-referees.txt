@@ -125,6 +125,5 @@ title-like sentence fragment, rather than "We display here...".
 
 14. The referee corrected us regarding the location at which the FtsZ
 polymer forms, which is not on the cell wall, but rather near the
-cytoplasmic side of the inner membrane.
-
-  <David>
+cytoplasmic side of the inner membrane.  We have corrected this
+statement in the first paragraph of the introduction.
