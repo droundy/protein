@@ -102,10 +102,8 @@ stad B - left 1.88 mid 2.49 right 1.82}
 
 9. The referee points out that the "starry night" patterns are
 inconsistent with experiments.  We agree with the referee that
-membrane diffusion will alleviate this problem.  WE HAVE ADDED A
-CLARIFICATION TO THIS EFFECT WHERE?
-
-  <David>
+membrane diffusion will alleviate this problem.  We have added a
+clarification that this effect is *not* observed in experiment.
 
 Minor points:
 
