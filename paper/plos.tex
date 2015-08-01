@@ -197,12 +197,12 @@ David Roundy\textsuperscript{1}
   system to simulate cells with flattened shapes.  The deterministic
   model predicts strong bipolar oscillations, in contradiction with
   the experimentally observed behavior, while the stochastic model,
-  which is based on the same reaction-diffusion equations, does
-  predict spatially irregular oscillations\fixme{, although they are still somewhat more bipolar than seen in experiment}.
+  which is based on the same reaction-diffusion equations,
+  predicts more spatially irregular oscillations.
   We further report simulations of flattened but more symmetric
-  shapes, and find that it \fixme{may be} the flattening and lateral expansion
-  rather than the asymmetry of the cell shapes that causes the
-  irregular oscillation behavior.
+  shapes, which suggest that the flattening and lateral expansion may
+  contribute as much to the irregular oscillation behavior as the
+  asymmetry of the cell shapes.
 
 % Please keep the Author Summary between 150 and 200 words
 % Use first person. PLOS ONE authors please skip this step. 
@@ -810,11 +810,16 @@ oscillation than appears in the irregular shapes \emph{A} and
 inadequate to make this comparison.  We therefore return to the
 correlation function between the number of proteins in a segment at
 the top of the cell and the number of proteins in a segment at the
-bottom of the cell.  \fixme{this is where Ill need to add the volumes} Fig.~\ref{fig:corr-B} shows this plot for shape
-\emph{B} and stadium \emph{B}.  Here we plot correlations of
-correlation times up to 500 seconds, a biologically relevant
-timescale.  E. coli cell doubling times vary widely depending on
-environmental conditions, but will often be between 20 minutes to 100
+bottom of the cell.  The ``top'' and ``bottom'' regions for computing
+the correlation time were established by dividing the long axis into
+thirds.  This resulted in regions at the top and bottom ranging from
+19\% to 33\% of the cell volume for shapes \emph{A} and \emph{B}, with
+the stadium shapes featuring 30\% of the volume in the top and bottom
+regions.  Fig.~\ref{fig:corr-B} shows this plot for shape \emph{B} and
+stadium \emph{B}.  Here we plot correlations of correlation times up
+to 500 seconds, a biologically relevant timescale.  E. coli cell
+doubling times vary widely depending on environmental conditions, but
+will often be between 20 minutes to 100
 minutes~\cite{pierucci1972chromosome}, while fluorescent microscopy
 experiments have shown that the FtsZ ring builds itself with a half
 life of roughly 30 seconds~\cite{stricker2002rapid}.
@@ -841,17 +846,17 @@ behavior, although even the very distorted shape~\emph{B} exhibiting
 only a factor of two greater decoherence.
 
 \section*{Conclusion}
-\fixme{We find a certain amount of qualitive agreement between our stochastic simulations and experiments showing disrupted MinD oscillations in asymmetric flattened E. coli cells.}  We find agreement between our stochastic simulations and experiments
-showing disrupted bipolar MinD oscillation in asymmetric flattened
-E. coli cells~\cite{mannik2012robustness}.  As observed
+We find qualitative agreement between our stochastic simulations and
+experiments showing disrupted bipolar MinD oscillation in asymmetric
+flattened E. coli cells~\cite{mannik2012robustness}.  As observed
 experimentally, our simulations predict that MinD maxima will form in
-a spatially irregular sequence of locations, \fixme{albeit with a somewhat more course scale bipolar regularity.}  This result builds upon
-existing results showing that this model and its variants are
-effective in a variety of wild-type and mutated cell
-shapes~\cite{fange2006noise, varma2008min, kruse2007experimentalist},
-and reinforces that stochastic variations of Huang's 2003
-model~\cite{fange2006noise, kerr2006division} has considerable
-predictive power beyond the standard wild-type cell.
+a spatially irregular sequence of locations, which follow an overall
+bipolar trend.  This result builds upon existing results showing that
+this model and its variants are effective in a variety of wild-type
+and mutated cell shapes~\cite{fange2006noise, varma2008min,
+  kruse2007experimentalist}, and reinforces that stochastic variations
+of Huang's 2003 model~\cite{fange2006noise, kerr2006division} has
+considerable predictive power beyond the standard wild-type cell.
 
 In contrast to the stochastic model, the original deterministic
 version of the model~\cite{huang2003dynamic} predicts behavior that
