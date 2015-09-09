@@ -1,0 +1,33 @@
+The referee had four corrections to suggest, which we address here.
+
+1) In Abstract “…while the stochastic model, which is based on the
+   same reaction-diffusion equations, predicts more spatially irregular
+   oscillations.” This is vague formulation. Perhaps one could state that
+   the oscillations decay over 5-10 periods.
+
+The rate of temporal decay or irregularity (5-10 periods) is distinct
+from the spatial irregularity.  Therefore we have left the abstract as
+is.
+
+2) Page 3 “This allows us to test the performance of this important
+   model in more extreme situations than has been done previously,
+   furthering our understanding of how and to what extent it breaks
+   down.” Presumably the model does not break down but the solution
+   becomes chaotic.
+
+By "breaks down" we did not mean become chaotic, but rather fail to
+agree with experimental observations.  To make this point more clear,
+we have changed "it [the model] breaks down" to "its predictions
+fail".
+
+3) Page 2 line 46 extra “the”
+
+We believe that the "the" was correct on that line, but the sentence
+was made confusing by a citation in between the words "instantaneous"
+and "the".  We have moved this citation to the end of the sentence to
+make it more clear that the phrase "increase or make instantaneous"
+applies to "the nucleotide exchange rate".
+
+4) Everywhere E. coli should be written in italics.
+
+We have made this change to italicize E. coli.
