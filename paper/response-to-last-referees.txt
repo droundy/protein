@@ -1,4 +1,6 @@
-The referee had four corrections to suggest, which we address here.
+We thank referee #3 for his (or her) careful reading of our paper and
+suggestions for improving it.  We address here the referee's four
+suggestions (quoted by number).
 
 1) In Abstract “…while the stochastic model, which is based on the
    same reaction-diffusion equations, predicts more spatially irregular
