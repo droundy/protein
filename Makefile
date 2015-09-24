@@ -5,7 +5,7 @@ CXXFLAGS = -g -O2 -Wall -Werror
 
 #all: protein_microscopy test-weights
 
-all: protein_microscopy paper/paper-MinD.pdf test-weights paper/plos.pdf
+all: protein_microscopy paper/paper-MinD.pdf test-weights paper/plos.pdf paper/plos-final.pdf
 
 test-weights: test-weights.cpp weights.cpp weights.h
 	g++ ${CXXFLAGS} -o test-weights test-weights.cpp weights.cpp
@@ -34,6 +34,20 @@ ALL_FIGURES = \
 
 paper/plos.pdf: paper/paper-MinD.pdf paper/plos.tex
 	cd paper && pdflatex plos.tex && bibtex plos && pdflatex plos.tex && pdflatex plos.tex
+
+paper/plos-final.pdf: paper/plos.pdf paper/plos-final.tex
+	cd paper && pdflatex plos-final.tex && pdflatex plos-final.tex && pdflatex plos-final.tex
+	inkscape paper/reactions.svg -T --export-eps=paper/Fig1.eps
+	echo inkscape data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf -T --export-eps=paper/Fig2A.eps
+	echo inkscape data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf -T --export-eps=paper/Fig2B.eps
+	echo inkscape paper/Fig2.svg -T --export-eps=paper/Fig2.eps
+	inkscape paper/Fig2.svg --export-dpi=500 --export-background=#ffffff --export-area-drawing --export-png=paper/Fig2.png
+	convert paper/Fig2.png paper/Fig2.tiff
+	inkscape paper/plot-ave.pdf -T --export-eps=paper/Fig3.eps
+	inkscape data/shape-randst/0_40-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf -T --export-eps=paper/Fig4A.eps
+	echo inkscape data/shape-stad/0_40-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf -T --export-eps=paper/Fig4B.eps
+	inkscape paper/Fig4.svg -T --export-eps=paper/Fig4.eps
+
 
 paper/paper-MinD.pdf: paper/paper-MinD.tex ${ALL_FIGURES}
 	echo ${ALL_FIGURES}
@@ -107,8 +121,6 @@ data/shape-stad/0_40-2_35-1_32-0_00-15_00-full_array/plots/correlation.pdf: pypl
 	data/shape-stad/0_40-2_35-1_32-0_00-15_00-full_array/fast-correlation-right-left.dat \
 	data/shape-stad/0_40-2_35-1_32-0_00-15_00-exact/fast-correlation-right-left.dat
 	python pyplots/correlation-plot.py stad 0.40 2.35 1.32 0.00 15.00 full_array 0.00 500.00 2
-
-
 
 
 

@@ -23,3 +23,9 @@ test-weights
 *.log
 *.bbl
 *.blg
+
+*.eps
+*.tiff
+*.png
+*.mp4
+arrow-file.txt
