@@ -294,7 +294,8 @@ ax.text(col_4x, bottom_annotate_y, 'natural pill',
 ax.set_xlim(viewport_xmin,viewport_xmax)
 ax.set_ylim(viewport_ymin,viewport_ymax)
 
-plt.savefig('./paper/plot-ave.pdf', facecolor='white')
+plt.savefig('./paper/plot-ave.pdf', transparent=True, facecolor='white')
+plt.savefig('./paper/plot-ave.svg', transparent=True)
 
 #plt.show()
 

@@ -35,18 +35,18 @@ ALL_FIGURES = \
 paper/plos.pdf: paper/paper-MinD.pdf paper/plos.tex
 	cd paper && pdflatex plos.tex && bibtex plos && pdflatex plos.tex && pdflatex plos.tex
 
-paper/plos-final.pdf: paper/plos.pdf paper/plos-final.tex
+paper/plos-final.pdf: paper/plos.pdf paper/plos-final.tex paper/Fig5.svg
 	cd paper && pdflatex plos-final.tex && pdflatex plos-final.tex && pdflatex plos-final.tex
 	inkscape paper/reactions.svg -T --export-eps=paper/Fig1.eps
 	echo inkscape data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf -T --export-eps=paper/Fig2A.eps
 	echo inkscape data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf -T --export-eps=paper/Fig2B.eps
-	echo inkscape paper/Fig2.svg -T --export-eps=paper/Fig2.eps
 	inkscape paper/Fig2.svg --export-dpi=500 --export-background=#ffffff --export-area-drawing --export-png=paper/Fig2.png
 	convert paper/Fig2.png paper/Fig2.tiff
 	inkscape paper/plot-ave.pdf -T --export-eps=paper/Fig3.eps
 	inkscape data/shape-randst/0_40-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf -T --export-eps=paper/Fig4A.eps
 	echo inkscape data/shape-stad/0_40-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf -T --export-eps=paper/Fig4B.eps
-	inkscape paper/Fig4.svg -T --export-eps=paper/Fig4.eps
+	inkscape paper/plot-ave.svg -T --export-eps=paper/Fig4.eps
+	inkscape paper/Fig5.svg -T --export-eps=paper/Fig5.eps
 
 
 paper/paper-MinD.pdf: paper/paper-MinD.tex ${ALL_FIGURES}
