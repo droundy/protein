@@ -35,13 +35,11 @@ ALL_FIGURES = \
 paper/plos.pdf: paper/paper-MinD.pdf paper/plos.tex
 	cd paper && pdflatex plos.tex && bibtex plos && pdflatex plos.tex && pdflatex plos.tex
 
-paper/plos-final.pdf: paper/plos.pdf paper/plos-final.tex paper/Fig5.svg
+paper/plos-final.pdf: paper/plos.pdf paper/plos-final.tex paper/Fig5.svg paper/Fig2.png
 	cd paper && pdflatex plos-final.tex && pdflatex plos-final.tex && pdflatex plos-final.tex
 	inkscape paper/reactions.svg -T --export-eps=paper/Fig1.eps
 	echo inkscape data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf -T --export-eps=paper/Fig2A.eps
 	echo inkscape data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf -T --export-eps=paper/Fig2B.eps
-	inkscape paper/Fig2.svg --export-dpi=500 --export-background=#ffffff --export-area-drawing --export-png=paper/Fig2.png
-	convert paper/Fig2.png paper/Fig2.tiff
 	inkscape paper/plot-ave.pdf -T --export-eps=paper/Fig3.eps
 	inkscape data/shape-randst/0_40-18_60-28_60-94_00-15_00-full_array/plots/correlation.pdf -T --export-eps=paper/Fig4A.eps
 	echo inkscape data/shape-stad/0_40-2_92-1_18-0_00-15_00-full_array/plots/correlation.pdf -T --export-eps=paper/Fig4B.eps
@@ -60,12 +58,15 @@ protein_test: protein_test.cpp protein_utils.cpp protein_membrane.cpp weights.cp
 paper/reactions.pdf: paper/reactions.svg
 	inkscape --export-pdf $@ $<
 
+paper/Fig2.png: data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.png data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.png
+	montage -tile 1x2 -geometry '1x1+0+0<' $^ $@
+
 # start time 29.501, period 45.002
-data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf: \
+data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.pdf data/shape-p/3_00-0_50-0_00-0_00-15_00-full_array/plots/single-image-plot.png: \
 		pyplots/single-image-plot.py pyplots/mycolormap.py
 	python $< p 3.00 0.50 0.00 0.00 15.00 full_array 312.00 350.00
 
-data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf: \
+data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.pdf data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/plots/single-image-plot.png: \
 		pyplots/single-image-plot.py pyplots/mycolormap.py pyplots/single-image-creation.py \
 		data/shape-p/3_00-0_50-0_00-0_00-15_00-exact/nE/images/single-300.0.dat
 	python $< p 3.00 0.50 0.00 0.00 15.00 exact 266.00 304.00
